@@ -82,6 +82,7 @@ public class HistoryTableProvider {
                         return Policy.bind("notAvailable"); //$NON-NLS-1$
                     return DateFormat.getInstance().format(date);
                 case COL_AUTHOR :
+                    //fix for npe issue 24
                     return entry.getAuthor() == null ? Policy.bind("notAvailable") : entry.getAuthor();
                 case COL_COMMENT :
                     String comment= entry.getComment();
