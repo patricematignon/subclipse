@@ -15,8 +15,7 @@ public class ConflictResolutionGenerator implements IMarkerResolutionGenerator2 
     }
 
     public IMarkerResolution[] getResolutions(IMarker marker) {
-        ConflictResolution conflictResolution = new ConflictResolution();
-        ConflictResolution[] conflictResolutions = { conflictResolution };
+        IMarkerResolution[] conflictResolutions = {new EditConflictsResolution(), new AcceptMineResolution(), new AcceptTheirsResolution(), new MarkAsResolvedResolution()};
         return conflictResolutions;
     }
 
