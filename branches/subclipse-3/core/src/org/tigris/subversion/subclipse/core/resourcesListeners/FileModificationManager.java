@@ -28,6 +28,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.team.core.RepositoryProvider;
 import org.tigris.subversion.subclipse.core.ISVNLocalResource;
+import org.tigris.subversion.subclipse.core.SVNException;
 import org.tigris.subversion.subclipse.core.SVNProviderPlugin;
 import org.tigris.subversion.subclipse.core.resources.SVNWorkspaceRoot;
 
@@ -80,12 +81,10 @@ public class FileModificationManager implements IResourceChangeListener, ISavePa
 						int flags = delta.getFlags();
 						if((flags & INTERESTING_CHANGES) != 0) {
                             ISVNLocalResource svnResource = SVNWorkspaceRoot.getSVNResourceFor(resource);
-                            svnResource.refreshStatus();
                             modifiedResources.add(resource);
 						}
 					} else if (delta.getKind() == IResourceDelta.ADDED) {
                         ISVNLocalResource svnResource = SVNWorkspaceRoot.getSVNResourceFor(resource);
-                        svnResource.refreshStatus();
                         modifiedResources.add(resource);                        
 					} else if (delta.getKind() == IResourceDelta.REMOVED) {
 						// provide notifications for deletions since they may not have been managed
@@ -96,10 +95,11 @@ public class FileModificationManager implements IResourceChangeListener, ISavePa
 				}
 			});
             
-            // we broadcast the changes to all listeners (ex : SVNLightwrightDecorator)
+            // we refresh all changed resources and broadcast the changes to all listeners (ex : SVNLightwrightDecorator)
 			if (!modifiedResources.isEmpty()) {
-				SVNProviderPlugin.broadcastModificationStateChanges(
-					(IResource[])modifiedResources.toArray(new IResource[modifiedResources.size()]));
+                IResource[] resources = (IResource[])modifiedResources.toArray(new IResource[modifiedResources.size()]);
+				refreshStatus(resources);
+                SVNProviderPlugin.broadcastModificationStateChanges(resources);
 				modifiedResources.clear();
 			}
 		} catch (CoreException e) {
@@ -107,7 +107,22 @@ public class FileModificationManager implements IResourceChangeListener, ISavePa
 		}
 
 	}
-	
+
+	/**
+	 * refresh (reset) the status of all the given resources
+     */
+    private void refreshStatus(IResource[] resources) {
+        for (int i = 0; i < resources.length;i++) {
+    		ISVNLocalResource svnResource = SVNWorkspaceRoot.getSVNResourceFor(resources[i]);
+    		try {
+				svnResource.refreshStatus();
+			} catch (SVNException e) {
+				e.printStackTrace();
+			}
+        }
+    }
+    
+    
 	/**
 	 * We register a save participant so we can get the delta from workbench
 	 * startup to plugin startup.

@@ -32,6 +32,7 @@ import org.eclipse.team.core.TeamException;
 import org.osgi.framework.BundleContext;
 import org.tigris.subversion.subclipse.core.client.IConsoleListener;
 import org.tigris.subversion.subclipse.core.repo.SVNRepositories;
+import org.tigris.subversion.subclipse.core.resources.StatusCacheManager;
 import org.tigris.subversion.subclipse.core.resources.RepositoryResourcesManager;
 import org.tigris.subversion.subclipse.core.resourcesListeners.FileModificationManager;
 import org.tigris.subversion.subclipse.core.resourcesListeners.SyncFileChangeListener;
@@ -64,6 +65,8 @@ public class SVNProviderPlugin extends Plugin {
 	// the list of all repositories currently handled by this provider
 	private SVNRepositories repositories;
 
+    private StatusCacheManager statusCacheManager;
+    
 	private RepositoryResourcesManager repositoryResourcesManager = new RepositoryResourcesManager();
 
 	private SVNAdapterFactories adapterFactories;
@@ -127,7 +130,10 @@ public class SVNProviderPlugin extends Plugin {
 		// register all the adapter factories
 		adapterFactories = new SVNAdapterFactories();
 		adapterFactories.startup();
-		
+	
+        statusCacheManager = new StatusCacheManager();
+        statusCacheManager.startup(null);
+        
 		// Initialize SVN change listeners. Note tha the report type is important.
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 
@@ -157,6 +163,8 @@ public class SVNProviderPlugin extends Plugin {
         repositories.shutdown();
 		
 		adapterFactories.shutdown();
+        
+        statusCacheManager.shutdown(null);
 		
         // save the plugin preferences
         savePluginPreferences();
@@ -335,6 +343,14 @@ public class SVNProviderPlugin extends Plugin {
 	public SVNRepositories getRepositories() {
 		return repositories;
 	}
+    
+    /**
+     * get the resource status cache
+	 */
+    public StatusCacheManager getStatusCacheManager() {
+    	return statusCacheManager;
+    }
+    
 
 	/**
 	 * Set the console listener for commands.

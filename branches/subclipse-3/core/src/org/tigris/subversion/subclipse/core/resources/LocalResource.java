@@ -19,7 +19,6 @@ import java.net.MalformedURLException;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.Team;
 import org.tigris.subversion.subclipse.core.ISVNLocalFolder;
@@ -35,7 +34,6 @@ import org.tigris.subversion.subclipse.core.util.Util;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 import org.tigris.subversion.svnclientadapter.ISVNDirEntry;
 import org.tigris.subversion.svnclientadapter.ISVNProperty;
-import org.tigris.subversion.svnclientadapter.ISVNStatus;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
 import org.tigris.subversion.svnclientadapter.SVNConstants;
 import org.tigris.subversion.svnclientadapter.SVNNodeKind;
@@ -56,7 +54,7 @@ public abstract class LocalResource implements ISVNLocalResource, Comparable {
 	protected static final String SEPARATOR = "/"; //$NON-NLS-1$
 	protected static final String CURRENT_LOCAL_FOLDER = "."; //$NON-NLS-1$
 
-    static final QualifiedName RESOURCE_SYNC_KEY = new QualifiedName(SVNProviderPlugin.ID, "resource-sync"); //$NON-NLS-1$
+//    static final QualifiedName RESOURCE_SYNC_KEY = new QualifiedName(SVNProviderPlugin.ID, "resource-sync"); //$NON-NLS-1$
 		
 	/*
 	 * The local resource represented by this handle
@@ -155,8 +153,8 @@ public abstract class LocalResource implements ISVNLocalResource, Comparable {
     /**
      * get the status of the given resource
      */
-    public ISVNStatus getStatus() throws SVNException {
-        return LocalResourceStatusCache.getStatus(resource);
+    public LocalResourceStatus getStatus() throws SVNException {
+        return SVNProviderPlugin.getPlugin().getStatusCacheManager().getStatus(resource);
     }
 
 	/*

@@ -11,8 +11,8 @@ import org.eclipse.team.core.variants.IResourceVariantComparator;
 import org.tigris.subversion.subclipse.core.ISVNLocalResource;
 import org.tigris.subversion.subclipse.core.resources.RemoteFile;
 import org.tigris.subversion.subclipse.core.resources.SVNWorkspaceRoot;
+import org.tigris.subversion.svnclientadapter.SVNStatusKind;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
-import org.tigris.subversion.svnclientadapter.ISVNStatus.Kind;
 
 /**
  * @author Panagiotis K
@@ -36,12 +36,12 @@ public class SVNStatusSyncInfo extends SyncInfo {
      * @see org.eclipse.team.core.synchronize.SyncInfo#calculateKind()
      */
     protected int calculateKind() throws TeamException {
-        Kind localKind = localStatusInfo.getKind();
-        Kind repositoryKind = remoteStatusInfo.getKind();
+        SVNStatusKind localKind = localStatusInfo.getKind();
+        SVNStatusKind repositoryKind = remoteStatusInfo.getKind();
 
-        if( localKind == Kind.NONE 
-         || localKind == Kind.MISSING
-         || localKind == Kind.INCOMPLETE) {
+        if( localKind == SVNStatusKind.NONE 
+         || localKind == SVNStatusKind.MISSING
+         || localKind == SVNStatusKind.INCOMPLETE) {
             return SyncInfo.INCOMING | SyncInfo.ADDITION;
         }
         else if( isDeletion( localKind ) ) {
@@ -67,33 +67,33 @@ public class SVNStatusSyncInfo extends SyncInfo {
         else if( isNotModified(localKind) ) {
             if( isNotModified( repositoryKind) )
                 return SyncInfo.IN_SYNC;
-            if( repositoryKind == Kind.DELETED )
+            if( repositoryKind == SVNStatusKind.DELETED )
                 return SyncInfo.INCOMING | SyncInfo.DELETION;
-            if( repositoryKind == Kind.ADDED )
+            if( repositoryKind == SVNStatusKind.ADDED )
                 return SyncInfo.INCOMING | SyncInfo.ADDITION;
             return SyncInfo.INCOMING | SyncInfo.CHANGE;
         }
 
        return SyncInfo.IN_SYNC;
     }
-    private boolean isDeletion(Kind kind) {
-        return kind == Kind.DELETED;
+    private boolean isDeletion(SVNStatusKind kind) {
+        return kind == SVNStatusKind.DELETED;
     }
 
-    private boolean isChange(Kind kind) {
-        return kind == Kind.MODIFIED 
-              || kind == Kind.REPLACED
-              || kind == Kind.OBSTRUCTED
-              || kind == Kind.CONFLICTED
-              || kind == Kind.MERGED;
+    private boolean isChange(SVNStatusKind kind) {
+        return kind == SVNStatusKind.MODIFIED 
+              || kind == SVNStatusKind.REPLACED
+              || kind == SVNStatusKind.OBSTRUCTED
+              || kind == SVNStatusKind.CONFLICTED
+              || kind == SVNStatusKind.MERGED;
     }
-    private boolean isNotModified(Kind kind) {
-        return kind == Kind.NORMAL
-              || kind == Kind.EXTERNAL
-              || kind == Kind.IGNORED;
+    private boolean isNotModified(SVNStatusKind kind) {
+        return kind == SVNStatusKind.NORMAL
+              || kind == SVNStatusKind.EXTERNAL
+              || kind == SVNStatusKind.IGNORED;
     }
-    private static boolean isAddition(Kind kind) {
-        return kind == Kind.ADDED || kind == Kind.UNVERSIONED;
+    private static boolean isAddition(SVNStatusKind kind) {
+        return kind == SVNStatusKind.ADDED || kind == SVNStatusKind.UNVERSIONED;
     }
 
     private static IResourceVariant createBaseResourceVariant(IResource local, StatusInfo localStatusInfo, StatusInfo remoteStatusInfo) {
@@ -104,9 +104,9 @@ public class SVNStatusSyncInfo extends SyncInfo {
     }
     private static IResourceVariant createLatestResourceVariant(IResource local, StatusInfo localStatusInfo, StatusInfo remoteStatusInfo) {
         if( remoteStatusInfo == null
-                || remoteStatusInfo.getKind() == Kind.DELETED )
+                || remoteStatusInfo.getKind() == SVNStatusKind.DELETED )
             return null;
-        if( remoteStatusInfo.getKind() == Kind.NONE && 
+        if( remoteStatusInfo.getKind() == SVNStatusKind.NONE && 
             localStatusInfo != null && isAddition(localStatusInfo.getKind()) ) {
             return null;
         }

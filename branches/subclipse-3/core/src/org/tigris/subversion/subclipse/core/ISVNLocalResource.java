@@ -14,8 +14,8 @@ import java.io.File;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
+import org.tigris.subversion.subclipse.core.resources.LocalResourceStatus;
 import org.tigris.subversion.svnclientadapter.ISVNProperty;
-import org.tigris.subversion.svnclientadapter.ISVNStatus;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
 
 /**
@@ -33,12 +33,12 @@ public interface ISVNLocalResource extends ISVNResource, IAdaptable {
    * @return the synchronization information for this resource, or <code>null</code>
    * if the resource does not have synchronization information available.
    */
-  public ISVNStatus getStatus() throws SVNException;
+  public LocalResourceStatus getStatus() throws SVNException;
 
   /**
    * refresh the status of the resource (which is cached) 
    */
-  public void refreshStatus();
+  public void refreshStatus() throws SVNException;
 
 
   /**

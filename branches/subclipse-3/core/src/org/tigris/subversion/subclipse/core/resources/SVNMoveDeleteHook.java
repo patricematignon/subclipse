@@ -29,7 +29,6 @@ import org.tigris.subversion.subclipse.core.SVNException;
 import org.tigris.subversion.subclipse.core.SVNTeamProvider;
 import org.tigris.subversion.subclipse.core.client.OperationManager;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
-import org.tigris.subversion.svnclientadapter.ISVNStatus;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
 
 public class SVNMoveDeleteHook extends DefaultMoveDeleteHook {
@@ -145,7 +144,7 @@ public class SVNMoveDeleteHook extends DefaultMoveDeleteHook {
 				// java class, the file is modified before being moved
 				// A modified file cannot be moved without force
 				
-				if(SVNWorkspaceRoot.getSVNFileFor(source).getStatus().getTextStatus() == ISVNStatus.Kind.ADDED){
+				if(SVNWorkspaceRoot.getSVNFileFor(source).getStatus().isAdded()){
 					//can't move a file that's in state added, so copy to new location
 					//remove old location, add new location  
 					//fix for issue 87 -mml
@@ -229,7 +228,7 @@ public class SVNMoveDeleteHook extends DefaultMoveDeleteHook {
 							IResource.DEPTH_ZERO, new NullProgressMonitor());
 				}
 				
-				if(SVNWorkspaceRoot.getSVNFolderFor(source).getStatus().getTextStatus() == ISVNStatus.Kind.ADDED){
+				if(SVNWorkspaceRoot.getSVNFolderFor(source).getStatus().isAdded()){
 					//can't rename a folder that's in state added, so copy to new location
 					//remove old location, add new location  
 					//fix for issue 87 -mml

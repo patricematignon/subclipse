@@ -28,7 +28,7 @@ public interface ISVNLocalFolder extends ISVNLocalResource, ISVNFolder {
      * @param depth
      * @see ISVNLocalResource#refreshStatus
      */
-    public void refreshStatus(int depth);
+    public void refreshStatus(int depth) throws SVNException;
 
     public void acceptChildren(ISVNResourceVisitor visitor) throws SVNException;
     

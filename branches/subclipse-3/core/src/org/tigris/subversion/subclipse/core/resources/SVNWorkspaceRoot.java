@@ -45,7 +45,6 @@ import org.tigris.subversion.subclipse.core.client.OperationManager;
 import org.tigris.subversion.subclipse.core.util.Util;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 import org.tigris.subversion.svnclientadapter.ISVNDirEntry;
-import org.tigris.subversion.svnclientadapter.ISVNStatus;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
 import org.tigris.subversion.svnclientadapter.SVNNodeKind;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
@@ -364,7 +363,7 @@ public class SVNWorkspaceRoot {
 		
 		// Ensure provided info matches that of the project
 		ISVNLocalFolder folder = (ISVNLocalFolder)SVNWorkspaceRoot.getSVNResourceFor(project);
-		ISVNStatus status = folder.getStatus();
+		LocalResourceStatus status = folder.getStatus();
         
         // this folder needs to be managed but also to have a remote counter-part
         // because we need to know its url
@@ -451,7 +450,7 @@ public class SVNWorkspaceRoot {
 	public ISVNRepositoryLocation getRepository() throws SVNException {
 		if (url == null)
         {
-            ISVNStatus status = localRoot.getStatus();
+            LocalResourceStatus status = localRoot.getStatus();
             if (!status.isManaged()) {
                 throw new SVNException(Policy.bind("SVNWorkspaceRoot.notSVNFolder", localRoot.getName()));  //$NON-NLS-1$
             }

@@ -31,15 +31,18 @@ public class Policy {
 	//   org.tigris.subversion.subclipse.core/debug=true
 	//   org.tigris.subversion.subclipse.core/metafiles=true
     //   org.tigris.subversion.subclipse.core/threading=true
+	//   org.tigris.subversion.subclipse.core/status=true
     // You can also enable tracing in the PDE target run-time tab 
 	public static boolean DEBUG_METAFILE_CHANGES = false; 
 	public static boolean DEBUG_THREADING = false; // used in ReetrantLock
-
+	public static boolean DEBUG_STATUS = false;
+    
 	static {
 		//init debug options
 		if (SVNProviderPlugin.getPlugin().isDebugging()) {
 			DEBUG_METAFILE_CHANGES = "true".equalsIgnoreCase(Platform.getDebugOption(SVNProviderPlugin.ID + "/metafiles"));//$NON-NLS-1$ //$NON-NLS-2$
 			DEBUG_THREADING = "true".equalsIgnoreCase(Platform.getDebugOption(SVNProviderPlugin.ID + "/threading"));//$NON-NLS-1$ //$NON-NLS-2$
+            DEBUG_STATUS = "true".equalsIgnoreCase(Platform.getDebugOption(SVNProviderPlugin.ID + "/status"));//$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 

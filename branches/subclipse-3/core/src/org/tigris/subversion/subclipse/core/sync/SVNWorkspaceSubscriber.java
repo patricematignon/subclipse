@@ -50,13 +50,14 @@ import org.tigris.subversion.subclipse.core.ISVNLocalResource;
 import org.tigris.subversion.subclipse.core.SVNProviderPlugin;
 import org.tigris.subversion.subclipse.core.SVNRevisionComparator;
 import org.tigris.subversion.subclipse.core.client.StatusCommand;
+import org.tigris.subversion.subclipse.core.resources.LocalResourceStatus;
 import org.tigris.subversion.subclipse.core.resources.SVNWorkspaceRoot;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 import org.tigris.subversion.svnclientadapter.ISVNStatus;
+import org.tigris.subversion.svnclientadapter.SVNStatusKind;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
 import org.tigris.subversion.svnclientadapter.SVNNodeKind;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
-import org.tigris.subversion.svnclientadapter.ISVNStatus.Kind;
 import org.tigris.subversion.svnclientadapter.SVNRevision.Number;
 
 public class SVNWorkspaceSubscriber extends Subscriber implements IResourceStateChangeListener {
@@ -311,10 +312,10 @@ public class SVNWorkspaceSubscriber extends Subscriber implements IResourceState
         for (int j = 0; members!=null && j < members.length; j++) {
             IResource resource = members[j];
 
-            StatusInfo localInfo = new StatusInfo(null, Kind.UNVERSIONED );
+            StatusInfo localInfo = new StatusInfo(null, SVNStatusKind.UNVERSIONED );
             localSyncStateStore.setBytes( resource,  localInfo.asBytes() );
 
-            StatusInfo remoteInfo = new StatusInfo(null, Kind.NONE );
+            StatusInfo remoteInfo = new StatusInfo(null, SVNStatusKind.NONE );
             remoteSyncStateStore.setBytes( resource, remoteInfo.asBytes() );
 
             allChanges.add(resource);
@@ -348,17 +349,17 @@ public class SVNWorkspaceSubscriber extends Subscriber implements IResourceState
             try {
                 if( resource.exists() ) {
                     ISVNLocalResource localResource = SVNWorkspaceRoot.getSVNResourceFor( resource );
-                    ISVNStatus status = localResource.getStatus();
+                    LocalResourceStatus status = localResource.getStatus();
                     StatusInfo localInfo = new StatusInfo(status.getLastChangedRevision(), status.getTextStatus() );
                     localSyncStateStore.setBytes( resource,  localInfo.asBytes() );
 
                     if( remoteSyncStateStore.getBytes( resource ) == null ) {
                         StatusInfo remoteInfo;
                         if( localResource.hasRemote() ) {
-                            remoteInfo = new StatusInfo(status.getLastChangedRevision(), Kind.NORMAL );
+                            remoteInfo = new StatusInfo(status.getLastChangedRevision(), SVNStatusKind.NORMAL );
                         }
                         else {
-                            remoteInfo = new StatusInfo(null, Kind.NONE );
+                            remoteInfo = new StatusInfo(null, SVNStatusKind.NONE );
                         }
                         remoteSyncStateStore.setBytes( resource, remoteInfo.asBytes() );
                     }
@@ -368,7 +369,7 @@ public class SVNWorkspaceSubscriber extends Subscriber implements IResourceState
                         localSyncStateStore.deleteBytes( resource );
                     }
                     else {
-                        StatusInfo localInfo = new StatusInfo(null, Kind.NONE );
+                        StatusInfo localInfo = new StatusInfo(null, SVNStatusKind.NONE );
                         localSyncStateStore.setBytes( resource,  localInfo.asBytes() );
                     }
                 }
@@ -400,9 +401,9 @@ public class SVNWorkspaceSubscriber extends Subscriber implements IResourceState
 
 class StatusInfo {
     private final Number revision;
-    private final Kind kind;
+    private final SVNStatusKind kind;
 
-    StatusInfo(SVNRevision.Number revision, ISVNStatus.Kind kind) {
+    StatusInfo(SVNRevision.Number revision, SVNStatusKind kind) {
         this.revision = revision;
         this.kind = kind;
     }
@@ -420,7 +421,7 @@ class StatusInfo {
         return new String( ((revision != null) ? revision.toString() : "" ) + ";"+ kind).getBytes();
     }
 
-    public Kind getKind() {
+    public SVNStatusKind getKind() {
         return kind;
     }
 
@@ -428,50 +429,50 @@ class StatusInfo {
         return revision;
     }
 
-    private static Kind fromString(String kind) {
+    private static SVNStatusKind fromString(String kind) {
         if( kind.equals( "non-svn" ) ) {
-            return Kind.NONE;
+            return SVNStatusKind.NONE;
         }
         if( kind.equals( "normal" ) ) {
-            return Kind.NORMAL;
+            return SVNStatusKind.NORMAL;
         }
         if( kind.equals( "added" ) ) {
-            return Kind.ADDED;
+            return SVNStatusKind.ADDED;
         }
         if( kind.equals( "missing" ) ) {
-            return Kind.MISSING;
+            return SVNStatusKind.MISSING;
         }
         if( kind.equals( "incomplete" ) ) {
-            return Kind.INCOMPLETE;
+            return SVNStatusKind.INCOMPLETE;
         }
         if( kind.equals( "deleted" ) ) {
-            return Kind.DELETED;
+            return SVNStatusKind.DELETED;
         }
         if( kind.equals( "replaced" ) ) {
-            return Kind.REPLACED;
+            return SVNStatusKind.REPLACED;
         }
         if( kind.equals( "modified" ) ) {
-            return Kind.MODIFIED;
+            return SVNStatusKind.MODIFIED;
         }
         if( kind.equals( "merged" ) ) {
-            return Kind.MERGED;
+            return SVNStatusKind.MERGED;
         }
         if( kind.equals( "conflicted" ) ) {
-            return Kind.CONFLICTED;
+            return SVNStatusKind.CONFLICTED;
         }
         if( kind.equals( "obstructed" ) ) {
-            return Kind.OBSTRUCTED;
+            return SVNStatusKind.OBSTRUCTED;
         }
         if( kind.equals( "ignored" ) ) {
-            return Kind.IGNORED;
+            return SVNStatusKind.IGNORED;
         }
         if( kind.equals( "external" ) ) {
-            return Kind.EXTERNAL;
+            return SVNStatusKind.EXTERNAL;
         }
         if( kind.equals( "unversioned" ) ) {
-            return Kind.UNVERSIONED;
+            return SVNStatusKind.UNVERSIONED;
         }
-        return Kind.NONE;
+        return SVNStatusKind.NONE;
     }
 
     static StatusInfo fromBytes(byte[] bytes) {

@@ -33,7 +33,6 @@ import org.tigris.subversion.subclipse.core.Policy;
 import org.tigris.subversion.subclipse.core.SVNException;
 import org.tigris.subversion.subclipse.core.SVNProviderPlugin;
 import org.tigris.subversion.subclipse.core.SVNTeamProvider;
-import org.tigris.subversion.svnclientadapter.ISVNStatus;
 import org.tigris.subversion.svnclientadapter.SVNConstants;
 
 /**
@@ -61,7 +60,7 @@ public class LocalFolder extends LocalResource implements ISVNLocalFolder {
 	public ISVNRemoteResource getBaseResource() throws SVNException {
 		if (!isManaged())
 			return null;
-		ISVNStatus status = getStatus();
+		LocalResourceStatus status = getStatus();
         
         return new BaseFolder(
 			this, // localResource 
@@ -120,41 +119,16 @@ public class LocalFolder extends LocalResource implements ISVNLocalFolder {
     /**
      * @see ISVNLocalResource#refreshStatus()
      */
-    public void refreshStatus() {
+    public void refreshStatus() throws SVNException {
         refreshStatus(IResource.DEPTH_ZERO);    
     }
 
     /**
+     * @throws SVNException
      * @see ISVNLocalFolder#refreshStatus(int)
      */
-    public void refreshStatus(int depth) {
-        try {
-            resource.setSessionProperty(RESOURCE_SYNC_KEY, null);
-        
-            if (depth != IResource.DEPTH_ZERO)
-            {
-                IResource[] children = ((IContainer)resource).members(); 
-                for (int i = 0;i < children.length;i++) {
-                    ISVNLocalResource svnChild = SVNWorkspaceRoot.getSVNResourceFor(children[i]);
-                    
-                    if (svnChild.isFolder()) {
-                        ISVNLocalFolder svnFolder = (ISVNLocalFolder)svnChild;
-                        if (depth == IResource.DEPTH_ONE)
-                            svnFolder.refreshStatus(IResource.DEPTH_ZERO);
-                        else
-                        if (depth == IResource.DEPTH_INFINITE)
-                            svnFolder.refreshStatus(IResource.DEPTH_INFINITE);
-                    }
-                    else 
-                        svnChild.refreshStatus();
-                                        
-                }
-            }        
-        
-        } catch (CoreException e) {
-            // the resource does not exist, we ignore the exception
-        }
-        
+    public void refreshStatus(int depth) throws SVNException {
+    	SVNProviderPlugin.getPlugin().getStatusCacheManager().refreshStatus(resource, depth);
     }
     
 	/**

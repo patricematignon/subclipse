@@ -12,17 +12,18 @@
 package org.tigris.subversion.subclipse.core.resources;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.resources.IResource;
 import org.tigris.subversion.subclipse.core.ISVNLocalFile;
 import org.tigris.subversion.subclipse.core.ISVNLocalResource;
 import org.tigris.subversion.subclipse.core.ISVNRemoteResource;
 import org.tigris.subversion.subclipse.core.ISVNResourceVisitor;
 import org.tigris.subversion.subclipse.core.SVNException;
+import org.tigris.subversion.subclipse.core.SVNProviderPlugin;
 import org.tigris.subversion.subclipse.core.client.OperationManager;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
-import org.tigris.subversion.svnclientadapter.ISVNStatus;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
 import org.tigris.subversion.svnclientadapter.SVNKeywords;
+import org.tigris.subversion.svnclientadapter.SVNStatusKind;
 
 /**
  * Represents handles to SVN resource on the local file system. Synchronization
@@ -45,7 +46,7 @@ public class LocalFile extends LocalResource implements ISVNLocalFile {
     	
 		if (!isManaged())
 			return null;
-		ISVNStatus status = getStatus();
+		LocalResourceStatus status = getStatus();
 
 		return new BaseFile(
 			this,                  // localResource
@@ -56,17 +57,11 @@ public class LocalFile extends LocalResource implements ISVNLocalFile {
 	
 	
     /**
+     * @throws SVNException
      * @see ISVNLocalResource#refreshStatus
      */
-    public void refreshStatus() {
-        try {
-            // by removing the session property we force LocalFile to refresh its
-            // status next time getStatus is called
-            resource.setSessionProperty(RESOURCE_SYNC_KEY, null);
-        } catch (CoreException e) {
-            // the resource does not exist, we ignore the exception
-        }
-        
+    public void refreshStatus() throws SVNException {
+    	SVNProviderPlugin.getPlugin().getStatusCacheManager().refreshStatus(resource, IResource.DEPTH_ZERO);
     }
 	
 	/*
@@ -82,8 +77,8 @@ public class LocalFile extends LocalResource implements ISVNLocalFile {
 	public boolean isModified() throws SVNException {
 		if (!exists()) return true;
 		
-		ISVNStatus status = getStatus();
-		return status.getTextStatus() == ISVNStatus.Kind.MODIFIED;
+		LocalResourceStatus status = getStatus();
+		return status.getTextStatus() == SVNStatusKind.MODIFIED;
 	}
 
     /*
