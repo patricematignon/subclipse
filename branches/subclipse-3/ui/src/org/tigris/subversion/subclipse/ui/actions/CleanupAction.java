@@ -11,59 +11,26 @@ package org.tigris.subversion.subclipse.ui.actions;
 
 import java.lang.reflect.InvocationTargetException;
 
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.team.core.TeamException;
-import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.tigris.subversion.subclipse.core.ISVNLocalResource;
 import org.tigris.subversion.subclipse.core.SVNException;
-import org.tigris.subversion.subclipse.core.resources.SVNWorkspaceRoot;
 import org.tigris.subversion.subclipse.ui.Policy;
-import org.tigris.subversion.svnclientadapter.SVNClientException;
+import org.tigris.subversion.subclipse.ui.operations.CleanupOperation;
 
 /**
  * Action to recursively cleanup any locks in teh working copy
  */
 public class CleanupAction extends WorkspaceAction {
 
-    protected void execute(final IAction action)
-            throws InvocationTargetException, InterruptedException {
-        run(new WorkspaceModifyOperation() {
-            public void execute(IProgressMonitor monitor)
-                    throws InvocationTargetException {
-                IResource[] resources = getSelectedResources();
-
-                try {
-                    for (int i = 0; i < resources.length; i++) {
-
-                        ISVNLocalResource svnResource = SVNWorkspaceRoot
-                                .getSVNResourceFor(resources[i]);
-                        svnResource.getRepository().getSVNClient().cleanup(svnResource.getFile());
-
-                        resources[i].refreshLocal(IResource.DEPTH_INFINITE,
-                                monitor);
-                    }
-                    // fix the action enablement
-                    if (action != null)
-                        action.setEnabled(isEnabled());
-                } catch (TeamException e) {
-                    throw new InvocationTargetException(e);
-                } catch (CoreException e) {
-                    throw new InvocationTargetException(e);
-                } catch (SVNClientException e) {
-                    throw new InvocationTargetException(e);
-                }
-            }
-        }, false /* cancelable */, PROGRESS_BUSYCURSOR);
+    protected void execute(final IAction action) throws InvocationTargetException, InterruptedException {
+        new CleanupOperation(getTargetPart(), getSelectedResources()).run();
     }
 
     /**
      * @see org.eclipse.team.internal.ccvs.ui.actions.CVSAction#getErrorTitle()
      */
     protected String getErrorTitle() {
-        return Policy.bind("CleanupAction.cleanup"); //$NON-NLS-1$
+        return Policy.bind("CleanupAction.error"); //$NON-NLS-1$
     }
 
     /* (non-Javadoc)

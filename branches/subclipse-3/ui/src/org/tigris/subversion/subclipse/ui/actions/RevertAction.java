@@ -17,20 +17,18 @@ import java.util.List;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.team.core.TeamException;
-import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.tigris.subversion.subclipse.core.ISVNLocalFolder;
 import org.tigris.subversion.subclipse.core.ISVNLocalResource;
 import org.tigris.subversion.subclipse.core.SVNException;
 import org.tigris.subversion.subclipse.core.commands.GetStatusCommand;
-import org.tigris.subversion.subclipse.core.resources.LocalResource;
 import org.tigris.subversion.subclipse.core.resources.LocalResourceStatus;
 import org.tigris.subversion.subclipse.core.resources.SVNWorkspaceRoot;
 import org.tigris.subversion.subclipse.ui.Policy;
 import org.tigris.subversion.subclipse.ui.dialogs.RevertDialog;
+import org.tigris.subversion.subclipse.ui.operations.RevertOperation;
 import org.tigris.subversion.svnclientadapter.SVNStatusKind;
 import org.tigris.subversion.svnclientadapter.SVNUrl;
 
@@ -39,38 +37,18 @@ import org.tigris.subversion.svnclientadapter.SVNUrl;
  */
 public class RevertAction extends WorkspaceAction {
     
-    private IResource[] resourcesToRevert;
     private String url;
-	
+	private IResource[] resourcesToRevert;
+    
 	protected void execute(final IAction action) throws InvocationTargetException, InterruptedException {
 		final IResource[] resources = getSelectedResources();
-	    run(new WorkspaceModifyOperation() {
-			public void execute(IProgressMonitor monitor) throws InvocationTargetException {
-				try {
-				    IResource[] modified = getModifiedResources(resources, monitor);
-				    if (!confirmRevert(modified)) return;
-					for (int i = 0; i < resourcesToRevert.length; i++) {
-						
-						ISVNLocalResource svnResource = SVNWorkspaceRoot.getSVNResourceFor(resourcesToRevert[i]);
-						if (svnResource instanceof LocalResource) ((LocalResource)svnResource).revert(false);
-						else svnResource.revert();
-						
-						// Revert on a file can also be used to resolve a merge conflict
-						if (resourcesToRevert[i].getType() == IResource.FILE) {
-							resourcesToRevert[i].getParent().refreshLocal(IResource.DEPTH_ONE, monitor);
-						} else {
-							resourcesToRevert[i].refreshLocal(IResource.DEPTH_INFINITE, monitor);
-						}
-					}
-					// fix the action enablement
-					if (action != null) action.setEnabled(isEnabled());
-				} catch (TeamException e) {
-					throw new InvocationTargetException(e);
-				} catch (CoreException e) {
-					throw new InvocationTargetException(e);
-				}
-			}
-		}, false /* cancelable */, PROGRESS_BUSYCURSOR);
+        try {
+            IResource[] modifiedResources = getModifiedResources(resources, new NullProgressMonitor());
+            if (!confirmRevert(modifiedResources)) return;
+            new RevertOperation(getTargetPart(), resourcesToRevert).run();
+        } catch (SVNException e) {
+            throw new InvocationTargetException(e);
+        }
 	}
 	
 	/**
@@ -133,7 +111,7 @@ public class RevertAction extends WorkspaceAction {
 	 * @see org.eclipse.team.internal.ccvs.ui.actions.CVSAction#getErrorTitle()
 	 */
 	protected String getErrorTitle() {
-		return Policy.bind("RevertAction.revert"); //$NON-NLS-1$
+		return Policy.bind("RevertAction.error"); //$NON-NLS-1$
 	}
 
 	/**

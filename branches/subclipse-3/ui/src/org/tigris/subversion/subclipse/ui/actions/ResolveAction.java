@@ -12,15 +12,9 @@ package org.tigris.subversion.subclipse.ui.actions;
  
 import java.lang.reflect.InvocationTargetException;
 
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.team.core.TeamException;
-import org.eclipse.ui.actions.WorkspaceModifyOperation;
-import org.tigris.subversion.subclipse.core.ISVNLocalResource;
-import org.tigris.subversion.subclipse.core.resources.SVNWorkspaceRoot;
 import org.tigris.subversion.subclipse.ui.Policy;
+import org.tigris.subversion.subclipse.ui.operations.ResolveOperation;
 
 /**
  * Action to mark conflicted file as resolved. 
@@ -28,33 +22,13 @@ import org.tigris.subversion.subclipse.ui.Policy;
 public class ResolveAction extends WorkspaceAction {
 	
 	protected void execute(final IAction action) throws InvocationTargetException, InterruptedException {
-		run(new WorkspaceModifyOperation() {
-			public void execute(IProgressMonitor monitor) throws InvocationTargetException {
-				IResource[] resources = getSelectedResources();
-				
-				try {
-					for (int i = 0; i < resources.length; i++) {
-						
-                        ISVNLocalResource svnResource = SVNWorkspaceRoot.getSVNResourceFor(resources[i]);
-                        svnResource.resolve();
-                        //for some reason, just refreshing the file won't cut it.
-                        resources[i].getParent().refreshLocal(IResource.DEPTH_INFINITE, monitor);
-					}
-					// fix the action enablement
-					if (action != null) action.setEnabled(isEnabled());
-				} catch (TeamException e) {
-					throw new InvocationTargetException(e);
-				} catch (CoreException e) {
-					throw new InvocationTargetException(e);
-				}
-			}
-		}, false /* cancelable */, PROGRESS_BUSYCURSOR);
+	    new ResolveOperation(getTargetPart(), getSelectedResources()).run();
 	}
 	/**
 	 * @see org.eclipse.team.internal.ccvs.ui.actions.CVSAction#getErrorTitle()
 	 */
 	protected String getErrorTitle() {
-		return Policy.bind("ResolveAction.resolve"); //$NON-NLS-1$
+		return Policy.bind("ResolveAction.error"); //$NON-NLS-1$
 	}
 
 	/**
