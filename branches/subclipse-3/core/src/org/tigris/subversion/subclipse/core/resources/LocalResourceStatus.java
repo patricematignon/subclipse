@@ -24,6 +24,7 @@ import org.tigris.subversion.svnclientadapter.ISVNStatus;
 import org.tigris.subversion.svnclientadapter.SVNNodeKind;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
 import org.tigris.subversion.svnclientadapter.SVNStatusKind;
+import org.tigris.subversion.svnclientadapter.SVNStatusUtils;
 import org.tigris.subversion.svnclientadapter.SVNUrl;
 import org.tigris.subversion.svnclientadapter.SVNRevision.Number;
 
@@ -355,10 +356,7 @@ public class LocalResourceStatus {
      * @return if managed by svn
      */
     public boolean isManaged() {
-        SVNStatusKind textStatus = getTextStatus();
-        return ((!textStatus.equals(SVNStatusKind.UNVERSIONED))
-                && (!textStatus.equals(SVNStatusKind.NONE)) && (!textStatus
-                .equals(SVNStatusKind.IGNORED)));
+        return SVNStatusUtils.isManaged(getTextStatus());
     }
 
     /**
@@ -367,8 +365,7 @@ public class LocalResourceStatus {
      * @return has version in repository
      */
     public boolean hasRemote() {
-        SVNStatusKind textStatus = getTextStatus();
-        return ((isManaged()) && (!textStatus.equals(SVNStatusKind.ADDED)));
+        return SVNStatusUtils.hasRemote(getTextStatus());
     }
 
     /**
