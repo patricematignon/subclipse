@@ -78,11 +78,20 @@ public class StatusCacheComposite {
     }
     
     /**
+     * add a status for the given resource (which does not need to exist)
+     * @param resource
+     * @param status
+     */
+    synchronized public void addStatus(IResource resource, LocalResourceStatus status) {
+    	addStatus(resource.getFullPath(),status);
+    }
+    
+    /**
      * add a status at the given relative path
      * @param path
      * @param status
      */
-    synchronized public void addStatus(IPath path, LocalResourceStatus status) {
+    synchronized private void addStatus(IPath path, LocalResourceStatus status) {
     	if (path.segmentCount() == 1) {
     		addStatus(path.lastSegment(), status);
         } else {
@@ -95,11 +104,20 @@ public class StatusCacheComposite {
     }
     
     /**
+     * get the status of the given resource (which does not need to exist)
+     * @param resource
+     * @return
+     */
+    synchronized public LocalResourceStatus getStatus(IResource resource) {
+    	return getStatus(resource.getFullPath());
+    }
+        
+    /**
      * get the status at the given relative path
      * @param path
      * @return
      */
-    synchronized public LocalResourceStatus getStatus(IPath path) {
+    synchronized private LocalResourceStatus getStatus(IPath path) {
         if (path.segmentCount() == 0) {
         	return status;
         }
@@ -142,11 +160,20 @@ public class StatusCacheComposite {
     }
     
     /**
+     * remove the status for the given resource (which does not need to exist)
+     * @param resource
+     * @param depth
+     */
+    synchronized public void removeStatus(IResource resource, int depth) {
+    	removeStatus(resource.getFullPath(),depth);
+    }
+    
+    /**
      * removes the status at the given relative path
      * @param path
      * @param depth
      */
-    synchronized public void removeStatus(IPath path, int depth) {
+    synchronized private void removeStatus(IPath path, int depth) {
     	if (path.segmentCount() > 1) {
             StatusCacheComposite child = getChild(path.segment(0));
             if (child == null) {

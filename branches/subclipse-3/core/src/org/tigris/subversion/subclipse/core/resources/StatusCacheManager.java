@@ -14,6 +14,8 @@ import java.io.File;
 import java.io.IOException;
 
 import org.eclipse.core.internal.resources.IManager;
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
@@ -66,6 +68,23 @@ public class StatusCacheManager implements IManager{
     private void recursiveUpdateStatusSet(IResource resource) throws SVNException {
         IWorkspace workspace = ResourcesPlugin.getWorkspace();
         IWorkspaceRoot workspaceRoot = workspace.getRoot();
+
+        if (!(resource instanceof IProject)) {
+            // if the status of the resource parent is not known, we
+            // recursively update it instead 
+            IContainer parent = resource.getParent();
+            if (parent != null) {
+                if (treeCacheRoot.getStatus(parent) == null) {
+                    recursiveUpdateStatusSet(parent);
+                    return;
+                }
+            }
+        }
+        
+        
+        if (Policy.DEBUG_STATUS) {
+            System.out.println("[svn] getting status for : " + resource.getFullPath()); //$NON-NLS-1$   
+        }
         
         // don't do getRepository().getSVNClient() as we can ask the status of a file
         // that is not associated with a known repository
@@ -101,7 +120,7 @@ public class StatusCacheManager implements IManager{
             }
             
             if (resourceStatus != null) {
-            	treeCacheRoot.addStatus(resourceStatus.getFullPath(), new LocalResourceStatus(status));
+            	treeCacheRoot.addStatus(resourceStatus, new LocalResourceStatus(status));
             }
         }
     }
@@ -113,23 +132,19 @@ public class StatusCacheManager implements IManager{
     public LocalResourceStatus getStatus(IResource resource) throws SVNException {
         LocalResourceStatus status = null;
 
-        status = treeCacheRoot.getStatus(resource.getFullPath());
+        status = treeCacheRoot.getStatus(resource);
         
         // we get it using svn 
         if (status == null)
         {
-            if (Policy.DEBUG_STATUS) {
-                System.out.println("[svn] getting status for : " + resource.getFullPath()); //$NON-NLS-1$   
-            }
-
             recursiveUpdateStatusSet(resource);
             
-            status = treeCacheRoot.getStatus(resource.getFullPath());
+            status = treeCacheRoot.getStatus(resource);
         }
         
         if (status == null) {
             status = new LocalResourceStatus(new SVNStatusUnversioned(resource.getLocation().toFile(),false));
-            treeCacheRoot.addStatus(resource.getFullPath(), status);
+            treeCacheRoot.addStatus(resource, status);
         }
         
         
@@ -143,7 +158,7 @@ public class StatusCacheManager implements IManager{
      * @throws SVNException
      */
     public void refreshStatus(IResource resource,int depth) throws SVNException {
-        treeCacheRoot.removeStatus(resource.getFullPath(),depth);
+        treeCacheRoot.removeStatus(resource,depth);
     }
 
 
