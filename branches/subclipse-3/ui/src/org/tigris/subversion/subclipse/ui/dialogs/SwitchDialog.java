@@ -5,8 +5,11 @@ import java.text.ParseException;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -19,6 +22,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Text;
 import org.tigris.subversion.subclipse.core.ISVNLocalResource;
 import org.tigris.subversion.subclipse.core.SVNException;
 import org.tigris.subversion.subclipse.core.resources.SVNWorkspaceRoot;
@@ -29,15 +33,16 @@ import org.tigris.subversion.svnclientadapter.SVNUrl;
 public class SwitchDialog extends Dialog {
     
     private static final int URL_WIDTH_HINT = 450;
-    
-    private static final String HEAD = "HEAD";
-    
+    private static final int REVISION_WIDTH_HINT = 40;
+ 
     private IResource resource;
     
-    private Combo urlCombo;
-    private Combo revisionCombo;
+    private Text urlText;
+    private Text revisionText;
     private Button headButton;
     private Button revisionButton;
+    
+    private Button okButton;
     
     private SVNUrl url;
     private SVNRevision revision;
@@ -62,15 +67,20 @@ public class SwitchDialog extends Dialog {
 		Label urlLabel = new Label(composite, SWT.NONE);
 		urlLabel.setText(Policy.bind("SwitchDialog.url"));
 		
-		urlCombo = new Combo(composite, SWT.BORDER);
+		urlText = new Text(composite, SWT.BORDER);
 		data = new GridData();
 		data.widthHint = URL_WIDTH_HINT;
-		urlCombo.setLayoutData(data);
+		urlText.setLayoutData(data);
 		ISVNLocalResource svnResource = SVNWorkspaceRoot.getSVNResourceFor(resource);
 		try {
             SVNUrl svnUrl = svnResource.getStatus().getUrl();
-            if (svnUrl != null) urlCombo.setText(svnResource.getStatus().getUrl().toString());
+            if (svnUrl != null) urlText.setText(svnResource.getStatus().getUrl().toString());
         } catch (SVNException e1) {}
+        urlText.addModifyListener(new ModifyListener() {
+            public void modifyText(ModifyEvent e) {
+                setOkButtonStatus();
+            }         
+        });
 		
 		Button browseButton = new Button(composite, SWT.PUSH);
 		browseButton.setText(Policy.bind("SwitchDialog.browse"));
@@ -78,7 +88,8 @@ public class SwitchDialog extends Dialog {
             public void widgetSelected(SelectionEvent e) {
                 ChooseUrlDialog dialog = new ChooseUrlDialog(getShell(), resource);
                 if ((dialog.open() == ChooseUrlDialog.OK) && (dialog.getUrl() != null)) {
-                    urlCombo.setText(dialog.getUrl());
+                    urlText.setText(dialog.getUrl());
+                    setOkButtonStatus();
                 }
             }
 		});
@@ -105,15 +116,26 @@ public class SwitchDialog extends Dialog {
 		
 		headButton.setSelection(true);
 		
-		revisionCombo = new Combo(revisionGroup, SWT.BORDER);
-		revisionCombo.add(HEAD);
-		revisionCombo.setText(HEAD);
-		revisionCombo.setEnabled(false);
+		revisionText = new Text(revisionGroup, SWT.BORDER);
+		data = new GridData();
+		data.widthHint = REVISION_WIDTH_HINT;
+		revisionText.setLayoutData(data);
+		revisionText.setEnabled(false);
+		
+		revisionText.addModifyListener(new ModifyListener() {
+            public void modifyText(ModifyEvent e) {
+                setOkButtonStatus();
+            }		    
+		});
 		
 		SelectionListener listener = new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
-                if (headButton.getSelection()) revisionCombo.setText(HEAD);
-                revisionCombo.setEnabled(revisionButton.getSelection());
+                revisionText.setEnabled(revisionButton.getSelection());
+                setOkButtonStatus();
+                if (revisionButton.getSelection()) {
+                    revisionText.selectAll();
+                    revisionText.setFocus();
+                }
             }
 		};
 		
@@ -125,11 +147,11 @@ public class SwitchDialog extends Dialog {
 	
     protected void okPressed() {
         try {
-            url = new SVNUrl(urlCombo.getText().trim());
-            if (headButton.getSelection() || revisionCombo.getText().trim().equalsIgnoreCase(HEAD)) revision = SVNRevision.HEAD;
+            url = new SVNUrl(urlText.getText().trim());
+            if (headButton.getSelection()) revision = SVNRevision.HEAD;
             else {
                 try {
-                    revision = SVNRevision.getRevision(revisionCombo.getText().trim());
+                    revision = SVNRevision.getRevision(revisionText.getText().trim());
                 } catch (ParseException e1) {
                   MessageDialog.openError(getShell(), Policy.bind("SwitchDialog.title"), Policy.bind("SwitchDialog.invalid"));
                   return;   
@@ -143,7 +165,13 @@ public class SwitchDialog extends Dialog {
     }
 
     protected Button createButton(Composite parent, int id, String label, boolean defaultButton) {
-        return super.createButton(parent, id, label, defaultButton);
+        Button button = super.createButton(parent, id, label, defaultButton);
+		if (id == IDialogConstants.OK_ID) okButton = button;    
+        return button;
+    }
+    
+    private void setOkButtonStatus() {
+        okButton.setEnabled((urlText.getText().trim().length() > 0) && (headButton.getSelection() || (revisionText.getText().trim().length() > 0)));
     }
     
     public SVNRevision getRevision() {
