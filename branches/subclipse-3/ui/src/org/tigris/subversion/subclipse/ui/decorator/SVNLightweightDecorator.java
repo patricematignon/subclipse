@@ -158,25 +158,18 @@ public class SVNLightweightDecorator
      */
 	public static boolean isDirty(final ISVNLocalResource svnResource) {
 		try {
-			return !svnResource.isIgnored() && 
-				(svnResource.isModified() || svnResource.getStatus().getPropStatus() == SVNStatusKind.MODIFIED);
+            if (svnResource.getIResource().getType() == IResource.FILE) {
+                // for files, we want that only modified files to be considered as dirty
+                return !svnResource.isIgnored() && (svnResource.isModified() || svnResource.getStatus().getPropStatus() == SVNStatusKind.MODIFIED);
+            } else {
+                // a container with an added file, deleted file, conflicted file ... is considered as dirty
+                return svnResource.isDirty();
+            }
 		} catch (SVNException e) {
 			//if we get an error report it to the log but assume dirty
 			SVNUIPlugin.log(e.getStatus());
 			return true;
 		}
-	}
-
-    /**
-     * tells if given resource is dirty or not 
-     */
-	public static boolean isDirty(IResource resource) {
-
-		// No need to decorate non-existant resources
-		if (!resource.exists()) return false;
-
-		return isDirty(SVNWorkspaceRoot.getSVNResourceFor(resource));
-
 	}
 	
 	/**
@@ -228,9 +221,8 @@ public class SVNLightweightDecorator
 		// determine a if resource has outgoing changes (e.g. is dirty).
 		boolean isDirty = false;
 
-		int type = resource.getType();
-		if (type == IResource.FILE || computeDeepDirtyCheck) {
-			isDirty = SVNLightweightDecorator.isDirty(svnResource);
+		if (resource.getType() == IResource.FILE || computeDeepDirtyCheck) {
+		    isDirty = SVNLightweightDecorator.isDirty(svnResource);
 		}
 		
 		decorateTextLabel(resource, decoration, isDirty);
