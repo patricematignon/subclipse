@@ -33,6 +33,7 @@ import org.tigris.subversion.subclipse.core.SVNException;
 import org.tigris.subversion.subclipse.core.SVNProviderPlugin;
 import org.tigris.subversion.subclipse.core.SVNStatus;
 import org.tigris.subversion.subclipse.core.util.Util;
+import org.tigris.subversion.svnclientadapter.SVNUrl;
 
 /**
  * The list of known repositories
@@ -46,6 +47,7 @@ public class SVNRepositories
     // version numbers for the state file 
     private static final int REPOSITORIES_STATE_FILE_VERSION_1 = 1;
     private static final int REPOSITORIES_STATE_FILE_VERSION_2 = 2;
+    private static final int REPOSITORIES_STATE_FILE_VERSION_3 = 3;
 
     /*
      * Add the repository location to the cached locations
@@ -229,24 +231,29 @@ public class SVNRepositories
      * @throws SVNException
      */
     private void readState(DataInputStream dis) throws IOException, SVNException {
+        int version = dis.readInt();
+        
+        if ((version < REPOSITORIES_STATE_FILE_VERSION_1) ||
+           (version > REPOSITORIES_STATE_FILE_VERSION_3)) {
+            Util.logError(Policy.bind("SVNProviderPlugin.unknownStateFileVersion", new Integer(version).toString()), null); //$NON-NLS-1$
+            return;
+        }
+        
         int count = dis.readInt();
-        if (count == REPOSITORIES_STATE_FILE_VERSION_1) {
-            count = dis.readInt();
-            for(int i = 0; i < count;i++){
-                ISVNRepositoryLocation root = getRepository(dis.readUTF());
-            }
-        } else
-        if (count == REPOSITORIES_STATE_FILE_VERSION_2) {
-            count = dis.readInt();
-            for(int i = 0; i < count;i++){
-                ISVNRepositoryLocation root = getRepository(dis.readUTF());
+        for(int i = 0; i < count;i++){
+        	ISVNRepositoryLocation root = getRepository(dis.readUTF());
+            if (version >= REPOSITORIES_STATE_FILE_VERSION_2) {
                 String label = dis.readUTF();
                 if (!label.equals("")) {
-                	root.setLabel(label);
+                    root.setLabel(label);
+                }                
+            }
+            if (version >= REPOSITORIES_STATE_FILE_VERSION_3) {
+                String repositoryRoot = dis.readUTF();
+                if (!repositoryRoot.equals("")) {
+                    root.setRepositoryRoot(new SVNUrl(repositoryRoot));
                 }
-            }            
-        } else {
-            Util.logError(Policy.bind("SVNProviderPlugin.unknownStateFileVersion", new Integer(count).toString()), null); //$NON-NLS-1$
+            }
         }
     }
     
@@ -257,7 +264,7 @@ public class SVNRepositories
      */
     private void writeState(DataOutputStream dos) throws IOException {
         // Write the repositories
-        dos.writeInt(REPOSITORIES_STATE_FILE_VERSION_2);
+        dos.writeInt(REPOSITORIES_STATE_FILE_VERSION_3);
         // Write out the repos
         Collection repos = repositories.values();
         dos.writeInt(repos.size());
@@ -270,6 +277,11 @@ public class SVNRepositories
             } else {
             	dos.writeUTF(root.getLabel());
             }
+            if (root.getRepositoryRoot() == null) {
+                dos.writeUTF("");
+            } else {
+                dos.writeUTF(root.getRepositoryRoot().toString());
+            }            
         }
 		dos.flush();
 		dos.close();

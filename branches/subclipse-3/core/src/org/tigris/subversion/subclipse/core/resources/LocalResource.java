@@ -29,14 +29,13 @@ import org.tigris.subversion.subclipse.core.SVNException;
 import org.tigris.subversion.subclipse.core.SVNProviderPlugin;
 import org.tigris.subversion.subclipse.core.SVNTeamProvider;
 import org.tigris.subversion.subclipse.core.client.OperationManager;
+import org.tigris.subversion.subclipse.core.commands.GetRemoteResourceCommand;
 import org.tigris.subversion.subclipse.core.util.Assert;
 import org.tigris.subversion.subclipse.core.util.Util;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
-import org.tigris.subversion.svnclientadapter.ISVNDirEntry;
 import org.tigris.subversion.svnclientadapter.ISVNProperty;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
 import org.tigris.subversion.svnclientadapter.SVNConstants;
-import org.tigris.subversion.svnclientadapter.SVNNodeKind;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
 import org.tigris.subversion.svnclientadapter.SVNUrl;
 
@@ -288,45 +287,10 @@ public abstract class LocalResource implements ISVNLocalResource, Comparable {
         	// if the user wants the base resource, we can't get it using the url
         	return getBaseResource();
         }
-    	
     	// even if file is not managed, there can be a corresponding resource
-        
-        // first we get the url of the resource
-        SVNUrl url = getUrl();
-        
-        ISVNClientAdapter svnClient = getRepository().getSVNClient();
-		ISVNDirEntry dirEntry;
-		try {
-        	dirEntry = svnClient.getDirEntry(url,revision);
-        } catch (SVNClientException e) {
-            throw new SVNException("Can't get latest remote resource for "+resource.toString(),e);   
-        }
-        
-        if (dirEntry == null)
-            return null; // no remote file
-        else
-        {
-            if (dirEntry.getNodeKind() == SVNNodeKind.FILE)
-                return new RemoteFile(
-                    null,  // we don't know its parent
-                    getRepository(),
-                    url,
-                    revision,
-                    dirEntry.getLastChangedRevision(),
-                    dirEntry.getLastChangedDate(),
-                    dirEntry.getLastCommitAuthor()
-                );
-             else
-                return new RemoteFolder(
-                    null,  // we don't know its parent
-                    getRepository(),
-                    url,
-                    revision,
-                    dirEntry.getLastChangedRevision(),
-                    dirEntry.getLastChangedDate(),
-                    dirEntry.getLastCommitAuthor()
-                );                
-        }
+        GetRemoteResourceCommand command = new GetRemoteResourceCommand(getRepository(),getUrl(),revision);
+        command.run(null);
+        return command.getRemoteResource();
     }
     
     /**

@@ -126,6 +126,17 @@ public interface ISVNRepositoryLocation  extends IAdaptable {
 	 */
 	public boolean pathExists();
 
+    /**
+     * get the repository root url
+     * @return
+     */
     public SVNUrl getRepositoryRoot();
+    
+    /**
+     * set the repository root url
+     * @param url
+     */
+    public void setRepositoryRoot(SVNUrl url);
+    
 }
 

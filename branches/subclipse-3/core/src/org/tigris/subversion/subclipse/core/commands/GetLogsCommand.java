@@ -44,6 +44,7 @@ public class GetLogsCommand implements ISVNCommand {
      * @throws SVNException
      */
     public void run(IProgressMonitor monitor) throws SVNException {
+        logEntries = null;
         ISVNClientAdapter client = remoteResource.getRepository().getSVNClient();
         monitor = Policy.monitorFor(monitor);
         monitor.beginTask(Policy.bind("RemoteFile.getLogEntries"), 100); //$NON-NLS-1$

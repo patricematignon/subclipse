@@ -515,16 +515,20 @@ public class SVNRepositoryLocation
     /**
      * get the url of the repository root <br>
      * Ex : if url is http://svn.collab.net/viewcvs/svn/trunk/subversion/, the
-     * repository root is http://svn.collab.net/viewcvs/svn/trunk
+     * repository root is http://svn.collab.net/viewcvs/svn
      * @return
      */
     public SVNUrl getRepositoryRoot() {
-    	if (repositoryRootUrl == null) {
-    		repositoryRootUrl = getSVNClient().getRepositoryRoot(getUrl());
-        }
+        // for now, we can't get it using svn, so user must give it
         return repositoryRootUrl;
     }
-	
+
+    /* (non-Javadoc)
+     * @see org.tigris.subversion.subclipse.core.ISVNRepositoryLocation#setRepositoryRoot(org.tigris.subversion.svnclientadapter.SVNUrl)
+     */
+    public void setRepositoryRoot(SVNUrl url) {
+        repositoryRootUrl = url;
+    }
 
 	/**
 	 * @return Returns the label.
@@ -539,5 +543,6 @@ public class SVNRepositoryLocation
 	public void setLabel(String label) {
 		this.label = label;
 	}
+
 
 }

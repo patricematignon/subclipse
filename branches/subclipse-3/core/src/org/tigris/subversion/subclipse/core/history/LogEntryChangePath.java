@@ -12,6 +12,11 @@ package org.tigris.subversion.subclipse.core.history;
 
 import java.net.MalformedURLException;
 
+import org.eclipse.core.runtime.PlatformObject;
+import org.tigris.subversion.subclipse.core.ISVNRemoteResource;
+import org.tigris.subversion.subclipse.core.ISVNRepositoryLocation;
+import org.tigris.subversion.subclipse.core.SVNException;
+import org.tigris.subversion.subclipse.core.commands.GetRemoteResourceCommand;
 import org.tigris.subversion.svnclientadapter.ISVNLogMessageChangePath;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
 import org.tigris.subversion.svnclientadapter.SVNUrl;
@@ -20,11 +25,12 @@ import org.tigris.subversion.svnclientadapter.SVNUrl;
  * A changePath in LogEntry
  * @see ISVNLogMessageChangePath
  */
-public class LogEntryChangePath {
+public class LogEntryChangePath extends PlatformObject {
 
     private SVNUrl path;
     private ISVNLogMessageChangePath logMessageChangePath;
-    private ILogEntry logEntry; 
+    private ILogEntry logEntry;
+    private ISVNRemoteResource remoteResource;
     
     public LogEntryChangePath(ILogEntry logEntry, ISVNLogMessageChangePath logMessageChangePath) {
         this.logMessageChangePath = logMessageChangePath;
@@ -63,8 +69,24 @@ public class LogEntryChangePath {
         return logMessageChangePath.getAction();
     }
     
+    
+	/**
+	 * @return Returns the logEntry.
+	 */
+	public ILogEntry getLogEntry() {
+		return logEntry;
+	}
+
+    private ISVNRepositoryLocation getRepository() {
+    	return logEntry.getResource().getRepository();
+    }
+    
+    /**
+     * get the url corresponding to this changed path or null if it cannot
+     * be determined 
+     */
     public SVNUrl getUrl() {
-    	SVNUrl repositoryRoot = logEntry.getResource().getRepository().getRepositoryRoot();
+    	SVNUrl repositoryRoot = getRepository().getRepositoryRoot();
         if (repositoryRoot != null) {
             try {
 				return new SVNUrl(repositoryRoot.get()+getPath());
@@ -75,5 +97,46 @@ public class LogEntryChangePath {
         	return null;
         }
     }
+    
+    public SVNRevision getRevision() {
+    	return logEntry.getRevision();
+    }
+    
+    /**
+     * get the remote resource corresponding to this changed path or null
+     * if it cannot be determined
+     * @return
+     * @throws SVNException
+     */
+    public ISVNRemoteResource getRemoteResource() throws SVNException {
+        SVNUrl url = getUrl();
+        if (url == null) {
+            return null;
+        }
+        if (remoteResource == null) {
+        	GetRemoteResourceCommand command = new GetRemoteResourceCommand(getRepository(), url, getRevision());
+        	command.run(null);
+        	remoteResource = command.getRemoteResource();
+        }
+        return remoteResource;
+    }
+
+
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
+     */
+    public Object getAdapter(Class adapter) {
+        ISVNRemoteResource remoteResource = null;
+		try {
+			remoteResource = getRemoteResource();
+		} catch (SVNException e) {
+		}
+        
+		if (adapter.isInstance(remoteResource)) {
+            return remoteResource;
+        }
+        return super.getAdapter(adapter);
+    }    
     
 }

@@ -43,10 +43,10 @@ public abstract class RemoteResource
 	// null when this is the repository location 
 	protected SVNUrl url;
 	protected ISVNRepositoryLocation repository;
-    private SVNRevision revision;
-	private SVNRevision.Number lastChangedRevision;
-	private Date date;
-	private String author;
+    protected SVNRevision revision;
+    protected SVNRevision.Number lastChangedRevision;
+    protected Date date;
+    protected String author;
 
 	public RemoteResource(IResource local, byte[] bytes){
 		String nfo = new String(bytes);
@@ -190,14 +190,17 @@ public abstract class RemoteResource
         return command.getLogEntries();
     }
 
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.team.core.variants.IResourceVariant#getContentIdentifier()
+     */
     public String getContentIdentifier() {
-		return this.getLastChangedRevision().getNumber()+"";
+		return getLastChangedRevision().getNumber()+"";
 	}
 	
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see org.eclipse.team.core.variants.CachedResourceVariant#getCachePath()
 	 */
 	protected String getCachePath() {
