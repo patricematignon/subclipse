@@ -9,6 +9,8 @@
  *******************************************************************************/
 package org.tigris.subversion.subclipse.core.commands;
 
+import java.io.File;
+
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -94,6 +96,15 @@ public class GetStatusCommand implements ISVNCommand {
         else
             if (status.getNodeKind() == SVNNodeKind.FILE)
                 resource =  workspaceRoot.getFileForLocation(pathEclipse);
+            else {
+                if (status.getNodeKind() == SVNNodeKind.UNKNOWN) {
+	            	File file = pathEclipse.toFile();
+	            	if (file.isDirectory())
+	            		resource = workspaceRoot.getContainerForLocation(pathEclipse);
+	            	else
+	            		resource = workspaceRoot.getFileForLocation(pathEclipse);
+                }
+            }
        return resource;     
     }    
     

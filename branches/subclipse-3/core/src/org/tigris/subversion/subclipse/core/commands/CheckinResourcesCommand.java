@@ -64,7 +64,8 @@ public class CheckinResourcesCommand implements ISVNCommand {
             while (parent.getType() != IResource.ROOT && 
                    parent.getType() != IResource.PROJECT && 
                    !svnParentResource.hasRemote()) {
-                       parentsList.add(parent);
+            	if (!inCommitList(parent))
+            		parentsList.add(parent);
                 parent = parent.getParent();
                 svnParentResource = svnParentResource.getParent();
             }
@@ -101,4 +102,11 @@ public class CheckinResourcesCommand implements ISVNCommand {
         }, Policy.monitorFor(monitor));
 	}
     
+	private boolean inCommitList(IResource resource) {
+		for (int i = 0; i < resources.length; i++) {
+			if (resources[i].equals(resource))
+				return true;
+		}
+		return false;
+	}
 }
