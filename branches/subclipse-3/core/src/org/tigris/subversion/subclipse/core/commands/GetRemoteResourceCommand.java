@@ -13,6 +13,7 @@ package org.tigris.subversion.subclipse.core.commands;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.tigris.subversion.subclipse.core.ISVNRemoteResource;
 import org.tigris.subversion.subclipse.core.ISVNRepositoryLocation;
+import org.tigris.subversion.subclipse.core.Policy;
 import org.tigris.subversion.subclipse.core.SVNException;
 import org.tigris.subversion.subclipse.core.resources.RemoteFile;
 import org.tigris.subversion.subclipse.core.resources.RemoteFolder;
@@ -49,6 +50,9 @@ public class GetRemoteResourceCommand implements ISVNCommand {
 	 * @see org.tigris.subversion.subclipse.core.commands.ISVNCommand#run(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public void run(IProgressMonitor monitor) throws SVNException {
+        monitor = Policy.monitorFor(monitor);
+        monitor.beginTask(Policy.bind("GetRemoteResourceCommand.getLogEntries"), 100); //$NON-NLS-1$
+        
         remoteResource = null;
         ISVNClientAdapter svnClient = repository.getSVNClient();
         ISVNDirEntry dirEntry;
@@ -84,6 +88,7 @@ public class GetRemoteResourceCommand implements ISVNCommand {
                     dirEntry.getLastCommitAuthor()
                 );                
         }
+        monitor.done();
 	}
 
     /**

@@ -21,7 +21,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.team.core.RepositoryProvider;
 import org.tigris.subversion.subclipse.core.ISVNFolder;
 import org.tigris.subversion.subclipse.core.ISVNLocalFolder;
 import org.tigris.subversion.subclipse.core.ISVNLocalResource;
@@ -32,7 +31,7 @@ import org.tigris.subversion.subclipse.core.ISVNRunnable;
 import org.tigris.subversion.subclipse.core.Policy;
 import org.tigris.subversion.subclipse.core.SVNException;
 import org.tigris.subversion.subclipse.core.SVNProviderPlugin;
-import org.tigris.subversion.subclipse.core.SVNTeamProvider;
+import org.tigris.subversion.subclipse.core.commands.AddIgnoredPatternCommand;
 import org.tigris.subversion.svnclientadapter.SVNConstants;
 
 /**
@@ -221,12 +220,8 @@ public class LocalFolder extends LocalResource implements ISVNLocalFolder {
      * @see ISVNLocalFolder#setIgnoredAs(String)
      */
     public void setIgnoredAs(final String pattern) throws SVNException {
-        SVNProviderPlugin.run(new ISVNRunnable() {
-            public void run(IProgressMonitor monitor) throws SVNException {
-                SVNTeamProvider provider = (SVNTeamProvider)RepositoryProvider.getProvider(resource.getProject());
-                provider.addIgnored(LocalFolder.this, pattern);
-            }
-        }, null);
+        AddIgnoredPatternCommand command = new AddIgnoredPatternCommand(this, pattern);
+        command.run(null);
     }
 
     public void revert() throws SVNException {

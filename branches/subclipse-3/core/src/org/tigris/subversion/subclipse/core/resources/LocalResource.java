@@ -29,6 +29,7 @@ import org.tigris.subversion.subclipse.core.SVNException;
 import org.tigris.subversion.subclipse.core.SVNProviderPlugin;
 import org.tigris.subversion.subclipse.core.SVNTeamProvider;
 import org.tigris.subversion.subclipse.core.client.OperationManager;
+import org.tigris.subversion.subclipse.core.commands.AddIgnoredPatternCommand;
 import org.tigris.subversion.subclipse.core.commands.GetRemoteResourceCommand;
 import org.tigris.subversion.subclipse.core.util.Assert;
 import org.tigris.subversion.subclipse.core.util.Util;
@@ -134,8 +135,8 @@ public abstract class LocalResource implements ISVNLocalResource, Comparable {
      * @see ISVNLocalResource#setIgnored()
      */
     public void setIgnored() throws SVNException {
-        SVNTeamProvider provider = (SVNTeamProvider)RepositoryProvider.getProvider(resource.getProject());
-        provider.addIgnored(getParent(),resource.getName());
+        AddIgnoredPatternCommand command = new AddIgnoredPatternCommand(getParent(), resource.getName());
+        command.run(null);
     }
     
 	/*
