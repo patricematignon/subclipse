@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
     <classpathentry kind="src" path="src"/>
-    <classpathentry kind="var" path="ECLIPSE_HOME/plugins/org.apache.xerces_4.0.13/xmlParserAPIs.jar"/>
-    <classpathentry kind="var" path="ECLIPSE_HOME/plugins/org.apache.xerces_4.0.13/xercesImpl.jar"/>
     <classpathentry kind="var"
         path="ECLIPSE_HOME/plugins/org.eclipse.core.runtime_3.0.0/runtime.jar" sourcepath="ORG_ECLIPSE_PLATFORM_SOURCE_SRC/org.eclipse.core.runtime_3.0.0/runtimesrc.zip"/>
     <classpathentry kind="var"
@@ -35,10 +33,11 @@
         path="ECLIPSE_HOME/plugins/org.eclipse.team.ui_3.0.0/teamui.jar" sourcepath="ORG_ECLIPSE_PLATFORM_SOURCE_SRC/org.eclipse.team.ui_3.0.0/teamuisrc.zip"/>
     <classpathentry kind="var"
         path="ECLIPSE_HOME/plugins/org.eclipse.compare_3.0.0/compare.jar" sourcepath="ORG_ECLIPSE_PLATFORM_SOURCE_SRC/org.eclipse.compare_3.0.0/comparesrc.zip"/>
-    <classpathentry kind="src" path="/svnClientAdapter"/>
+    <classpathentry kind="src" path="/core"/>
+    <classpathentry kind="var" path="ECLIPSE_HOME/plugins/org.apache.xerces_4.0.13/xmlParserAPIs.jar"/>
+    <classpathentry kind="var" path="ECLIPSE_HOME/plugins/org.apache.xerces_4.0.13/xercesImpl.jar"/>
     <classpathentry kind="var"
         path="ECLIPSE_HOME/plugins/org.eclipse.core.boot_3.0.0/boot.jar" sourcepath="ORG_ECLIPSE_PLATFORM_SOURCE_SRC/org.eclipse.core.boot_3.0.0/bootsrc.zip"/>
     <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-    <classpathentry kind="src" path="/core"/>
     <classpathentry kind="output" path="classes"/>
 </classpath>
