@@ -16,6 +16,7 @@ import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
@@ -75,6 +76,7 @@ import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.part.ResourceTransfer;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
+import org.tigris.subversion.subclipse.core.IResourceStateChangeListener;
 import org.tigris.subversion.subclipse.core.ISVNLocalFile;
 import org.tigris.subversion.subclipse.core.ISVNLocalResource;
 import org.tigris.subversion.subclipse.core.ISVNRemoteFile;
@@ -101,7 +103,7 @@ import org.tigris.subversion.svnclientadapter.SVNRevision;
  * - showHistory(IResource resource, boolean refetch) or
  * - showHistory(ISVNRemoteFile remoteFile, boolean refetch)
  */
-public class HistoryView extends ViewPart {
+public class HistoryView extends ViewPart implements IResourceStateChangeListener {
 	// the resource for which we want to see the history or null if we use showHistory(ISVNRemoteResource)
 	private IResource resource;
 
@@ -133,6 +135,10 @@ public class HistoryView extends ViewPart {
 	private boolean shutdown = false;
 
 	public static final String VIEW_ID = "org.tigris.subversion.subclipse.ui.history.HistoryView"; //$NON-NLS-1$
+
+	public HistoryView() {
+	    SVNProviderPlugin.addResourceStateChangeListener(this);
+	}
 
 	private IPartListener partListener = new IPartListener() {
 		public void partActivated(IWorkbenchPart part) {
@@ -404,6 +410,7 @@ public class HistoryView extends ViewPart {
 	    shutdown = true;
 		getSite().getPage().removePartListener(partListener);
 		getSite().getPage().removePartListener(partListener2);
+		SVNProviderPlugin.removeResourceStateChangeListener(this);
 	}   
 
 	/**
@@ -759,6 +766,28 @@ public class HistoryView extends ViewPart {
 		}
 	}
 
+	/**
+	 * This method updates the history table, highlighting the current revison
+	 * without refetching the log entries to preserve bandwidth.
+	 * The user has to a manual refresh to get the new log entries. 
+	 */
+    private void resourceChanged() {
+        getSite().getShell().getDisplay().asyncExec(new Runnable() {
+        	public void run() {
+        		ISVNLocalResource localResource = SVNWorkspaceRoot.getSVNResourceFor(resource);
+        		try {
+                    if (localResource != null && !localResource.getStatus().isAdded()) {
+                    	ISVNRemoteResource baseResource = localResource.getBaseResource();
+                    	historyTableProvider.setRemoteResource(baseResource);
+                    	tableViewer.refresh();
+                    }
+                } catch (SVNException e) {
+                    SVNUIPlugin.openError(getViewSite().getShell(), null, null, e);
+                }
+        	}
+        });
+    }
+
 	private class FetchLogEntriesJob extends Job {
 		public ISVNRemoteResource remoteResource;
 		public FetchLogEntriesJob() {
@@ -786,6 +815,36 @@ public class HistoryView extends ViewPart {
 				return e.getStatus();
 			}
 		}
-	};
+	}
+
+    /* (non-Javadoc)
+     * @see org.tigris.subversion.subclipse.core.IResourceStateChangeListener#resourceSyncInfoChanged(org.eclipse.core.resources.IResource[])
+     */
+    public void resourceSyncInfoChanged(IResource[] changedResources) {
+        for (int i = 0; i < changedResources.length; i++) {
+            IResource changedResource = changedResources[i];
+            if( resource.equals( changedResource ) ) {
+				resourceChanged();
+            }
+        }
+    }
+
+    /* (non-Javadoc)
+     * @see org.tigris.subversion.subclipse.core.IResourceStateChangeListener#resourceModified(org.eclipse.core.resources.IResource[])
+     */
+    public void resourceModified(IResource[] changedResources) {
+    }
+
+    /* (non-Javadoc)
+     * @see org.tigris.subversion.subclipse.core.IResourceStateChangeListener#projectConfigured(org.eclipse.core.resources.IProject)
+     */
+    public void projectConfigured(IProject project) {
+    }
+
+    /* (non-Javadoc)
+     * @see org.tigris.subversion.subclipse.core.IResourceStateChangeListener#projectDeconfigured(org.eclipse.core.resources.IProject)
+     */
+    public void projectDeconfigured(IProject project) {
+    };
 	
 }
