@@ -1,10 +1,13 @@
-Subclipse is an Eclipse plugin that enables Suvbersion support in the Eclipse IDE 
+Subclipse is an Eclipse plugin that enables Suvbersion support in
+the Eclipse IDE
 
-An initial release has been made that supports most of the major Subversion features as well as Eclipse features such as refactoring. 
+An initial release has been made that supports most of the major
+Subversion features as well as Eclipse features such as refactoring.
 
 * Current Release
 
-Download the current release of 0.9.4 which supports the following and more ...
+Download the current release of which supports the following and
+more ...
 
 Share 
 Checkout 
@@ -20,38 +23,53 @@ Linked against Subversion 1.05
 
 * Installation
 
-Download the subclipse-0.9.4.zip file 
 
-Unzip the file into the Eclipse home directory. 
+Add the LoonSoft update site http://www.loonsoft.com/updates to
+your update site configuration (Help->Software Updates->Find and
+install) and check for updates. Select Subclipse, and let it install.
+Restarting Eclipse is recommended.
 
-Restart Eclipse 
-
-Open a new SVNExplorer Perspective and use it in the same way as the CVS Plugin 
+Open a new SVNExplorer Perspective and use it in the same way as
+the CVS Plugin
 
 * Source
 
 We are using a subversion-repository. 
 
-You can browse the latest source 
+You can browse the latest source  at http://svn.collab.net/repos/subclipse
 
 Otherwise you can check out the newest Subclipse source using svn: 
 
    svn co http://svn.collab.net/repos/subclipse/trunk/ subclipse
+
 This will check out subclipse, svnClientAdapter and svnant 
 
 * FAQ
 
-Why is Subclipse so particular about what version of Subclipse and Berkley DB is used?
+Why is Subclipse so particular about what version of Subclipse and
+Berkley DB is used?
 
-Subclipse uses a JNI interface (SVN-UP) to Subversion. The binaries that come with Subclipse are linked with particular versions when compiled. If you want to use a different version of Subversion and Berkley DB then you'll need to change the version of the Subversion libraries (libdb40.dll, libeay32.dll, ssleay32.dll, zlib.dll) and recompile the SVN-UP library (good luck with that). Basically don't bother and just upgrade your Subversion version. 
+Subclipse uses a JNI interface (SVN-UP) to Subversion. The binaries
+that come with Subclipse are linked with particular versions when
+compiled. If you want to use a different version of Subversion and
+Berkley DB then you'll need to change the version of the Subversion
+libraries (libdb40.dll, libeay32.dll, ssleay32.dll, zlib.dll) and
+recompile the SVN-UP library (good luck with that). Basically don't
+bother and just upgrade your Subversion version.
 
-So if Subclipse is tied to a Subversion version, will it be updated when a new version of Subversion comes out? 
+So if Subclipse is tied to a Subversion version, will it be updated
+when a new version of Subversion comes out?
 
-Short answer is yes, but it will depend on the SVN-UP guys releasing a new JNI library (which I'm sure they'de do quite quickly). 
+Short answer is yes, but it will depend on the SVN-UP guys releasing
+a new JNI library (which I'm sure they'de do quite quickly).
 
-Why does Subclipse only support Windows? 
+Why does Subclipse only support Windows?
 
-Currently the only pre-compiled SVN-UP library is released for Windows as a dll. The library can compiled for linux, so when the binary is released in that form I'll add another release. 
+It doesn't. Current supported platforms are Windows, OSX and Linux.
 
-Will the plugin work under WSAD 5? Not currently. Subclipse uses some methods that are only supported in Eclipse 2.1 such as isLinkedResource(). We'll look into supporting it soon. 
+Will the plugin work under WSAD 5? 
+
+Not currently. Subclipse uses some methods that are only supported
+in Eclipse 2.1 such as isLinkedResource(). We'll look into supporting
+it soon.
 

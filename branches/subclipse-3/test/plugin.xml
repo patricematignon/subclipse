@@ -4,7 +4,7 @@
 <plugin
    id="org.tigris.subversion.subclipse.test"
    name="org.tigris.subversion.subclipse.test"
-   version="0.9.4"
+   version="0.9.5"
    provider-name="">
 
    <runtime>
