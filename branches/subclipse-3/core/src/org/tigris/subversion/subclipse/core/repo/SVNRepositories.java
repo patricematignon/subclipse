@@ -147,8 +147,8 @@ public class SVNRepositories
 		Set keys = repositories.keySet();
 		for(Iterator iter = keys.iterator();iter.hasNext();){
 			String url = (String)iter.next();
-			if(location.indexOf(url)!=-1){
-				return (ISVNRepositoryLocation) repositories.get(url);
+			if (url.equals(location) || location.indexOf(url + "/") != -1){
+			    return (ISVNRepositoryLocation) repositories.get(url);
 			}
         	
 		}//else we couldn't find it, fall through to adding new repo.
