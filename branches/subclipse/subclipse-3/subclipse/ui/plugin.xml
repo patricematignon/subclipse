@@ -18,6 +18,7 @@
       <import plugin="org.eclipse.team.ui"/>
       <import plugin="org.eclipse.compare"/>
       <import plugin="org.tigris.subversion.subclipse.core"/>
+      <import plugin="org.eclipse.platform" version="3.0.0" match="compatible"/>
    </requires>
 
 
@@ -358,7 +359,6 @@
             id="org.tigris.subversion.subclipse.ui.SVNPreferences">
       </page>
    </extension>
-<!-- **************** Markers ******************* -->
 <!--extension
          point="org.eclipse.ui.preferencePages">
       <page
@@ -368,6 +368,7 @@
             id="org.tigris.subversion.subclipse.ui.SVNDecoratorPreferences">
       </page>
    </extension-->
+<!-- **************** Markers ******************* -->
    <extension
          point="org.eclipse.ui.markerResolution">
       <markerResolutionGenerator
