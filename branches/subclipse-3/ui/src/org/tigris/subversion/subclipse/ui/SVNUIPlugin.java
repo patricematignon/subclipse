@@ -41,6 +41,7 @@ import org.tigris.subversion.subclipse.ui.authentication.SVNPromptUserPassword;
 import org.tigris.subversion.subclipse.ui.console.SVNOutputConsole;
 import org.tigris.subversion.subclipse.ui.repository.RepositoryManager;
 import org.tigris.subversion.subclipse.ui.repository.model.SVNAdapterFactory;
+import org.tigris.subversion.subclipse.ui.util.SimpleDialogsHelper;
 /**
  * UI Plugin for Subversion provider-specific workbench functionality.
  */
@@ -390,6 +391,8 @@ public class SVNUIPlugin extends AbstractUIPlugin {
 		
 		console = new SVNOutputConsole();
 		SVNProviderPlugin.getPlugin().setSvnPromptUserPassword(new SVNPromptUserPassword());
+		SVNProviderPlugin.getPlugin().setSimpleDialogsHelper(new SimpleDialogsHelper());
+		
 	}
 	
 	/**
