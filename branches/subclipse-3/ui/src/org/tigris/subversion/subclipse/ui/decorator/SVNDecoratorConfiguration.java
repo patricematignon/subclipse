@@ -12,11 +12,53 @@
 package org.tigris.subversion.subclipse.ui.decorator;
 
 
+import java.util.ArrayList;
 import java.util.Map;
 
 import org.eclipse.jface.viewers.IDecoration;
 
 public class SVNDecoratorConfiguration {
+
+	/**
+	 * Decorator component that represents static text in the format string
+	 */
+	private static class ConstantValueDecoratorComponent implements IDecoratorComponent {
+		private final String value;
+
+		public ConstantValueDecoratorComponent(String value) {
+			this.value = value;
+		}
+
+		public String getValue() {
+			return value;
+		}
+		public String toString() {
+			return "\"" + value + "\"";
+		}
+	}
+
+	/**
+	 * Decorator component that represents a placeholder for a value
+	 */
+	private static class MappedValueDecoratorComponent implements IDecoratorComponent {
+
+		private final String key;
+		private final Map bindings;
+		public MappedValueDecoratorComponent(Map bindings, String key) {
+			this.bindings = bindings;
+			this.key = key;
+			
+		}
+
+		public String getValue() {
+			return (String)bindings.get(key);
+		}
+		
+		public String toString() {
+			return "{" + key + "}";
+		}
+		
+	}
 
 	public static final String RESOURCE_NAME = "name"; //$NON-NLS-1$
 	public static final String RESOURCE_REVISION = "revision"; //$NON-NLS-1$
@@ -36,18 +78,13 @@ public class SVNDecoratorConfiguration {
 	public static final String DEFAULT_FOLDERTEXTFORMAT = "{added_flag}{dirty_flag}{name} "; //$NON-NLS-1$
 	public static final String DEFAULT_PROJECTTEXTFORMAT = "{dirty_flag}{name} [{url}]"; //$NON-NLS-1$
 
-	public static void trimRight(StringBuffer strBuffer) {
-        while ((strBuffer.length() > 0) && (Character.isWhitespace(strBuffer.charAt(strBuffer.length()-1))))
-            strBuffer.deleteCharAt(strBuffer.length()-1);
-    }
-    
     /**
      * add a prefix and a suffix depending on format string and the bindings
      * @param decoration
      * @param format
      * @param bindings
      */
-	public static void decorate(IDecoration decoration, String format, Map bindings) {
+	public static void decorate(IDecoration decoration, IDecoratorComponent[][] format, Map bindings) {
         
         String[] prefixSuffix = decorate(format, bindings);
         decoration.addPrefix(prefixSuffix[0]);
@@ -61,11 +98,79 @@ public class SVNDecoratorConfiguration {
      * @param bindings
      * @return
      */
-    public static String decorate(String name, String format, Map bindings) {
+    public static String decorate(String name, String formatString, Map bindings) {
+    	IDecoratorComponent[][] format = compileFormatString(formatString, bindings);
         String[] prefixSuffix = decorate(format, bindings);
-        return prefixSuffix[0]+name+prefixSuffix[1];
+
+        return prefixSuffix[0] + name + prefixSuffix[1];
     }
-    
+
+    /**
+     * Creates a list of prefix and suffix decorator components
+     * @param format Format to create components from
+     * @param bindings Bindings to link components to
+     * @return Decorator components for prefix and suffix
+     */
+    public static IDecoratorComponent[][] compileFormatString(String format, Map bindings) {
+		int length = format.length();
+		int start = -1;
+		int end = length;
+
+		boolean isPrefix = true;
+		ArrayList prefix = new ArrayList();
+		ArrayList suffix = new ArrayList();
+		
+		while ((start + 1) < length) {
+			if ((end = format.indexOf('{', start)) > -1) {
+				if (start + 1 != end) {
+					IDecoratorComponent component = new ConstantValueDecoratorComponent(format.substring(start + 1, end));
+					if (isPrefix) {
+						prefix.add(component);
+					} else {
+						suffix.add(component);
+					}
+				}
+				if ((start = format.indexOf('}', end)) > -1) {
+					String key = format.substring(end + 1, start);
+
+					//We use the RESOURCE_NAME key to determine if we are doing the prefix or suffix.  The name isn't actually part of either.                  
+					if (key.equals(RESOURCE_NAME)) {
+						// Start working on the suffix
+						isPrefix = false;
+					} else {
+						IDecoratorComponent component = new MappedValueDecoratorComponent(bindings, key);
+						if (isPrefix) {
+							prefix.add(component);
+						} else {
+							suffix.add(component);
+						}
+					}
+
+				} else {
+					// No closing brace, so it is not a variable
+					IDecoratorComponent component = new ConstantValueDecoratorComponent(format.substring(end));
+					if (isPrefix) {
+						prefix.add(component);
+					} else {
+						suffix.add(component);
+					}
+					break;
+				}
+			} else {
+				// No variables, just text
+				IDecoratorComponent component = new ConstantValueDecoratorComponent(format.substring(start + 1));
+				if (isPrefix) {
+					prefix.add(component);
+				} else {
+					suffix.add(component);
+				}
+				break;
+			}
+		}
+		return new IDecoratorComponent[][] {
+				(IDecoratorComponent[])prefix.toArray(new IDecoratorComponent[prefix.size()]),
+				(IDecoratorComponent[])suffix.toArray(new IDecoratorComponent[suffix.size()])};
+    }
     /**
      * get the suffix and the prefix depending on the format string and the bindings
      * the first element is the prefix, the second is the suffix
@@ -75,45 +180,24 @@ public class SVNDecoratorConfiguration {
      * ==> prefix= "*"
      * ==> suffix= " 182  13/10/03 14:25  cchab"
      */
-	public static String[] decorate(String format, Map bindings) {
+	public static String[] decorate(IDecoratorComponent[][] format, Map bindings) {
+    	StringBuffer prefix = new StringBuffer(80);
+    	StringBuffer suffix = new StringBuffer(80);
 
-        StringBuffer prefix = new StringBuffer(80);
-        StringBuffer suffix = new StringBuffer(80);
-                    
-		StringBuffer output = prefix;
+    	for (int iPrefix = 0; iPrefix < format[0].length; iPrefix++) {
+    		String value = format[0][iPrefix].getValue();
+    		if (value != null) {
+    			prefix.append(value);
+    		}
+    	}
 
-		int length = format.length();
-		int start = -1;
-		int end = length;
-		while (true) {
-			if ((end = format.indexOf('{', start)) > -1) {
-				output.append(format.substring(start + 1, end));
-				if ((start = format.indexOf('}', end)) > -1) {
-					String key = format.substring(end + 1, start);
-					String s;
-
-					//We use the RESOURCE_NAME key to determine if we are doing the prefix or suffix.  The name isn't actually part of either.                  
-					if (key.equals(RESOURCE_NAME)) {
-						output = suffix;
-						s = null;
-					} else {
-						s = (String) bindings.get(key);
-					}
-
-					if (s != null) {
-						output.append(s);
-					} else
-						trimRight(output);
-				} else {
-					output.append(format.substring(end, length));
-					break;
-				}
-			} else {
-				output.append(format.substring(start + 1, length));
-				break;
-			}
-		}
-        return new String[] {prefix.toString(), suffix.toString() };
+    	for (int iSuffix = 0; iSuffix < format[1].length; iSuffix++) {
+    		String value = format[1][iSuffix].getValue();
+    		if (value != null) {
+    			suffix.append(value);
+    		}
+    	}
+    	return new String[] {prefix.toString(), suffix.toString()};
 	}
     
 }

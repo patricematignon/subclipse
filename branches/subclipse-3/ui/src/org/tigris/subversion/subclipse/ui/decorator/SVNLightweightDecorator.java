@@ -25,6 +25,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.IDecoration;
 import org.eclipse.jface.viewers.ILightweightLabelDecorator;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -62,6 +64,23 @@ public class SVNLightweightDecorator
 	private static ImageDescriptor conflicted;
 	private static ImageDescriptor merged;
 
+	private static IPropertyChangeListener propertyListener;
+
+	private boolean computeDeepDirtyCheck;
+	private IDecoratorComponent[][] folderDecoratorFormat;
+	private IDecoratorComponent[][] projectDecoratorFormat;
+	private IDecoratorComponent[][] fileDecoratorFormat;
+	private String dirtyFlag;
+	private String addedFlag;
+	private boolean showNewResources;
+	private boolean showDirty;
+	private boolean showAdded;
+	private boolean showHasRemote;
+	private DateFormat dateFormat;
+
+	// re-use the bindings map to reduce amount of garbage created
+	private final Map bindings;
+
 	/*
 	 * Define a cached image descriptor which only creates the image data once
 	 */
@@ -90,6 +109,47 @@ public class SVNLightweightDecorator
 	}
 
 	public SVNLightweightDecorator() {
+        bindings = new HashMap(5);
+		dateFormat = DateFormat.getInstance();
+
+		IPreferenceStore store = SVNUIPlugin.getPlugin().getPreferenceStore();
+		computeDeepDirtyCheck = store.getBoolean(ISVNUIConstants.PREF_CALCULATE_DIRTY);
+		folderDecoratorFormat = SVNDecoratorConfiguration.compileFormatString(store.getString(ISVNUIConstants.PREF_FOLDERTEXT_DECORATION), bindings);
+		projectDecoratorFormat = SVNDecoratorConfiguration.compileFormatString(store.getString(ISVNUIConstants.PREF_PROJECTTEXT_DECORATION), bindings);
+		fileDecoratorFormat = SVNDecoratorConfiguration.compileFormatString(store.getString(ISVNUIConstants.PREF_FILETEXT_DECORATION), bindings);
+		dirtyFlag = store.getString(ISVNUIConstants.PREF_DIRTY_FLAG);
+		addedFlag = store.getString(ISVNUIConstants.PREF_ADDED_FLAG);
+		showNewResources = store.getBoolean(ISVNUIConstants.PREF_SHOW_NEWRESOURCE_DECORATION);
+		showDirty = store.getBoolean(ISVNUIConstants.PREF_SHOW_DIRTY_DECORATION);
+		showAdded = store.getBoolean(ISVNUIConstants.PREF_SHOW_ADDED_DECORATION);
+		showHasRemote = store.getBoolean(ISVNUIConstants.PREF_SHOW_HASREMOTE_DECORATION);
+
+		propertyListener = new IPropertyChangeListener() {
+						public void propertyChange(PropertyChangeEvent event) {
+							if (ISVNUIConstants.PREF_CALCULATE_DIRTY.equals(event.getProperty())) {
+								computeDeepDirtyCheck = ((Boolean)event.getNewValue()).booleanValue();					
+							} else if (ISVNUIConstants.PREF_FOLDERTEXT_DECORATION.equals(event.getProperty())) {
+								folderDecoratorFormat = SVNDecoratorConfiguration.compileFormatString((String)event.getNewValue(), bindings);
+							} else if (ISVNUIConstants.PREF_PROJECTTEXT_DECORATION.equals(event.getProperty())) {
+								projectDecoratorFormat = SVNDecoratorConfiguration.compileFormatString((String)event.getNewValue(), bindings);
+							} else if (ISVNUIConstants.PREF_FILETEXT_DECORATION.equals(event.getProperty())) {
+								fileDecoratorFormat = SVNDecoratorConfiguration.compileFormatString((String)event.getNewValue(), bindings);
+							} else if (ISVNUIConstants.PREF_DIRTY_FLAG.equals(event.getProperty())) {
+								dirtyFlag = (String)event.getNewValue();
+							} else if (ISVNUIConstants.PREF_ADDED_FLAG.equals(event.getProperty())) {
+								addedFlag = (String)event.getNewValue();
+							} else if (ISVNUIConstants.PREF_SHOW_NEWRESOURCE_DECORATION.equals(event.getProperty())){
+								showNewResources = ((Boolean)event.getNewValue()).booleanValue();
+							} else if (ISVNUIConstants.PREF_SHOW_DIRTY_DECORATION.equals(event.getProperty())) {
+								showDirty = ((Boolean)event.getNewValue()).booleanValue();
+							} else if (ISVNUIConstants.PREF_SHOW_ADDED_DECORATION.equals(event.getProperty())) {
+								showAdded = ((Boolean)event.getNewValue()).booleanValue();
+							} else if (ISVNUIConstants.PREF_SHOW_HASREMOTE_DECORATION.equals(event.getProperty())) {
+								showHasRemote = ((Boolean)event.getNewValue()).booleanValue();
+							}
+						}
+					};
+		store.addPropertyChangeListener(propertyListener);
 		SVNProviderPlugin.addResourceStateChangeListener(this);
 //		SVNProviderPlugin.broadcastDecoratorEnablementChanged(true /* enabled */);
 	}
@@ -167,12 +227,11 @@ public class SVNLightweightDecorator
 		}
 
 		// determine a if resource has outgoing changes (e.g. is dirty).
-		IPreferenceStore store = SVNUIPlugin.getPlugin().getPreferenceStore();
 		boolean isDirty = false;
-		boolean computeDeepDirtyCheck = store.getBoolean(ISVNUIConstants.PREF_CALCULATE_DIRTY);
+
 		int type = resource.getType();
 		if (type == IResource.FILE || computeDeepDirtyCheck) {
-			isDirty = SVNLightweightDecorator.isDirty(resource);
+			isDirty = SVNLightweightDecorator.isDirty(svnResource);
 		}
 		
 		decorateTextLabel(resource, decoration, isDirty);
@@ -184,12 +243,11 @@ public class SVNLightweightDecorator
 	}
 
     /**
-     * decorate the text label of the given resource
+     * decorate the text label of the given resource.
+     * This method assumes that only one thread will be accessing it at a time.
      */
-	public static void decorateTextLabel(IResource resource, IDecoration decoration, boolean isDirty) {
+	public void decorateTextLabel(IResource resource, IDecoration decoration, boolean isDirty) {
 		try {
-			IPreferenceStore store =
-				SVNUIPlugin.getPlugin().getPreferenceStore();
 
 			// if the resource does not have a location then return. This can happen if the resource
 			// has been deleted after we where asked to decorate it.
@@ -198,26 +256,19 @@ public class SVNLightweightDecorator
 			}
 
 			// get the format
-			String format = ""; //$NON-NLS-1$
+			IDecoratorComponent[][] format;
 			int type = resource.getType();
 			if (type == IResource.FOLDER) {
-				format =
-					store.getString(ISVNUIConstants.PREF_FOLDERTEXT_DECORATION);
+				format = folderDecoratorFormat;
 			} else if (type == IResource.PROJECT) {
-				format =
-					store.getString(
-						ISVNUIConstants.PREF_PROJECTTEXT_DECORATION);
+				format = projectDecoratorFormat;
 			} else {
-				format =
-					store.getString(ISVNUIConstants.PREF_FILETEXT_DECORATION);
+				format = fileDecoratorFormat;
 			}
             
             // fill the bindings
-            Map bindings = new HashMap(3);
 			if (isDirty) {
-				bindings.put(
-					SVNDecoratorConfiguration.DIRTY_FLAG,
-					   store.getString(ISVNUIConstants.PREF_DIRTY_FLAG));
+				bindings.put(SVNDecoratorConfiguration.DIRTY_FLAG, dirtyFlag);
 			}
 
 			ISVNLocalResource svnResource =
@@ -229,8 +280,7 @@ public class SVNLightweightDecorator
 					status.getUrl().toString());
 			if (status.isAdded()) {
 				bindings.put(
-					SVNDecoratorConfiguration.ADDED_FLAG,
-					   store.getString(ISVNUIConstants.PREF_ADDED_FLAG));
+					SVNDecoratorConfiguration.ADDED_FLAG, addedFlag);
 			} else {
                 if ((status.getRevision().getNumber() != SVNRevision.SVN_INVALID_REVNUM) &&
                     (status.getRevision().getNumber() != 0))
@@ -245,14 +295,15 @@ public class SVNLightweightDecorator
                 if (status.getLastChangedDate() != null)
                     bindings.put(
 					   SVNDecoratorConfiguration.RESOURCE_DATE,
-						DateFormat.getInstance().format(status.getLastChangedDate()));
+						dateFormat.format(status.getLastChangedDate()));
 			}
 
 			SVNDecoratorConfiguration.decorate(decoration, format, bindings);
 			
 		} catch (SVNException e) {
 			SVNUIPlugin.log(e.getStatus());
-			return;
+		} finally {
+			bindings.clear();
 		}
 	}
 
@@ -261,13 +312,9 @@ public class SVNLightweightDecorator
 	 * one we think is the most important to show.
 	 * Return null if no overlay is to be used.
 	 */	
-	public static ImageDescriptor getOverlay(IResource resource, boolean isDirty, SVNTeamProvider provider) {
+	public ImageDescriptor getOverlay(IResource resource, boolean isDirty, SVNTeamProvider provider) {
         ISVNLocalResource svnResource = SVNWorkspaceRoot.getSVNResourceFor(resource);
         
-        // for efficiency don't look up a pref until its needed
-		IPreferenceStore store = SVNUIPlugin.getPlugin().getPreferenceStore();
-		boolean showNewResources = store.getBoolean(ISVNUIConstants.PREF_SHOW_NEWRESOURCE_DECORATION);
-
 		// show newResource icon
 		if (showNewResources) {
 			try {
@@ -286,14 +333,10 @@ public class SVNLightweightDecorator
 			}
 		}
 		
-		boolean showDirty = store.getBoolean(ISVNUIConstants.PREF_SHOW_DIRTY_DECORATION);
-
 		// show dirty icon
 		if(showDirty && isDirty) {
 			 return dirty;
 		}
-				
-		boolean showAdded = store.getBoolean(ISVNUIConstants.PREF_SHOW_ADDED_DECORATION);
 
         // show added icon
 		if (showAdded) {
@@ -316,9 +359,6 @@ public class SVNLightweightDecorator
 			}
 		}
 
-		
-		boolean showHasRemote = store.getBoolean(ISVNUIConstants.PREF_SHOW_HASREMOTE_DECORATION);
-		
 		// Simplest is that is has remote.
 		if (showHasRemote) {
             try {
@@ -384,12 +424,10 @@ public class SVNLightweightDecorator
 		//System.out.println(">> State Change Event");
 		List resourcesToUpdate = new ArrayList();
 
-		boolean showingDeepDirtyIndicators = SVNUIPlugin.getPlugin().getPreferenceStore().getBoolean(ISVNUIConstants.PREF_CALCULATE_DIRTY);
-
 		for (int i = 0; i < changedResources.length; i++) {
 			IResource resource = changedResources[i];
 
-			if(showingDeepDirtyIndicators) {
+			if(computeDeepDirtyCheck) {
               IResource current = resource;
               while (current.getType() != IResource.ROOT) {
                   resourcesToUpdate.add(current);
@@ -437,6 +475,7 @@ public class SVNLightweightDecorator
 	 */
 	public void dispose() {
 		super.dispose();
+		SVNUIPlugin.getPlugin().getPreferenceStore().removePropertyChangeListener(propertyListener);
         SVNProviderPlugin.removeResourceStateChangeListener(this);        
 //		SVNProviderPlugin.broadcastDecoratorEnablementChanged(false /* disabled */);
 	}
