@@ -24,6 +24,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
@@ -52,7 +53,8 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.actions.ActionContext;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.part.ResourceTransfer;
 import org.eclipse.ui.part.ViewPart;
 import org.tigris.subversion.subclipse.core.IResourceStateChangeListener;
@@ -62,6 +64,7 @@ import org.tigris.subversion.subclipse.core.SVNProviderPlugin;
 import org.tigris.subversion.subclipse.core.commands.GetStatusCommand;
 import org.tigris.subversion.subclipse.core.resources.LocalResourceStatus;
 import org.tigris.subversion.subclipse.core.resources.SVNWorkspaceRoot;
+import org.tigris.subversion.subclipse.ui.IHelpContextIds;
 import org.tigris.subversion.subclipse.ui.ISVNUIConstants;
 import org.tigris.subversion.subclipse.ui.Policy;
 import org.tigris.subversion.subclipse.ui.SVNUIPlugin;
@@ -91,6 +94,8 @@ public class PendingOperationsView extends ViewPart implements IResourceStateCha
     
     private Action compareWithBaseAction;
     
+    private OpenActionGroup fOpenEditorGroup; 
+    
     public PendingOperationsView() {
         SVNProviderPlugin.addResourceStateChangeListener(this);
     }
@@ -100,6 +105,8 @@ public class PendingOperationsView extends ViewPart implements IResourceStateCha
      * @see org.eclipse.ui.IWorkbenchPart#dispose()
      */
     public void dispose() {
+        if (fOpenEditorGroup != null)
+            fOpenEditorGroup.dispose();
         shutdown = true;
         super.dispose();
         SVNProviderPlugin.removeResourceStateChangeListener(this);
@@ -300,6 +307,9 @@ public class PendingOperationsView extends ViewPart implements IResourceStateCha
 
 		tableViewer.setContentProvider(new EditorsContentProvider());
 		tableViewer.setLabelProvider(new EditorsLabelProvider());
+        
+        getViewSite().setSelectionProvider(tableViewer);
+        
         contributeActions();
         
         initDragAndDrop();        
@@ -392,14 +402,16 @@ public class PendingOperationsView extends ViewPart implements IResourceStateCha
         actionBarsMenu.add(toggleModifiedAction);                
         
 		// set F1 help
-//		WorkbenchHelp.setHelp(tableViewer.getControl(), IHelpContextIds.CVS_EDITORS_VIEW);
+        WorkbenchHelp.setHelp(tableViewer.getControl(), IHelpContextIds.PENDING_OPERATIONS_VIEW);
 
         tableViewer.addDoubleClickListener(new IDoubleClickListener() {
             public void doubleClick(DoubleClickEvent e) {
                 handleDoubleClick(e);
             }
-        }); 
+        });
+                
 
+        fOpenEditorGroup= new OpenActionGroup(this);
 	}
 
     /**
@@ -410,13 +422,15 @@ public class PendingOperationsView extends ViewPart implements IResourceStateCha
         Transfer[] transfers = new Transfer[] {ResourceTransfer.getInstance()};
         tableViewer.addDropSupport(ops, transfers, new PendingDropAdapter(tableViewer, this));
     }
-    
+
     /**
      * fill the popup menu for the table
      */
     private void fillTableMenu(IMenuManager manager) {
-        // file actions go first (view file)
-        manager.add(new Separator(IWorkbenchActionConstants.GROUP_FILE));
+        manager.add(new GroupMarker("group.open"));
+        fOpenEditorGroup.setContext(new ActionContext(tableViewer.getSelection()));
+        fOpenEditorGroup.fillContextMenu(manager);
+        fOpenEditorGroup.setContext(null);
         manager.add(new Separator("additions")); //$NON-NLS-1$
         manager.add(refreshAction);
         manager.add(new Separator("additions-end")); //$NON-NLS-1$
