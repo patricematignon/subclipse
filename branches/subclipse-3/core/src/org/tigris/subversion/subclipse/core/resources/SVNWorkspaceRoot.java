@@ -11,9 +11,7 @@
  *******************************************************************************/
 package org.tigris.subversion.subclipse.core.resources;
 
-import java.io.File;
 import java.io.InputStream;
-import java.net.MalformedURLException;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -23,9 +21,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
@@ -41,13 +37,9 @@ import org.tigris.subversion.subclipse.core.Policy;
 import org.tigris.subversion.subclipse.core.SVNException;
 import org.tigris.subversion.subclipse.core.SVNProviderPlugin;
 import org.tigris.subversion.subclipse.core.SVNStatus;
-import org.tigris.subversion.subclipse.core.client.OperationManager;
+import org.tigris.subversion.subclipse.core.commands.CheckoutCommand;
+import org.tigris.subversion.subclipse.core.commands.ShareProjectCommand;
 import org.tigris.subversion.subclipse.core.util.Util;
-import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
-import org.tigris.subversion.svnclientadapter.ISVNDirEntry;
-import org.tigris.subversion.svnclientadapter.SVNClientException;
-import org.tigris.subversion.svnclientadapter.SVNNodeKind;
-import org.tigris.subversion.svnclientadapter.SVNRevision;
 import org.tigris.subversion.svnclientadapter.SVNUrl;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -77,67 +69,7 @@ public class SVNWorkspaceRoot {
 		this.localRoot = getSVNFolderFor(resource);
 	}
 
-    /*
-     * Delete the target projects before checking out
-     */
-    private static void scrubProjects(IProject[] projects, IProgressMonitor monitor) throws SVNException {
-        if (projects == null) {
-            monitor.done();
-            return;
-        }
-        monitor.beginTask(Policy.bind("SVNProvider.Scrubbing_projects_1"), projects.length * 100); //$NON-NLS-1$
-        try {   
-            for (int i=0;i<projects.length;i++) {
-                IProject project = projects[i];
-                if (project != null && project.exists()) {
-                    if(!project.isOpen()) {
-                        project.open(Policy.subMonitorFor(monitor, 10));
-                    }
-                    // We do not want to delete the project to avoid a project deletion delta
-                    // We do not want to delete the .project to avoid core exceptions
-                    monitor.subTask(Policy.bind("SVNProvider.Scrubbing_local_project_1")); //$NON-NLS-1$
-                    // unmap the project from any previous repository provider
-                    if (RepositoryProvider.getProvider(project) != null)
-                        RepositoryProvider.unmap(project);
-                    IResource[] children = project.members(IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS);
-                    IProgressMonitor subMonitor = Policy.subMonitorFor(monitor, 80);
-                    subMonitor.beginTask(null, children.length * 100);
-                    try {
-                        for (int j = 0; j < children.length; j++) {
-                            if ( ! children[j].getName().equals(".project")) {//$NON-NLS-1$
-                                children[j].delete(true /*force*/, Policy.subMonitorFor(subMonitor, 100));
-                            }
-                        }
-                    } finally {
-                        subMonitor.done();
-                    }
-                } else if (project != null) {
-                    // Make sure there is no directory in the local file system.
-                    File location = new File(project.getParent().getLocation().toFile(), project.getName());
-                    if (location.exists()) {
-                        deepDelete(location);
-                    }
-                }
-            }
-        } catch (CoreException e) {
-            throw SVNException.wrapException(e);
-        } finally {
-            monitor.done();
-        }
-    }
 
-    /*
-     * delete a folder recursively
-     */ 
-    private static void deepDelete(File resource) {
-        if (resource.isDirectory()) {
-            File[] fileList = resource.listFiles();
-            for (int i = 0; i < fileList.length; i++) {
-                deepDelete(fileList[i]);
-            }
-        }
-        resource.delete();
-    }
 
 	/**
 	 * get a project for the remote folder. The name is either the name of the 
@@ -194,99 +126,9 @@ public class SVNWorkspaceRoot {
 		final ISVNRemoteFolder[] resources,
 		final IProject[] projects,
 		final IProgressMonitor monitor)
-		throws TeamException {
-		final TeamException[] eHolder = new TeamException[1];
-		try {
-
-			IWorkspaceRunnable workspaceRunnable = new IWorkspaceRunnable() {
-				public void run(IProgressMonitor pm) throws CoreException {
-					pm.beginTask(null, 1000 * resources.length);
-
-					// Get the location of the workspace root
-					ISVNLocalFolder root = SVNWorkspaceRoot.getSVNFolderFor(ResourcesPlugin.getWorkspace().getRoot());
-                    
-                    try {                        
-                        // Prepare the target projects to receive resources
-                        scrubProjects(projects, monitor);
-                        pm.worked(100);
-                        
-                        for (int i = 0; i < resources.length; i++) {
-                            IProject project = null;
-                            RemoteFolder resource = (RemoteFolder) resources[i];
-
-							project = projects[i];
-							boolean deleteDotProject = false;
-						    // Perform the checkout
-                            ISVNClientAdapter svnClient = resource.getRepository().getSVNClient();
-
-							// check if the remote project has a .project file
-							ISVNDirEntry[] rootFiles = svnClient.getList(resource.getUrl(), SVNRevision.HEAD, false);
-							for (int j = 0; j < rootFiles.length; j++) {
-								if ((rootFiles[j].getNodeKind() == SVNNodeKind.FILE) && (".project".equals(rootFiles[j].getPath()))) {
-										deleteDotProject = true;
-								}
-							}							
-
-                            File destPath;
-							if (project.getLocation() == null) {
-                                // project.getLocation is null if the project does not exist in the workspace
-								destPath = new File(root.getIResource().getLocation().toFile(),project.getName());
-                                // we create the directory corresponding to the project and we open it 
-                                project.create(null);
-                                project.open(null);
-
-								  
-							} else {
-								destPath = project.getLocation().toFile();
-							}
-							
-							//delete the project file if the flag gets set.
-							//fix for 54
-							if(deleteDotProject){
-								
-								IFile projectFile = project.getFile(".project");
-								if (projectFile != null) {
-									// delete the project file, force, no history, without progress monitor
-									projectFile.delete(true, false, null);
-								}
-							}   
-							
-                            OperationManager operationHandler = OperationManager.getInstance();
-							try {
-								operationHandler.beginOperation(svnClient);
-								svnClient.checkout(resource.getUrl(), destPath, SVNRevision.HEAD, true);
-                                pm.worked(800); 
-							} catch (SVNClientException e) {
-								throw new SVNException("cannot checkout");
-							} finally {
-								operationHandler.endOperation(); 
-							}
-
-							// Bring the project into the workspace
-							refreshProjects(
-								new IProject[] { project },
-								Policy.subMonitorFor(pm, 100));
-                        } //for
-					} catch (TeamException e) {
-						// Pass it outside the workspace runnable
-						eHolder[0] = e;
-					} catch (SVNClientException ce) {
-						eHolder[0] = new TeamException("Error Getting Dir list", ce);
-					} finally {
-						pm.done();
-					}
-				} // run
-			};
-			ResourcesPlugin.getWorkspace().run(workspaceRunnable, monitor);
-		} catch (CoreException e) {
-			throw SVNException.wrapException(e);
-		} finally {
-			monitor.done();
-		}
-		// Re-throw the TeamException, if one occurred
-		if (eHolder[0] != null) {
-			throw eHolder[0];
-		}
+		throws SVNException {
+        CheckoutCommand command = new CheckoutCommand(resources, projects);
+        command.run(monitor);
 	}
 					
 	/**
@@ -295,69 +137,10 @@ public class SVNWorkspaceRoot {
      * if remoteDirName is null, the name of the project is used
      * if location is not in repositories, it is added 
 	 */
-	public static void shareProject(final ISVNRepositoryLocation location, final IProject project, String remoteDirName, IProgressMonitor monitor) throws TeamException {
-		
-		// Determine if the repository is known
-		boolean alreadyExists = SVNProviderPlugin.getPlugin().getRepositories().isKnownRepository(location.getLocation());
-		
-		try {
-			// Get the import properties
-			String projectName = project.getName();
-			if (remoteDirName == null)
-				remoteDirName = projectName;
-
-
-            final ISVNClientAdapter svnClient = location.getSVNClient();
-		
-			// perform the workspace modifications in a runnable
-			try {
-				final TeamException[] exception = new TeamException[] {null};
-				final String dirName = remoteDirName;
-				ResourcesPlugin.getWorkspace().run(new IWorkspaceRunnable() {
-					public void run(IProgressMonitor monitor){
-						try {
-                            String message = Policy.bind("SVNProvider.initialImport"); //$NON-NLS-1$
-                            
-                            try {
-                                // create the remote dir
-                                SVNUrl url = new SVNUrl(Util.appendPath(location.getUrl().toString(),dirName));
-                                svnClient.mkdir(url,message);
-                                
-                                // checkout it so that we have .svn
-                                svnClient.checkout(url,project.getLocation().toFile(),SVNRevision.HEAD,false);
-                            } catch (SVNClientException e) {
-                                throw new SVNException("Error while creating module: "+e.getMessage(),e);  
-                            } catch (MalformedURLException e) {
-                                throw new SVNException("Error while creating module: "+e.getMessage(),e);
-                            }
-
-                            // SharingWizard.doesSVNDirectoryExist calls getStatus on the folder which poplulates the status cache
-                            // Need to clear the cache so we can get the new hasRemote value
-                            SVNProviderPlugin.getPlugin().getStatusCacheManager().refreshStatus(project, IResource.DEPTH_INFINITE);
-                    		
-							//Register it with Team.  If it already is, no harm done.
-							RepositoryProvider.map(project, SVNProviderPlugin.getTypeId());
-						} catch (TeamException e) {
-							exception[0] = e;
-						}
-					}
-				}, monitor);
-				if (exception[0] != null)
-					throw exception[0];
-			} catch (CoreException e) {
-				throw SVNException.wrapException(e);
-			}
-		} catch (TeamException e) {
-			// The checkout may have triggered password caching
-			// Therefore, if this is a newly created location, we want to clear its cache
-			if ( ! alreadyExists)
-				SVNProviderPlugin.getPlugin().getRepositories().disposeRepository(location);
-			throw e;
-		}
-		// Add the repository if it didn't exist already
-		if ( ! alreadyExists)
-			SVNProviderPlugin.getPlugin().getRepositories().addOrUpdateRepository(location);
-	}
+	public static void shareProject(ISVNRepositoryLocation location, IProject project, String remoteDirName, IProgressMonitor monitor) throws TeamException {
+		ShareProjectCommand command = new ShareProjectCommand(location, project, remoteDirName);
+        command.run(monitor);
+    }
 	
 	/**
 	 * Set the sharing for a project to enable it to be used with the SVNTeamProvider.
@@ -381,24 +164,6 @@ public class SVNWorkspaceRoot {
 		
 		// Register the project with Team
 		RepositoryProvider.map(project, SVNProviderPlugin.getTypeId());
-	}
-
-	
-	/*
-	 * Bring the provided projects into the workspace
-	 */
-	private static void refreshProjects(IProject[] projects, IProgressMonitor monitor) throws CoreException, TeamException {
-		monitor.beginTask(Policy.bind("SVNProvider.Creating_projects_2"), projects.length * 100); //$NON-NLS-1$
-		try {
-			for (int i = 0; i < projects.length; i++) {
-				IProject project = projects[i];
-				// Register the project with Team
-				RepositoryProvider.map(project, SVNProviderPlugin.getTypeId());
-				RepositoryProvider.getProvider(project, SVNProviderPlugin.getTypeId());
-			}
-		} finally {
-			monitor.done();
-		}
 	}
 				
     /**

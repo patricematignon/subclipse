@@ -29,6 +29,7 @@ import org.eclipse.team.core.ProjectSetCapability;
 import org.eclipse.team.core.ProjectSetSerializationContext;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
+import org.tigris.subversion.subclipse.core.commands.CheckoutCommand;
 import org.tigris.subversion.subclipse.core.repo.SVNRepositoryLocation;
 import org.tigris.subversion.subclipse.core.resources.SVNWorkspaceRoot;
 
@@ -210,23 +211,11 @@ public class SVNProjectSetCapability extends ProjectSetCapability {
 			if (repositoryLocation == null){
 				return false;
 			}
-			SVNWorkspaceRoot
-					.checkout(
-							new ISVNRemoteFolder[]{(ISVNRemoteFolder) repositoryLocation
-									.getRootFolder()}, new IProject[]{project},
-							monitor);
+            CheckoutCommand command = new CheckoutCommand(new ISVNRemoteFolder[]{(ISVNRemoteFolder) repositoryLocation
+                    .getRootFolder()}, new IProject[]{project});
+            command.run(monitor);
 			return true;
 		}
-	}
-
-	private static void deepDelete(File resource) {
-		if (resource.isDirectory()) {
-			File[] fileList = resource.listFiles();
-			for (int i = 0; i < fileList.length; i++) {
-				deepDelete(fileList[i]);
-			}
-		}
-		resource.delete();
 	}
 
 }
