@@ -517,7 +517,8 @@ public class PendingOperationsView extends ViewPart implements IResourceStateCha
      */
     public void showPending(IContainer container) throws SVNException {
         parent = container;
-        setTitle(Policy.bind("PendingOperationsView.titleWithArgument", container.getName())); //$NON-NLS-1$
+        setPartName(Policy.bind("PendingOperationsView.titleWithArgument", container.getName())); //$NON-NLS-1$
+        setContentDescription(Policy.bind("PendingOperationsView.titleWithArgument", container.getName())); //$NON-NLS-1$
         tableViewer.setInput(getStatus());
     }
 

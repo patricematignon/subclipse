@@ -498,7 +498,8 @@ public class SvnPropertiesView extends ViewPart {
 	 */
 	public void showSvnProperties(ISVNLocalResource resource) throws SVNException {
 		this.resource = resource;
-		setTitle(Policy.bind("SvnPropertiesView.titleWithArgument", resource.getName())); //$NON-NLS-1$
+		setPartName(Policy.bind("SvnPropertiesView.titleWithArgument", resource.getName())); //$NON-NLS-1$
+		setContentDescription(Policy.bind("SvnPropertiesView.titleWithArgument", resource.getName())); //$NON-NLS-1$
 		refresh();
 	}
 

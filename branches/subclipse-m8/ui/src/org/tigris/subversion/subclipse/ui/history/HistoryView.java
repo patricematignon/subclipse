@@ -440,7 +440,8 @@ public class HistoryView extends ViewPart {
 					ISVNRemoteFile remoteFile = (ISVNRemoteFile)SVNWorkspaceRoot.getRemoteResourceFor(file);
 					historyTableProvider.setFile(remoteFile);
 					tableViewer.setInput(remoteFile);
-					setTitle(Policy.bind("HistoryView.titleWithArgument", remoteFile.getName())); //$NON-NLS-1$
+					setPartName(Policy.bind("HistoryView.titleWithArgument", remoteFile.getName())); //$NON-NLS-1$
+					setContentDescription(Policy.bind("HistoryView.titleWithArgument", remoteFile.getName())); //$NON-NLS-1$
 				} catch (TeamException e) {
 					SVNUIPlugin.openError(getViewSite().getShell(), null, null, e);
 				}				
@@ -449,7 +450,9 @@ public class HistoryView extends ViewPart {
 		}
 		this.file = null;
 		tableViewer.setInput(null);
-		setTitle(Policy.bind("HistoryView.title")); //$NON-NLS-1$
+		setPartName(Policy.bind("HistoryView.title")); //$NON-NLS-1$
+		setContentDescription(Policy.bind("HistoryView.title")); //$NON-NLS-1$
+		
 	}
 	
 	/**
@@ -458,13 +461,15 @@ public class HistoryView extends ViewPart {
 	public void showHistory(ISVNRemoteFile remoteFile, String currentRevision) {
 		if (remoteFile == null) {
 			tableViewer.setInput(null);
-			setTitle(Policy.bind("HistoryView.title")); //$NON-NLS-1$
+			setPartName(Policy.bind("HistoryView.title")); //$NON-NLS-1$
+			setContentDescription(Policy.bind("HistoryView.title")); //$NON-NLS-1$
 			return;
 		}
 		this.file = null;
 		historyTableProvider.setFile(remoteFile);
 		tableViewer.setInput(remoteFile);
-		setTitle(Policy.bind("HistoryView.titleWithArgument", remoteFile.getName()));
+		setPartName(Policy.bind("HistoryView.titleWithArgument", remoteFile.getName()));
+		setContentDescription(Policy.bind("HistoryView.titleWithArgument", remoteFile.getName()));
 	}
 	
     
