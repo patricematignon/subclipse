@@ -46,7 +46,7 @@ public class LocalFile extends LocalResource implements ISVNLocalFile {
 			return null;
 		ISVNStatus status = getStatus();
         SVNUrl url = status.getUrl();
-		return new SVNRemoteFile(
+		return new RemoteFile(
 			null, // parent : we don't know it 
 			getRepository(),
             url,
@@ -74,7 +74,7 @@ public class LocalFile extends LocalResource implements ISVNLocalFile {
 	/*
 	 * @see ISVNResource#isFolder()
 	 */
-	public boolean isContainer() {
+	public boolean isFolder() {
 		return false;
 	}
 	

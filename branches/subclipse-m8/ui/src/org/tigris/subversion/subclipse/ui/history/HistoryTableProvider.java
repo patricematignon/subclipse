@@ -29,11 +29,9 @@ import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.tigris.subversion.subclipse.core.ISVNRemoteFile;
-import org.tigris.subversion.subclipse.core.SVNException;
 import org.tigris.subversion.subclipse.core.history.ILogEntry;
 import org.tigris.subversion.subclipse.ui.Policy;
 
@@ -45,7 +43,7 @@ import org.tigris.subversion.subclipse.ui.Policy;
 public class HistoryTableProvider {
 
 	private ISVNRemoteFile currentFile;
-	private Shell shell;
+	
 	
 	/**
 	 * Constructor for HistoryTableProvider.
@@ -299,7 +297,7 @@ public class HistoryTableProvider {
 		};
 	}
 	
-	public void setFile(ISVNRemoteFile file) throws SVNException {
+	public void setFile(ISVNRemoteFile file) {
 		this.currentFile = file;
 	}
 }

@@ -331,7 +331,7 @@ public class SVNDecoratorPreferencesPage extends PreferencePage implements IWork
 		
 		IStructuredContentProvider contentsProvider = new IStructuredContentProvider() {
 			public Object[] getElements(Object inputElement) {
-				return (Object[]) variables.toArray(new StringPair[variables.size()]);
+				return variables.toArray(new StringPair[variables.size()]);
 			}
 			public void dispose() {}
 			public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {}

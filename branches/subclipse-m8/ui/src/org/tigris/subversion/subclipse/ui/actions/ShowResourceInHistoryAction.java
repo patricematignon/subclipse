@@ -31,7 +31,7 @@ public class ShowResourceInHistoryAction extends WorkspaceAction {
 	 */
 	public void execute(IAction action) throws InterruptedException, InvocationTargetException {
 		run(new IRunnableWithProgress() {
-			public void run(IProgressMonitor monitor) throws InvocationTargetException {
+			public void run(IProgressMonitor monitor) {
 				IResource[] resources = getSelectedResources();
 				if (resources.length != 1) return;
 				HistoryView view = (HistoryView)showView(HistoryView.VIEW_ID);
@@ -67,7 +67,7 @@ public class ShowResourceInHistoryAction extends WorkspaceAction {
 	 * @see org.tigris.subversion.subclipse.ui.actions.WorkspaceAction#isEnabledForSVNResource(org.tigris.subversion.subclipse.core.ISVNResource)
 	 */
 	protected boolean isEnabledForSVNResource(ISVNLocalResource svnResource) throws SVNException {
-		return (!svnResource.isContainer() && super.isEnabledForSVNResource(svnResource));
+		return (!svnResource.isFolder() && super.isEnabledForSVNResource(svnResource));
 	}
 
 }

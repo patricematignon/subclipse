@@ -206,7 +206,7 @@ public class SVNCompareEditorInput extends CompareEditorInput {
 	 * Sets up the title and pane labels for the comparison view.
 	 */
 	private void initLabels() {
-		CompareConfiguration cc = (CompareConfiguration) getCompareConfiguration();
+		CompareConfiguration cc = getCompareConfiguration();
 
         ITypedElement left = this.left;
         ITypedElement right = this.right;
@@ -235,7 +235,7 @@ public class SVNCompareEditorInput extends CompareEditorInput {
 			if (left != null) leftName = left.getName();
 			String rightName = null;
 			if (right != null) rightName = right.getName();
-			boolean differentNames = false;
+			
 			if (leftName != null && !leftName.equals(rightName)) {
 				title = Policy.bind("SVNCompareEditorInput.titleNoAncestorDifferent", new Object[] {leftName, getVersionLabel(left), rightName, getVersionLabel(right)} );  //$NON-NLS-1$
 			} else {
@@ -256,7 +256,7 @@ public class SVNCompareEditorInput extends CompareEditorInput {
 	/* (non-Javadoc)
 	 * Method declared on CompareEditorInput
 	 */
-	protected Object prepareInput(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+	protected Object prepareInput(IProgressMonitor monitor) throws InterruptedException {
 		final boolean threeWay = ancestor != null;
 		if (right == null || left == null) {
 			setMessage(Policy.bind("SVNCompareEditorInput.different")); //$NON-NLS-1$

@@ -253,19 +253,19 @@ public class ConfigurationWizardMainPage extends SVNWizardPage {
 		}
 		
 		if(properties != null) {
-			String method = (String)properties.getProperty("connection"); //$NON-NLS-1$
+			
 	
-			String user = (String)properties.getProperty("user"); //$NON-NLS-1$
+			String user = properties.getProperty("user"); //$NON-NLS-1$
 			if (user != null) {
 				userCombo.setText(user);
 			}
 	
-			String password = (String)properties.getProperty("password"); //$NON-NLS-1$
+			String password = properties.getProperty("password"); //$NON-NLS-1$
 			if (password != null) {
 				passwordText.setText(password);
 			}
 	
-			String host = (String)properties.getProperty("url"); //$NON-NLS-1$
+			String host = properties.getProperty("url"); //$NON-NLS-1$
 			if (host != null) {
 				urlCombo.setText(host);
 			}

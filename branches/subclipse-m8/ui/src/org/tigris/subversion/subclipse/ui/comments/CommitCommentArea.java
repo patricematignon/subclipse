@@ -11,7 +11,6 @@
  *******************************************************************************/
 package org.tigris.subversion.subclipse.ui.comments;
 
-import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -28,10 +27,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.team.core.RepositoryProvider;
-import org.tigris.subversion.subclipse.core.SVNException;
-import org.tigris.subversion.subclipse.core.SVNProviderPlugin;
-import org.tigris.subversion.subclipse.core.SVNTeamProvider;
 import org.tigris.subversion.subclipse.ui.Policy;
 import org.tigris.subversion.subclipse.ui.SVNUIPlugin;
 import org.tigris.subversion.subclipse.ui.dialogs.DialogArea;
@@ -47,7 +42,7 @@ public class CommitCommentArea extends DialogArea {
 	
 	private Text text;
 	private Combo previousCommentsCombo;
-	private IProject mainProject;
+	
 	private String[] comments = new String[0];
 	private String comment = ""; //$NON-NLS-1$
 	
@@ -168,37 +163,6 @@ public class CommitCommentArea extends DialogArea {
 	}
 
 	/**
-	 * Method clearCommitText.
-	 */
-	private void clearCommitText() {
-		text.setText("");
-		previousCommentsCombo.deselectAll();
-	}
-
-	/**
-	 * Method getProvider.
-	 */
-	private SVNTeamProvider getProvider() throws SVNException {
-		if (mainProject == null) return null;
-		return (SVNTeamProvider) RepositoryProvider.getProvider(mainProject, SVNProviderPlugin.getTypeId());
-	}
-	
-	/**
-	 * Method getSelectedComment.
-	 * @return String
-	 */
-	private String getSelectedComment() {
-		if (comments.length == 0) {
-			return "";
-		} else {
-			int index = previousCommentsCombo.getSelectionIndex();
-			if (index != -1)
-				return comments[index];
-		}
-		return ""; //$NON-NLS-1$
-	}
-	
-	/**
 	 * Return the entered comment
 	 * 
 	 * @return the comment
@@ -216,13 +180,6 @@ public class CommitCommentArea extends DialogArea {
 		return comment;
 	}
 
-	/**
-	 * Method setProject.
-	 * @param iProject
-	 */
-	public void setProject(IProject iProject) {
-		this.mainProject = iProject;
-	}
 	
 	private void finished() {
 		// if there is still a comment, remember it

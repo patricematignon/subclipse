@@ -42,7 +42,7 @@ public class SVNMoveDeleteHook implements IMoveDeleteHook {
 		    if (!resource.isManaged())
 			  return false;
 
-			ISVNClientAdapter svnClient = resource.getRepository().getSVNClient();
+			
 			monitor.beginTask(null, 1000);
 			monitor.setTaskName("Working..");
             resource.delete();
@@ -72,9 +72,6 @@ public class SVNMoveDeleteHook implements IMoveDeleteHook {
         try {
 		    if (!resource.isManaged())
 			    return false;
-
-
-			ISVNClientAdapter svnClient = resource.getRepository().getSVNClient();
 			monitor.beginTask(null, 1000);
 			monitor.setTaskName("Working..");
             resource.delete();
@@ -122,7 +119,7 @@ public class SVNMoveDeleteHook implements IMoveDeleteHook {
 
             boolean force = (updateFlags & IResource.FORCE) != 0;
             boolean keepHistory = (updateFlags & IResource.KEEP_HISTORY) != 0;
-            boolean isDeep = (updateFlags & IResource.SHALLOW) == 0;
+           
             
             // If the file is not in sync with the local file system and force is false,
             // then signal that we have an error.

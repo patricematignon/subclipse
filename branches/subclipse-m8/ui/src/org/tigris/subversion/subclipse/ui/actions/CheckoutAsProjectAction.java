@@ -12,15 +12,11 @@
 package org.tigris.subversion.subclipse.ui.actions;
 
 import java.io.File;
-import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -29,21 +25,12 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
-import org.tigris.subversion.subclipse.core.ISVNFolder;
-import org.tigris.subversion.subclipse.core.ISVNRemoteFile;
 import org.tigris.subversion.subclipse.core.ISVNRemoteFolder;
 import org.tigris.subversion.subclipse.core.ISVNRepositoryLocation;
-import org.tigris.subversion.subclipse.core.ISVNResource;
 import org.tigris.subversion.subclipse.core.resources.SVNWorkspaceRoot;
-import org.tigris.subversion.subclipse.core.util.Util;
 import org.tigris.subversion.subclipse.ui.Policy;
 import org.tigris.subversion.subclipse.ui.util.IPromptCondition;
 import org.tigris.subversion.subclipse.ui.util.PromptingDialog;
-import org.tigris.subversion.svnclientadapter.SVNUrl;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.w3c.dom.Text;
 
 /**
  * Add some remote resources to the workspace. Current implementation:
@@ -80,7 +67,8 @@ public class CheckoutAsProjectAction extends SVNAction {
 						String name = folders[i].getName();
 						
 						// Check for a better name for the project
-						try {
+						//TODO: this can't be right.
+					/*	try {
 							ISVNResource[] children = folders[i].members(monitor, ISVNFolder.FILE_MEMBERS);
 							for (int k = 0; k < children.length; k++) {
 								ISVNResource resource = children[k];
@@ -106,7 +94,7 @@ public class CheckoutAsProjectAction extends SVNAction {
 						catch (Exception e) {
 						  // no .project exists ... that's ok
 						}
-
+*/
 						IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(name);
 						targetFolders.put(name, folders[i]);
 						targetProjects.add(project);
@@ -143,7 +131,7 @@ public class CheckoutAsProjectAction extends SVNAction {
 	/*
 	 * @see TeamAction#isEnabled()
 	 */
-	protected boolean isEnabled() throws TeamException {
+	protected boolean isEnabled() {
 		ISVNRemoteFolder[] resources = getSelectedRemoteFolders();
 		if (resources.length == 0) return false;
 		for (int i = 0; i < resources.length; i++) {
@@ -183,7 +171,7 @@ public class CheckoutAsProjectAction extends SVNAction {
                 return false;
             }
             public String promptMessage(IResource resource) {
-                File localLocation  = getFileLocation(resource);
+                getFileLocation(resource);
                 if(resource.exists()) {
                     return Policy.bind("AddToWorkspaceAction.thisResourceExists", resource.getName());//$NON-NLS-1$
                 } else {

@@ -99,19 +99,15 @@ public class RemoteFileEditorInput implements IWorkbenchAdapter, IStorageEditorI
 	 * @return the image descriptor for this input
 	 */
 	public ImageDescriptor getImageDescriptor() {
-		/*IWorkbenchAdapter fileAdapter = (IWorkbenchAdapter)file.getAdapter(IWorkbenchAdapter.class);
-		return fileAdapter == null ? null : fileAdapter.getImageDescriptor(file);*/
-		return null;
-		
+		IWorkbenchAdapter fileAdapter = (IWorkbenchAdapter)file.getAdapter(IWorkbenchAdapter.class);
+		return fileAdapter == null ? null : fileAdapter.getImageDescriptor(file);
 	}
 	/**
 	 * @see IWorkbenchAdapter#getImageDescriptor
 	 */
 	public ImageDescriptor getImageDescriptor(Object object) {
-		//IWorkbenchAdapter fileAdapter = (IWorkbenchAdapter)file.getAdapter(IWorkbenchAdapter.class);
-		//return fileAdapter == null ? null : fileAdapter.getImageDescriptor(file);
-		return null;
-		
+		IWorkbenchAdapter fileAdapter = (IWorkbenchAdapter)file.getAdapter(IWorkbenchAdapter.class);
+		return fileAdapter == null ? null : fileAdapter.getImageDescriptor(file);
 	}
 	/**
 	 * @see IWorkbenchAdapter#getLabel
@@ -153,7 +149,7 @@ public class RemoteFileEditorInput implements IWorkbenchAdapter, IStorageEditorI
 	 * @return an IStorage object.
 	 * @exception CoreException if this method fails
 	 */
-	public IStorage getStorage() throws CoreException {
+	public IStorage getStorage() {
 		if (storage == null) {
 			storage = new RemoteFileStorage(file);
 		}

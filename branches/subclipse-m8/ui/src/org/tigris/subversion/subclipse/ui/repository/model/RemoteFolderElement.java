@@ -33,7 +33,7 @@ public class RemoteFolderElement extends SVNModelElement {
 	
 	public ImageDescriptor getImageDescriptor(Object object) {
 		if (!(object instanceof ISVNRemoteFolder)) return null;
-		ISVNRemoteFolder folder = (ISVNRemoteFolder) object;
+		
 		return PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJ_FOLDER);
 	}
 	/**

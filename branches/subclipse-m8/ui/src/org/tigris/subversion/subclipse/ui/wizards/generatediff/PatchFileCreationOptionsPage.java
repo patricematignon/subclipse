@@ -27,7 +27,7 @@ import org.tigris.subversion.subclipse.ui.Policy;
  * Page to select the options for creating the patch.
  */
 public class PatchFileCreationOptionsPage extends WizardPage {
-	private final GenerateDiffFileWizard patchFileCreationOptionsPage;
+	
 
 	private Button recurseOption;
 	
@@ -36,7 +36,7 @@ public class PatchFileCreationOptionsPage extends WizardPage {
 	 */
 	protected PatchFileCreationOptionsPage(GenerateDiffFileWizard wizard, String pageName) {
 		super(pageName);
-		this.patchFileCreationOptionsPage = wizard;
+		
 	}
 
 	/**
@@ -44,7 +44,7 @@ public class PatchFileCreationOptionsPage extends WizardPage {
 	 */
 	protected PatchFileCreationOptionsPage(GenerateDiffFileWizard wizard, String pageName, String title, ImageDescriptor titleImage) {
 		super(pageName, title, titleImage);
-		this.patchFileCreationOptionsPage = wizard;
+		
 	}
 
 	/*

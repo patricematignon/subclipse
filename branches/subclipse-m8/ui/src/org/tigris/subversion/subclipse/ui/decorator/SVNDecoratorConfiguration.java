@@ -36,11 +36,7 @@ public class SVNDecoratorConfiguration {
 	public static final String DEFAULT_FOLDERTEXTFORMAT = "{added_flag}{dirty_flag}{name} "; //$NON-NLS-1$
 	public static final String DEFAULT_PROJECTTEXTFORMAT = "{dirty_flag}{name} [{url}]"; //$NON-NLS-1$
 
-	// prefix characters that can be removed if the following binding is not found
-	private static final char KEYWORD_SEPSPACE = ' ';
-
-	
-    public static void trimRight(StringBuffer strBuffer) {
+	public static void trimRight(StringBuffer strBuffer) {
         while ((strBuffer.length() > 0) && (Character.isWhitespace(strBuffer.charAt(strBuffer.length()-1))))
             strBuffer.deleteCharAt(strBuffer.length()-1);
     }

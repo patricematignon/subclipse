@@ -24,10 +24,8 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ui.actions.TeamAction;
 import org.eclipse.ui.PlatformUI;
 import org.tigris.subversion.subclipse.core.ISVNRemoteFolder;
@@ -62,9 +60,6 @@ abstract public class SVNAction extends TeamAction {
 		} catch (InterruptedException e) {
 			// Show any problems that have occured so far
 			handle(null);
-		}  catch (TeamException e) {
-			// Handle the exception and any accumulated errors
-			handle(e);
 		}
 	}
 
@@ -75,7 +70,7 @@ abstract public class SVNAction extends TeamAction {
 	 * inherited method to ensure proper initialization of this superclass is performed.
 	 * These included prepartion to accumulate IStatus and checking for dirty editors.
 	 */
-	protected boolean beginExecution(IAction action) throws TeamException {
+	protected boolean beginExecution(IAction action) {
 		accumulatedStatus.clear();
 		if(needsToSaveDirtyEditors()) {
 			if(!saveAllEditors()) {
@@ -95,7 +90,7 @@ abstract public class SVNAction extends TeamAction {
 	 * if no exception occured. Sunclasses may override but should invoke this
 	 * inherited method to ensure proper handling oy any accumulated IStatus.
 	 */
-	protected void endExecution() throws TeamException {
+	protected void endExecution() {
 		if ( ! accumulatedStatus.isEmpty()) {
 			handle(null);
 		}
@@ -296,7 +291,7 @@ abstract public class SVNAction extends TeamAction {
 		ArrayList resources = null;
 		if (!selection.isEmpty()) {
 			resources = new ArrayList();
-			Iterator elements = ((IStructuredSelection) selection).iterator();
+			Iterator elements = selection.iterator();
 			while (elements.hasNext()) {
 				Object next = elements.next();
 				if (next instanceof ISVNRemoteFolder) {
@@ -326,7 +321,7 @@ abstract public class SVNAction extends TeamAction {
 		ArrayList resources = null;
 		if (!selection.isEmpty()) {
 			resources = new ArrayList();
-			Iterator elements = ((IStructuredSelection)selection).iterator();
+			Iterator elements = selection.iterator();
 			while (elements.hasNext()) {
 				Object next = elements.next();
 				if (next instanceof ISVNRemoteResource) {

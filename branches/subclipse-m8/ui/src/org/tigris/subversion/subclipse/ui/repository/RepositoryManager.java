@@ -45,7 +45,7 @@ import org.tigris.subversion.subclipse.ui.dialogs.AddToVersionControlDialog;
  * It also provides a number of useful methods for assisting in repository operations.
  */
 public class RepositoryManager {
-	private Map repositoryRoots = new HashMap();
+	
 	
 	List listeners = new ArrayList();
 
@@ -128,7 +128,7 @@ public class RepositoryManager {
     /**
      * called when plugin is started
      */	
-	public void startup() throws TeamException {
+	public void startup() {
         commentsManager.loadCommentHistory();
 		
         // we listen to changes to repository so that we can advise concerned views

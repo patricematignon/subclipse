@@ -23,7 +23,6 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
@@ -38,7 +37,7 @@ public class DetailsDialogWithProjects extends DetailsDialog {
 	private String detailsTitle;
 	private IProject[] projects;
 
-	private Button actionButton;
+	
 	private org.eclipse.swt.widgets.List detailsList;
 
 	private boolean includeCancelButton;
@@ -101,7 +100,7 @@ public class DetailsDialogWithProjects extends DetailsDialog {
 		}
 		
 		for (int i = 0; i < projects.length; i++) {
-			IProject project = projects[i];
+			
 			detailsList.add(projects[i].getName()); //$NON-NLS-1$
 		}			
 		return composite;

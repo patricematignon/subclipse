@@ -113,9 +113,9 @@ public class LocalFolder extends LocalResource implements ISVNLocalFolder {
 
 	
 	/**
-	 * @see ISVNResource#isContainer()
+	 * @see ISVNResource#isFolder()
 	 */
-	public boolean isContainer() {
+	public boolean isFolder() {
 		return true;
 	}
 
@@ -139,7 +139,7 @@ public class LocalFolder extends LocalResource implements ISVNLocalFolder {
                 for (int i = 0;i < children.length;i++) {
                     ISVNLocalResource svnChild = SVNWorkspaceRoot.getSVNResourceFor(children[i]);
                     
-                    if (svnChild.isContainer()) {
+                    if (svnChild.isFolder()) {
                         ISVNLocalFolder svnFolder = (ISVNLocalFolder)svnChild;
                         if (depth == IResource.DEPTH_ONE)
                             svnFolder.refreshStatus(IResource.DEPTH_ZERO);

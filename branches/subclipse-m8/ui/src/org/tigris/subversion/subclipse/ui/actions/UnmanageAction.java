@@ -41,7 +41,6 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.tigris.subversion.subclipse.core.ISVNLocalFolder;
 import org.tigris.subversion.subclipse.core.ISVNLocalResource;
-import org.tigris.subversion.subclipse.core.SVNException;
 import org.tigris.subversion.subclipse.core.SVNTeamProvider;
 import org.tigris.subversion.subclipse.core.resources.SVNWorkspaceRoot;
 import org.tigris.subversion.subclipse.ui.IHelpContextIds;
@@ -57,7 +56,7 @@ public class UnmanageAction extends WorkspaceAction {
     // from the project. It also allows to cancel the operation
 	static class DeleteProjectDialog extends MessageDialog {
 
-		private IProject[] projects;
+		
 		private boolean deleteContent = false;
 		private Button radio1;
 		private Button radio2;
@@ -71,7 +70,7 @@ public class UnmanageAction extends WorkspaceAction {
 				MessageDialog.QUESTION, 
 				new String[] {IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL},
 				0); 	// yes is the default
-			this.projects = projects;
+			
 		}
 		
 		static String getTitle(IProject[] projects) {
@@ -146,7 +145,7 @@ public class UnmanageAction extends WorkspaceAction {
      */
 	private IRunnableWithProgress getOperation() {
 		return new WorkspaceModifyOperation() {
-			public void execute(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+			public void execute(IProgressMonitor monitor) throws InvocationTargetException {
 				try {
 					// maps the selected resources (projects) to their providers
                     Hashtable table = getProviderMapping();
@@ -212,7 +211,7 @@ public class UnmanageAction extends WorkspaceAction {
 	/**
 	 * @see org.tigris.subversion.subclipse.ui.actions.WorkspaceAction#isEnabledForSVNResource(org.tigris.subversion.subclipse.core.ISVNResource)
 	 */
-	protected boolean isEnabledForSVNResource(ISVNLocalResource svnResource) throws SVNException {
+	protected boolean isEnabledForSVNResource(ISVNLocalResource svnResource) {
 		IResource resource = svnResource.getIResource();
 		return resource != null && resource.getType() == IResource.PROJECT;
 	}

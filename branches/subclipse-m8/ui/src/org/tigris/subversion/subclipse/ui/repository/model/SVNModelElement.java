@@ -44,7 +44,7 @@ public abstract class SVNModelElement implements IWorkbenchAdapter {
 			if (needsProgress) {
 				final Object[][] result = new Object[1][];
 				IRunnableWithProgress runnable = new IRunnableWithProgress() {
-					public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+					public void run(IProgressMonitor monitor) throws InvocationTargetException {
 						try {
 							result[0] = SVNModelElement.this.internalGetChildren(o, monitor);
 						} catch (TeamException e) {

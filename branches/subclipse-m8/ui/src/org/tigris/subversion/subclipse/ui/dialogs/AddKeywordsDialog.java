@@ -279,7 +279,7 @@ public class AddKeywordsDialog extends Dialog {
         // set the content provider
         listViewer.setContentProvider(new IStructuredContentProvider() {
             public Object[] getElements(Object inputElement) {
-                return (Object[]) items;
+                return items;
             }
             public void dispose() {}
             public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {}

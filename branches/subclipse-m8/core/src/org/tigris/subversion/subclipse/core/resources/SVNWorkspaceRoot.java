@@ -35,7 +35,6 @@ import org.tigris.subversion.subclipse.core.Policy;
 import org.tigris.subversion.subclipse.core.SVNException;
 import org.tigris.subversion.subclipse.core.SVNProviderPlugin;
 import org.tigris.subversion.subclipse.core.SVNStatus;
-import org.tigris.subversion.subclipse.core.SVNTeamProvider;
 import org.tigris.subversion.subclipse.core.client.OperationManager;
 import org.tigris.subversion.subclipse.core.util.Util;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
@@ -238,7 +237,7 @@ public class SVNWorkspaceRoot {
 		boolean alreadyExists = SVNProviderPlugin.getPlugin().getRepositories().isKnownRepository(location.getLocation());
 		
         // Set the folder sync info of the project to point to the remote module
-		final ISVNLocalFolder folder = (ISVNLocalFolder)SVNWorkspaceRoot.getSVNResourceFor(project);
+		SVNWorkspaceRoot.getSVNResourceFor(project);
 			
 		try {
 			// Get the import properties
@@ -254,7 +253,7 @@ public class SVNWorkspaceRoot {
 				final TeamException[] exception = new TeamException[] {null};
 				final String dirName = remoteDirName;
 				ResourcesPlugin.getWorkspace().run(new IWorkspaceRunnable() {
-					public void run(IProgressMonitor monitor) throws CoreException {
+					public void run(IProgressMonitor monitor){
 						try {
                             String message = Policy.bind("SVNProvider.initialImport"); //$NON-NLS-1$
                             
@@ -313,7 +312,7 @@ public class SVNWorkspaceRoot {
             throw new SVNException(new SVNStatus(SVNStatus.ERROR, Policy.bind("SVNProvider.infoMismatch", project.getName())));//$NON-NLS-1$
         
 		// Ensure that the provided location is managed
-		ISVNRepositoryLocation location = SVNProviderPlugin.getPlugin().getRepositories().getRepository(status.getUrl().toString());
+		SVNProviderPlugin.getPlugin().getRepositories().getRepository(status.getUrl().toString());
 		
 		// Register the project with Team
 		RepositoryProvider.map(project, SVNProviderPlugin.getTypeId());
@@ -330,7 +329,7 @@ public class SVNWorkspaceRoot {
 				IProject project = projects[i];
 				// Register the project with Team
 				RepositoryProvider.map(project, SVNProviderPlugin.getTypeId());
-				SVNTeamProvider provider = (SVNTeamProvider)RepositoryProvider.getProvider(project, SVNProviderPlugin.getTypeId());
+				RepositoryProvider.getProvider(project, SVNProviderPlugin.getTypeId());
 			}
 		} finally {
 			monitor.done();
@@ -383,6 +382,7 @@ public class SVNWorkspaceRoot {
         return managed.getLatestRemoteResource();        
     }
     
+   
 
 	/**
      * get the repository for this project 

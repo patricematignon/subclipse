@@ -18,7 +18,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.team.core.TeamException;
 import org.tigris.subversion.subclipse.core.ISVNRemoteResource;
 import org.tigris.subversion.subclipse.ui.Policy;
 import org.tigris.subversion.subclipse.ui.compare.ResourceEditionNode;
@@ -32,7 +31,7 @@ public class CompareRemoteResourcesAction extends SVNAction {
 
 	public void execute(IAction action) throws InvocationTargetException, InterruptedException {
 		run(new IRunnableWithProgress() {
-			public void run(IProgressMonitor monitor) throws InvocationTargetException {
+			public void run(IProgressMonitor monitor) {
 				ISVNRemoteResource[] editions = getSelectedRemoteResources();
 				if (editions == null || editions.length != 2) {
 					MessageDialog.openError(getShell(), Policy.bind("CompareRemoteResourcesAction.unableToCompare"), Policy.bind("CompareRemoteResourcesAction.selectTwoResources")); //$NON-NLS-1$ //$NON-NLS-2$
@@ -50,7 +49,7 @@ public class CompareRemoteResourcesAction extends SVNAction {
 	/*
 	 * @see TeamAction#isEnabled()
 	 */
-	protected boolean isEnabled() throws TeamException {
+	protected boolean isEnabled() {
 		ISVNRemoteResource[] resources = getSelectedRemoteResources();
 		if (resources.length != 2) return false;
 		return resources[0].isContainer() == resources[1].isContainer();

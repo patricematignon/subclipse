@@ -59,8 +59,6 @@ public class IgnoreResourcesDialog extends Dialog {
 	private int selectedAction;
 	private String customPattern;
 	
-	// layout controls
-	private static final int LABEL_WIDTH_HINT = 400;
 	private static final int LABEL_INDENT_WIDTH = 32;
 
 	/**
@@ -205,15 +203,6 @@ public class IgnoreResourcesDialog extends Dialog {
 		return textbox;
 	}
 
-	private Label createWrappingLabel(Composite parent, String text) {
-		Label label = new Label(parent, SWT.WRAP);
-		label.setText(text);
-		GridData data = new GridData(GridData.FILL_BOTH);
-		data.widthHint = LABEL_WIDTH_HINT;
-		label.setLayoutData(data);
-		return label;
-	}
-	
 	private Button createRadioButton(Composite parent, String text) {
 		Button button = new Button(parent, SWT.RADIO);
 		button.setText(text);

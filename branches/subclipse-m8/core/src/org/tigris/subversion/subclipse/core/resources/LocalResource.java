@@ -240,7 +240,7 @@ abstract class LocalResource implements ISVNResource, Comparable {
         else
         {
             if (dirEntry.getNodeKind() == SVNNodeKind.FILE)
-                return new SVNRemoteFile(
+                return new RemoteFile(
                     null,  // we don't know its parent
                     getRepository(),
                     url,

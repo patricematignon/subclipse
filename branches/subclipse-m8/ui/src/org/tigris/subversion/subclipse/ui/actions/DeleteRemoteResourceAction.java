@@ -37,7 +37,7 @@ public class DeleteRemoteResourceAction extends SVNAction {
             return; // cancel
         
         run(new IRunnableWithProgress() {
-            public void run(IProgressMonitor monitor) throws InterruptedException, InvocationTargetException {
+            public void run(IProgressMonitor monitor) throws InvocationTargetException {
                 try {
                     SVNProviderPlugin.getPlugin().getRepositoryResourcesManager().
                         deleteRemoteResources(        
@@ -53,7 +53,7 @@ public class DeleteRemoteResourceAction extends SVNAction {
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ui.actions.TeamAction#isEnabled()
 	 */
-	protected boolean isEnabled() throws TeamException {
+	protected boolean isEnabled() {
 		return getSelectedRemoteResources().length > 0;
 	}
 

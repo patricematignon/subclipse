@@ -14,7 +14,6 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.team.core.TeamException;
 import org.tigris.subversion.subclipse.core.SVNException;
 import org.tigris.subversion.subclipse.ui.pending.PendingOperationsView;
 
@@ -27,7 +26,7 @@ import org.tigris.subversion.subclipse.ui.pending.PendingOperationsView;
  */
 public class ShowPendingOperationsAction extends WorkspaceAction {
 	
-	protected void execute(IAction action) throws InvocationTargetException, InterruptedException {
+	protected void execute(IAction action) throws InvocationTargetException {
         final IContainer container = (IContainer)getSelectedResources()[0];
         
         try {        
@@ -43,7 +42,7 @@ public class ShowPendingOperationsAction extends WorkspaceAction {
     /* (non-Javadoc)
      * @see org.eclipse.team.internal.ui.actions.TeamAction#isEnabled()
      */
-    protected boolean isEnabled() throws TeamException {
+    protected boolean isEnabled() {
         return (selection.size() == 1);
     }
 

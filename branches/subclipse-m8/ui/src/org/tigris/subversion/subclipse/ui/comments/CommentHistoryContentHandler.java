@@ -15,7 +15,7 @@ package org.tigris.subversion.subclipse.ui.comments;
 import java.util.Vector;
 
 import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
+import org.xml.sax.ContentHandler;
 import org.xml.sax.helpers.DefaultHandler;
 
 /**
@@ -31,7 +31,7 @@ class CommentHistoryContentHandler extends DefaultHandler {
 	/**
 	 * @see ContentHandler#characters(char[], int, int)
 	 */
-	public void characters(char[] chars, int startIndex, int length) throws SAXException {
+	public void characters(char[] chars, int startIndex, int length) {
 		if (buffer == null) return;
 		buffer.append(chars, startIndex, length);
 	}
@@ -43,8 +43,7 @@ class CommentHistoryContentHandler extends DefaultHandler {
 			String namespaceURI,
 			String localName,
 			String qName,
-			Attributes atts)
-			throws SAXException {
+			Attributes atts) {
 		if (localName.equals(CommentsManager.ELEMENT_COMMIT_COMMENT)) {
 			buffer = new StringBuffer();
 			return;

@@ -61,7 +61,7 @@ public class SyncFileChangeListener implements IResourceChangeListener {
 			final Set changedContainers = new HashSet();
 			
 			event.getDelta().accept(new IResourceDeltaVisitor() {
-				public boolean visit(IResourceDelta delta) throws CoreException {
+				public boolean visit(IResourceDelta delta) {
 					IResource resource = delta.getResource();
 					
 					if(resource.getType()==IResource.ROOT) {

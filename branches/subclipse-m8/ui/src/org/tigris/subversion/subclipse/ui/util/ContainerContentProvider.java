@@ -31,8 +31,9 @@ import org.eclipse.jface.viewers.Viewer;
  * Provides content for a tree viewer that shows only containers.
  */
 public class ContainerContentProvider implements ITreeContentProvider {
-	private Viewer viewer;
+	
 	private boolean showClosedProjects = true;
+	
 /**
  * Creates a new ResourceContentProvider.
  */
@@ -99,12 +100,7 @@ public Object getParent(Object element) {
 public boolean hasChildren(Object element) {
 	return getChildren(element).length > 0;
 }
-/**
- * @see IContentProvider#inputChanged
- */
-public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-	this.viewer = viewer;
-}
+
 /**
  * @see IContentProvider#isDeleted
  */
@@ -119,6 +115,13 @@ public boolean isDeleted(Object element) {
  */
 public void showClosedProjects(boolean show){
 	showClosedProjects = show;
+}
+/* (non-Javadoc)
+ * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
+ */
+public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+	
+	
 }
 
 }

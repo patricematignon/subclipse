@@ -33,7 +33,7 @@ import org.tigris.subversion.subclipse.core.SVNException;
 import org.tigris.subversion.subclipse.core.SVNProviderPlugin;
 import org.tigris.subversion.subclipse.core.SVNStatus;
 import org.tigris.subversion.subclipse.core.client.NotificationListener;
-import org.tigris.subversion.subclipse.core.resources.SVNRemoteFile;
+import org.tigris.subversion.subclipse.core.resources.RemoteFile;
 import org.tigris.subversion.subclipse.core.resources.RemoteFolder;
 import org.tigris.subversion.subclipse.core.util.Util;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
@@ -145,7 +145,7 @@ public class SVNRepositoryLocation
 		throws SVNException {
 		try {
 			ISVNRemoteResource[] resources =
-				(ISVNRemoteResource[]) getRootFolder().members(progress);
+				getRootFolder().members(progress);
 			return resources;
 		} catch (TeamException e) {
 			throw new SVNException(e.getStatus());
@@ -180,7 +180,7 @@ public class SVNRepositoryLocation
 		if (dirEntry == null)
 			return null; // no remote file
 		else {
-			return new SVNRemoteFile(null, // we don't know its parent
+			return new RemoteFile(null, // we don't know its parent
 			this,
 				url,
 				SVNRevision.HEAD,
@@ -214,14 +214,6 @@ public String getUsername() {
 	return user == null ? "" : user; //$NON-NLS-1$
 }
 
-private String getPassword() {
-	// user can be null but not password
-	if (user == null) {
-		retrieveUsernamePassword();
-	}
-	return password; //$NON-NLS-1$
-}
-
 /**
  * get the svn client corresponding to the repository
  */
@@ -234,7 +226,6 @@ public ISVNClientAdapter getSVNClient() {
 	svnClient.addNotifyListener(NotificationListener.getInstance());
 
 	svnClient.setUsername(getUsername());
-	String passWord = getPassword();
 	if (password != null)
 		svnClient.setPassword(password);
 	return svnClient;

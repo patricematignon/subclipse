@@ -47,11 +47,11 @@ public class PasteRemoteResourceAction extends SVNAction {
             
             ISVNRemoteResource selectedResource = getSelectedRemoteResources()[0];
             final ISVNRemoteFolder destination = 
-                (selectedResource.isContainer()?
+                (selectedResource.isFolder()?
                     (ISVNRemoteFolder)selectedResource:selectedResource.getParent());
             
             run(new IRunnableWithProgress() {
-                public void run(IProgressMonitor monitor) throws InterruptedException, InvocationTargetException {
+                public void run(IProgressMonitor monitor)throws  InvocationTargetException {
                     try {
                         SVNProviderPlugin.getPlugin().getRepositoryResourcesManager().
                             copyRemoteResource(resource,destination,message,monitor);
@@ -65,7 +65,7 @@ public class PasteRemoteResourceAction extends SVNAction {
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ui.actions.TeamAction#isEnabled()
 	 */
-	protected boolean isEnabled() throws TeamException {
+	protected boolean isEnabled() {
         if (getSelectedRemoteResources().length != 1)
             return false;
         

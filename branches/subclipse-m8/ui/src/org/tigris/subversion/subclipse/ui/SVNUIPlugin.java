@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -74,7 +75,14 @@ public class SVNUIPlugin extends AbstractUIPlugin {
 //		}
 //	};
 	
-		
+	
+    public static void log(CoreException e) {
+		log(e.getStatus().getSeverity(), Policy.bind("simpleInternal"), e); //$NON-NLS-1$
+	}
+    public static void log(int severity, String message, Throwable e) {
+		log(new Status(severity, ID, 0, message, e));
+	}
+    
 	/**
 	 * SVNUIPlugin constructor
 	 * 
@@ -192,11 +200,7 @@ public class SVNUIPlugin extends AbstractUIPlugin {
 	public synchronized RepositoryManager getRepositoryManager() {
 		if (repositoryManager == null) {
 			repositoryManager = new RepositoryManager();
-			try {
-				repositoryManager.startup();
-			} catch (TeamException e) {
-				SVNUIPlugin.log(e.getStatus());
-			}
+			repositoryManager.startup();
 		}
 		return repositoryManager;
 	}
@@ -215,7 +219,7 @@ public class SVNUIPlugin extends AbstractUIPlugin {
 	}	
 
 	public static void log(TeamException e) {
-		getPlugin().getLog().log(new Status(e.getStatus().getSeverity(), SVNUIPlugin.ID, 0, Policy.bind("simpleInternal"), e));; //$NON-NLS-1$
+		getPlugin().getLog().log(new Status(e.getStatus().getSeverity(), SVNUIPlugin.ID, 0, Policy.bind("simpleInternal"), e)); //$NON-NLS-1$
 	}
 
 	// flags to tailor error reporting

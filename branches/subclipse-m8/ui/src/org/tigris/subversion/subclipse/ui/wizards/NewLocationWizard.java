@@ -80,7 +80,7 @@ public class NewLocationWizard extends Wizard {
 			if (mainPage.getValidate()) {
 				try {
 					new ProgressMonitorDialog(getShell()).run(true, true, new IRunnableWithProgress() {
-						public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+						public void run(IProgressMonitor monitor) throws InvocationTargetException {
 							try {
 								root[0].validateConnection(monitor);
 							} catch (TeamException e) {

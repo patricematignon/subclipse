@@ -12,18 +12,14 @@
 package org.tigris.subversion.subclipse.core.resources;
 
 
-import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.variants.IResourceVariant;
 import org.tigris.subversion.javahl.Revision.Kind;
 import org.tigris.subversion.subclipse.core.ISVNFolder;
 import org.tigris.subversion.subclipse.core.ISVNRemoteFolder;
@@ -34,7 +30,6 @@ import org.tigris.subversion.subclipse.core.Policy;
 import org.tigris.subversion.subclipse.core.SVNException;
 import org.tigris.subversion.subclipse.core.SVNProviderPlugin;
 import org.tigris.subversion.subclipse.core.SVNStatus;
-import org.tigris.subversion.subclipse.core.history.ILogEntry;
 import org.tigris.subversion.subclipse.core.util.Util;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 import org.tigris.subversion.svnclientadapter.ISVNDirEntry;
@@ -47,11 +42,9 @@ import org.tigris.subversion.svnclientadapter.SVNUrl;
  * This class provides the implementation of ISVNRemoteFolder
  * 
  */
-public class RemoteFolder extends SVNRemoteResource implements ISVNRemoteFolder, ISVNFolder {
+public class RemoteFolder extends RemoteResource implements ISVNRemoteFolder, ISVNFolder {
 
     private ISVNRemoteResource[] children;
-    
-    
 	
 	/**
 	 * Constructor for RemoteFolder.
@@ -158,7 +151,7 @@ public class RemoteFolder extends SVNRemoteResource implements ISVNRemoteFolder,
 				ISVNDirEntry entry = list[i];
 				if (entry.getNodeKind() == SVNNodeKind.FILE)
 				{
-					result.add(new SVNRemoteFile(this, getRepository(),
+					result.add(new RemoteFile(this, getRepository(),
                         new SVNUrl(Util.appendPath(url.toString(),entry.getPath())),
                         getRevision(),
                         entry.getHasProps(),
@@ -197,11 +190,11 @@ public class RemoteFolder extends SVNRemoteResource implements ISVNRemoteFolder,
 		boolean includeFiles = (((flags & FILE_MEMBERS) != 0) || ((flags & (FILE_MEMBERS | FOLDER_MEMBERS)) == 0));
 		boolean includeFolders = (((flags & FOLDER_MEMBERS) != 0) || ((flags & (FILE_MEMBERS | FOLDER_MEMBERS)) == 0));
 		boolean includeManaged = (((flags & MANAGED_MEMBERS) != 0) || ((flags & (MANAGED_MEMBERS | UNMANAGED_MEMBERS | IGNORED_MEMBERS)) == 0));
-		boolean includeUnmanaged = (((flags & UNMANAGED_MEMBERS) != 0) || ((flags & (MANAGED_MEMBERS | UNMANAGED_MEMBERS | IGNORED_MEMBERS)) == 0));
+	
 		for (int i = 0; i < resources.length; i++) {
 			ISVNResource svnResource = resources[i];
-			if ((includeFiles && ( ! svnResource.isContainer())) 
-					|| (includeFolders && (svnResource.isContainer()))) {
+			if ((includeFiles && ( ! svnResource.isFolder())) 
+					|| (includeFolders && (svnResource.isFolder()))) {
 				if (includeManaged) {
 					result.add(svnResource);
 				}
@@ -211,7 +204,13 @@ public class RemoteFolder extends SVNRemoteResource implements ISVNRemoteFolder,
 		return (ISVNResource[]) result.toArray(new ISVNResource[result.size()]);
 	}
 	
-	
+	/**
+	 * @see ISVNResource#isFolder()
+	 */
+	public boolean isFolder() {
+		return true;
+	}
+
 	/*
 	 * @see IRemoteResource#isContainer()
 	 */
@@ -226,12 +225,7 @@ public class RemoteFolder extends SVNRemoteResource implements ISVNRemoteFolder,
 		return getMembers(progress);
 	}
 
-	/*
-	 * @see IRemoteResource#getContents(IProgressMonitor)
-	 */
-	public InputStream getContents(IProgressMonitor progress) throws TeamException {
-		return null;
-	}
+	
     
     /**
      * creates a new remote folder 
@@ -254,79 +248,47 @@ public class RemoteFolder extends SVNRemoteResource implements ISVNRemoteFolder,
         }
     }    
 
-    public String getCreatorDisplayName(){
-        return this.getAuthor();
-    }
+    
     public String getContentIdentifier(){
         return this.getRevision().toString();
     }
-    public String getComment() throws SVNException{
-        ILogEntry[] entries = getLogEntries(new NullProgressMonitor());
-        if(entries == null || entries.length ==0) {
-            return "None";
-        }else {
-            return entries[0].getComment();
-        }
-    }
+   
 
-    public IStorage getBufferedStorage(IProgressMonitor monitor) throws TeamException
+    public IStorage getBufferedStorage(IProgressMonitor monitor)
     {
-        return null;
+    	return null;
     }
 
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.subclipse.core.ISVNRemoteFolder#members()
+	 * @see org.eclipse.team.core.variants.CachedResourceVariant#fetchContents(org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public ISVNRemoteResource[] members() {
-		return children;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.core.variants.IResourceVariantTree#roots()
-	 */
-	public IResource[] roots() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.core.variants.IResourceVariantTree#members(org.eclipse.core.resources.IResource)
-	 */
-	public IResource[] members(IResource resource) throws TeamException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.core.variants.IResourceVariantTree#getResourceVariant(org.eclipse.core.resources.IResource)
-	 */
-	public IResourceVariant getResourceVariant(IResource resource) throws TeamException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.core.variants.IResourceVariantTree#hasResourceVariant(org.eclipse.core.resources.IResource)
-	 */
-	public boolean hasResourceVariant(IResource resource) throws TeamException {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.core.variants.IResourceVariantTree#refresh(org.eclipse.core.resources.IResource[], int, org.eclipse.core.runtime.IProgressMonitor)
-	 */
-	public IResource[] refresh(IResource[] resources, int depth, IProgressMonitor monitor) throws TeamException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.core.variants.IResourceVariantTree#flushVariants(org.eclipse.core.resources.IResource, int)
-	 */
-	public void flushVariants(IResource resource, int depth) throws TeamException {
-		// TODO Auto-generated method stub
+	protected void fetchContents(IProgressMonitor monitor){
+	
 		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.variants.CachedResourceVariant#getCachePath()
+	 */
+	protected String getCachePath() {
+		return this.getUrl().toString();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.variants.CachedResourceVariant#getCacheId()
+	 */
+	protected String getCacheId() {
+		return SVNProviderPlugin.ID;
+	}
+
+	
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.variants.IResourceVariant#asBytes()
+	 */
+	public byte[] asBytes() {
+
+		return getCachePath().getBytes();
 	}
 
     

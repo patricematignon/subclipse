@@ -12,8 +12,6 @@
 package org.tigris.subversion.subclipse.core;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.variants.IResourceVariantTree;
 
  
 
@@ -23,16 +21,9 @@ import org.eclipse.team.core.variants.IResourceVariantTree;
   * 
   * Clients are not expected to implement this interface.
   */
-public interface ISVNRemoteFolder extends ISVNRemoteResource, ISVNFolder,IResourceVariantTree  {
+public interface ISVNRemoteFolder extends ISVNRemoteResource, ISVNFolder{
 
     void createRemoteFolder(String folderName, String message,IProgressMonitor monitor) throws SVNException;	
 	
     void refresh();
-    
-    /**
-     * get this resource's child resources.
-     * @return
-     * @todo Generated comment
-     */
-    public ISVNRemoteResource[] members(IProgressMonitor monitor)throws TeamException;
 }

@@ -49,7 +49,7 @@ public class RemoveRootAction extends SelectionListenerAction {
 		ArrayList resources = null;
 		if (selection!=null && !selection.isEmpty()) {
 			resources = new ArrayList();
-			Iterator elements = ((IStructuredSelection) selection).iterator();
+			Iterator elements = selection.iterator();
 			while (elements.hasNext()) {
 				Object next = SVNAction.getAdapter(elements.next(), ISVNRepositoryLocation.class);
 				if (next instanceof ISVNRepositoryLocation) {

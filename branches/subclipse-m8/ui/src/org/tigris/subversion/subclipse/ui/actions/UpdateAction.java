@@ -38,7 +38,7 @@ public class UpdateAction extends WorkspaceAction {
 	 */
 	public void execute(IAction action) throws InterruptedException, InvocationTargetException {
 		run(new WorkspaceModifyOperation() {
-			public void execute(IProgressMonitor monitor) throws InterruptedException, InvocationTargetException {
+			public void execute(IProgressMonitor monitor) throws InvocationTargetException {
 				try {					
                     // maps the selected resources to their providers
 					Hashtable table = getProviderMapping();

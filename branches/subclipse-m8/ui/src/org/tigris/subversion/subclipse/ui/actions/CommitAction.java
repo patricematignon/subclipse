@@ -51,7 +51,7 @@ public class CommitAction extends WorkspaceAction {
 		final String[] comment = new String[] {null};
 		final IResource[][] resourcesToBeAdded = new IResource[][] { null };
 		run(new IRunnableWithProgress() {
-			public void run(IProgressMonitor monitor) throws InterruptedException, InvocationTargetException {
+			public void run(IProgressMonitor monitor) throws InvocationTargetException {
 				try {
 					// search for any non-added, non-ignored resources in the selection
 					IResource[] unadded = getUnaddedResources(resources, monitor);
@@ -67,7 +67,7 @@ public class CommitAction extends WorkspaceAction {
 		if (comment[0] == null) return; // user canceled
 		
 		run(new WorkspaceModifyOperation() {
-			public void execute(IProgressMonitor monitor) throws InterruptedException, InvocationTargetException {
+			public void execute(IProgressMonitor monitor) throws  InvocationTargetException {
 				try {
 					// execute the add and commit in a single SVN runnable so sync changes are batched
 					SVNProviderPlugin.run(
@@ -110,7 +110,7 @@ public class CommitAction extends WorkspaceAction {
 			    // visit each resource deeply
 			    try {
 				    resource.accept(new IResourceVisitor() {
-					public boolean visit(IResource resource) throws CoreException {
+					public boolean visit(IResource resource) {
 						ISVNLocalResource svnResource = SVNWorkspaceRoot.getSVNResourceFor(resource);
 						// skip ignored resources and their children
 						try {

@@ -14,8 +14,8 @@ package org.tigris.subversion.subclipse.core.resources;
 import java.util.Date;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.variants.CachedResourceVariant;
 import org.tigris.subversion.subclipse.core.ISVNRemoteFolder;
 import org.tigris.subversion.subclipse.core.ISVNRemoteResource;
 import org.tigris.subversion.subclipse.core.ISVNRepositoryLocation;
@@ -35,8 +35,8 @@ import org.tigris.subversion.svnclientadapter.SVNUrl;
  * resources that reside in a SVN repository but have not necessarily been loaded
  * locally.
  */
-public abstract class SVNRemoteResource
-	extends PlatformObject
+public abstract class RemoteResource
+	extends CachedResourceVariant
 	implements ISVNRemoteResource {
 
 	protected RemoteFolder parent;
@@ -52,7 +52,7 @@ public abstract class SVNRemoteResource
 	/**
 	 * Constructor for RemoteResource.
 	 */
-	public SVNRemoteResource(
+	public RemoteResource(
 		RemoteFolder parent,
 		ISVNRepositoryLocation repository,
 		SVNUrl url,
@@ -81,7 +81,7 @@ public abstract class SVNRemoteResource
     /**
      * this constructor is used for the folder corresponding to repository location
      */
-    public SVNRemoteResource(ISVNRepositoryLocation repository, SVNUrl url, SVNRevision revision) {
+    public RemoteResource(ISVNRepositoryLocation repository, SVNUrl url, SVNRevision revision) {
         this.parent = null;
         this.repository = repository;
         this.url = url;
@@ -126,9 +126,9 @@ public abstract class SVNRemoteResource
 	public boolean equals(Object target) {
 		if (this == target)
 			return true;
-		if (!(target instanceof SVNRemoteResource))
+		if (!(target instanceof RemoteResource))
 			return false;
-		SVNRemoteResource remote = (SVNRemoteResource) target;
+		RemoteResource remote = (RemoteResource) target;
 		return remote.isContainer() == isContainer() && remote.getUrl().equals(getUrl());
 	}
 
