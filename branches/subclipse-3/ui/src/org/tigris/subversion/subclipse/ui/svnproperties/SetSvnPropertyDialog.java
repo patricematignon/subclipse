@@ -215,7 +215,7 @@ public class SetSvnPropertyDialog extends Dialog {
 		if (!svnResource.isFolder()) {
 			recurseCheckbox.setEnabled(false);
 		}
-		recurseCheckbox.addListener(SWT.Modify,updatePropertiesListener);
+		recurseCheckbox.addListener(SWT.Selection, updatePropertiesListener);
 	
 		// status message
 		statusMessageLabel = new Label(area, SWT.LEFT);
