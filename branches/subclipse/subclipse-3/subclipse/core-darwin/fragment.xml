@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<fragment
+   id="org.tigris.subversion.subclipse.native.aqua.ppc"
+   name="subclipse Macintosh native support"
+   version="0.8.1"
+   provider-name="%tigris"
+   plugin-id="org.tigris.subversion.subclipse.core"
+   plugin-version="0.8.1"
+   match="perfect">
+
+   <runtime>
+   </runtime>
+
+
+</fragment>
