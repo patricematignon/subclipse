@@ -22,13 +22,13 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.internal.ui.dialogs.IPromptCondition;
-import org.eclipse.team.internal.ui.dialogs.PromptingDialog;
 import org.tigris.subversion.subclipse.core.ISVNLocalResource;
 import org.tigris.subversion.subclipse.core.SVNException;
 import org.tigris.subversion.subclipse.core.SVNProviderPlugin;
 import org.tigris.subversion.subclipse.core.resources.SVNWorkspaceRoot;
 import org.tigris.subversion.subclipse.ui.Policy;
+import org.tigris.subversion.subclipse.ui.util.PromptingDialog;
+import org.tigris.subversion.subclipse.ui.util.IPromptCondition;
 
 /**
  * This class represents an action performed on a local SVN workspace

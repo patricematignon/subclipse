@@ -15,7 +15,6 @@ import java.lang.reflect.InvocationTargetException;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.internal.ui.dialogs.IPromptCondition;
 import org.tigris.subversion.subclipse.ui.Policy;
 import org.tigris.subversion.subclipse.ui.operations.ReplaceOperation;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
@@ -36,11 +35,6 @@ public class ReplaceWithRemoteAction extends WorkspaceAction {
 		// Peform the replace in the background
 		new ReplaceOperation(getTargetPart(), resources[0], SVNRevision.HEAD).run();
 	}
-	
-	
-	protected IPromptCondition getPromptCondition(IResource[] dirtyResources) {
-		return getOverwriteLocalChangesPrompt(dirtyResources);
-	}	
 	
 	/**
 	 * @see org.eclipse.team.internal.ccvs.ui.actions.CVSAction#getErrorTitle()

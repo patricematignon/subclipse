@@ -18,7 +18,6 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.ui.SaveablePartDialog;
 import org.tigris.subversion.subclipse.ui.Policy;
 import org.tigris.subversion.subclipse.ui.compare.SVNCompareRevisionsInput;
@@ -71,7 +70,7 @@ public class ReplaceWithRevisionAction extends CompareWithRevisionAction {
 				try {
 					input.replaceLocalWithCurrentlySelectedRevision();
 				} catch (CoreException e) {
-					Utils.handle(e);
+					handle(e);
 				}
 				buttonId = IDialogConstants.OK_ID;
 			}
