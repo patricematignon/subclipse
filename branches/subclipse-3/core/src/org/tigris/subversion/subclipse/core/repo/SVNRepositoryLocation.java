@@ -7,7 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     C?dric Chabanois (cchabanois@ifrance.com) - modified for Subversion 
+ *     Cédric Chabanois (cchabanois@ifrance.com) - modified for Subversion 
  *******************************************************************************/
 package org.tigris.subversion.subclipse.core.repo;
 
@@ -334,25 +334,18 @@ public void validateConnection(IProgressMonitor monitor) throws SVNException {
 	}
 }
 
-
-
 /*
- *  This is a utility method to determine if a repository location exists before we try to import to it.
- * Ripped generously from validateConnection and getClient().  Return null if it exists, return an error message if it doesn't.
- * @author mml
+ *  this should be made more robust --mml 11/27/03
  * @see org.tigris.subversion.subclipse.core.ISVNRepositoryLocation#pathExists()
  */
-public static boolean pathExists(String url, String username, String password)throws MalformedURLException, SVNClientException{
-	
-	ISVNClientAdapter svnClient =
-	SVNProviderPlugin.getPlugin().createSVNClient();
-	svnClient.addNotifyListener(NotificationListener.getInstance());
-	svnClient.setUsername(username);
-	if (password != null){
-		svnClient.setPassword(password);
+public boolean pathExists(){
+	ISVNClientAdapter svnClient = getSVNClient();
+	try{
+		svnClient.getList(getUrl(), SVNRevision.HEAD, false);
+	}catch(SVNClientException e){
+		return false;
 	}
-			svnClient.getList(new SVNUrl(url), SVNRevision.HEAD, false);
-			return true;
+	return true;
 }
 
 /*
