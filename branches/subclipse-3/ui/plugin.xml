@@ -60,8 +60,8 @@
       <view
             icon="icons/full/clcl16/properties.png"
             class="org.tigris.subversion.subclipse.ui.svnproperties.SvnPropertiesView"
-            category="org.tigris.subversion.subclipse"
             name="%SvnPropertiesView.name"
+            category="org.tigris.subversion.subclipse"
             id="org.tigris.subversion.subclipse.ui.svnproperties.SvnPropertiesView">
       </view>
    </extension>

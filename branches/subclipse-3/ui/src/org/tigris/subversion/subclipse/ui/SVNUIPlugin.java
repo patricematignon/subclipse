@@ -422,6 +422,7 @@ public class SVNUIPlugin extends AbstractUIPlugin {
         return display;     
     }
 
+	
     /**
      * Returns the image descriptor for the given image ID.
      * Returns null if there is no such image.

@@ -43,8 +43,7 @@ public class RevertAction extends WorkspaceAction {
 					if (action != null) action.setEnabled(isEnabled());
 				} catch (TeamException e) {
 					throw new InvocationTargetException(e);
-				}
-				catch (CoreException e) {
+				} catch (CoreException e) {
 					throw new InvocationTargetException(e);
 				}
 			}
