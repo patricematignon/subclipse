@@ -267,7 +267,8 @@ public class SVNWorkspaceSubscriber extends Subscriber implements IResourceState
                         //if the resource is a locally added folder then
                         //add it's members
                         if( changedResource.exists() 
-                                && status.getRevision() == null ) {
+                                && status.getRevision() == null 
+                                && status.getTextStatus() != SVNStatusKind.EXTERNAL) {
                             addLocalContainerStatusInfo((IContainer) changedResource, allChanges);
                         }
                     }

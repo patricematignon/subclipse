@@ -73,6 +73,8 @@ public class SVNStatusSyncInfo extends SyncInfo {
                 return SyncInfo.INCOMING | SyncInfo.ADDITION;
             return SyncInfo.INCOMING | SyncInfo.CHANGE;
         }
+        else if( localKind == SVNStatusKind.EXTERNAL)
+            return SyncInfo.IN_SYNC;
 
        return SyncInfo.IN_SYNC;
     }
@@ -89,7 +91,6 @@ public class SVNStatusSyncInfo extends SyncInfo {
     }
     private boolean isNotModified(SVNStatusKind kind) {
         return kind == SVNStatusKind.NORMAL
-              || kind == SVNStatusKind.EXTERNAL
               || kind == SVNStatusKind.IGNORED;
     }
     private static boolean isAddition(SVNStatusKind kind) {
