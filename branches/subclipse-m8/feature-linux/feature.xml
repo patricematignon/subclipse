@@ -6,6 +6,7 @@
       provider-name="tigris.org"
       os="linux"
       ws="gtk"
+      nl="de,en_US,fr"
       arch="x86">
 
    <install-handler/>
@@ -164,22 +165,22 @@ This Agreement is governed by the laws of the State of New York and the intellec
    </requires>
 
    <plugin
-         id="org.tigris.subversion.javahl.linux"
-         download-size="0"
-         install-size="0"
-         version="0.9.0"
-         fragment="true"/>
-
-   <plugin
          id="org.tigris.subversion.subclipse.core"
          download-size="0"
          install-size="0"
-         version="0.9.0"/>
+         version="0.9.3"/>
 
    <plugin
          id="org.tigris.subversion.subclipse.ui"
          download-size="0"
          install-size="0"
-         version="0.9.0"/>
+         version="0.9.3"/>
+
+   <plugin
+         id="org.tigris.subversion.javahl.linux"
+         download-size="0"
+         install-size="0"
+         version="0.9.3"
+         fragment="true"/>
 
 </feature>
