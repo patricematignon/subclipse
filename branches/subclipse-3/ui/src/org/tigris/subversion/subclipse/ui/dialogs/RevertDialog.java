@@ -87,7 +87,9 @@ public class RevertDialog extends Dialog {
 		Label label = createWrappingLabel(composite);
 		label.setText(Policy.bind("RevertDialog.resources")); //$NON-NLS-1$
 		// add the selectable checkbox list
-		Table table = new Table(composite, SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.MULTI | SWT.CHECK);
+		Table table = new Table(composite, 
+                SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | 
+                SWT.MULTI | SWT.CHECK | SWT.BORDER);
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);
 		TableLayout layout = new TableLayout();
