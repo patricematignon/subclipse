@@ -21,7 +21,11 @@
 	<classpathentry kind="var" path="ECLIPSE_HOME/plugins/org.apache.xerces_4.0.13/xmlParserAPIs.jar"/>
 	<classpathentry kind="var" path="ECLIPSE_HOME/plugins/org.apache.xerces_4.0.13/xercesImpl.jar"/>
 	<classpathentry kind="src" path="/core"/>
-	<classpathentry sourcepath="ORG_ECLIPSE_PLATFORM_SOURCE_SRC/org.eclipse.core.boot_3.0.0/bootsrc.zip" kind="var" path="ECLIPSE_HOME/plugins/org.eclipse.core.boot_3.0.0/boot.jar"/>
+	<classpathentry sourcepath="ORG_ECLIPSE_PLATFORM_SOURCE_SRC/org.eclipse.osgi_3.0.0/osgisrc.zip" kind="var" path="ECLIPSE_HOME/plugins/org.eclipse.osgi_3.0.0/osgi.jar"/>
+	<classpathentry sourcepath="ORG_ECLIPSE_PLATFORM_SOURCE_SRC/org.eclipse.osgi_3.0.0/coresrc.zip" kind="var" path="ECLIPSE_HOME/plugins/org.eclipse.osgi_3.0.0/core.jar"/>
+	<classpathentry sourcepath="ORG_ECLIPSE_PLATFORM_SOURCE_SRC/org.eclipse.osgi_3.0.0/resolversrc.zip" kind="var" path="ECLIPSE_HOME/plugins/org.eclipse.osgi_3.0.0/resolver.jar"/>
+	<classpathentry sourcepath="ORG_ECLIPSE_PLATFORM_SOURCE_SRC/org.eclipse.osgi_3.0.0/defaultAdaptorsrc.zip" kind="var" path="ECLIPSE_HOME/plugins/org.eclipse.osgi_3.0.0/defaultAdaptor.jar"/>
+	<classpathentry sourcepath="ORG_ECLIPSE_PLATFORM_SOURCE_SRC/org.eclipse.osgi_3.0.0/eclipseAdaptorsrc.zip" kind="var" path="ECLIPSE_HOME/plugins/org.eclipse.osgi_3.0.0/eclipseAdaptor.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path="classes"/>
 </classpath>

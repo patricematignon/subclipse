@@ -46,7 +46,7 @@ public class SVNLocalCompareEditorInput extends SVNSyncCompareInput {
 		try {
 			for (int i = 0; i < trees.length; i++) {
 				IResource resource = resources[i];	
-                IRemoteResource remote = SVNWorkspaceRoot.getRemoteResourceFor(resource);
+                IRemoteResource remote = SVNWorkspaceRoot.getLatestResourceFor(resource);
     			trees[i] = new SVNRemoteSyncElement(false /* two-way */, resource, null, remote);				 
 			}
 		} finally {

@@ -3,7 +3,7 @@
 <plugin
    id="org.tigris.subversion.subclipse.core"
    name="%pluginName"
-   version="0.8.1"
+   version="0.8.6"
    provider-name="%providerName"
    class="org.tigris.subversion.subclipse.core.SVNProviderPlugin">
 
@@ -11,7 +11,7 @@
       <library name="svnClientAdapter.jar">
          <export name="*"/>
       </library>
-      <library name="javahl.jar">
+      <library name="svnjavahl.jar">
          <export name="*"/>
       </library>
       <library name="SVNPluginCore.jar">
@@ -19,16 +19,12 @@
       </library>
    </runtime>
    <requires>
-      <import plugin="org.eclipse.ui.ide"/>
-      <import plugin="org.eclipse.ui.views"/>
-      <import plugin="org.eclipse.jface.text"/>
-      <import plugin="org.eclipse.ui.workbench.texteditor"/>
-      <import plugin="org.eclipse.ui.editors"/>
       <import plugin="org.eclipse.core.resources"/>
       <import plugin="org.eclipse.ui"/>
       <import plugin="org.eclipse.team.core"/>
       <import plugin="org.apache.xerces"/>
-      <import plugin="org.eclipse.platform" version="3.0.0" match="compatible"/>
+      <import plugin="org.eclipse.core.runtime"/>
+      <import plugin="org.eclipse.osgi"/>
    </requires>
 
 
