@@ -292,7 +292,12 @@ public class ConfigurationWizardMainPage extends SVNWizardPage {
         ChooseRootUrlDialog dialog = new ChooseRootUrlDialog(getShell(),reposUrl);
 
         if (dialog.open() == Window.OK) {
-            rootUrlText.setText(dialog.getRootUrl().toString());
+            SVNUrl rootUrl = dialog.getRootUrl();
+            if (rootUrl != null) {
+                rootUrlText.setText(rootUrl.toString());
+            } else {
+                rootUrlText.setText(""); //$NON-NLS-1$
+            }
         }        
     }    
     
