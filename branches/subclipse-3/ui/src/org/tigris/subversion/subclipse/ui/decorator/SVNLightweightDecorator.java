@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceVisitor;
@@ -44,6 +45,7 @@ import org.tigris.subversion.subclipse.core.SVNTeamProvider;
 import org.tigris.subversion.subclipse.core.resources.LocalResourceStatus;
 import org.tigris.subversion.subclipse.core.resources.SVNWorkspaceRoot;
 import org.tigris.subversion.subclipse.ui.ISVNUIConstants;
+import org.tigris.subversion.subclipse.ui.Policy;
 import org.tigris.subversion.subclipse.ui.SVNUIPlugin;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
 import org.tigris.subversion.svnclientadapter.SVNStatusKind;
@@ -334,7 +336,12 @@ public class SVNLightweightDecorator
 	 * Return null if no overlay is to be used.
 	 */	
 	public ImageDescriptor getOverlay(IResource resource, boolean isDirty, SVNTeamProvider provider) {
-        ISVNLocalResource svnResource = SVNWorkspaceRoot.getSVNResourceFor(resource);
+	    try {
+	        resource.deleteMarkers("org.tigris.subversion.subclipse.ui.conflictMarker", true, IResource.DEPTH_ZERO); //$NON-NLS-1$
+	    } catch (Exception e) {
+	        SVNUIPlugin.log(e.getMessage());
+	    }
+	    ISVNLocalResource svnResource = SVNWorkspaceRoot.getSVNResourceFor(resource);
         
 		// show newResource icon
 		if (showNewResources) {
@@ -382,6 +389,13 @@ public class SVNLightweightDecorator
 					return added;
                 }
                 if (status.isTextConflicted()) {
+                    try {
+                        IMarker marker = resource.createMarker("org.tigris.subversion.subclipse.ui.conflictMarker"); //$NON-NLS-1$
+                        marker.setAttribute(IMarker.MESSAGE, Policy.bind("SVNConflicts")); //$NON-NLS-1$
+                        marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_WARNING);
+                    } catch (Exception e) {
+                        SVNUIPlugin.log(e.getMessage());
+                    }
                 	return conflicted;
                 }
 			} catch (SVNException e) {

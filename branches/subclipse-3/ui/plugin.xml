@@ -725,6 +725,20 @@
 	            id="svn_comment_font">
 	         <description>%commitCommentFont.description</description>
 	    </fontDefinition>   	
+	</extension>
+	
+	<extension point="org.eclipse.core.resources.markers"
+		id="conflictMarker" name="%conflictMarker">
+		<super type="org.eclipse.core.resources.problemmarker"/>
+		<persistent value="true"/>
+	</extension>
+	
+	<extension
+		point="org.eclipse.ui.ide.markerResolution">
+		<markerResolutionGenerator
+			class="org.tigris.subversion.subclipse.ui.decorator.ConflictResolutionGenerator"
+			markerType="org.tigris.subversion.subclipse.ui.conflictMarker">
+		</markerResolutionGenerator>
 	</extension>   
 
 </plugin>

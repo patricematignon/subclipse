@@ -38,6 +38,16 @@ import org.tigris.subversion.svnclientadapter.utils.Command;
  * Action to edit conflicts
  */
 public class EditConflictsAction extends WorkspaceAction {
+    private IFile selectedResource;
+    
+    public EditConflictsAction() {
+        super();
+    }
+    
+    public EditConflictsAction(IFile selectedResource) {
+        this();
+        this.selectedResource = selectedResource;
+    }
 
     /**
      * edit the conflicts using built-in merger
@@ -125,8 +135,11 @@ public class EditConflictsAction extends WorkspaceAction {
         run(new WorkspaceModifyOperation() {
             public void execute(IProgressMonitor monitor)
                     throws CoreException, InvocationTargetException, InterruptedException {
-
-                IFile resource = (IFile) getSelectedResources()[0];
+                IFile resource;
+                if (selectedResource == null)
+                    resource = (IFile) getSelectedResources()[0];
+                else
+                    resource = selectedResource;
                 ISVNLocalResource svnResource = SVNWorkspaceRoot
                         .getSVNResourceFor(resource);
                 try {
