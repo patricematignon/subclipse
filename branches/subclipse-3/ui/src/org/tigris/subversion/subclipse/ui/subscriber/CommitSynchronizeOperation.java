@@ -28,6 +28,7 @@ import org.tigris.subversion.subclipse.core.ISVNLocalResource;
 import org.tigris.subversion.subclipse.core.SVNException;
 import org.tigris.subversion.subclipse.core.SVNTeamProvider;
 import org.tigris.subversion.subclipse.core.resources.SVNWorkspaceRoot;
+import org.tigris.subversion.subclipse.ui.Policy;
 import org.tigris.subversion.subclipse.ui.dialogs.CommitDialog;
 import org.tigris.subversion.subclipse.ui.operations.CommitOperation;
 import org.tigris.subversion.subclipse.ui.settings.ProjectProperties;
@@ -36,7 +37,6 @@ import org.tigris.subversion.subclipse.ui.settings.ProjectProperties;
  * Sync view operation for putting file system resources
  */
 public class CommitSynchronizeOperation extends SVNSynchronizeOperation {
-	private SyncInfoSet syncSet;
     private String commitComment;
     private IResource[] resourcesToCommit;
     private String url;
@@ -48,28 +48,13 @@ public class CommitSynchronizeOperation extends SVNSynchronizeOperation {
 		this.url = url;
 	}
 	
-	protected SyncInfoSet getSyncInfoSet() {
-		if (syncSet == null) {
-			syncSet = super.getSyncInfoSet();
-			if (!promptForConflictHandling(getShell(), syncSet)) {
-				syncSet.clear();
-				return syncSet;
-			}
-			if (!confirmCommit()) {
-			    syncSet.clear();
-			    return syncSet;
-			}
-		}
-	    return syncSet;
-	}
-	
-	private boolean confirmCommit() {
+	private boolean confirmCommit(SyncInfoSet set) {
 	    commit = false;
-	    IResource[] modified = syncSet.getResources();
+	    IResource[] modified = set.getResources();
 	    if (modified.length > 0) {
 	        try {
                 ProjectProperties projectProperties = ProjectProperties.getProjectProperties(modified[0]);
-                IResource[] unaddedResources = getUnaddedResources();
+                IResource[] unaddedResources = getUnaddedResources(set);
                 final CommitDialog dialog = new CommitDialog(getShell(), modified, url, unaddedResources.length > 0, projectProperties);
         		getShell().getDisplay().syncExec(new Runnable() {
         			public void run() {
@@ -91,23 +76,6 @@ public class CommitSynchronizeOperation extends SVNSynchronizeOperation {
 	 * @see org.eclipse.team.examples.filesystem.ui.FileSystemSynchronizeOperation#promptForConflictHandling(org.eclipse.swt.widgets.Shell, org.eclipse.team.core.synchronize.SyncInfoSet)
 	 */
 	protected boolean promptForConflictHandling(Shell shell, SyncInfoSet syncSet) {
-		// If there is a conflict in the syncSet, we need to prompt the user before proceeding.
-		if (syncSet.hasConflicts() || syncSet.hasIncomingChanges()) {
-			switch (promptForConflicts(shell, syncSet)) {
-			case 0:
-				// Yes, synchronize conflicts as well
-				break;
-			case 1:
-				// No, stop here
-				syncSet.removeConflictingNodes();
-				syncSet.removeIncomingNodes();
-				break;
-			case 2:
-			default:
-				// Cancel
-				return false;
-			}	
-		}
 		return true;
 	}
 	
@@ -117,9 +85,9 @@ public class CommitSynchronizeOperation extends SVNSynchronizeOperation {
 	 * @return 0 to sync conflicts, 1 to sync all non-conflicts, 2 to cancel
 	 */
 	private int promptForConflicts(Shell shell, SyncInfoSet syncSet) {
-		String[] buttons = new String[] {IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL, IDialogConstants.CANCEL_LABEL};
-		String title = "Confirm Overwrite"; //$NON-NLS-1$
-		String question = "You have changes that conflict with the server. Release those changes?"; //$NON-NLS-1$
+		String[] buttons = new String[] {IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL};
+		String title = Policy.bind("SyncAction.commit.conflict.title"); //$NON-NLS-1$
+		String question = Policy.bind("SyncAction.commit.conflict.question"); //$NON-NLS-1$
 		final MessageDialog dialog = new MessageDialog(shell, title, null, question, MessageDialog.QUESTION, buttons, 0);
 		shell.getDisplay().syncExec(new Runnable() {
 			public void run() {
@@ -129,8 +97,8 @@ public class CommitSynchronizeOperation extends SVNSynchronizeOperation {
 		return dialog.getReturnCode();
 	}
 	
-	private IResource[] getUnaddedResources() {
-		IResource[] resources = syncSet.getResources();
+	private IResource[] getUnaddedResources(SyncInfoSet set) {
+	    IResource[] resources = set.getResources();
 		List result = new ArrayList();
 		for (int i = 0; i < resources.length; i++) {
 			IResource resource = resources[i];
@@ -177,8 +145,21 @@ public class CommitSynchronizeOperation extends SVNSynchronizeOperation {
 	 * @see org.eclipse.team.examples.filesystem.ui.FileSystemSynchronizeOperation#run(org.eclipse.team.examples.filesystem.FileSystemProvider, org.eclipse.team.core.synchronize.SyncInfoSet, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	protected void run(SVNTeamProvider provider, SyncInfoSet set, IProgressMonitor monitor) {
-		//SVNOperations.getInstance().checkin(set.getResources(), IResource.DEPTH_INFINITE, true, monitor);
-	    if (commit) {
+		if (set.hasConflicts() || set.hasIncomingChanges()) {
+			switch (promptForConflicts(getShell(), set)) {
+			case 0:
+				// Yes, commit non-conflicts
+				set.removeConflictingNodes();
+				set.removeIncomingNodes();
+				break;
+			case 1:
+				// No, stop here
+				return;
+			default:
+				return;
+			}	
+		}
+	    if (confirmCommit(set)) {
 	        final IResource[][] resourcesToBeAdded = new IResource[][] { null };
 		    List toBeAddedList = new ArrayList();
 		    for (int i = 0; i < resourcesToCommit.length; i++) {
