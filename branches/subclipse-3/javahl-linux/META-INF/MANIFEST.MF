@@ -4,5 +4,5 @@ Bundle-SymbolicName: org.tigris.subversion.javahl.linux
 Bundle-Vendor: tigris.org
 Bundle-Name: Linux Fragment
 Bundle-ClassPath: linux.jar
-Fragment-Host: org.tigris.subversion.subclipse.core;bundle-version="0.9.9"
-Bundle-Version: 0.9.9
+Fragment-Host: org.tigris.subversion.subclipse.core;bundle-version="0.9.10"
+Bundle-Version: 0.9.10
