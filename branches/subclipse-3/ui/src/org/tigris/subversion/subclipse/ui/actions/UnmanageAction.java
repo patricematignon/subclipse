@@ -148,7 +148,7 @@ public class UnmanageAction extends WorkspaceAction {
 			public void execute(IProgressMonitor monitor) throws InvocationTargetException {
 				try {
 					// maps the selected resources (projects) to their providers
-                    Hashtable table = getProviderMapping();
+                    Hashtable table = getProviderMapping(getSelectedResources());
 					Set keySet = table.keySet();
 					monitor.beginTask("", keySet.size() * 1000); //$NON-NLS-1$
 					monitor.setTaskName(Policy.bind("Unmanage.unmanaging")); //$NON-NLS-1$

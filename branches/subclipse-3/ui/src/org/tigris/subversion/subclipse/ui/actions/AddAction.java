@@ -47,7 +47,7 @@ public class AddAction extends WorkspaceAction {
 			public void execute(IProgressMonitor monitor) throws InvocationTargetException {
 				try {
                     // associate the resources with their respective RepositoryProvider					
-					Hashtable table = getProviderMapping();
+					Hashtable table = getProviderMapping(getSelectedResources());
 					Set keySet = table.keySet();
 					monitor.beginTask("", keySet.size() * 1000); //$NON-NLS-1$
 					monitor.setTaskName(Policy.bind("AddAction.adding")); //$NON-NLS-1$
