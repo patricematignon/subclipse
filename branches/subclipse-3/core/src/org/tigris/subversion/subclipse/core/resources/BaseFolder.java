@@ -43,11 +43,10 @@ public class BaseFolder extends RemoteFolder implements ISVNRemoteFolder {
 	 */
 	public BaseFolder( 
 			ISVNLocalResource localResource,
-	        boolean hasProps,
 	        SVNRevision.Number lastChangedRevision,
 	        Date date,
 	        String author) throws SVNException {
-		super(null, localResource.getRepository(), localResource.getUrl(), SVNRevision.BASE,hasProps, lastChangedRevision, date, author);
+		super(null, localResource.getRepository(), localResource.getUrl(), SVNRevision.BASE, lastChangedRevision, date, author);
 		Assert.isNotNull(localResource);
 		this.localResource = localResource;
 	}
@@ -84,7 +83,6 @@ public class BaseFolder extends RemoteFolder implements ISVNRemoteFolder {
 				{
 				    result.add(new BaseFolder(
 	                   new LocalFolder(container.getFolder(new Path(entry.getPath()))), 
-                       entry.getHasProps(),
                        entry.getLastChangedRevision(),
                        entry.getLastChangedDate(),
                        entry.getLastCommitAuthor()));
@@ -99,7 +97,6 @@ public class BaseFolder extends RemoteFolder implements ISVNRemoteFolder {
 				{
 					result.add(new BaseFile(
                         new LocalFile(container.getFile(new Path(entry.getPath()))), 
-                        entry.getHasProps(),
                         entry.getLastChangedRevision(),
                         entry.getLastChangedDate(),
                         entry.getLastCommitAuthor()));

@@ -152,8 +152,10 @@ public class SVNRepositoryLocation
 		}
 	}
 
+
 	/*
-	 * @see ISVNRepositoryLocation#getRemoteFolder(String)
+	 * (non-Javadoc)
+	 * @see org.tigris.subversion.subclipse.core.ISVNRepositoryLocation#getRemoteFolder(java.lang.String)
 	 */
 	public ISVNRemoteFolder getRemoteFolder(String remotePath) {
 		try {
@@ -166,6 +168,10 @@ public class SVNRepositoryLocation
 		}
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see org.tigris.subversion.subclipse.core.ISVNRepositoryLocation#getRemoteFile(org.tigris.subversion.svnclientadapter.SVNUrl)
+	 */
 	public ISVNRemoteFile getRemoteFile(SVNUrl url) throws SVNException{
 		ISVNClientAdapter svnClient = getSVNClient();
 		ISVNDirEntry dirEntry = null;
@@ -184,7 +190,6 @@ public class SVNRepositoryLocation
 			this,
 				url,
 				SVNRevision.HEAD,
-				dirEntry.getHasProps(),
 				dirEntry.getLastChangedRevision(),
 				dirEntry.getLastChangedDate(),
 				dirEntry.getLastCommitAuthor());

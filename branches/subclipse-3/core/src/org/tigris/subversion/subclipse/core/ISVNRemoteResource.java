@@ -53,11 +53,6 @@ public interface ISVNRemoteResource extends ISVNResource, IAdaptable, IResourceV
 	public boolean equals(Object other);
 
     /**
-     * @return true if this remote resource has properties
-     */
-    public boolean getHasProps();
-
-    /**
      * @return the last changed revision of this remote resource
      */
     public SVNRevision.Number getLastChangedRevision();

@@ -22,7 +22,6 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.Team;
-import org.tigris.subversion.subclipse.core.ISVNLocalFile;
 import org.tigris.subversion.subclipse.core.ISVNLocalFolder;
 import org.tigris.subversion.subclipse.core.ISVNLocalResource;
 import org.tigris.subversion.subclipse.core.ISVNRemoteResource;
@@ -238,13 +237,19 @@ public abstract class LocalResource implements ISVNLocalResource, Comparable {
         return getRemoteResource(SVNRevision.HEAD); 
     }
 
-    /**
-     * get the base for this local resource
-     * @return
-     * @throws SVNException
+    /*
+     * (non-Javadoc)
+     * @see org.tigris.subversion.subclipse.core.ISVNLocalResource#getBaseResource()
      */
     public ISVNRemoteResource getBaseResource() throws SVNException {
-        ISVNClientAdapter svnClient = getRepository().getSVNClient();
+		// this is what we used previously
+		// see in LocalFile and LocalFolder for new implementation
+		// we can't use that for now because it is too slow
+		// repository is contacted (it should not be)
+    	return null;
+
+		/*
+    	ISVNClientAdapter svnClient = getRepository().getSVNClient();
 		ISVNDirEntry dirEntry;
 		try {
         	dirEntry = svnClient.getDirEntry(getFile(),SVNRevision.BASE);
@@ -272,7 +277,7 @@ public abstract class LocalResource implements ISVNLocalResource, Comparable {
                     dirEntry.getLastChangedDate(),
                     dirEntry.getLastCommitAuthor()
                 );                
-        }
+        }*/
     }
     
     /**
@@ -309,7 +314,6 @@ public abstract class LocalResource implements ISVNLocalResource, Comparable {
                     getRepository(),
                     url,
                     revision,
-                    dirEntry.getHasProps(),
                     dirEntry.getLastChangedRevision(),
                     dirEntry.getLastChangedDate(),
                     dirEntry.getLastCommitAuthor()
@@ -320,7 +324,6 @@ public abstract class LocalResource implements ISVNLocalResource, Comparable {
                     getRepository(),
                     url,
                     revision,
-                    dirEntry.getHasProps(),
                     dirEntry.getLastChangedRevision(),
                     dirEntry.getLastChangedDate(),
                     dirEntry.getLastCommitAuthor()

@@ -23,7 +23,6 @@ import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 import org.tigris.subversion.svnclientadapter.ISVNStatus;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
 import org.tigris.subversion.svnclientadapter.SVNKeywords;
-import org.tigris.subversion.svnclientadapter.SVNUrl;
 
 /**
  * Represents handles to SVN resource on the local file system. Synchronization
@@ -38,26 +37,24 @@ public class LocalFile extends LocalResource implements ISVNLocalFile {
 		super(file);
 	}
 
-    /**
-     * get the remote resource corresponding to this local file
-     * @return null if file is not managed
-     */	
-	public ISVNRemoteResource getRemoteResource() throws SVNException {
+	/*
+	 * (non-Javadoc)
+	 * @see org.tigris.subversion.subclipse.core.resources.LocalResource#getBaseResource()
+	 */
+    public ISVNRemoteResource getBaseResource() throws SVNException {
+    	
 		if (!isManaged())
 			return null;
 		ISVNStatus status = getStatus();
-        SVNUrl url = status.getUrl();
-		return new RemoteFile(
-			null, // parent : we don't know it 
-			getRepository(),
-            url,
-            status.getRevision(), // can't use BASE for remote resources
-			false, // hasProps
+
+		return new BaseFile(
+			this,                  // localResource
 			status.getLastChangedRevision(),
 			status.getLastChangedDate(),
 			status.getLastCommitAuthor());
-	}
-
+    }
+	
+	
     /**
      * @see ISVNLocalResource#refreshStatus
      */

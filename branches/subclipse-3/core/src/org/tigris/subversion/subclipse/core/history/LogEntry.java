@@ -37,7 +37,7 @@ public class LogEntry extends PlatformObject implements ILogEntry {
 	public LogEntry(RemoteResource resource, SVNRevision.Number revision, String author, Date date, String comment) {
         if (resource.isFolder()) {
             try {
-                this.resource = new RemoteFolder(null,resource.getRepository(), resource.getUrl(), revision, resource.getHasProps(),
+                this.resource = new RemoteFolder(null,resource.getRepository(), resource.getUrl(), revision, 
                     revision, date, author);
             } catch (SVNException e) {
                 // we can safely ignore this exception because we use SVNRevision.Number
@@ -46,7 +46,7 @@ public class LogEntry extends PlatformObject implements ILogEntry {
         else
         {
             try {
-                this.resource = new RemoteFile(null,resource.getRepository(), resource.getUrl(), revision, resource.getHasProps(),
+                this.resource = new RemoteFile(null,resource.getRepository(), resource.getUrl(), revision, 
                     revision, date, author);  
             } catch (SVNException e) {
                 // we can safely ignore this exception because we use SVNRevision.Number

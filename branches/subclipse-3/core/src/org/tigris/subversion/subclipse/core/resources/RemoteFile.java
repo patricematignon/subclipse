@@ -41,11 +41,16 @@ public class RemoteFile extends RemoteResource implements ISVNRemoteFile {
 		super(local, bytes);
 		
 	}
-	public RemoteFile(RemoteFolder parent, ISVNRepositoryLocation repository,
-			SVNUrl url, SVNRevision revision, boolean hasProps,
-			SVNRevision.Number lastChangedRevision, Date date, String author)
+	public RemoteFile(
+			RemoteFolder parent, 
+			ISVNRepositoryLocation repository,
+			SVNUrl url, 
+			SVNRevision revision,
+			SVNRevision.Number lastChangedRevision, 
+			Date date, 
+			String author)
 			throws SVNException {
-		super(parent, repository, url, revision, hasProps, lastChangedRevision,
+		super(parent, repository, url, revision, lastChangedRevision,
 				date, author);
 	}
 	public RemoteFile(ISVNRepositoryLocation repository, SVNUrl url,

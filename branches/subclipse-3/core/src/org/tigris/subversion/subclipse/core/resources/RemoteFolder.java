@@ -53,11 +53,10 @@ public class RemoteFolder extends RemoteResource implements ISVNRemoteFolder, IS
         ISVNRepositoryLocation repository,
         SVNUrl url,
         SVNRevision revision,
-        boolean hasProps,
         SVNRevision.Number lastChangedRevision,
         Date date,
         String author) throws SVNException {
-		super(parent, repository, url, revision,hasProps, lastChangedRevision, date, author);
+		super(parent, repository, url, revision, lastChangedRevision, date, author);
 	}
 
     public RemoteFolder(ISVNRepositoryLocation repository, SVNUrl url, SVNRevision revision) {
@@ -147,7 +146,6 @@ public class RemoteFolder extends RemoteResource implements ISVNRemoteFolder, IS
 				    result.add(new RemoteFolder(this, getRepository(),
 					   new SVNUrl(Util.appendPath(url.toString(),entry.getPath())),
                        getRevision(),
-                       entry.getHasProps(),
                        entry.getLastChangedRevision(),
                        entry.getLastChangedDate(),
                        entry.getLastCommitAuthor()));
@@ -163,7 +161,6 @@ public class RemoteFolder extends RemoteResource implements ISVNRemoteFolder, IS
 					result.add(new RemoteFile(this, getRepository(),
                         new SVNUrl(Util.appendPath(url.toString(),entry.getPath())),
                         getRevision(),
-                        entry.getHasProps(),
                         entry.getLastChangedRevision(),
                         entry.getLastChangedDate(),
                         entry.getLastCommitAuthor()));

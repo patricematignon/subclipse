@@ -46,7 +46,6 @@ public abstract class RemoteResource
 	// null when this is the repository location 
 	protected SVNUrl url;
 	protected ISVNRepositoryLocation repository;
-	protected boolean hasProps;
     private SVNRevision revision;
 	private SVNRevision.Number lastChangedRevision;
 	private Date date;
@@ -70,22 +69,15 @@ public abstract class RemoteResource
 		ISVNRepositoryLocation repository,
 		SVNUrl url,
         SVNRevision revision,
-		boolean hasProps,
 		SVNRevision.Number lastChangedRevision,
 		Date date,
 		String author) throws SVNException {
 
-        if ( (revision.getKind() == SVNRevision.Kind.base) ||
-             (revision.getKind() == SVNRevision.Kind.committed) ||
-             (revision.getKind() == SVNRevision.Kind.previous) ) {
-            throw new SVNException("A remote resource cannot have a base, committed or previous revision ");        
-        }
 		this.parent = parent;
 		this.repository = repository;
 		this.url = url;
         this.revision = revision;
         
-		this.hasProps = hasProps;
 		this.lastChangedRevision = lastChangedRevision;
 		this.date = date;
 		this.author = author;
@@ -101,7 +93,6 @@ public abstract class RemoteResource
         this.revision = revision;
         
         // we don't know the following properties
-        this.hasProps = false;
         this.lastChangedRevision = null;
         this.date = null;
         this.author = null;
@@ -162,13 +153,6 @@ public abstract class RemoteResource
      */
     public SVNUrl getUrl() {
         return url;
-    }
-
-    /**
-     * tells if this remote resource has properties
-     */
-    public boolean getHasProps() {
-        return hasProps;
     }
 
     /**

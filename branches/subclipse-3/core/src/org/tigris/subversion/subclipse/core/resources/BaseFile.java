@@ -34,11 +34,10 @@ public class BaseFile extends RemoteFile implements ISVNRemoteFile {
 	
 	public BaseFile( 
 			ISVNLocalResource localResource,
-	        boolean hasProps,
 	        SVNRevision.Number lastChangedRevision,
 	        Date date,
 	        String author) throws SVNException {
-		super(null, localResource.getRepository(), localResource.getUrl(), SVNRevision.BASE,hasProps, lastChangedRevision, date, author);
+		super(null, localResource.getRepository(), localResource.getUrl(), SVNRevision.BASE, lastChangedRevision, date, author);
 		Assert.isNotNull(localResource);
 		this.localResource = localResource;
 	}	

@@ -74,17 +74,19 @@ public interface ISVNLocalResource extends ISVNResource, IAdaptable {
   public File getFile();
 
   /**
-   * @return the corresponding remote resource (having the same or equivalent revision number)
-   * @throws SVNException
-   */
-  public ISVNRemoteResource getRemoteResource() throws SVNException;
- 
-  /**
    * @return the latest remote version of this resource from repository
    * @throws SVNException
    */ 
   public ISVNRemoteResource getLatestRemoteResource() throws SVNException;
 
+
+  /**
+   * get the base version for this local resource
+   * @return
+   * @throws SVNException
+   */
+  public ISVNRemoteResource getBaseResource() throws SVNException;
+  
   /**
    * get the remote resource corresponding to the given revision of this local resource
    * @return null if there is no remote file corresponding to this local resource

@@ -22,6 +22,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.team.core.RepositoryProvider;
+import org.tigris.subversion.subclipse.core.ISVNFolder;
 import org.tigris.subversion.subclipse.core.ISVNLocalFolder;
 import org.tigris.subversion.subclipse.core.ISVNLocalResource;
 import org.tigris.subversion.subclipse.core.ISVNRemoteResource;
@@ -34,7 +35,6 @@ import org.tigris.subversion.subclipse.core.SVNProviderPlugin;
 import org.tigris.subversion.subclipse.core.SVNTeamProvider;
 import org.tigris.subversion.svnclientadapter.ISVNStatus;
 import org.tigris.subversion.svnclientadapter.SVNConstants;
-import org.tigris.subversion.svnclientadapter.SVNUrl;
 
 /**
  * Implements the ISVNLocalFolder interface on top of an 
@@ -54,20 +54,17 @@ public class LocalFolder extends LocalResource implements ISVNLocalFolder {
 		super(container);		
 	}
 
-    /**
-     * @return the remote resource (with the same revision as local one) corresponding to this folder
-     */
-	public ISVNRemoteResource getRemoteResource() throws SVNException {
+	/*
+	 * (non-Javadoc)
+	 * @see org.tigris.subversion.subclipse.core.resources.LocalResource#getBaseResource()
+	 */
+	public ISVNRemoteResource getBaseResource() throws SVNException {
 		if (!isManaged())
 			return null;
 		ISVNStatus status = getStatus();
-        SVNUrl url = status.getUrl();
-		return new RemoteFolder(
-			null, // parent : we don't know it 
-			getRepository(),
-            url, 
-            status.getRevision(), // we can't use BASE for remote folders ...
-			false, // hasProps
+        
+        return new BaseFolder(
+			this, // localResource 
 			status.getLastChangedRevision(),
 			status.getLastChangedDate(),
 			status.getLastCommitAuthor());

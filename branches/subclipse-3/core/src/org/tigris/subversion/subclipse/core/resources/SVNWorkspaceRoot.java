@@ -415,14 +415,14 @@ public class SVNWorkspaceRoot {
 	}
 	
     /**
-     * get the remote resource (same revision) corresponding to the local one
+     * get the base resource corresponding to the local one
      * @param resource
      * @return
      * @throws SVNException
      */
-	public static ISVNRemoteResource getRemoteResourceFor(IResource resource) throws SVNException {
+	public static ISVNRemoteResource getBaseResourceFor(IResource resource) throws SVNException {
 		ISVNLocalResource managed = getSVNResourceFor(resource);
-		return managed.getRemoteResource();
+		return managed.getBaseResource();
 	}
 	
     /**
