@@ -16,6 +16,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
@@ -30,8 +31,6 @@ import org.tigris.subversion.subclipse.core.util.ReentrantLock;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 import org.tigris.subversion.svnclientadapter.ISVNNotifyListener;
 import org.tigris.subversion.svnclientadapter.SVNNodeKind;
-
-
 
 /**
  * This class manages jsvn operations. beginOperation must be called before a
@@ -77,18 +76,20 @@ public class OperationManager implements ISVNNotifyListener {
 	public void endOperation() throws SVNException {
 		try {
 			if (lock.getNestingCount() == 1) {
-                svnClient.removeNotifyListener(this);
-                for (Iterator it = changedResources.iterator();it.hasNext(); ) {
-                    IResource resource = (IResource)it.next();
-                    try {
-                        resource.refreshLocal(IResource.DEPTH_INFINITE,new NullProgressMonitor());
-						if(Policy.DEBUG_METAFILE_CHANGES) {
-							System.out.println("[svn] file refreshed : " + resource.getFullPath()); //$NON-NLS-1$
+				svnClient.removeNotifyListener(this);
+				for (Iterator it = changedResources.iterator(); it.hasNext();) {
+					IResource resource = (IResource) it.next();
+					try {
+						resource.refreshLocal(IResource.DEPTH_INFINITE,
+								new NullProgressMonitor());
+						if (Policy.DEBUG_METAFILE_CHANGES) {
+							System.out
+									.println("[svn] file refreshed : " + resource.getFullPath()); //$NON-NLS-1$
 						}
-                    } catch (CoreException e) {
-                        throw SVNException.wrapException(e);             
-                    }
-                }
+					} catch (CoreException e) {
+						throw SVNException.wrapException(e);
+					}
+				}
 			}
 		} finally {
 			lock.release();
@@ -97,40 +98,42 @@ public class OperationManager implements ISVNNotifyListener {
 	public void onNotify(File path, SVNNodeKind kind) {
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		IWorkspaceRoot workspaceRoot = workspace.getRoot();
-		
-        IPath pathEclipse; 
-        try {
-            pathEclipse = new Path(path.getCanonicalPath());
-        } catch (IOException e)
-        {
-            // should never occur ...
-            return;
-        }
 
-        if (kind == SVNNodeKind.UNKNOWN)  { // delete, revert 
-            IPath pathEntries = pathEclipse.removeLastSegments(1).append(".svn");
-            IResource entries = workspaceRoot.getFolder(pathEntries);
-            changedResources.add(entries);
-        }
-        else
-        {
-            IResource resource = null;
-    		if (kind == SVNNodeKind.DIR)		
-                resource = workspaceRoot.getContainerForLocation(pathEclipse);
-    		else
-            if (kind == SVNNodeKind.FILE)
-                resource =  workspaceRoot.getFileForLocation(pathEclipse);
-            
-            IResource entries = null;
-            if (resource != null) 
-                entries = resource.getParent().getFolder(new Path(".svn")); 
+		IPath pathEclipse;
+		try {
+			pathEclipse = new Path(path.getCanonicalPath());
+		} catch (IOException e) {
+			// should never occur ...
+			return;
+		}
 
-			// .svn directory will be refreshed so all files in the directory including resource will
-			// be refreshed 
-           
-            if (entries != null)
-                changedResources.add(entries);
-        }
+		if (kind == SVNNodeKind.UNKNOWN) { // delete, revert
+			IPath pathEntries = pathEclipse.removeLastSegments(1)
+					.append(".svn");
+			IResource entries = workspaceRoot.getFolder(pathEntries);
+			changedResources.add(entries);
+		} else {
+			IResource resource = null;
+			if (kind == SVNNodeKind.DIR)
+				resource = workspaceRoot.getContainerForLocation(pathEclipse);
+			else if (kind == SVNNodeKind.FILE)
+				resource = workspaceRoot.getFileForLocation(pathEclipse);
+
+			IResource entries = null;
+
+			if (resource != null) {
+				if (resource.getProject() == resource) {
+					// resource is a project. We can't refresh ../.svn
+					entries = ((IProject) resource).getFolder(new Path(".svn"));
+				} else {
+					entries = resource.getParent().getFolder(new Path(".svn"));
+				}
+				if (entries != null)
+					changedResources.add(entries);
+			}
+
+		}
+
 	}
 	public void logCommandLine(String commandLine) {
 	}

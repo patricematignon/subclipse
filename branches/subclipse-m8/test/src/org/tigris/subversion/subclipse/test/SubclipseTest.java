@@ -26,6 +26,9 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jdt.core.IPackageFragment;
+import org.eclipse.jdt.core.IType;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
 import org.tigris.subversion.subclipse.core.ISVNRepositoryLocation;
@@ -35,6 +38,8 @@ import org.tigris.subversion.subclipse.core.SVNTeamProvider;
 import org.tigris.subversion.subclipse.core.repo.SVNRepositories;
 import org.tigris.subversion.subclipse.core.resources.SVNWorkspaceRoot;
 import org.tigris.subversion.svnclientadapter.SVNClientAdapterFactory;
+
+
 public abstract class SubclipseTest extends TestCase {
 	protected SVNRepositories repositories;
 	protected ISVNRepositoryLocation repositoryLocation;
@@ -100,6 +105,7 @@ public abstract class SubclipseTest extends TestCase {
 			properties.setProperty("user", user);
 		if (pass != null)
 			properties.setProperty("password", pass);
+		
 		repositoryLocation = repositories.createRepository(properties);
 	}
 	/**
@@ -167,6 +173,25 @@ public abstract class SubclipseTest extends TestCase {
 		}
 	}
 	/**
+	 * create a project with a Class
+	 * @param projectName
+	 * @return
+	 * @throws CoreException
+	 */
+	protected TestProject createProjectWithAClass(String projectName) throws CoreException {
+		TestProject testProject = new TestProject(projectName);
+		
+		// create a file
+		IPackageFragment package1 = testProject.createPackage("pack1");
+		IType type = testProject.createJavaType(package1,"AClass.java",
+			"public class AClass { \n" +
+			"  public void m() {}\n" +
+			"}");
+		
+		return testProject;
+	}
+
+	/**
 	 * share the project using svn
 	 * 
 	 * @throws Exception
@@ -182,11 +207,11 @@ public abstract class SubclipseTest extends TestCase {
 	protected void unshareProject(IProject project) throws TeamException {
 		RepositoryProvider.unmap(project);
 	}
+	
+
+
 	/**
-	 * add and commit a resource
-	 * 
-	 * @param resource
-	 * @param comment
+	 * @return
 	 */
 	protected void addAndCommit(IProject project, IResource resource,
 			String comment) throws SVNException, TeamException {

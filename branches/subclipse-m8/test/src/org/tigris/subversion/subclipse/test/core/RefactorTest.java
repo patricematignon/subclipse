@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.tigris.subversion.subclipse.test.core;
 
+import org.eclipse.core.internal.resources.ResourceException;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.runtime.Path;
@@ -63,7 +64,7 @@ public class RefactorTest extends SubclipseTest {
 		assertEquals(svnResource.getStatus().getTextStatus(), Kind.ADDED);
 	}
 	
-	public void testPackageRename() throws Exception {
+	public void testPackageRenameFailsWithForceFalse() throws Exception {
 		TestProject testProject = new TestProject("testProject");
 		shareProject(testProject.getProject());
 		
@@ -83,7 +84,38 @@ public class RefactorTest extends SubclipseTest {
 		
 		// let's rename the package
 		IFolder folder =  testProject.getProject().getFolder(new Path("src/pack1"));
-		folder.move(new Path("pack2"),false, null);
+		try{
+			folder.move(new Path("pack2"),false, null);
+			fail("Should fail, setting force to false will force an exception when tree is out of sync in SVNMoveDeleteHook");
+		}catch(ResourceException e){
+			
+		}
+
+		
+		
+	}
+	
+	public void testPackageRenameWithForce() throws Exception {
+		TestProject testProject = new TestProject("testProject");
+		shareProject(testProject.getProject());
+		
+		// create a file
+		IPackageFragment package1 = testProject.createPackage("pack1");
+		IType type = testProject.createJavaType(package1,"AClass.java",
+			"public class AClass { \n" +
+			"  public void m() {}\n" +
+			"}");
+
+		SVNTeamProvider provider = getProvider(testProject.getProject());
+		
+		IFile resource = testProject.getProject().getFile(new Path("src/pack1/AClass.java"));
+		
+		// add and commit it
+		addAndCommit(testProject.getProject(),resource,"committed");
+		
+		// let's rename the package
+		IFolder folder =  testProject.getProject().getFolder(new Path("src/pack1"));
+		folder.move(new Path("pack2"),true, null);
 		
 		// note that the initial folder still exist after package renaming
 		

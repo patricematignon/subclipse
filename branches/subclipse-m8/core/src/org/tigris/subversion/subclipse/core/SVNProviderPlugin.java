@@ -66,8 +66,8 @@ public class SVNProviderPlugin extends Plugin {
 
 	private RepositoryResourcesManager repositoryResourcesManager = new RepositoryResourcesManager();
 
-	private int svnClientInterface;
-
+    private int svnClientInterface;  
+	
 	/**
 	 * This constructor required by the bundle loader (calls newInstance())
 	 *  

@@ -14,26 +14,24 @@ package org.tigris.subversion.subclipse.core.resources;
 import org.eclipse.core.internal.resources.ResourceStatus;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceStatus;
-import org.eclipse.core.resources.team.IMoveDeleteHook;
 import org.eclipse.core.resources.team.IResourceTree;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.internal.core.DefaultMoveDeleteHook;
 import org.tigris.subversion.subclipse.core.ISVNLocalFile;
 import org.tigris.subversion.subclipse.core.ISVNLocalFolder;
 import org.tigris.subversion.subclipse.core.SVNException;
 import org.tigris.subversion.subclipse.core.SVNTeamProvider;
-//import org.tigris.subversion.subclipse.core.client.OperationManager;
+import org.tigris.subversion.subclipse.core.client.OperationManager;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
 
-public class SVNMoveDeleteHook implements IMoveDeleteHook {
+public class SVNMoveDeleteHook extends DefaultMoveDeleteHook{
 
 	public boolean deleteFile(IResourceTree tree, IFile file, int updateFlags, IProgressMonitor monitor) {
 
@@ -92,9 +90,7 @@ public class SVNMoveDeleteHook implements IMoveDeleteHook {
 		return true;
 	}
 
-	public boolean deleteProject(IResourceTree tree, IProject project, int updateFlags, IProgressMonitor monitor) {
-		return false;
-	}
+	
 
     /*
      *  (non-Javadoc)
@@ -135,7 +131,7 @@ public class SVNMoveDeleteHook implements IMoveDeleteHook {
                 tree.addToLocalHistory(source);
 
             try {
-               // OperationManager.getInstance().beginOperation(svnClient);
+                OperationManager.getInstance().beginOperation(svnClient);
 			    
                 // add destination directory to version control if necessary
                 // see bug #15
@@ -162,7 +158,7 @@ public class SVNMoveDeleteHook implements IMoveDeleteHook {
 				throw SVNException.wrapException(te); 
 			}  
             finally {
-                //OperationManager.getInstance().endOperation();
+                OperationManager.getInstance().endOperation();
             }
 
 		} catch (SVNException e) {
@@ -187,7 +183,7 @@ public class SVNMoveDeleteHook implements IMoveDeleteHook {
 		IFolder destination,
 		int updateFlags,
 		IProgressMonitor monitor) {
-
+		System.out.println("executing move from: "+source+" to dest: "+destination);
 		try {
             ISVNLocalFolder resource = new LocalFolder(source);
             if (!resource.isManaged())
@@ -201,6 +197,7 @@ public class SVNMoveDeleteHook implements IMoveDeleteHook {
             // try and move all resources, doing it in a best-effort manner.
             boolean force = (updateFlags & IResource.FORCE) != 0;
             if (!force && !tree.isSynchronized(source, IResource.DEPTH_INFINITE)) {
+            	System.out.println("force is false and tree sync is false, short circuit");
                 String message = org.eclipse.core.internal.utils.Policy.bind("localstore.resourceIsOutOfSync", source.getFullPath().toString());//$NON-NLS-1$
                 IStatus status = new ResourceStatus(IResourceStatus.ERROR, source.getFullPath(), message);
                 tree.failed(status);
@@ -210,23 +207,22 @@ public class SVNMoveDeleteHook implements IMoveDeleteHook {
 			ISVNClientAdapter svnClient = resource.getRepository().getSVNClient();
 
             try {
-                //OperationManager.getInstance().beginOperation(svnClient);
-
-                // add destination directory to version control if necessary
-                // see bug #15
-                if (!SVNWorkspaceRoot.getSVNFolderFor(destination.getParent()).isManaged()) {
-                    SVNTeamProvider provider = (SVNTeamProvider)RepositoryProvider.getProvider(destination.getProject());
-                    provider.add(new IResource[] {destination.getParent()},IResource.DEPTH_ZERO,new NullProgressMonitor());
-                }
+                OperationManager.getInstance().beginOperation(svnClient);
                 
 			    svnClient.move(
                     source.getLocation().toFile(), 
                     destination.getLocation().toFile(),
                     true);
+                // add destination directory to version control if necessary
+                // see bug #15
+               /* if (!SVNWorkspaceRoot.getSVNFolderFor(destination.getParent()).isManaged()) {
+                    SVNTeamProvider provider = (SVNTeamProvider)RepositoryProvider.getProvider(destination.getProject());
+                    provider.add(new IResource[] {destination.getParent()},IResource.DEPTH_ZERO,new NullProgressMonitor());
+                }*/
             } catch (SVNClientException e) {
                 throw SVNException.wrapException(e); 
-			} catch (TeamException te) {
-				throw SVNException.wrapException(te); 
+//			} catch (TeamException te) {
+//				throw SVNException.wrapException(te); 
 			} finally {
                // OperationManager.getInstance().endOperation();
             }
@@ -247,14 +243,7 @@ public class SVNMoveDeleteHook implements IMoveDeleteHook {
 		return true;
 	}
 
-	public boolean moveProject(
-		IResourceTree tree,
-		IProject source,
-		IProjectDescription description,
-		int updateFlags,
-		IProgressMonitor monitor) {
-		return false;
-	}
+	
 
 	
 }
