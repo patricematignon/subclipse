@@ -225,22 +225,22 @@ public class PendingOperationsView extends ViewPart implements IResourceStateCha
 			String result = null;
 			switch (columnIndex) {
 				case 0 :
-    				result = ""; //status.getPath();
+    				result = ""; //status.getPath(); //$NON-NLS-1$
 					break;
                 case 1 : // description
                     if (status.isCopied()) {
-                        result = Policy.bind("PendingOperationsView.hasBeenCopied",svnResource.getName(),
+                        result = Policy.bind("PendingOperationsView.hasBeenCopied",svnResource.getName(), //$NON-NLS-1$
                             status.getUrlCopiedFrom().toString());
                     }    
                     else
                     if (status.isAdded())
-                        result = Policy.bind("PendingOperationsView.hasBeenAdded",svnResource.getName());
+                        result = Policy.bind("PendingOperationsView.hasBeenAdded",svnResource.getName()); //$NON-NLS-1$
                     else
                     if (status.isDeleted())
-                        result = Policy.bind("PendingOperationsView.hasBeenDeleted",svnResource.getName());
+                        result = Policy.bind("PendingOperationsView.hasBeenDeleted",svnResource.getName()); //$NON-NLS-1$
                     else
                     if (status.isTextModified())
-                        result = Policy.bind("PendingOperationsView.hasBeenModified",svnResource.getName());
+                        result = Policy.bind("PendingOperationsView.hasBeenModified",svnResource.getName()); //$NON-NLS-1$
                     break;
 				case 2 : // resource
 					result = svnResource.getName();
@@ -427,7 +427,7 @@ public class PendingOperationsView extends ViewPart implements IResourceStateCha
      * fill the popup menu for the table
      */
     private void fillTableMenu(IMenuManager manager) {
-        manager.add(new GroupMarker("group.open"));
+        manager.add(new GroupMarker("group.open")); //$NON-NLS-1$
         fOpenEditorGroup.setContext(new ActionContext(tableViewer.getSelection()));
         fOpenEditorGroup.fillContextMenu(manager);
         fOpenEditorGroup.setContext(null);
@@ -555,7 +555,7 @@ public class PendingOperationsView extends ViewPart implements IResourceStateCha
      */
     private Action getCompareWithBaseAction() {
         if (compareWithBaseAction == null) {
-            compareWithBaseAction = new Action("") {
+            compareWithBaseAction = new Action("") { //$NON-NLS-1$
                 public void run() {
                     CompareWithBaseRevisionAction delegate = new CompareWithBaseRevisionAction();
                     delegate.init(this);

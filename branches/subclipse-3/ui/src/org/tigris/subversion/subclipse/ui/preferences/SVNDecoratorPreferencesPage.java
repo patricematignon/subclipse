@@ -20,7 +20,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.compare.internal.TabFolderLayout;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -187,11 +186,11 @@ public class SVNDecoratorPreferencesPage extends PreferencePage implements IWork
         bindings.put(SVNDecoratorConfiguration.EXTERNAL_FLAG, externalFlag.getText());
             
         String example;
-        example = SVNDecoratorConfiguration.decorate("file.txt",fileTextFormat.getText(), bindings);
+        example = SVNDecoratorConfiguration.decorate("file.txt",fileTextFormat.getText(), bindings); //$NON-NLS-1$
         fileTextFormatExample.setText(example);
-        example = SVNDecoratorConfiguration.decorate("folder",folderTextFormat.getText(), bindings);
+        example = SVNDecoratorConfiguration.decorate("folder",folderTextFormat.getText(), bindings); //$NON-NLS-1$
         folderTextFormatExample.setText(example);
-        example = SVNDecoratorConfiguration.decorate("Project",projectTextFormat.getText(), bindings);                   
+        example = SVNDecoratorConfiguration.decorate("Project",projectTextFormat.getText(), bindings);                    //$NON-NLS-1$
         projectTextFormatExample.setText(example);
 	}
 	
@@ -202,7 +201,6 @@ public class SVNDecoratorPreferencesPage extends PreferencePage implements IWork
 				
 		// create a tab folder for the page
 		TabFolder tabFolder = new TabFolder(parent, SWT.NONE);
-		tabFolder.setLayout(new TabFolderLayout());
 		tabFolder.setLayoutData(new GridData(GridData.FILL_BOTH));		
 		
 		// text decoration options
@@ -241,19 +239,19 @@ public class SVNDecoratorPreferencesPage extends PreferencePage implements IWork
 		createLabel(fileTextGroup, Policy.bind("SVNDecoratorPreferencesPage.selectFormats"), 3); //$NON-NLS-1$
 
 		TextPair format = createFormatEditorControl(fileTextGroup, 
-            Policy.bind("SVNDecoratorPreferencesPage.fileFormat"), 
+            Policy.bind("SVNDecoratorPreferencesPage.fileFormat"),  //$NON-NLS-1$
             Policy.bind("SVNDecoratorPreferencesPage.addVariables"), getFileBindingDescriptions()); //$NON-NLS-1$ //$NON-NLS-2$
 		fileTextFormat = format.t1;
 		fileTextFormatExample = format.t2;
         
 		format = createFormatEditorControl(fileTextGroup, 
-            Policy.bind("SVNDecoratorPreferencesPage.folderFormat"), 
+            Policy.bind("SVNDecoratorPreferencesPage.folderFormat"),  //$NON-NLS-1$
             Policy.bind("SVNDecoratorPreferencesPage.addVariables"), getFolderBindingDescriptions()); //$NON-NLS-1$ //$NON-NLS-2$
 		folderTextFormat = format.t1;
 		folderTextFormatExample = format.t2;
         
 		format = createFormatEditorControl(fileTextGroup, 
-            Policy.bind("SVNDecoratorPreferencesPage.projectFormat"), 
+            Policy.bind("SVNDecoratorPreferencesPage.projectFormat"),  //$NON-NLS-1$
             Policy.bind("SVNDecoratorPreferencesPage.addVariables"), getProjectBindingDescriptions()); //$NON-NLS-1$ //$NON-NLS-2$
 		projectTextFormat = format.t1;
 		projectTextFormatExample = format.t2;

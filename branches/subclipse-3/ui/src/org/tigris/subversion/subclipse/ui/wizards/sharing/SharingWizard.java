@@ -288,7 +288,7 @@ public class SharingWizard extends Wizard implements IConfigurationWizard {
 					participant = new SVNSynchronizeParticipant(new ResourceScope(resources));
 					TeamUI.getSynchronizeManager().addSynchronizeParticipants(new ISynchronizeParticipant[] {participant});
 				}
-				participant.refresh(resources, "Synchronizing", "Synchronizing " + participant.getName(), SVNUIPlugin.getActivePage().getActivePart().getSite());			
+				participant.refresh(resources, Policy.bind("SharingWizard.0"), Policy.bind("SharingWizard.1", participant.getName()), SVNUIPlugin.getActivePage().getActivePart().getSite()); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 //			if (doSync[0]) {
 //				// Sync of the project

@@ -19,7 +19,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -381,7 +380,7 @@ public class SVNUIPlugin extends AbstractUIPlugin {
 //		Platform.getAdapterManager().registerAdapters(factory, RepositoryRoot.class);
 		
         // we initialize the image descriptors
-		imageDescriptors.initializeImages(ctxt.getBundle().getEntry("/"));
+		imageDescriptors.initializeImages(ctxt.getBundle().getEntry("/")); //$NON-NLS-1$
 		
         preferences = new Preferences(getPreferenceStore());
 		preferences.initializePreferences();

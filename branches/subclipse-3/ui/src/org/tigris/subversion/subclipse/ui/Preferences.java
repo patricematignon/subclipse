@@ -64,11 +64,11 @@ private IPreferenceStore store;
         store.setDefault(ISVNUIConstants.PREF_SHOW_COMPARE_REVISION_IN_DIALOG, false);
         
         store.setDefault(ISVNUIConstants.PREF_SVNINTERFACE, JhlClientAdapterFactory.JAVAHL_CLIENT);
-        store.setDefault(ISVNUIConstants.PREF_SVNCONFIGDIR, "");
+        store.setDefault(ISVNUIConstants.PREF_SVNCONFIGDIR, ""); //$NON-NLS-1$
 
         store.setDefault(ISVNUIConstants.PREF_MERGE_USE_EXTERNAL, false);
-        store.setDefault(ISVNUIConstants.PREF_MERGE_PROGRAM_LOCATION,"");
-        store.setDefault(ISVNUIConstants.PREF_MERGE_PROGRAM_PARAMETERS,"");
+        store.setDefault(ISVNUIConstants.PREF_MERGE_PROGRAM_LOCATION,""); //$NON-NLS-1$
+        store.setDefault(ISVNUIConstants.PREF_MERGE_PROGRAM_PARAMETERS,""); //$NON-NLS-1$
         
         setSvnClientInterface(store.getString(ISVNUIConstants.PREF_SVNINTERFACE));
         setSvnClientConfigDir(store.getString(ISVNUIConstants.PREF_SVNCONFIGDIR));
@@ -89,7 +89,7 @@ private IPreferenceStore store;
     private void setSvnClientConfigDir(String configDir) {
         SVNProviderPlugin plugin = SVNProviderPlugin.getPlugin();
         SVNClientManager svnClientManager = plugin.getSVNClientManager();
-        if ("".equals(configDir)) {
+        if ("".equals(configDir)) { //$NON-NLS-1$
         	svnClientManager.setConfigDir(null);
         } else {
         	File configDirFile = new File(configDir);

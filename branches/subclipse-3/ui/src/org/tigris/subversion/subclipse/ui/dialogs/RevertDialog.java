@@ -82,8 +82,8 @@ public class RevertDialog extends Dialog {
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
 		Label label = createWrappingLabel(composite);
-		if (url == null) label.setText(Policy.bind("RevertDialog.url") + " " + Policy.bind("RevertDialog.multiple")); //$NON-NLS-1$
-		else label.setText(Policy.bind("RevertDialog.url") + " " + url); //$NON-NLS-1$
+		if (url == null) label.setText(Policy.bind("RevertDialog.url") + " " + Policy.bind("RevertDialog.multiple")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		else label.setText(Policy.bind("RevertDialog.url") + " " + url); //$NON-NLS-1$ //$NON-NLS-2$
 
 		addResourcesArea(composite);
 		WorkbenchHelp.setHelp(composite, IHelpContextIds.REVERT_DIALOG);
@@ -117,7 +117,7 @@ public class RevertDialog extends Dialog {
 			   String result = null;
 			   switch (columnIndex) {
 				case 0 :
-	    			result = ""; 
+	    			result = "";  //$NON-NLS-1$
 					break;			
 	            case 1:
 	                if (url == null) result = ((IResource)element).getFullPath().toString();
@@ -131,7 +131,7 @@ public class RevertDialog extends Dialog {
 				    result = getPropertyStatus((IResource)element);
 	                break;	                
 	            default:
-	                result = "";
+	                result = ""; //$NON-NLS-1$
 	                break;
 	            }
 
@@ -142,7 +142,7 @@ public class RevertDialog extends Dialog {
 			    String[] segments = resource.getFullPath().segments();
 			    StringBuffer path = new StringBuffer();
 			    for (int i = 0; i < segments.length; i++) {
-			        path.append("/" + segments[i]);
+			        path.append("/" + segments[i]); //$NON-NLS-1$
 			        if (url.endsWith(path.toString())) {
 			            if (i == (segments.length - 2)) 
 			                return resource.getFullPath().toString().substring(path.length() + 1);
@@ -249,9 +249,9 @@ public class RevertDialog extends Dialog {
                if (!status.isManaged())
                    result = Policy.bind("CommitDialog.unversioned"); //$NON-NLS-1$
                else
-                   result = "";
+                   result = ""; //$NON-NLS-1$
 			} catch (TeamException e) {
-			    result = "";
+			    result = ""; //$NON-NLS-1$
 			}                   
 	    return result;
     }
@@ -268,9 +268,9 @@ public class RevertDialog extends Dialog {
 	                (svnResource.getStatus().getPropStatus().equals(SVNStatusKind.MODIFIED)))
 	                result = Policy.bind("CommitDialog.modified"); //$NON-NLS-1$		
                 else
-                    result = "";
+                    result = ""; //$NON-NLS-1$
 			} catch (TeamException e) {
-			    result = "";
+			    result = ""; //$NON-NLS-1$
 			}                   
 	    return result;
     }	

@@ -75,7 +75,7 @@ public class CommitAction extends WorkspaceAction {
 					
 				    // if no changes since last commit, do not show commit dialog.
 				    if (modified.length == 0) {
-					    MessageDialog.openInformation(getShell(), Policy.bind("CommitDialog.title"), Policy.bind("CommitDialog.noChanges")); //$NON-NLS-1$
+					    MessageDialog.openInformation(getShell(), Policy.bind("CommitDialog.title"), Policy.bind("CommitDialog.noChanges")); //$NON-NLS-1$ //$NON-NLS-2$
 					    commit = false;
 					} else {
 					    ProjectProperties projectProperties = ProjectProperties.getProjectProperties(modified[0]);
@@ -181,7 +181,7 @@ public class CommitAction extends WorkspaceAction {
 	protected boolean confirmCommit(IResource[] modifiedResources, ProjectProperties projectProperties) throws SVNException {
 	   if (onTagPath(modifiedResources)) {
 	       // Warning - working copy appears to be on a tag path.
-	       if (!MessageDialog.openQuestion(getShell(), Policy.bind("CommitDialog.title"), Policy.bind("CommitDialog.tag"))) //$NON-NLS-1$
+	       if (!MessageDialog.openQuestion(getShell(), Policy.bind("CommitDialog.title"), Policy.bind("CommitDialog.tag"))) //$NON-NLS-1$ //$NON-NLS-2$
 	           return false;	       
 	   }
 	   CommitDialog dialog = new CommitDialog(getShell(), modifiedResources, url, unaddedResources, projectProperties);

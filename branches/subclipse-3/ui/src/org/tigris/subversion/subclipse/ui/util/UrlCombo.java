@@ -35,7 +35,7 @@ public class UrlCombo extends Composite {
         combo.setLayoutData(data);
         settings = SVNUIPlugin.getPlugin().getDialogSettings();
         for (int i = 0; i < 5; i++) {
-            String url = settings.get("UrlCombo."  + project  + "." + i); //$NON-NLS-1$
+            String url = settings.get("UrlCombo."  + project  + "." + i); //$NON-NLS-1$ //$NON-NLS-2$
             if (url == null) break;
             combo.add(url);
         }
@@ -57,7 +57,7 @@ public class UrlCombo extends Composite {
         ArrayList urls = new ArrayList();
         urls.add(getText());
         for (int i = 0; i < 5; i++) {
-            String url = settings.get("UrlCombo." + project + "." + i); //$NON-NLS-1$
+            String url = settings.get("UrlCombo." + project + "." + i); //$NON-NLS-1$ //$NON-NLS-2$
             if (url == null) break;
             if (!urls.contains(url)) urls.add(url);
         }
@@ -65,7 +65,7 @@ public class UrlCombo extends Composite {
         Iterator iter = urls.iterator();
         while (iter.hasNext()) {
             String url = (String)iter.next();
-            settings.put("UrlCombo." + project + "." + i++, url); //$NON-NLS-1$
+            settings.put("UrlCombo." + project + "." + i++, url); //$NON-NLS-1$ //$NON-NLS-2$
             if (i == 5) break;
         }
     }

@@ -19,7 +19,6 @@ import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.synchronize.SyncInfoSet;
-import org.eclipse.team.internal.ui.actions.TeamAction;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.tigris.subversion.subclipse.core.ISVNLocalResource;
@@ -83,7 +82,7 @@ public class EditConflictsSynchronizeOperation extends SVNSynchronizeOperation {
 	                }
 	            }
 	
-	        }, false /* cancelable */, TeamAction.PROGRESS_BUSYCURSOR);    
+	        }, false /* cancelable */, PROGRESS_BUSYCURSOR);    
         }
     }
     
@@ -130,7 +129,7 @@ public class EditConflictsSynchronizeOperation extends SVNSynchronizeOperation {
             String mergeProgramParameters = preferenceStore
                     .getString(ISVNUIConstants.PREF_MERGE_PROGRAM_PARAMETERS);
 
-            if (mergeProgramLocation.equals("")) {
+            if (mergeProgramLocation.equals("")) { //$NON-NLS-1$
                 throw new SVNException(Policy
                         .bind("EditConflictsAction.noMergeProgramConfigured")); //$NON-NLS-1$
             }
@@ -144,16 +143,16 @@ public class EditConflictsSynchronizeOperation extends SVNSynchronizeOperation {
             String[] parameters = StringUtils
                     .split(mergeProgramParameters, ' ');
             for (int i = 0; i < parameters.length; i++) {
-                parameters[i] = StringUtils.replace(parameters[i], "${theirs}",
+                parameters[i] = StringUtils.replace(parameters[i], "${theirs}", //$NON-NLS-1$
                         conflictNewFile.getLocation().toFile()
                                 .getAbsolutePath());
-                parameters[i] = StringUtils.replace(parameters[i], "${yours}",
+                parameters[i] = StringUtils.replace(parameters[i], "${yours}", //$NON-NLS-1$
                         conflictWorkingFile.getLocation().toFile()
                                 .getAbsolutePath());
-                parameters[i] = StringUtils.replace(parameters[i], "${base}",
+                parameters[i] = StringUtils.replace(parameters[i], "${base}", //$NON-NLS-1$
                         conflictOldFile.getLocation().toFile()
                                 .getAbsolutePath());
-                parameters[i] = StringUtils.replace(parameters[i], "${merged}",
+                parameters[i] = StringUtils.replace(parameters[i], "${merged}", //$NON-NLS-1$
                         resource.getLocation().toFile().getAbsolutePath());
             }
             

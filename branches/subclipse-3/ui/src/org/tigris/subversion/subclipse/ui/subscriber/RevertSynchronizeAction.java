@@ -17,8 +17,6 @@ import org.tigris.subversion.subclipse.core.resources.SVNWorkspaceRoot;
 import org.tigris.subversion.svnclientadapter.SVNUrl;
 
 public class RevertSynchronizeAction extends SynchronizeModelAction {
-    private IResource[] resourcesToRevert;
-    private String url;
 
     public RevertSynchronizeAction(String text, ISynchronizePageConfiguration configuration) {
         super(text, configuration);

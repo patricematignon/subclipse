@@ -11,10 +11,7 @@
 package org.tigris.subversion.subclipse.ui.console;
 
 import java.io.File;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -57,9 +54,6 @@ public class SVNOutputConsole extends MessageConsole implements IConsoleListener
 	private Color messageColor;
 	private Color errorColor;
 	
-	// used to time the commands
-	private long commandStarted = 0;
-	
 	// streams for each command type - each stream has its own color
 	private MessageConsoleStream commandStream;
 	private MessageConsoleStream messageStream;
@@ -70,9 +64,6 @@ public class SVNOutputConsole extends MessageConsole implements IConsoleListener
 	private boolean showOnMessage;
 
 	private ConsoleDocument document;
-	
-	// format for timings printed to console
-	private static final DateFormat TIME_FORMAT = new SimpleDateFormat(Policy.bind("Console.resultTimeFormat")); //$NON-NLS-1$
 
 	// Indicates whether the console is visible in the Console view
 	private boolean visible = false;
@@ -342,23 +333,6 @@ public class SVNOutputConsole extends MessageConsole implements IConsoleListener
                 showOnError = ((Boolean)value).booleanValue();
             }
         }
-	}
-	
-	/**
-	 * Returns the NLSd message based on the status returned from the SVN
-	 * command.
-	 * @param status an NLSd message based on the status returned from the
-	 * SVN command.
-	 */
-	private String messageLineForStatus(IStatus status) {
-		if (status.getSeverity() == IStatus.ERROR) {
-			return Policy.bind("Console.error", status.getMessage()); //$NON-NLS-1$
-		} else if (status.getSeverity() == IStatus.WARNING) {
-			return Policy.bind("Console.warning", status.getMessage()); //$NON-NLS-1$
-		} else if (status.getSeverity() == IStatus.INFO) {
-			return Policy.bind("Console.info", status.getMessage()); //$NON-NLS-1$
-		}
-		return status.getMessage();
 	}
 	
 	/**

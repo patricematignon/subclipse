@@ -93,8 +93,8 @@ public class HistoryTableProvider {
 					return entry.getAuthor();
 				case COL_COMMENT:
 					String comment = entry.getComment();
-					int rIndex = comment.indexOf("\r"); 
-					int nIndex = comment.indexOf("\n");	
+					int rIndex = comment.indexOf("\r");  //$NON-NLS-1$
+					int nIndex = comment.indexOf("\n");	 //$NON-NLS-1$
 					if( (rIndex == -1) && (nIndex == -1) )
 						return comment;
 						
@@ -102,9 +102,9 @@ public class HistoryTableProvider {
 						return Policy.bind("HistoryView.[...]_4"); //$NON-NLS-1$
 						
 					if(rIndex != -1)
-						return Policy.bind("SVNCompareRevisionsInput.truncate", comment.substring(0, rIndex));
+						return Policy.bind("SVNCompareRevisionsInput.truncate", comment.substring(0, rIndex)); //$NON-NLS-1$
 					else
-						return Policy.bind("SVNCompareRevisionsInput.truncate", comment.substring(0, nIndex));
+						return Policy.bind("SVNCompareRevisionsInput.truncate", comment.substring(0, nIndex)); //$NON-NLS-1$
 			}
 			return ""; //$NON-NLS-1$
 		}

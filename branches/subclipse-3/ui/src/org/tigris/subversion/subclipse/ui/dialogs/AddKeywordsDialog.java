@@ -190,36 +190,36 @@ public class AddKeywordsDialog extends Dialog {
             
         lastChangedDateKeyword = new KeywordItem(
             SVNKeywords.LAST_CHANGED_DATE,
-            Policy.bind("AddKeywordsDialog.lastChangedDate.description"),            
-            Policy.bind("AddKeywordsDialog.lastChangedDate.sample"),
+            Policy.bind("AddKeywordsDialog.lastChangedDate.description"), //$NON-NLS-1$
+            Policy.bind("AddKeywordsDialog.lastChangedDate.sample"), //$NON-NLS-1$
             lastChangedDateKeywordState    
         );
         
         lastChangedRevisionKeyword = new KeywordItem(
             SVNKeywords.LAST_CHANGED_REVISION,
-            Policy.bind("AddKeywordsDialog.lastChangedRevision.description"),            
-            Policy.bind("AddKeywordsDialog.lastChangedRevision.sample"),
+            Policy.bind("AddKeywordsDialog.lastChangedRevision.description"), //$NON-NLS-1$
+            Policy.bind("AddKeywordsDialog.lastChangedRevision.sample"), //$NON-NLS-1$
             lastChangedRevisionKeywordState
         );
         
         lastChangedByKeyword = new KeywordItem(
             SVNKeywords.LAST_CHANGED_BY,
-            Policy.bind("AddKeywordsDialog.lastChangedBy.description"),            
-            Policy.bind("AddKeywordsDialog.lastChangedBy.sample"),
+            Policy.bind("AddKeywordsDialog.lastChangedBy.description"), //$NON-NLS-1$
+            Policy.bind("AddKeywordsDialog.lastChangedBy.sample"), //$NON-NLS-1$
             lastChangedByKeywordState
         );
         
         headUrlKeyword = new KeywordItem(
             SVNKeywords.HEAD_URL,
-            Policy.bind("AddKeywordsDialog.headUrl.description"),            
-            Policy.bind("AddKeywordsDialog.headUrl.sample"),
+            Policy.bind("AddKeywordsDialog.headUrl.description"), //$NON-NLS-1$
+            Policy.bind("AddKeywordsDialog.headUrl.sample"), //$NON-NLS-1$
             headUrlKeywordState
         );
         
         idKeyword = new KeywordItem(
             SVNKeywords.ID,
-            Policy.bind("AddKeywordsDialog.id.description"),            
-            Policy.bind("AddKeywordsDialog.id.sample"),
+            Policy.bind("AddKeywordsDialog.id.description"), //$NON-NLS-1$
+            Policy.bind("AddKeywordsDialog.id.sample"), //$NON-NLS-1$
             idKeywordState
         );        
         
@@ -255,16 +255,16 @@ public class AddKeywordsDialog extends Dialog {
 		listViewer.getTable().setLayoutData(data);
         
         TableColumn column = new TableColumn(listViewer.getTable(), SWT.LEFT);
-        column.setText("keyword");
+        column.setText(Policy.bind("AddKeywordsDialog.keyword")); //$NON-NLS-1$
         column.setWidth(200);
 
         column = new TableColumn(listViewer.getTable(), SWT.LEFT);
-        column.setText("description");
+        column.setText(Policy.bind("AddKeywordsDialog.description")); //$NON-NLS-1$
         column.setWidth(350);
         column.setResizable(true);
         
         column = new TableColumn(listViewer.getTable(), SWT.LEFT);
-        column.setText("sample");
+        column.setText(Policy.bind("AddKeywordsDialog.sample")); //$NON-NLS-1$
         column.setWidth(250);
         column.setResizable(true);        
                         
@@ -302,7 +302,7 @@ public class AddKeywordsDialog extends Dialog {
                 else
                 if (columnIndex == 2)
                     return item.sample;
-                return "";
+                return ""; //$NON-NLS-1$
             }
             
            public void addListener(ILabelProviderListener listener) {

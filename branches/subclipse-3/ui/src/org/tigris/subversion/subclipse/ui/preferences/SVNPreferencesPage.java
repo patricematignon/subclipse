@@ -288,7 +288,7 @@ public class SVNPreferencesPage extends PreferencePage implements IWorkbenchPref
                 File serversFile = new File(configDir,"servers"); //$NON-NLS-1$
                 File configFile = new File(configDir,"config"); //$NON-NLS-1$
                 if (!serversFile.exists() && !configFile.exists()) {
-                	setErrorMessage(Policy.bind("SVNPreferencePage.isNotSvnConfigDir"));
+                	setErrorMessage(Policy.bind("SVNPreferencePage.isNotSvnConfigDir")); //$NON-NLS-1$
                 }
             }
         }

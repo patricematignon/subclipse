@@ -151,7 +151,7 @@ public abstract class RepositoryProviderOperation extends SVNOperation {
 		for (int i=0;i<resources.length;i++) {
 			IPath svnPath = resources[i].getFullPath().removeFirstSegments(1);
 			if (svnPath.segmentCount() == 0) {
-				arguments.add(".");//Session.CURRENT_LOCAL_FOLDER);
+				arguments.add(".");//Session.CURRENT_LOCAL_FOLDER); //$NON-NLS-1$
 			} else {
 				arguments.add(svnPath.toString());
 			}

@@ -48,7 +48,7 @@ public class BranchTagDialog extends Dialog {
         super(parentShell);
 		int shellStyle = getShellStyle();
 		setShellStyle(shellStyle | SWT.RESIZE);
-		commitCommentArea = new CommitCommentArea(this, null, Policy.bind("BranchTagDialog.enterComment"));       
+		commitCommentArea = new CommitCommentArea(this, null, Policy.bind("BranchTagDialog.enterComment"));        //$NON-NLS-1$
         this.resource = resource;
     }
     
@@ -62,7 +62,7 @@ public class BranchTagDialog extends Dialog {
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
 		Group repositoryGroup = new Group(composite, SWT.NULL);
-		repositoryGroup.setText(Policy.bind("BranchTagDialog.repository"));
+		repositoryGroup.setText(Policy.bind("BranchTagDialog.repository")); //$NON-NLS-1$
 		repositoryGroup.setLayout(new GridLayout());
 		GridData data = new GridData(GridData.FILL_BOTH);
 		repositoryGroup.setLayoutData(data);
@@ -97,7 +97,7 @@ public class BranchTagDialog extends Dialog {
 		toUrlCombo.setText(urlText.getText());
 		
 		Button browseButton = new Button(urlComposite, SWT.PUSH);
-		browseButton.setText(Policy.bind("SwitchDialog.browse"));
+		browseButton.setText(Policy.bind("SwitchDialog.browse")); //$NON-NLS-1$
 		browseButton.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 ChooseUrlDialog dialog = new ChooseUrlDialog(getShell(), resource);
@@ -118,7 +118,7 @@ public class BranchTagDialog extends Dialog {
 		
 		serverButton = new Button(serverComposite, SWT.CHECK);
 		serverButton.setSelection(true); 
-		serverButton.setText(Policy.bind("BranchTagDialog.server"));
+		serverButton.setText(Policy.bind("BranchTagDialog.server")); //$NON-NLS-1$
 		data = new GridData();
 		data.horizontalSpan = 2;
 		serverButton.setLayoutData(data);
@@ -149,7 +149,7 @@ public class BranchTagDialog extends Dialog {
         try {
             toUrl = new SVNUrl(toUrlCombo.getText());
         } catch (MalformedURLException e) {
-            MessageDialog.openError(getShell(), Policy.bind("BranchTagDialog.title"), e.getMessage());
+            MessageDialog.openError(getShell(), Policy.bind("BranchTagDialog.title"), e.getMessage()); //$NON-NLS-1$
             return;
         }
         super.okPressed();

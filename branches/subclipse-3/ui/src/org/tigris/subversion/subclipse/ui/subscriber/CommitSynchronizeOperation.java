@@ -40,8 +40,7 @@ public class CommitSynchronizeOperation extends SVNSynchronizeOperation {
     private String commitComment;
     private IResource[] resourcesToCommit;
     private String url;
-    private boolean unaddedResources;	
-	private boolean commit;
+    private boolean commit;
 
 	protected CommitSynchronizeOperation(ISynchronizePageConfiguration configuration, IDiffElement[] elements, String url) {
 		super(configuration, elements);

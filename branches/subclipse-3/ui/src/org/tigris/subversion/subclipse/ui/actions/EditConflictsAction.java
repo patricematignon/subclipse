@@ -78,7 +78,7 @@ public class EditConflictsAction extends WorkspaceAction {
             String mergeProgramParameters = preferenceStore
                     .getString(ISVNUIConstants.PREF_MERGE_PROGRAM_PARAMETERS);
 
-            if (mergeProgramLocation.equals("")) {
+            if (mergeProgramLocation.equals("")) { //$NON-NLS-1$
                 throw new SVNException(Policy
                         .bind("EditConflictsAction.noMergeProgramConfigured")); //$NON-NLS-1$
             }
@@ -92,16 +92,16 @@ public class EditConflictsAction extends WorkspaceAction {
             String[] parameters = StringUtils
                     .split(mergeProgramParameters, ' ');
             for (int i = 0; i < parameters.length; i++) {
-                parameters[i] = StringUtils.replace(parameters[i], "${theirs}",
+                parameters[i] = StringUtils.replace(parameters[i], "${theirs}", //$NON-NLS-1$
                         conflictNewFile.getLocation().toFile()
                                 .getAbsolutePath());
-                parameters[i] = StringUtils.replace(parameters[i], "${yours}",
+                parameters[i] = StringUtils.replace(parameters[i], "${yours}", //$NON-NLS-1$
                         conflictWorkingFile.getLocation().toFile()
                                 .getAbsolutePath());
-                parameters[i] = StringUtils.replace(parameters[i], "${base}",
+                parameters[i] = StringUtils.replace(parameters[i], "${base}", //$NON-NLS-1$
                         conflictOldFile.getLocation().toFile()
                                 .getAbsolutePath());
-                parameters[i] = StringUtils.replace(parameters[i], "${merged}",
+                parameters[i] = StringUtils.replace(parameters[i], "${merged}", //$NON-NLS-1$
                         resource.getLocation().toFile().getAbsolutePath());
             }
             command.setParameters(parameters);

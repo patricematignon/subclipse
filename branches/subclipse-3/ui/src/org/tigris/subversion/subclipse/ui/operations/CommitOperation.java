@@ -41,7 +41,7 @@ public class CommitOperation extends SVNOperation {
 			if (resourcesToAdd.length > 0) {
 			    Map table = getProviderMapping(resourcesToAdd);
 				if (table.get(null) != null) {
-					throw new SVNException(Policy.bind("RepositoryManager.addErrorNotAssociated")); 
+					throw new SVNException(Policy.bind("RepositoryManager.addErrorNotAssociated"));  //$NON-NLS-1$
 				}
 				Set keySet = table.keySet();
 				Iterator iterator = keySet.iterator();

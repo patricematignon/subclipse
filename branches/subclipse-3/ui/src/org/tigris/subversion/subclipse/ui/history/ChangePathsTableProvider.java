@@ -67,16 +67,16 @@ public class ChangePathsTableProvider {
             if (changePath == null) return ""; //$NON-NLS-1$
             switch (columnIndex) {
                 case COL_ACTION:
-                    return ""+changePath.getAction();
+                    return ""+changePath.getAction(); //$NON-NLS-1$
                 case COL_PATH:
                 	return changePath.getPath();
                 case COL_DESCRIPTION:
                     if (changePath.getCopySrcPath() != null) {
-                    	return Policy.bind("ChangePathsTableProvider.copiedfrom", 
+                    	return Policy.bind("ChangePathsTableProvider.copiedfrom",  //$NON-NLS-1$
                                 changePath.getCopySrcPath(),
                                 changePath.getCopySrcRevision().toString());
                     } else {
-                    	return "";
+                    	return ""; //$NON-NLS-1$
                     }
             }
             return ""; //$NON-NLS-1$

@@ -33,7 +33,7 @@ public class SVNDecoratorConfiguration {
 			return value;
 		}
 		public String toString() {
-			return "\"" + value + "\"";
+			return '"' + value + '"';
 		}
 	}
 
@@ -53,7 +53,7 @@ public class SVNDecoratorConfiguration {
 		}
 		
 		public String toString() {
-			return "{" + key + "}";
+			return '{' + key + '}';
 		}
 		
 	}

@@ -54,7 +54,7 @@ public class MoveRemoteResourceWizardMainPage extends SVNWizardPage {
 
     private ISVNRemoteFolder parentFolder; // the parent folder of the destination
                                            // by default this is the folder of the resource to rename
-    private String resourceName = "";                                           
+    private String resourceName = ""; //$NON-NLS-1$
 
     private ISelectionChangedListener treeSelectionChangedListener = new ISelectionChangedListener() {
         public void selectionChanged(SelectionChangedEvent event) {

@@ -20,7 +20,6 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.SubProgressMonitor;
-import org.eclipse.team.internal.core.InfiniteSubProgressMonitor;
 
 public class Policy {
 	public static boolean DEBUG_CONSOLE_BUFFERING = false;
@@ -111,13 +110,5 @@ public class Policy {
 	if (monitor instanceof NullProgressMonitor)
 		return monitor;
 	return new SubProgressMonitor(monitor, ticks, style);
-	}
-	
-	public static IProgressMonitor infiniteSubMonitorFor(IProgressMonitor monitor, int ticks) {
-		if (monitor == null)
-			return new NullProgressMonitor();
-		if (monitor instanceof NullProgressMonitor)
-			return monitor;
-		return new InfiniteSubProgressMonitor(monitor, ticks);
 	}
 }

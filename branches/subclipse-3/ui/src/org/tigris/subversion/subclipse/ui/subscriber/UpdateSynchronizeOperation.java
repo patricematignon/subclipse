@@ -64,8 +64,8 @@ public class UpdateSynchronizeOperation extends SVNSynchronizeOperation {
 	 */
 	private int promptForConflicts(Shell shell, SyncInfoSet syncSet) {
 		String[] buttons = new String[] {IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL, IDialogConstants.CANCEL_LABEL};
-		String title = Policy.bind("SyncAction.update.conflict.title");
-		String question = Policy.bind("SyncAction.update.conflict.question");
+		String title = Policy.bind("SyncAction.update.conflict.title"); //$NON-NLS-1$
+		String question = Policy.bind("SyncAction.update.conflict.question"); //$NON-NLS-1$
 		final MessageDialog dialog = new MessageDialog(shell, title, null, question, MessageDialog.QUESTION, buttons, 0);
 		shell.getDisplay().syncExec(new Runnable() {
 			public void run() {

@@ -166,7 +166,7 @@ public class CommitCommentArea extends DialogArea {
 		// (see bug 32078: http://bugs.eclipse.org/bugs/show_bug.cgi?id=32078)
 		previousCommentsCombo.setText(""); //$NON-NLS-1$
 		
-		if (commentProperties == null) text.setText("");
+		if (commentProperties == null) text.setText(""); //$NON-NLS-1$
 	}
 
 	/*

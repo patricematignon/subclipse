@@ -34,11 +34,11 @@
    <extension
          point="org.eclipse.ui.views">
       <category
-            name="SVN"
+            name="%viewCategory"
             id="org.tigris.subversion.subclipse">
       </category>
       <view
-            name="SVN Repository"
+            name="%repositoryView.name"
             icon="icons/full/cview16/repo_rep.gif"
             category="org.tigris.subversion.subclipse"
             class="org.tigris.subversion.subclipse.ui.repository.RepositoriesView"
@@ -370,7 +370,7 @@
          <action
                label="%CompareWithHeadAction.label"
                helpContextId="org.tigris.subversion.subclipse.ui.compare_with_latest_action_context"
-               tooltip="%CompareWithRemoteAction.tooltip"
+               tooltip="%CompareWithHeadAction.tooltip"
                class="org.tigris.subversion.subclipse.ui.actions.CompareWithHeadRevisionAction"
                menubarPath="compareWithMenu/compareWithGroup"
                id="org.tigris.subversion.subclipse.ui.compareWithHead">
@@ -444,7 +444,7 @@
                icon="icons/full/tortoise/diff.gif"
                helpContextId="org.tigris.subversion.subclipse.ui.team_create_patch_action_context"
                class="org.tigris.subversion.subclipse.ui.actions.GenerateDiffFileAction"
-               tooltip="%GenerateDiff.tooltip"
+               tooltip="%generatediff.tooltip"
                menubarPath="team.main/group1"
                id="org.tigris.subversion.subclipse.ui.GenerateDiff">
          </action>
@@ -645,7 +645,7 @@
       <page
             objectClass="org.eclipse.core.resources.IResource"
             adaptable="true"
-            name="Subversion"
+            name="%svnPropertyPage.name"
             class="org.tigris.subversion.subclipse.ui.properties.SVNPropertyPage"
             id="org.tigris.subversion.subclipse.ui.properties.SVNPropertyPage">
          <filter
@@ -692,9 +692,9 @@
    <extension
          point="org.eclipse.team.ui.synchronizeWizards">
       <wizard
-            name="Synchronize SVN Provider"
+            name="%syncWizard.name"
             icon="icons/full/cview16/svn_persp.gif"
-            description="Synchronize files managed with SVN"
+            description="%syncWizard.description"
             class="org.tigris.subversion.subclipse.ui.SynchronizeWizard"
             id="org.tigris.subversion.subclipse.synchronizeWizard">
       </wizard>
@@ -702,7 +702,7 @@
    <extension
          point="org.eclipse.ui.workbench.texteditor.quickDiffReferenceProvider">
       <referenceprovider
-            label="Pristine SVN Copy"
+            label="%svnQuickDiff.label"
             class="org.tigris.subversion.subclipse.ui.SVNPristineCopyQuickDiffProvider"
             id="org.tigris.subversion.subclipse.quickdiff.providers.SVNReferenceProvider">
       </referenceprovider>
@@ -717,15 +717,13 @@
    <extension point="org.eclipse.ui.themes">
 		<themeElementCategory
 	    	id="org.tigris.subversion.subclipse.ui.fontsandcolors"
-	       	label="SVN"/>
+	       	label="%themeCategory"/>
 	    <fontDefinition
-	            label="SVN Commit Comment Font"
+	            label="%commitCommentFont.label"
 	            categoryId="org.tigris.subversion.subclipse.ui.fontsandcolors"
 	            defaultsTo="org.eclipse.jface.textfont"
 	            id="svn_comment_font">
-	         <description>
-	            The font for SVN commit comments.
-	         </description>
+	         <description>%commitCommentFont.description</description>
 	    </fontDefinition>   	
 	</extension>   
 

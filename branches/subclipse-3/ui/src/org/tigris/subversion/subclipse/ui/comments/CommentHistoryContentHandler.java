@@ -15,7 +15,6 @@ package org.tigris.subversion.subclipse.ui.comments;
 import java.util.Vector;
 
 import org.xml.sax.Attributes;
-import org.xml.sax.ContentHandler;
 import org.xml.sax.helpers.DefaultHandler;
 
 /**

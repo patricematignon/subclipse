@@ -73,11 +73,11 @@ public interface ISVNUIConstants {
     public final String IMG_MERGE = "tortoise/merge.gif"; //$NON-NLS-1$
     
     // views
-    public final String IMG_SVN_CONSOLE = "cview16/console_view.gif";
+    public final String IMG_SVN_CONSOLE = "cview16/console_view.gif"; //$NON-NLS-1$
     
     //operations
-    public final String IMG_CHECKOUT = "ctool16/checkout.gif";
-    public final String IMG_ADD_PROPERTY = "ctool16/svn_prop_add.gif";
+    public final String IMG_CHECKOUT = "ctool16/checkout.gif"; //$NON-NLS-1$
+    public final String IMG_ADD_PROPERTY = "ctool16/svn_prop_add.gif"; //$NON-NLS-1$
 	
 	// preferences
 	public final String PREF_SHOW_COMMENTS = "pref_show_comments"; //$NON-NLS-1$
@@ -133,9 +133,9 @@ public interface ISVNUIConstants {
 	public final String PREF_SHOW_SYNCINFO_AS_TEXT = "pref_show_syncinfo_as_text"; //$NON-NLS-1$
 
     // merge program preferences
-    public final String PREF_MERGE_PROGRAM_LOCATION = "pref_merge_program_location";
-    public final String PREF_MERGE_PROGRAM_PARAMETERS = "pref_merge_program_parameters";
-    public final String PREF_MERGE_USE_EXTERNAL = "pref_merge_use_external";
+    public final String PREF_MERGE_PROGRAM_LOCATION = "pref_merge_program_location"; //$NON-NLS-1$
+    public final String PREF_MERGE_PROGRAM_PARAMETERS = "pref_merge_program_parameters"; //$NON-NLS-1$
+    public final String PREF_MERGE_USE_EXTERNAL = "pref_merge_use_external"; //$NON-NLS-1$
     
 	// watch/edit preferences
 	public final String PREF_CHECKOUT_READ_ONLY = "pref_checkout_read_only"; //$NON-NLS-1$
@@ -148,7 +148,7 @@ public interface ISVNUIConstants {
     public final String PREF_SVNINTERFACE = "pref_svninterface"; //$NON-NLS-1$
 	
     // svn client config directory
-    public final String PREF_SVNCONFIGDIR = "pref_svnconfigdir";
+    public final String PREF_SVNCONFIGDIR = "pref_svnconfigdir"; //$NON-NLS-1$
  
     // svn commit comment font
     public final String SVN_COMMENT_FONT = "svn_comment_font"; //$NON-NLS-1$

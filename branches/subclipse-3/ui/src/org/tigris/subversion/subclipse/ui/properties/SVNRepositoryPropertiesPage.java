@@ -183,7 +183,7 @@ public class SVNRepositoryPropertiesPage extends PropertyPage {
         if (dialog.open() == Window.OK) {
             SVNUrl url = dialog.getRootUrl();
             if (url == null) {
-                repositoryRootText.setText("");
+                repositoryRootText.setText(""); //$NON-NLS-1$
             } else {
             	repositoryRootText.setText(dialog.getRootUrl().toString());
             }

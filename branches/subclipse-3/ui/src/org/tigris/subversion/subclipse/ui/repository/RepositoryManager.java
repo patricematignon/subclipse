@@ -200,7 +200,7 @@ public class RepositoryManager {
 		
 		// some of the resources are not associated with shared projects
 		if (table.get(null) != null) {
-			throw new SVNException(Policy.bind("RepositoryManager.addErrorNotAssociated")); 
+			throw new SVNException(Policy.bind("RepositoryManager.addErrorNotAssociated"));  //$NON-NLS-1$
 		}
 		
 		// iterate through the svn providers

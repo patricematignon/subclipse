@@ -77,9 +77,9 @@ public class MarkMergedSynchronizeOperation extends SVNSynchronizeOperation {
     
 	private File getTempFile(IResource resource) {
 	    int count = 1;
-	    while (new File(resource.getLocation() + "." + count + ".tmp").exists()) 
+	    while (new File(resource.getLocation() + "." + count + ".tmp").exists())  //$NON-NLS-1$ //$NON-NLS-2$
 	        count++;
-	    File tempFile = new File(resource.getLocation() + "." + count + ".tmp");
+	    File tempFile = new File(resource.getLocation() + "." + count + ".tmp"); //$NON-NLS-1$ //$NON-NLS-2$
         return tempFile;
     }
 

@@ -72,9 +72,9 @@ public class HistoryDialog extends Dialog {
 	protected Control createDialogArea(Composite parent) {
 	    getLogEntries();
 	    if (resource == null)
-	        getShell().setText(Policy.bind("HistoryDialog.title") + " - " + remoteResource.getName()); //$NON-NLS-1$
+	        getShell().setText(Policy.bind("HistoryDialog.title") + " - " + remoteResource.getName()); //$NON-NLS-1$ //$NON-NLS-2$
 	    else
-	        getShell().setText(Policy.bind("HistoryDialog.title") + " - " + resource.getName()); //$NON-NLS-1$
+	        getShell().setText(Policy.bind("HistoryDialog.title") + " - " + resource.getName()); //$NON-NLS-1$ //$NON-NLS-2$
 		Composite composite = new Composite(parent, SWT.NULL);
 		composite.setLayout(new GridLayout());
 		GridData data = new GridData(GridData.FILL_BOTH);

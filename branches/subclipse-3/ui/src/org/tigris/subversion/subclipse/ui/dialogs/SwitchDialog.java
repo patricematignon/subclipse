@@ -66,7 +66,7 @@ public class SwitchDialog extends Dialog {
 		composite.setLayoutData(data);
 		
 		Label urlLabel = new Label(composite, SWT.NONE);
-		urlLabel.setText(Policy.bind("SwitchDialog.url"));
+		urlLabel.setText(Policy.bind("SwitchDialog.url")); //$NON-NLS-1$
 		
 		urlCombo = new UrlCombo(composite, resource.getProject().getName());
 		ISVNLocalResource svnResource = SVNWorkspaceRoot.getSVNResourceFor(resource);
@@ -81,7 +81,7 @@ public class SwitchDialog extends Dialog {
         });
 		
 		Button browseButton = new Button(composite, SWT.PUSH);
-		browseButton.setText(Policy.bind("SwitchDialog.browse"));
+		browseButton.setText(Policy.bind("SwitchDialog.browse")); //$NON-NLS-1$
 		browseButton.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 ChooseUrlDialog dialog = new ChooseUrlDialog(getShell(), resource);
@@ -93,7 +93,7 @@ public class SwitchDialog extends Dialog {
 		});
 
 		Group revisionGroup = new Group(composite, SWT.NULL);
-		revisionGroup.setText(Policy.bind("SwitchDialog.revision"));
+		revisionGroup.setText(Policy.bind("SwitchDialog.revision")); //$NON-NLS-1$
 		GridLayout revisionLayout = new GridLayout();
 		revisionLayout.numColumns = 2;
 		revisionGroup.setLayout(revisionLayout);
@@ -102,13 +102,13 @@ public class SwitchDialog extends Dialog {
 		revisionGroup.setLayoutData(data);
 		
 		headButton = new Button(revisionGroup, SWT.RADIO);
-		headButton.setText(Policy.bind("SwitchDialog.head"));
+		headButton.setText(Policy.bind("SwitchDialog.head")); //$NON-NLS-1$
 		data = new GridData();
 		data.horizontalSpan = 2;
 		headButton.setLayoutData(data);
 		
 		revisionButton = new Button(revisionGroup, SWT.RADIO);
-		revisionButton.setText(Policy.bind("SwitchDialog.revision"));
+		revisionButton.setText(Policy.bind("SwitchDialog.revision")); //$NON-NLS-1$
 		
 		headButton.setSelection(true);
 		
@@ -153,12 +153,12 @@ public class SwitchDialog extends Dialog {
                 try {
                     revision = SVNRevision.getRevision(revisionText.getText().trim());
                 } catch (ParseException e1) {
-                  MessageDialog.openError(getShell(), Policy.bind("SwitchDialog.title"), Policy.bind("SwitchDialog.invalid"));
+                  MessageDialog.openError(getShell(), Policy.bind("SwitchDialog.title"), Policy.bind("SwitchDialog.invalid")); //$NON-NLS-1$ //$NON-NLS-2$
                   return;   
                 }
             }
         } catch (MalformedURLException e) {
-            MessageDialog.openError(getShell(), Policy.bind("SwitchDialog.title"), e.getMessage());
+            MessageDialog.openError(getShell(), Policy.bind("SwitchDialog.title"), e.getMessage()); //$NON-NLS-1$
             return;
         }
         super.okPressed();

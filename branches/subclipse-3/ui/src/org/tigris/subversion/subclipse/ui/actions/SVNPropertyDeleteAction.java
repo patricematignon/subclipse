@@ -38,12 +38,12 @@ public class SVNPropertyDeleteAction extends SVNPropertyAction {
 
 					String message;
 					if (svnProperties.length == 1) {
-						message = Policy.bind("SVNPropertyDeleteAction.confirmSingle",svnProperties[0].getName());
+						message = Policy.bind("SVNPropertyDeleteAction.confirmSingle",svnProperties[0].getName()); //$NON-NLS-1$
 					} else {
-						message = Policy.bind("SVNPropertyDeleteAction.confirmMultiple",Integer.toString(svnProperties.length));
+						message = Policy.bind("SVNPropertyDeleteAction.confirmMultiple",Integer.toString(svnProperties.length)); //$NON-NLS-1$
 					}
 										
-					if (!MessageDialog.openQuestion(getShell(), "Confirm property delete", message)) {
+					if (!MessageDialog.openQuestion(getShell(), Policy.bind("SVNPropertyDeleteAction.title"), message)) { //$NON-NLS-1$
 						return; 
 					}
 					

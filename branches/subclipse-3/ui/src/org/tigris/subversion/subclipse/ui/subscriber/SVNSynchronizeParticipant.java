@@ -74,7 +74,7 @@ public class SVNSynchronizeParticipant extends ScopableSubscriberParticipant {
 						SyncInfo info = SVNWorkspaceSubscriber.getInstance().getSyncInfo(resource);
 						IResourceVariant variant = info.getRemote();
 						if (variant != null) {
-							return text + " (" + variant.getContentIdentifier() + ")";
+							return text + " (" + variant.getContentIdentifier() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 						}
 					}
 				}

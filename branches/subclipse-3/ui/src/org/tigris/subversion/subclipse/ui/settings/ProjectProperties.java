@@ -12,7 +12,7 @@ import org.tigris.subversion.subclipse.ui.util.LinkList;
 import org.tigris.subversion.svnclientadapter.ISVNProperty;
 
 public class ProjectProperties {
-    protected String label = "Issue Number:";
+    protected String label = "Issue Number:"; //$NON-NLS-1$
     protected String message;
     protected boolean number = false;
     protected String url;
@@ -64,12 +64,12 @@ public class ProjectProperties {
     
     public String getResolvedMessage(String issue) {
         if (message == null) return null;
-        return message.replaceAll("%BUGID%", issue);
+        return message.replaceAll("%BUGID%", issue); //$NON-NLS-1$
     }
     
     public String getResolvedUrl(String issue) {
         if (url == null) return null;
-        return url.replaceAll("%BUGID%", issue);
+        return url.replaceAll("%BUGID%", issue); //$NON-NLS-1$
     }
     
     // Retrieve hyperlink ranges and url's from commit message.
@@ -77,7 +77,7 @@ public class ProjectProperties {
         ArrayList links = new ArrayList();
         ArrayList urls = new ArrayList();
         if (message != null) {
-	        int index = message.indexOf("%BUGID%");
+	        int index = message.indexOf("%BUGID%"); //$NON-NLS-1$
 	        if (index != -1) {
 		        String tag = message.substring(0, index);
 		        index = commitMessage.indexOf(tag);
@@ -86,7 +86,7 @@ public class ProjectProperties {
 			        int start = index;
 			        StringBuffer issue = new StringBuffer();
 			        while (index < commitMessage.length()) {
-			            if (commitMessage.substring(index, index + 1).equals(",")) {
+			            if (commitMessage.substring(index, index + 1).equals(",")) { //$NON-NLS-1$
 			                int range[] = {start, issue.length()};
 			                String url = getResolvedUrl(issue.toString());
 			                if ((url != null) && (url.trim().length() > 0)) {
@@ -96,7 +96,7 @@ public class ProjectProperties {
 			                start = index + 1;
 			                issue = new StringBuffer();
 			            } else {
-			                if (commitMessage.substring(index, index + 1).equals(" ") || commitMessage.substring(index, index + 1).equals("\n")) break;
+			                if (commitMessage.substring(index, index + 1).equals(" ") || commitMessage.substring(index, index + 1).equals("\n")) break; //$NON-NLS-1$ //$NON-NLS-2$
 			            	issue.append(commitMessage.substring(index, index + 1));
 			            }
 			            index++;
@@ -132,7 +132,7 @@ public class ProjectProperties {
     	ArrayList links = new ArrayList();
     	while (i != -1) {
     	    while (i != -1) {
-    	        if (Character.isWhitespace(s.charAt(i)) || s.substring(i, i + 1).equals("\n")) {
+    	        if (Character.isWhitespace(s.charAt(i)) || s.substring(i, i + 1).equals("\n")) { //$NON-NLS-1$
     	            i++;
     	            break;
     	        }
@@ -143,7 +143,7 @@ public class ProjectProperties {
     		boolean found = false;
     		i += URL.length();
     		while (!found && i < max) {
-    			found = (Character.isWhitespace(s.charAt(i)) || s.substring(i, i + 1).equals("\n"));
+    			found = (Character.isWhitespace(s.charAt(i)) || s.substring(i, i + 1).equals("\n")); //$NON-NLS-1$
     			i++;
     		}
     		if (i!=max) i--;
@@ -172,11 +172,11 @@ public class ProjectProperties {
 
     
     public String toString() {
-       return "bugtraq:label: " + label + "\n" + //$NON-NLS-1$
-              "bugtraq:message: " + message + "\n" + //$NON-NLS-1$
-              "bugtraq:number: " + number + "\n" + //$NON-NLS-1$
-              "bugtraq:url: " + url + "\n" + //$NON-NLS-1$
-              "bugtraq:warnifnoissue: " + warnIfNoIssue + "\n" + //$NON-NLS-1$
+       return "bugtraq:label: " + label + "\n" + //$NON-NLS-1$ //$NON-NLS-2$
+              "bugtraq:message: " + message + "\n" + //$NON-NLS-1$ //$NON-NLS-2$
+              "bugtraq:number: " + number + "\n" + //$NON-NLS-1$ //$NON-NLS-2$
+              "bugtraq:url: " + url + "\n" + //$NON-NLS-1$ //$NON-NLS-2$
+              "bugtraq:warnifnoissue: " + warnIfNoIssue + "\n" + //$NON-NLS-1$ //$NON-NLS-2$
               "bugtraq:append: " + append; //$NON-NLS-1$
     }
     

@@ -38,7 +38,7 @@ public class ChooseRootUrlDialog extends ListDialog {
         List list = new ArrayList();
         
         // we want the user can select "no root url", ie a blank url
-        list.add(""); // we cannot add null, we would have a NullPointerException
+        list.add(""); // we cannot add null, we would have a NullPointerException //$NON-NLS-1$
         SVNUrl possibleRoot = this.url;
         while (possibleRoot != null) {
             list.add(possibleRoot);
@@ -59,7 +59,7 @@ public class ChooseRootUrlDialog extends ListDialog {
      */
     public SVNUrl getRootUrl() {
         Object result = getResult()[0];
-        if ("".equals(result)) {
+        if ("".equals(result)) { //$NON-NLS-1$
         	return null;
         } else {
         	return (SVNUrl)result;

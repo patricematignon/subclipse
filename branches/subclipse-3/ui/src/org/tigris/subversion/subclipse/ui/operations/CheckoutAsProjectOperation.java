@@ -30,7 +30,7 @@ public class CheckoutAsProjectOperation extends SVNOperation {
             IProgressMonitor subMonitor = new SubProgressMonitor(monitor, 1000); 
 			try {
 				Platform.getJobManager().beginRule(localFolders[i], monitor);
-				monitor.setTaskName(Policy.bind("CheckoutAsProjectOperation.0", remoteFolders[i].getName()));
+				monitor.setTaskName(Policy.bind("CheckoutAsProjectOperation.0", remoteFolders[i].getName())); //$NON-NLS-1$
 				IProject[] local = new IProject[1];
 				local[0] = localFolders[i];
 				ISVNRemoteFolder[] remote = new ISVNRemoteFolder[1];

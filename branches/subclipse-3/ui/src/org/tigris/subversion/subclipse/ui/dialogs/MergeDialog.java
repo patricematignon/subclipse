@@ -364,7 +364,7 @@ public class MergeDialog extends Dialog {
     
     private void diff() {
         FileDialog dialog = new FileDialog(getShell(), SWT.SAVE);
-        dialog.setText("Create Unified Diff File");
+        dialog.setText(Policy.bind("MergeDialog.diffTitle")); //$NON-NLS-1$
         String returnFile = dialog.open();
         if (returnFile == null) return;
         diffFile = new File(returnFile);
@@ -401,7 +401,7 @@ public class MergeDialog extends Dialog {
 	            return;
 	        }
 	        if (remoteResource == null) {
-	            MessageDialog.openError(getShell(), Policy.bind("MergeDialog.showLog"), Policy.bind("MergeDialog.urlError") + " " + fromUrlCombo.getText()); //$NON-NLS-1$
+	            MessageDialog.openError(getShell(), Policy.bind("MergeDialog.showLog"), Policy.bind("MergeDialog.urlError") + " " + fromUrlCombo.getText()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	            return;	            
 	        }
         }
@@ -414,7 +414,7 @@ public class MergeDialog extends Dialog {
 	            return;
 	        }
 	        if (remoteResource == null) {
-	            MessageDialog.openError(getShell(), Policy.bind("MergeDialog.showLog"), Policy.bind("MergeDialog.urlError") + " " + toUrlCombo.getText()); //$NON-NLS-1$
+	            MessageDialog.openError(getShell(), Policy.bind("MergeDialog.showLog"), Policy.bind("MergeDialog.urlError") + " " + toUrlCombo.getText()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	            return;	            
 	        }	        
         }   
@@ -461,7 +461,7 @@ public class MergeDialog extends Dialog {
                 try {
                     fromRevision = SVNRevision.getRevision(fromRevisionText.getText().trim());
                 } catch (ParseException e1) {
-                  MessageDialog.openError(getShell(), Policy.bind("MergeDialog.title"), Policy.bind("MergeDialog.invalidFrom")); //$NON-NLS-1$
+                  MessageDialog.openError(getShell(), Policy.bind("MergeDialog.title"), Policy.bind("MergeDialog.invalidFrom")); //$NON-NLS-1$ //$NON-NLS-2$
                   return;   
                 }
             }
@@ -472,7 +472,7 @@ public class MergeDialog extends Dialog {
                 try {
                     toRevision = SVNRevision.getRevision(toRevisionText.getText().trim());
                 } catch (ParseException e1) {
-                  MessageDialog.openError(getShell(), Policy.bind("MergeDialog.title"), Policy.bind("MergeDialog.invalidTo")); //$NON-NLS-1$
+                  MessageDialog.openError(getShell(), Policy.bind("MergeDialog.title"), Policy.bind("MergeDialog.invalidTo")); //$NON-NLS-1$ //$NON-NLS-2$
                   return;   
                 }
             }            

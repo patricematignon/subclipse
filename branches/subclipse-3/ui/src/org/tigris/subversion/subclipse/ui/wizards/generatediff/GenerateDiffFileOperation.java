@@ -69,7 +69,7 @@ public class GenerateDiffFileOperation implements IRunnableWithProgress {
 			} else {
 				os = new FileOutputStream(outputFile);
 			}
-            File tmpFile = File.createTempFile("sub","");
+            File tmpFile = File.createTempFile("sub",""); //$NON-NLS-1$ //$NON-NLS-2$
             tmpFile.deleteOnExit();
 
             ISVNLocalResource svnResource = SVNWorkspaceRoot.getSVNResourceFor(resource);

@@ -511,7 +511,7 @@ public class SvnPropertiesView extends ViewPart {
 	 */
 	private void updateStatus() {
 		if (resource == null) {
-			statusLabel.setText("");
+			statusLabel.setText(""); //$NON-NLS-1$
 			return;
 		}
 		try {
@@ -541,9 +541,9 @@ public class SvnPropertiesView extends ViewPart {
 	public void showSvnProperties(ISVNLocalResource resource) throws SVNException {
 		this.resource = resource;
 		if (resource != null) {
-			setContentDescription(Policy.bind("SvnPropertiesView.titleWithArgument", resource.getName()));
+			setContentDescription(Policy.bind("SvnPropertiesView.titleWithArgument", resource.getName())); //$NON-NLS-1$
 		} else {
-			setContentDescription("");
+			setContentDescription(""); //$NON-NLS-1$
 		}
 		refresh();
 	}

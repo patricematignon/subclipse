@@ -112,8 +112,8 @@ public class CommitDialog extends Dialog {
 	 */
 	protected Control createDialogArea(Composite parent) {
 	    
-		if (url == null) getShell().setText(Policy.bind("CommitDialog.commitTo") + " " + Policy.bind("CommitDialog.multiple")); //$NON-NLS-1$
-		else getShell().setText(Policy.bind("CommitDialog.commitTo") + " " + url);
+		if (url == null) getShell().setText(Policy.bind("CommitDialog.commitTo") + " " + Policy.bind("CommitDialog.multiple")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		else getShell().setText(Policy.bind("CommitDialog.commitTo") + " " + url);  //$NON-NLS-1$//$NON-NLS-2$
 		Composite composite = new Composite(parent, SWT.NULL);
 		composite.setLayout(new GridLayout());
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -164,7 +164,7 @@ public class CommitDialog extends Dialog {
 			   String result = null;
 			   switch (columnIndex) {
 				case 0 :
-	    			result = ""; 
+	    			result = "";  //$NON-NLS-1$
 					break;			
 	            case 1:
 	                if (url == null) result = ((IResource)element).getFullPath().toString();
@@ -178,7 +178,7 @@ public class CommitDialog extends Dialog {
 				    result = getPropertyStatus((IResource)element);
 	                break;	                
 	            default:
-	                result = "";
+	                result = ""; //$NON-NLS-1$
 	                break;
 	            }
 
@@ -189,7 +189,7 @@ public class CommitDialog extends Dialog {
 			    String[] segments = resource.getFullPath().segments();
 			    StringBuffer path = new StringBuffer();
 			    for (int i = 0; i < segments.length; i++) {
-			        path.append("/" + segments[i]);
+			        path.append("/" + segments[i]); //$NON-NLS-1$
 			        if (url.endsWith(path.toString())) {
 			            if (i == (segments.length - 2)) 
 			                return resource.getFullPath().toString().substring(path.length() + 1);
@@ -280,7 +280,7 @@ public class CommitDialog extends Dialog {
         if (projectProperties != null) {
             issue = issueText.getText().trim();
             if (projectProperties.isWarnIfNoIssue() && (issueText.getText().trim().length() == 0)) {
-                if (!MessageDialog.openQuestion(getShell(), Policy.bind("CommitDialog.title"), Policy.bind("CommitDialog.0", projectProperties.getLabel()))) {
+                if (!MessageDialog.openQuestion(getShell(), Policy.bind("CommitDialog.title"), Policy.bind("CommitDialog.0", projectProperties.getLabel()))) { //$NON-NLS-1$ //$NON-NLS-2$
                     issueText.setFocus();
                     return; //$NON-NLS-1$
                 }
@@ -338,9 +338,9 @@ public class CommitDialog extends Dialog {
                if (!status.isManaged())
                    result = Policy.bind("CommitDialog.unversioned"); //$NON-NLS-1$
                else
-                   result = "";
+                   result = ""; //$NON-NLS-1$
 			} catch (TeamException e) {
-			    result = "";
+			    result = ""; //$NON-NLS-1$
 			}                   
 	    return result;
     }
@@ -357,9 +357,9 @@ public class CommitDialog extends Dialog {
 	                (svnResource.getStatus().getPropStatus().equals(SVNStatusKind.MODIFIED)))
 	                result = Policy.bind("CommitDialog.modified"); //$NON-NLS-1$		
                 else
-                    result = "";
+                    result = ""; //$NON-NLS-1$
 			} catch (TeamException e) {
-			    result = "";
+			    result = ""; //$NON-NLS-1$
 			}                   
 	    return result;
     }	
@@ -497,9 +497,9 @@ public class CommitDialog extends Dialog {
 	public String getComment() {
 	    if ((projectProperties != null) && (issue != null) && (issue.length() > 0)) {
 	        if (projectProperties.isAppend()) 
-	            return commitCommentArea.getComment() + "\n" + projectProperties.getResolvedMessage(issue) + "\n";
+	            return commitCommentArea.getComment() + "\n" + projectProperties.getResolvedMessage(issue) + "\n"; //$NON-NLS-1$ //$NON-NLS-2$
 	        else
-	            return projectProperties.getResolvedMessage(issue) + "\n" + commitCommentArea.getComment();
+	            return projectProperties.getResolvedMessage(issue) + "\n" + commitCommentArea.getComment(); //$NON-NLS-1$
 	    }
 		return commitCommentArea.getComment();
 	}

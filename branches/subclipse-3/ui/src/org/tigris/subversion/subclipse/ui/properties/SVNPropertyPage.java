@@ -13,7 +13,6 @@ package org.tigris.subversion.subclipse.ui.properties;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -31,11 +30,10 @@ import org.tigris.subversion.subclipse.core.SVNTeamProvider;
 import org.tigris.subversion.subclipse.core.resources.LocalResourceStatus;
 import org.tigris.subversion.subclipse.core.resources.SVNWorkspaceRoot;
 import org.tigris.subversion.subclipse.ui.IHelpContextIds;
+import org.tigris.subversion.subclipse.ui.Policy;
 import org.tigris.subversion.subclipse.ui.SVNUIPlugin;
 
 public class SVNPropertyPage extends PropertyPage {
-
-    private static final int TEXT_FIELD_WIDTH = 50;
 
     private Text ignoredValue;
     private Text managedValue;
@@ -63,7 +61,7 @@ public class SVNPropertyPage extends PropertyPage {
 
         //Label for path field
         Label pathLabel = new Label(composite, SWT.NONE);
-        pathLabel.setText("Path");
+        pathLabel.setText(Policy.bind("SVNPropertyPage.path")); //$NON-NLS-1$
 
         // Path text field
         Text pathValueText = new Text(composite, SWT.WRAP | SWT.READ_ONLY);
@@ -85,63 +83,63 @@ public class SVNPropertyPage extends PropertyPage {
         Composite composite = createDefaultComposite(parent);
 
         Label label = new Label(composite, SWT.NONE);
-        label.setText("Ignored");
+        label.setText(Policy.bind("SVNPropertyPage.ignored")); //$NON-NLS-1$
         ignoredValue = new Text(composite, SWT.WRAP | SWT.READ_ONLY);
 
         label = new Label(composite, SWT.NONE);
-        label.setText("Managed");
+        label.setText(Policy.bind("SVNPropertyPage.managed")); //$NON-NLS-1$
         managedValue = new Text(composite, SWT.WRAP | SWT.READ_ONLY);
 
         label = new Label(composite, SWT.NONE);
-        label.setText("Has Remote");
+        label.setText(Policy.bind("SVNPropertyPage.hasRemote")); //$NON-NLS-1$
         hasRemoteValue = new Text(composite, SWT.WRAP | SWT.READ_ONLY);
 
         label = new Label(composite, SWT.NONE);
-        label.setText("URL");
+        label.setText(Policy.bind("SVNPropertyPage.url")); //$NON-NLS-1$
         urlValue = new Text(composite, SWT.WRAP | SWT.READ_ONLY);
 
         label = new Label(composite, SWT.NONE);
-        label.setText("Last Changed Revision");
+        label.setText(Policy.bind("SVNPropertyPage.changedRevision")); //$NON-NLS-1$
         lastChangedRevisionValue = new Text(composite, SWT.WRAP | SWT.READ_ONLY);
 
         label = new Label(composite, SWT.NONE);
-        label.setText("Last Changed Date");
+        label.setText(Policy.bind("SVNPropertyPage.changedDate")); //$NON-NLS-1$
         lastChangedDateValue = new Text(composite, SWT.WRAP | SWT.READ_ONLY);
 
         label = new Label(composite, SWT.NONE);
-        label.setText("Last Commit Author");
+        label.setText(Policy.bind("SVNPropertyPage.changedAuthor")); //$NON-NLS-1$
         lastCommitAuthorValue = new Text(composite, SWT.WRAP | SWT.READ_ONLY);
 
         label = new Label(composite, SWT.NONE);
-        label.setText("Status");
+        label.setText(Policy.bind("SVNPropertyPage.status")); //$NON-NLS-1$
         textStatusValue = new Text(composite, SWT.WRAP | SWT.READ_ONLY);
 
         label = new Label(composite, SWT.NONE);
-        label.setText("Merged");
+        label.setText(Policy.bind("SVNPropertyPage.merged")); //$NON-NLS-1$
         mergedValue = new Text(composite, SWT.WRAP | SWT.READ_ONLY);
 
         label = new Label(composite, SWT.NONE);
-        label.setText("Deleted");
+        label.setText(Policy.bind("SVNPropertyPage.deleted")); //$NON-NLS-1$
         deletedValue = new Text(composite, SWT.WRAP | SWT.READ_ONLY);
 
         label = new Label(composite, SWT.NONE);
-        label.setText("Modified");
+        label.setText(Policy.bind("SVNPropertyPage.modified")); //$NON-NLS-1$
         modifiedValue = new Text(composite, SWT.WRAP | SWT.READ_ONLY);
 
         label = new Label(composite, SWT.NONE);
-        label.setText("Added");
+        label.setText(Policy.bind("SVNPropertyPage.added")); //$NON-NLS-1$
         addedValue = new Text(composite, SWT.WRAP | SWT.READ_ONLY);
 
         label = new Label(composite, SWT.NONE);
-        label.setText("Revision");
+        label.setText(Policy.bind("SVNPropertyPage.revision")); //$NON-NLS-1$
         revisionValue = new Text(composite, SWT.WRAP | SWT.READ_ONLY);
 
         label = new Label(composite, SWT.NONE);
-        label.setText("Copied");
+        label.setText(Policy.bind("SVNPropertyPage.copied")); //$NON-NLS-1$
         copiedValue = new Text(composite, SWT.WRAP | SWT.READ_ONLY);
 
         label = new Label(composite, SWT.NONE);
-        label.setText("Path");
+        label.setText(Policy.bind("SVNPropertyPage.path")); //$NON-NLS-1$
 
         GridData gd = new GridData();
         gd.horizontalSpan = 2;
@@ -163,36 +161,36 @@ public class SVNPropertyPage extends PropertyPage {
             if (status.getUrlCopiedFrom() != null) {
 
                 label = new Label(composite, SWT.NONE);
-                label.setText("URL Copied From");
+                label.setText(Policy.bind("SVNPropertyPage.copiedFrom")); //$NON-NLS-1$
                 urlCopiedFromValue = new Text(composite, SWT.WRAP | SWT.READ_ONLY);
                 urlCopiedFromValue.setText(status.getUrlCopiedFrom() != null ? status
-                        .getUrlCopiedFrom().toString() : "");
+                        .getUrlCopiedFrom().toString() : ""); //$NON-NLS-1$
             }
 
             ignoredValue.setText(new Boolean(status.isIgnored()).toString());
             managedValue.setText(new Boolean(status.isManaged()).toString());
             hasRemoteValue.setText(new Boolean(status.isIgnored()).toString());
-            urlValue.setText(status.getUrl() != null ? status.getUrl().toString() : "");
+            urlValue.setText(status.getUrl() != null ? status.getUrl().toString() : ""); //$NON-NLS-1$
             lastChangedRevisionValue.setText(status.getLastChangedRevision() != null ? status
-                    .getLastChangedRevision().toString() : "");
+                    .getLastChangedRevision().toString() : ""); //$NON-NLS-1$
             lastChangedDateValue.setText(status.getLastChangedDate() != null ? status
-                    .getLastChangedDate().toString() : "");
+                    .getLastChangedDate().toString() : ""); //$NON-NLS-1$
             lastCommitAuthorValue.setText(status.getLastCommitAuthor() != null ? status
-                    .getLastCommitAuthor() : "");
+                    .getLastCommitAuthor() : ""); //$NON-NLS-1$
             textStatusValue.setText(status.getTextStatus() != null ? status.getTextStatus()
-                    .toString() : "");
+                    .toString() : ""); //$NON-NLS-1$
             mergedValue.setText(new Boolean(status.isTextMerged()).toString());
             deletedValue.setText(new Boolean(status.isDeleted()).toString());
             modifiedValue.setText(new Boolean(status.isTextModified()).toString());
             addedValue.setText(new Boolean(status.isAdded()).toString());
             revisionValue.setText(status.getRevision() != null ? status.getRevision().toString()
-                    : "");
+                    : ""); //$NON-NLS-1$
             copiedValue.setText(new Boolean(status.isCopied()).toString());
 //            pathValue.setText(status.getPath() != null ? status.getPath() : "");
 
         } catch (Exception e) {
             SVNUIPlugin.log(new Status(Status.ERROR, SVNUIPlugin.ID, TeamException.UNABLE,
-                    "Property Exception", e));
+                    "Property Exception", e)); //$NON-NLS-1$
         }
     }
 
