@@ -26,6 +26,7 @@ import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
 import org.tigris.subversion.subclipse.core.ISVNLocalResource;
 import org.tigris.subversion.subclipse.core.ISVNRepositoryLocation;
+import org.tigris.subversion.subclipse.core.SVNClientManager;
 import org.tigris.subversion.subclipse.core.SVNException;
 import org.tigris.subversion.subclipse.core.SVNProviderPlugin;
 import org.tigris.subversion.subclipse.core.SVNTeamProvider;
@@ -85,16 +86,18 @@ public abstract class SubclipseTest extends TestCase {
         // do we use javahl or command line ?
         String mode = System.getProperty("svn.mode");
         SVNProviderPlugin plugin = SVNProviderPlugin.getPlugin();
+        SVNClientManager svnClientManager = plugin.getSVNClientManager();
 
+        
         if (mode == null || mode.equalsIgnoreCase("javahl")) {
-            plugin.setSvnClientInterface(SVNClientAdapterFactory.JAVAHL_CLIENT);
-            if (plugin.getSvnClientInterface() != SVNClientAdapterFactory.JAVAHL_CLIENT) {
+            svnClientManager.setSvnClientInterface(SVNClientAdapterFactory.JAVAHL_CLIENT);
+            if (svnClientManager.getSvnClientInterface() != SVNClientAdapterFactory.JAVAHL_CLIENT) {
                 System.out.println("Warning : Can't use Javahl");
             }
         } else if (mode.equalsIgnoreCase("cli")) {
-            plugin
+            svnClientManager
                     .setSvnClientInterface(SVNClientAdapterFactory.COMMANDLINE_CLIENT);
-            if (plugin.getSvnClientInterface() != SVNClientAdapterFactory.JAVAHL_CLIENT) {
+            if (svnClientManager.getSvnClientInterface() != SVNClientAdapterFactory.JAVAHL_CLIENT) {
                 System.out
                         .println("Warning : Can't use command line interface");
             }
