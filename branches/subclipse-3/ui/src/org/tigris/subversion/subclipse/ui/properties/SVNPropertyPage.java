@@ -10,211 +10,221 @@
  *******************************************************************************/
 package org.tigris.subversion.subclipse.ui.properties;
 
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Text;
-import org.eclipse.team.core.RepositoryProvider;
-import org.eclipse.team.core.TeamException;
-import org.eclipse.ui.dialogs.PropertyPage;
-import org.tigris.subversion.subclipse.core.ISVNLocalResource;
-import org.tigris.subversion.subclipse.core.SVNProviderPlugin;
-import org.tigris.subversion.subclipse.core.SVNTeamProvider;
-import org.tigris.subversion.subclipse.core.resources.SVNWorkspaceRoot;
-import org.tigris.subversion.subclipse.ui.SVNUIPlugin;
-import org.tigris.subversion.svnclientadapter.ISVNStatus;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
+import org.eclipse.swt.*;
+import org.eclipse.swt.layout.*;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.team.core.*;
+import org.eclipse.ui.dialogs.*;
+import org.tigris.subversion.subclipse.core.*;
+import org.tigris.subversion.subclipse.core.resources.*;
+import org.tigris.subversion.subclipse.ui.*;
+import org.tigris.subversion.svnclientadapter.*;
 
 public class SVNPropertyPage extends PropertyPage {
 
-	private static final int TEXT_FIELD_WIDTH = 50;
+    private static final int TEXT_FIELD_WIDTH = 50;
 
-	private Text ignoredTextField;
-	private Text managedTextField;
-	private Text hasRemoteTextField;
-	private Text urlTextField;
-	private Text lastChangedRevisionTextField;
-	private Text lastChangedDateTextField;
-	private Text lastCommitAuthorTextField;
-	private Text textStatusTextField;
-	private Text mergedTextField;
-	private Text deletedTextField;
-	private Text modifiedTextField;
-	private Text addedTextField;
-	private Text revisionTextField;
-	private Text copiedTextField;
-	private Text pathTextField;
-	private Text urlCopiedFromTextField;	
+    private Label ignoredValue;
+    private Label managedValue;
+    private Label hasRemoteValue;
+    private Label urlValue;
+    private Label lastChangedRevisionValue;
+    private Label lastChangedDateValue;
+    private Label lastCommitAuthorValue;
+    private Label textStatusValue;
+    private Label mergedValue;
+    private Label deletedValue;
+    private Label modifiedValue;
+    private Label addedValue;
+    private Label revisionValue;
+    private Label copiedValue;
+    private Label pathLabel;
+    private Label urlCopiedFromValue;
+    private Label pathValue;
 
-	public SVNPropertyPage() {
-		super();
-	}
+    public SVNPropertyPage() {
+        super();
+    }
 
-	private void addFirstSection(Composite parent) {
-		Composite composite = createDefaultComposite(parent);
+    private void addFirstSection(Composite parent) {
+        Composite composite = createDefaultComposite(parent);
 
-		//Label for path field
-		Label pathLabel = new Label(composite, SWT.NONE);
-		pathLabel.setText("Path");
+        //Label for path field
+        Label pathLabel = new Label(composite, SWT.NONE);
+        pathLabel.setText("Path");
 
-		// Path text field
-		Text pathValueText = new Text(composite, SWT.WRAP | SWT.READ_ONLY);
-		pathValueText.setText(((IResource) getElement()).getFullPath().toString());
-	}
+        // Path text field
+        Label pathValueText = new Label(composite, SWT.WRAP);
+        GridData gd = new GridData();
+        gd.horizontalSpan = 2;
+        pathValueText.setLayoutData(gd);
+        pathValueText.setText(((IResource) getElement()).getFullPath().toString());
+    }
 
-	private void addSeparator(Composite parent) {
-		Label separator = new Label(parent, SWT.SEPARATOR | SWT.HORIZONTAL);
-		GridData gridData = new GridData();
-		gridData.horizontalAlignment = GridData.FILL;
-		gridData.grabExcessHorizontalSpace = true;
-		separator.setLayoutData(gridData);
-	}
+    private void addSeparator(Composite parent) {
+        Label separator = new Label(parent, SWT.SEPARATOR | SWT.HORIZONTAL);
+        GridData gridData = new GridData();
+        gridData.horizontalAlignment = GridData.FILL;
+        //gridData.grabExcessHorizontalSpace = true;
+        separator.setLayoutData(gridData);
+    }
 
-	private void addSecondSection(Composite parent) {
-		Composite composite = createDefaultComposite(parent);
+    private void addSecondSection(Composite parent) {
+        Composite composite = createDefaultComposite(parent);
 
-		GridData gd = new GridData();
-		gd.widthHint = convertWidthInCharsToPixels(TEXT_FIELD_WIDTH);
-				
-		Label pathLabel = new Label(composite, SWT.NONE);
-		pathLabel.setText("Ignored");		
-		ignoredTextField = new Text(composite, SWT.WRAP | SWT.READ_ONLY);
-		
-		pathLabel = new Label(composite, SWT.NONE);
-		pathLabel.setText("Managed");		
-		managedTextField = new Text(composite, SWT.WRAP | SWT.READ_ONLY);
+        GridData gd = new GridData();
+        gd.widthHint = convertWidthInCharsToPixels(TEXT_FIELD_WIDTH);
 
-		pathLabel = new Label(composite, SWT.NONE);
-		pathLabel.setText("Has Remote");		
-		hasRemoteTextField = new Text(composite, SWT.WRAP | SWT.READ_ONLY);
+        Label label = new Label(composite, SWT.NONE);
+        label.setText("Ignored");
+        ignoredValue = new Label(composite, SWT.WRAP);
 
-		pathLabel = new Label(composite, SWT.NONE);
-		pathLabel.setText("URL");		
-		urlTextField = new Text(composite, SWT.WRAP | SWT.READ_ONLY);
+        label = new Label(composite, SWT.NONE);
+        label.setText("Managed");
+        managedValue = new Label(composite, SWT.WRAP);
 
-		pathLabel = new Label(composite, SWT.NONE);
-		pathLabel.setText("Last Changed Revision");		
-		lastChangedRevisionTextField = new Text(composite, SWT.WRAP | SWT.READ_ONLY);
+        label = new Label(composite, SWT.NONE);
+        label.setText("Has Remote");
+        hasRemoteValue = new Label(composite, SWT.WRAP);
 
-		pathLabel = new Label(composite, SWT.NONE);
-		pathLabel.setText("Last Changed Date");		
-		lastChangedDateTextField = new Text(composite, SWT.WRAP | SWT.READ_ONLY);
+        label = new Label(composite, SWT.NONE);
+        label.setText("URL");
+        urlValue = new Label(composite, SWT.WRAP);
 
-		pathLabel = new Label(composite, SWT.NONE);
-		pathLabel.setText("Last Commit Author");		
-		lastCommitAuthorTextField = new Text(composite, SWT.WRAP | SWT.READ_ONLY);
+        label = new Label(composite, SWT.NONE);
+        label.setText("Last Changed Revision");
+        lastChangedRevisionValue = new Label(composite, SWT.WRAP);
 
-		pathLabel = new Label(composite, SWT.NONE);
-		pathLabel.setText("Status");		
-		textStatusTextField = new Text(composite, SWT.WRAP | SWT.READ_ONLY);
+        label = new Label(composite, SWT.NONE);
+        label.setText("Last Changed Date");
+        lastChangedDateValue = new Label(composite, SWT.WRAP);
 
-		pathLabel = new Label(composite, SWT.NONE);
-		pathLabel.setText("Merged");		
-		mergedTextField = new Text(composite, SWT.WRAP | SWT.READ_ONLY);
+        label = new Label(composite, SWT.NONE);
+        label.setText("Last Commit Author");
+        lastCommitAuthorValue = new Label(composite, SWT.WRAP);
 
-		pathLabel = new Label(composite, SWT.NONE);
-		pathLabel.setText("Deleted");		
-		deletedTextField = new Text(composite, SWT.WRAP | SWT.READ_ONLY);
+        label = new Label(composite, SWT.NONE);
+        label.setText("Status");
+        textStatusValue = new Label(composite, SWT.WRAP);
 
-		pathLabel = new Label(composite, SWT.NONE);
-		pathLabel.setText("Modified");		
-		modifiedTextField = new Text(composite, SWT.WRAP | SWT.READ_ONLY);
+        label = new Label(composite, SWT.NONE);
+        label.setText("Merged");
+        mergedValue = new Label(composite, SWT.WRAP);
 
-		pathLabel = new Label(composite, SWT.NONE);
-		pathLabel.setText("Added");		
-		addedTextField = new Text(composite, SWT.WRAP | SWT.READ_ONLY);
+        label = new Label(composite, SWT.NONE);
+        label.setText("Deleted");
+        deletedValue = new Label(composite, SWT.WRAP);
 
-		pathLabel = new Label(composite, SWT.NONE);
-		pathLabel.setText("Revision");		
-		revisionTextField = new Text(composite, SWT.WRAP | SWT.READ_ONLY);
+        label = new Label(composite, SWT.NONE);
+        label.setText("Modified");
+        modifiedValue = new Label(composite, SWT.WRAP);
 
-		pathLabel = new Label(composite, SWT.NONE);
-		pathLabel.setText("Copied");		
-		copiedTextField = new Text(composite, SWT.WRAP | SWT.READ_ONLY);
+        label = new Label(composite, SWT.NONE);
+        label.setText("Added");
+        addedValue = new Label(composite, SWT.WRAP);
 
-		pathLabel = new Label(composite, SWT.NONE);
-		pathLabel.setText("Path");		
-		pathTextField = new Text(composite, SWT.WRAP | SWT.READ_ONLY);
+        label = new Label(composite, SWT.NONE);
+        label.setText("Revision");
+        revisionValue = new Label(composite, SWT.WRAP);
 
-		pathLabel = new Label(composite, SWT.NONE);
-		pathLabel.setText("URL Copied From");		
-		urlCopiedFromTextField = new Text(composite, SWT.WRAP | SWT.READ_ONLY);
+        label = new Label(composite, SWT.NONE);
+        label.setText("Copied");
+        copiedValue = new Label(composite, SWT.WRAP);
 
-		// Populate owner text field
-		try {
-			IResource resource = (IResource) getElement();
-			SVNTeamProvider svnProvider = (SVNTeamProvider)RepositoryProvider.getProvider(resource.getProject(), SVNProviderPlugin.getTypeId());
-			if (svnProvider == null)
-				return;
+        label = new Label(composite, SWT.NONE);
+        label.setText("Path");
 
-			ISVNLocalResource svnResource = SVNWorkspaceRoot.getSVNResourceFor(resource);
-			if(svnResource == null)
-				return;
+        gd = new GridData();
+        gd.horizontalSpan = 2;
+        pathValue = new Label(composite, SWT.WRAP);
+        pathValue.setLayoutData(gd);
 
-			ISVNStatus status = svnResource.getStatus();
+        // Populate owner text field
+        try {
+            IResource resource = (IResource) getElement();
+            SVNTeamProvider svnProvider = (SVNTeamProvider) RepositoryProvider.getProvider(resource
+                    .getProject(), SVNProviderPlugin.getTypeId());
+            if (svnProvider == null) return;
 
-			ignoredTextField.setText(new Boolean(status.isIgnored()).toString());		
-			managedTextField.setText(new Boolean(status.isManaged()).toString());
-			hasRemoteTextField.setText(new Boolean(status.isIgnored()).toString());
-			urlTextField.setText(status.getUrl() != null? status.getUrl().toString():"");
-			lastChangedRevisionTextField.setText(status.getLastChangedRevision() != null? status.getLastChangedRevision().toString():"");
-			lastChangedDateTextField.setText(status.getLastChangedDate() != null? status.getLastChangedDate().toString():"");
-			lastCommitAuthorTextField.setText(status.getLastCommitAuthor() != null? status.getLastCommitAuthor():"");
-			textStatusTextField.setText(status.getTextStatus() != null? status.getTextStatus().toString():"");
-			mergedTextField.setText(new Boolean(status.isMerged()).toString());
-			deletedTextField.setText(new Boolean(status.isDeleted()).toString());
-			modifiedTextField.setText(new Boolean(status.isModified()).toString());
-			addedTextField.setText(new Boolean(status.isAdded()).toString());
-			revisionTextField.setText(status.getRevision() != null? status.getRevision().toString():"");
-			copiedTextField.setText(new Boolean(status.isCopied()).toString());
-			pathTextField.setText(status.getPath() != null? status.getPath():"");
-			urlCopiedFromTextField.setText(status.getUrlCopiedFrom() != null? status.getUrlCopiedFrom():"");			
-			
-		} catch (Exception e) {
-			SVNUIPlugin.log(new Status(Status.ERROR, SVNUIPlugin.ID, TeamException.UNABLE, "Property Exception", e));
-		}
-	}
+            ISVNLocalResource svnResource = SVNWorkspaceRoot.getSVNResourceFor(resource);
+            if (svnResource == null) return;
 
-	/**
-	 * @see PreferencePage#createContents(Composite)
-	 */
-	protected Control createContents(Composite parent) {
-		Composite composite = new Composite(parent, SWT.NONE);
-		GridLayout layout = new GridLayout();
-		composite.setLayout(layout);
-		GridData data = new GridData(GridData.FILL);
-		data.grabExcessHorizontalSpace = true;
-		composite.setLayoutData(data);
+            ISVNStatus status = svnResource.getStatus();
 
-		addFirstSection(composite);
-		addSeparator(composite);
-		addSecondSection(composite);
-		return composite;
-	}
+            if (status.getUrlCopiedFrom() != null) {
 
-	private Composite createDefaultComposite(Composite parent) {
-		Composite composite = new Composite(parent, SWT.NULL);
-		GridLayout layout = new GridLayout();
-		layout.numColumns = 2;
-		composite.setLayout(layout);
+                label = new Label(composite, SWT.NONE);
+                label.setText("URL Copied From");
+                urlCopiedFromValue = new Label(composite, SWT.WRAP);
+                urlCopiedFromValue.setText(status.getUrlCopiedFrom() != null ? status
+                        .getUrlCopiedFrom() : "");
+            }
 
-		GridData data = new GridData();
-		data.verticalAlignment = GridData.FILL;
-		data.horizontalAlignment = GridData.FILL;
-		composite.setLayoutData(data);
+            ignoredValue.setText(new Boolean(status.isIgnored()).toString());
+            managedValue.setText(new Boolean(status.isManaged()).toString());
+            hasRemoteValue.setText(new Boolean(status.isIgnored()).toString());
+            urlValue.setText(status.getUrl() != null ? status.getUrl().toString() : "");
+            lastChangedRevisionValue.setText(status.getLastChangedRevision() != null ? status
+                    .getLastChangedRevision().toString() : "");
+            lastChangedDateValue.setText(status.getLastChangedDate() != null ? status
+                    .getLastChangedDate().toString() : "");
+            lastCommitAuthorValue.setText(status.getLastCommitAuthor() != null ? status
+                    .getLastCommitAuthor() : "");
+            textStatusValue.setText(status.getTextStatus() != null ? status.getTextStatus()
+                    .toString() : "");
+            mergedValue.setText(new Boolean(status.isMerged()).toString());
+            deletedValue.setText(new Boolean(status.isDeleted()).toString());
+            modifiedValue.setText(new Boolean(status.isModified()).toString());
+            addedValue.setText(new Boolean(status.isAdded()).toString());
+            revisionValue.setText(status.getRevision() != null ? status.getRevision().toString()
+                    : "");
+            copiedValue.setText(new Boolean(status.isCopied()).toString());
+            pathValue.setText(status.getPath() != null ? status.getPath() : "");
 
-		return composite;
-	}
+        } catch (Exception e) {
+            SVNUIPlugin.log(new Status(Status.ERROR, SVNUIPlugin.ID, TeamException.UNABLE,
+                    "Property Exception", e));
+        }
+    }
 
-	protected void performDefaults() {
-	}
+    /**
+     * @see PreferencePage#createContents(Composite)
+     */
+    protected Control createContents(Composite parent) {
+        Composite composite = new Composite(parent, SWT.NONE);
+        GridLayout layout = new GridLayout();
+        layout.numColumns = 2;
+        composite.setLayout(layout);
+        GridData data = new GridData(GridData.FILL);
 
-	public boolean performOk() {
-		return true;
-	}
+        composite.setLayoutData(data);
+
+        addFirstSection(composite);
+        addSeparator(composite);
+        addSecondSection(composite);
+        return composite;
+    }
+
+    private Composite createDefaultComposite(Composite parent) {
+        Composite composite = new Composite(parent, SWT.NULL);
+        GridLayout layout = new GridLayout();
+        layout.numColumns = 2;
+        composite.setLayout(layout);
+
+        GridData data = new GridData();
+        data.verticalAlignment = GridData.FILL;
+        composite.setLayoutData(data);
+
+        return composite;
+    }
+
+    protected void performDefaults() {
+    }
+
+    public boolean performOk() {
+        return true;
+    }
 
 }
