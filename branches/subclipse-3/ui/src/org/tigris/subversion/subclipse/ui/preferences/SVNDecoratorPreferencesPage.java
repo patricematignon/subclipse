@@ -46,6 +46,8 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.dialogs.ListSelectionDialog;
+import org.tigris.subversion.subclipse.core.ISVNCoreConstants;
+import org.tigris.subversion.subclipse.core.SVNProviderPlugin;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.tigris.subversion.subclipse.ui.IHelpContextIds;
 import org.tigris.subversion.subclipse.ui.ISVNUIConstants;
@@ -352,9 +354,13 @@ public class SVNDecoratorPreferencesPage extends PreferencePage implements IWork
 		store.setValue(ISVNUIConstants.PREF_SHOW_NEWRESOURCE_DECORATION, imageShowNewResource.getSelection());
 		
 		store.setValue(ISVNUIConstants.PREF_CALCULATE_DIRTY, showDirty.getSelection());
-		
+        
+        // Update the strategy used to calculate the dirty state
+		SVNProviderPlugin.getPlugin().getPluginPreferences().setValue(ISVNCoreConstants.PREF_RECURSIVE_STATUS_UPDATE, showDirty.getSelection());
+        SVNProviderPlugin.getPlugin().savePluginPreferences();
+        
 		SVNLightweightDecorator.refresh();
-		
+
 		SVNUIPlugin.getPlugin().savePluginPreferences();
 		return true;
 	}
