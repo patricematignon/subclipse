@@ -100,13 +100,6 @@ public interface ISVNLocalResource extends ISVNResource, IAdaptable {
 	public ISVNRemoteResource getRemoteResource(SVNRevision revision)
 			throws SVNException;
 
-	/**
-	 * Method isModified.
-	 * 
-	 * @return boolean
-	 */
-	public boolean isModified() throws SVNException;
-
     /**    
      * resource is considered dirty if either 
      * <ul>

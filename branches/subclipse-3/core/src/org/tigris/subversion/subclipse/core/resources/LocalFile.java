@@ -70,17 +70,11 @@ public class LocalFile extends LocalResource implements ISVNLocalFile {
 	public boolean isFolder() {
 		return false;
 	}
-	
-	/*
-	 * @see ISVNLocalResource#isModified()
-	 */
-	public boolean isModified() throws SVNException {
-		if (!exists()) return true;
-		
-		LocalResourceStatus status = getStatus();
-		return status.getTextStatus() == SVNStatusKind.MODIFIED;
-	}
 
+    /*
+     * (non-Javadoc)
+     * @see org.tigris.subversion.subclipse.core.ISVNLocalResource#isDirty()
+     */
     public boolean isDirty() throws SVNException {
         LocalResourceStatus status = getStatus();
         return status.isDirty();

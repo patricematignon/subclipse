@@ -431,6 +431,14 @@ public class LocalResourceStatus {
         return getTextStatus().equals(SVNStatusKind.CONFLICTED);
     }
 
+    public boolean isPropModified() {
+        return getPropStatus().equals(SVNStatusKind.MODIFIED);
+    }
+
+    public boolean isPropConflicted() {
+        return getPropStatus().equals(SVNStatusKind.CONFLICTED);
+    }
+    
     public boolean isCopied() {
         return urlCopiedFrom != null;
     }

@@ -136,31 +136,8 @@ public class LocalFolder extends LocalResource implements ISVNLocalFolder {
     }
 
     /**
-     * Assumption this is only called from decorator and isIgnored() is
-     * purposely ommited here for performance reasons.
+     * A folder is considered dirty if its status is dirty or if one of its children is dirty
      */
-    public boolean isModified() throws SVNException {
-        IContainer container = (IContainer) getIResource();
-
-        if (!isManaged()) {
-            return container.exists();
-        }
-
-        ISVNLocalResource[] children = (ISVNLocalResource[]) members(
-                new NullProgressMonitor(), ALL_UNIGNORED_MEMBERS);
-
-        for (int i = 0; i < children.length; i++) {
-            ISVNLocalResource resource = children[i];
-            if (resource.isModified()) {
-                // if a child resource is dirty consider the parent dirty as
-                // well, there
-                // is no need to continue checking other siblings.
-                return true;
-            }
-        }
-        return false;
-    }
-
     public boolean isDirty() throws SVNException {
         if (getStatus().isDirty()) {
             return true;
