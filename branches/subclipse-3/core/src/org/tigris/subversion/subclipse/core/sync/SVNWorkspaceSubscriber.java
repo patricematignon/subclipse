@@ -345,10 +345,38 @@ public class SVNWorkspaceSubscriber extends Subscriber implements IResourceState
     private void internalResourceChanged(IResource[] changedResources) {
         for (int i = 0; i < changedResources.length; i++) {
             IResource resource = changedResources[i];
-            System.out.println("refresing "+resource);
-            refresh(resource, IResource.DEPTH_ZERO );
+            try {
+                if( resource.exists() ) {
+                    ISVNLocalResource localResource = SVNWorkspaceRoot.getSVNResourceFor( resource );
+                    ISVNStatus status = localResource.getStatus();
+                    StatusInfo localInfo = new StatusInfo(status.getLastChangedRevision(), status.getTextStatus() );
+                    localSyncStateStore.setBytes( resource,  localInfo.asBytes() );
+
+                    if( remoteSyncStateStore.getBytes( resource ) == null ) {
+                        StatusInfo remoteInfo;
+                        if( localResource.hasRemote() ) {
+                            remoteInfo = new StatusInfo(status.getLastChangedRevision(), Kind.NORMAL );
+                        }
+                        else {
+                            remoteInfo = new StatusInfo(null, Kind.NONE );
+                        }
+                        remoteSyncStateStore.setBytes( resource, remoteInfo.asBytes() );
+                    }
+                }
+                else {
+                    if( remoteSyncStateStore.getBytes( resource ) == null ) {
+                        localSyncStateStore.deleteBytes( resource );
+                    }
+                    else {
+                        StatusInfo localInfo = new StatusInfo(null, Kind.NONE );
+                        localSyncStateStore.setBytes( resource,  localInfo.asBytes() );
+                    }
+                }
+            } catch (TeamException e) {
+                e.printStackTrace();
+            }
         }
-		fireTeamResourceChange(SubscriberChangeEvent.asSyncChangedDeltas(this, changedResources));
+        fireTeamResourceChange(SubscriberChangeEvent.asSyncChangedDeltas(this, changedResources));
     }
 
     /* (non-Javadoc)
