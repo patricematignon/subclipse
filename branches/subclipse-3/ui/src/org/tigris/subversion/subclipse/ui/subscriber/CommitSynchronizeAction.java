@@ -40,7 +40,7 @@ public class CommitSynchronizeAction extends SynchronizeModelAction {
 	 * @see org.eclipse.team.ui.synchronize.SynchronizeModelAction#getSyncInfoFilter()
 	 */
 	protected FastSyncInfoFilter getSyncInfoFilter() {
-		return new SyncInfoDirectionFilter(new int[] {SyncInfo.OUTGOING, SyncInfo.CONFLICTING});
+		return new SyncInfoDirectionFilter(new int[] {SyncInfo.OUTGOING});
 	}
 	
 	/* (non-Javadoc)

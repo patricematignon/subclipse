@@ -29,10 +29,9 @@ public class ShowHistorySynchronizeAction extends SynchronizeModelAction {
 			    if (selection.size() != 1) return false;
 		        ISynchronizeModelElement element = (ISynchronizeModelElement)selection.getFirstElement();
 			    IResource resource = element.getResource();
-                ISVNLocalResource svnResource = SVNWorkspaceRoot
-                .getSVNResourceFor(resource);			    
+                ISVNLocalResource svnResource = SVNWorkspaceRoot.getSVNResourceFor(resource);			    
                 try {
-                    return !svnResource.getStatus().isAdded();
+                    return !svnResource.getStatus().isAdded() && svnResource.getStatus().isManaged() && resource.exists();
                 } catch (SVNException e) {
                     return false;
                 }
