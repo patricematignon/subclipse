@@ -27,22 +27,22 @@ public class SVNPropertyPage extends PropertyPage {
 
     private static final int TEXT_FIELD_WIDTH = 50;
 
-    private Label ignoredValue;
-    private Label managedValue;
-    private Label hasRemoteValue;
-    private Label urlValue;
-    private Label lastChangedRevisionValue;
-    private Label lastChangedDateValue;
-    private Label lastCommitAuthorValue;
-    private Label textStatusValue;
-    private Label mergedValue;
-    private Label deletedValue;
-    private Label modifiedValue;
-    private Label addedValue;
-    private Label revisionValue;
-    private Label copiedValue;
-    private Label urlCopiedFromValue;
-    private Label pathValue;
+    private Text ignoredValue;
+    private Text managedValue;
+    private Text hasRemoteValue;
+    private Text urlValue;
+    private Text lastChangedRevisionValue;
+    private Text lastChangedDateValue;
+    private Text lastCommitAuthorValue;
+    private Text textStatusValue;
+    private Text mergedValue;
+    private Text deletedValue;
+    private Text modifiedValue;
+    private Text addedValue;
+    private Text revisionValue;
+    private Text copiedValue;
+    private Text urlCopiedFromValue;
+    private Text pathValue;
 
     public SVNPropertyPage() {
         super();
@@ -56,7 +56,7 @@ public class SVNPropertyPage extends PropertyPage {
         pathLabel.setText("Path");
 
         // Path text field
-        Label pathValueText = new Label(composite, SWT.WRAP);
+        Text pathValueText = new Text(composite, SWT.WRAP | SWT.READ_ONLY);
         GridData gd = new GridData();
         gd.horizontalSpan = 2;
         pathValueText.setLayoutData(gd);
@@ -76,66 +76,66 @@ public class SVNPropertyPage extends PropertyPage {
 
         Label label = new Label(composite, SWT.NONE);
         label.setText("Ignored");
-        ignoredValue = new Label(composite, SWT.WRAP);
+        ignoredValue = new Text(composite, SWT.WRAP | SWT.READ_ONLY);
 
         label = new Label(composite, SWT.NONE);
         label.setText("Managed");
-        managedValue = new Label(composite, SWT.WRAP);
+        managedValue = new Text(composite, SWT.WRAP | SWT.READ_ONLY);
 
         label = new Label(composite, SWT.NONE);
         label.setText("Has Remote");
-        hasRemoteValue = new Label(composite, SWT.WRAP);
+        hasRemoteValue = new Text(composite, SWT.WRAP | SWT.READ_ONLY);
 
         label = new Label(composite, SWT.NONE);
         label.setText("URL");
-        urlValue = new Label(composite, SWT.WRAP);
+        urlValue = new Text(composite, SWT.WRAP | SWT.READ_ONLY);
 
         label = new Label(composite, SWT.NONE);
         label.setText("Last Changed Revision");
-        lastChangedRevisionValue = new Label(composite, SWT.WRAP);
+        lastChangedRevisionValue = new Text(composite, SWT.WRAP | SWT.READ_ONLY);
 
         label = new Label(composite, SWT.NONE);
         label.setText("Last Changed Date");
-        lastChangedDateValue = new Label(composite, SWT.WRAP);
+        lastChangedDateValue = new Text(composite, SWT.WRAP | SWT.READ_ONLY);
 
         label = new Label(composite, SWT.NONE);
         label.setText("Last Commit Author");
-        lastCommitAuthorValue = new Label(composite, SWT.WRAP);
+        lastCommitAuthorValue = new Text(composite, SWT.WRAP | SWT.READ_ONLY);
 
         label = new Label(composite, SWT.NONE);
         label.setText("Status");
-        textStatusValue = new Label(composite, SWT.WRAP);
+        textStatusValue = new Text(composite, SWT.WRAP | SWT.READ_ONLY);
 
         label = new Label(composite, SWT.NONE);
         label.setText("Merged");
-        mergedValue = new Label(composite, SWT.WRAP);
+        mergedValue = new Text(composite, SWT.WRAP | SWT.READ_ONLY);
 
         label = new Label(composite, SWT.NONE);
         label.setText("Deleted");
-        deletedValue = new Label(composite, SWT.WRAP);
+        deletedValue = new Text(composite, SWT.WRAP | SWT.READ_ONLY);
 
         label = new Label(composite, SWT.NONE);
         label.setText("Modified");
-        modifiedValue = new Label(composite, SWT.WRAP);
+        modifiedValue = new Text(composite, SWT.WRAP | SWT.READ_ONLY);
 
         label = new Label(composite, SWT.NONE);
         label.setText("Added");
-        addedValue = new Label(composite, SWT.WRAP);
+        addedValue = new Text(composite, SWT.WRAP | SWT.READ_ONLY);
 
         label = new Label(composite, SWT.NONE);
         label.setText("Revision");
-        revisionValue = new Label(composite, SWT.WRAP);
+        revisionValue = new Text(composite, SWT.WRAP | SWT.READ_ONLY);
 
         label = new Label(composite, SWT.NONE);
         label.setText("Copied");
-        copiedValue = new Label(composite, SWT.WRAP);
+        copiedValue = new Text(composite, SWT.WRAP | SWT.READ_ONLY);
 
         label = new Label(composite, SWT.NONE);
         label.setText("Path");
 
         GridData gd = new GridData();
         gd.horizontalSpan = 2;
-        pathValue = new Label(composite, SWT.WRAP);
+        pathValue = new Text(composite, SWT.WRAP | SWT.READ_ONLY);
         pathValue.setLayoutData(gd);
 
         // Populate owner text field
@@ -154,7 +154,7 @@ public class SVNPropertyPage extends PropertyPage {
 
                 label = new Label(composite, SWT.NONE);
                 label.setText("URL Copied From");
-                urlCopiedFromValue = new Label(composite, SWT.WRAP);
+                urlCopiedFromValue = new Text(composite, SWT.WRAP | SWT.READ_ONLY);
                 urlCopiedFromValue.setText(status.getUrlCopiedFrom() != null ? status
                         .getUrlCopiedFrom() : "");
             }
