@@ -285,6 +285,7 @@ public class SVNLightweightDecorator
 					SVNDecoratorConfiguration.ADDED_FLAG, addedFlag);
 			} else {
 				if ((status.getTextStatus() != ISVNStatus.Kind.UNVERSIONED) &&
+				    (status.getRevision() != null) &&
                     (status.getRevision().getNumber() != SVNRevision.SVN_INVALID_REVNUM) &&
                     (status.getRevision().getNumber() != 0)) {
 				    bindings.put(
