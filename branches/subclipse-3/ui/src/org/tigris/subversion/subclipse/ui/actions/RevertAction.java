@@ -35,9 +35,15 @@ public class RevertAction extends WorkspaceAction {
 				try {
 					for (int i = 0; i < resources.length; i++) {
 						
-                        ISVNLocalResource svnResource = SVNWorkspaceRoot.getSVNResourceFor(resources[i]);
-                        svnResource.revert();
-                        resources[i].refreshLocal(IResource.DEPTH_INFINITE, monitor);
+						ISVNLocalResource svnResource = SVNWorkspaceRoot.getSVNResourceFor(resources[i]);
+						svnResource.revert();
+						
+						// Revert on a file can also be used to resolve a merge conflict
+						if (resources[i].getType() == IResource.FILE) {
+							resources[i].getParent().refreshLocal(IResource.DEPTH_ONE, monitor);
+						} else {
+							resources[i].refreshLocal(IResource.DEPTH_INFINITE, monitor);
+						}
 					}
 					// fix the action enablement
 					if (action != null) action.setEnabled(isEnabled());
