@@ -11,12 +11,9 @@
 package org.tigris.subversion.subclipse.ui.properties;
 
 import java.net.MalformedURLException;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -28,15 +25,14 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.dialogs.ListDialog;
 import org.eclipse.ui.dialogs.PropertyPage;
-import org.eclipse.ui.internal.dialogs.ListContentProvider;
 import org.tigris.subversion.subclipse.core.ISVNRepositoryLocation;
 import org.tigris.subversion.subclipse.core.SVNException;
 import org.tigris.subversion.subclipse.core.SVNProviderPlugin;
 import org.tigris.subversion.subclipse.core.repo.SVNRepositories;
 import org.tigris.subversion.subclipse.ui.Policy;
 import org.tigris.subversion.subclipse.ui.SVNUIPlugin;
+import org.tigris.subversion.subclipse.ui.dialogs.ChooseRootUrlDialog;
 import org.tigris.subversion.svnclientadapter.SVNUrl;
 
 /**
@@ -156,11 +152,7 @@ public class SVNRepositoryPropertiesPage extends PropertyPage {
         button.setText(Policy.bind("SVNRepositoryPropertiesPage.browseRootUrl")); //$NON-NLS-1$
         button.addListener(SWT.Selection, new Listener() {
             public void handleEvent(Event event) {
-                
-                SVNUrl url = openChooseRootDialog(location.getUrl());
-                if (url != null) {
-                	repositoryRootText.setText(url.get());
-                }
+                openChooseRootDialog();
             }
         });
 
@@ -186,25 +178,15 @@ public class SVNRepositoryPropertiesPage extends PropertyPage {
      * @param url
      * @return
      */
-    private SVNUrl openChooseRootDialog(SVNUrl url) {
-        List list = new ArrayList();
-        
-        while (url != null) {
-        	list.add(url);
-        	url = url.getParent();
-        }
-        
-        ListDialog dialog= new ListDialog(getShell());
-        dialog.setTitle(Policy.bind("SVNRepositoryPropertiesPage.rootUrlDialogTitle")); //$NON-NLS-1$
-        dialog.setAddCancelButton(true);
-        dialog.setLabelProvider(new LabelProvider());
-        dialog.setMessage(Policy.bind("SVNRepositoryPropertiesPage.chooseRootUrl")); //$NON-NLS-1$
-        dialog.setContentProvider(new ListContentProvider());
-        dialog.setInput(list);
+    private void openChooseRootDialog() {
+        ChooseRootUrlDialog dialog = new ChooseRootUrlDialog(getShell(),location.getUrl()); 
         if (dialog.open() == Window.OK) {
-        	return (SVNUrl)dialog.getResult()[0];
-        } else {
-        	return null;
+            SVNUrl url = dialog.getRootUrl();
+            if (url == null) {
+                repositoryRootText.setText("");
+            } else {
+            	repositoryRootText.setText(dialog.getRootUrl().toString());
+            }
         }
     }
     
@@ -305,6 +287,8 @@ public class SVNRepositoryPropertiesPage extends PropertyPage {
 			} catch (MalformedURLException e1) {
                 // should not occur, we don't change the url of the root
 			}
+        } else {
+        	location.setRepositoryRoot(null);
         }
         
         try {

@@ -18,9 +18,11 @@ import java.util.Arrays;
 import java.util.Properties;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
@@ -30,11 +32,13 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.tigris.subversion.subclipse.ui.IHelpContextIds;
 import org.tigris.subversion.subclipse.ui.Policy;
+import org.tigris.subversion.subclipse.ui.dialogs.ChooseRootUrlDialog;
 import org.tigris.subversion.svnclientadapter.SVNUrl;
 
 /**
@@ -52,7 +56,10 @@ public class ConfigurationWizardMainPage extends SVNWizardPage {
 	// Password
 	private Text passwordText;
 	
-	// Host
+    // repository root url 
+    private Text rootUrlText;
+    
+	// url of the repository we want to add
 	private Combo urlCombo;
 
 	// Validation
@@ -128,6 +135,9 @@ public class ConfigurationWizardMainPage extends SVNWizardPage {
 
 		Listener listener = new Listener() {
 			public void handleEvent(Event event) {
+                String reposUrlString = urlCombo.getText();
+                String rootUrlString = rootUrlText.getText();
+                
 				validateFields();
 			}
 		};
@@ -139,7 +149,47 @@ public class ConfigurationWizardMainPage extends SVNWizardPage {
 		urlCombo = createEditableCombo(g);
 		urlCombo.addListener(SWT.Selection, listener);
 		urlCombo.addListener(SWT.Modify, listener);
-		
+        
+        // root url
+        createLabel(g, Policy.bind("ConfigurationWizardMainPage.rootUrl")); //$NON-NLS-1$
+        
+        Composite rootUrlComposite = new Composite(g, SWT.NONE);
+        GridData data = new GridData(GridData.FILL_HORIZONTAL);
+        data.grabExcessHorizontalSpace = true;
+        rootUrlComposite.setLayoutData(data);
+        
+        GridLayout layout = new GridLayout();
+        layout.numColumns = 2;
+        layout.marginHeight = 0;
+        layout.marginHeight = 0;
+        rootUrlComposite.setLayout(layout);
+        rootUrlText = createTextField(rootUrlComposite);
+        rootUrlText.setEditable(false);
+        Button button = new Button(rootUrlComposite, SWT.NONE);
+        button.setText(Policy.bind("ConfigurationWizardMainPage.browseRootUrl")); //$NON-NLS-1$        
+        button.addListener(SWT.Selection, new Listener() {
+            public void handleEvent(Event event) {
+            	openChooseRootDialog();
+            }
+        });
+        
+        // warning for repository root
+        Composite warningComposite = new Composite(g, SWT.NONE);
+        layout = new GridLayout();
+        layout.numColumns = 2;
+        layout.marginHeight = 0;
+        layout.marginHeight = 0;
+        warningComposite.setLayout(layout);
+        data = new GridData();
+        data.horizontalSpan = 2;
+        data.horizontalAlignment = GridData.FILL;
+        warningComposite.setLayoutData(data);
+        
+        Label warningLabel = new Label(warningComposite, SWT.NONE);
+        warningLabel.setImage(Dialog.getImage(Dialog.DLG_IMG_MESSAGE_WARNING));
+        Label warningText = new Label(warningComposite, SWT.WRAP);
+        warningText.setText(Policy.bind("ConfigurationWizardMainPage.rootUrlWarning")); //$NON-NLS-1$
+        
 		g = createGroup(composite, Policy.bind("ConfigurationWizardMainPage.Authentication_2")); //$NON-NLS-1$
 		
 		// User name
@@ -156,7 +206,7 @@ public class ConfigurationWizardMainPage extends SVNWizardPage {
 		// create a composite to ensure the validate button is in its own tab group
 		if (showValidate) {
 			Composite validateButtonTabGroup = new Composite(composite, SWT.NONE);
-			GridData data = new GridData();
+			data = new GridData();
 			data.horizontalSpan = 2;
 			validateButtonTabGroup.setLayoutData(data);
 			validateButtonTabGroup.setLayout(new FillLayout());
@@ -176,7 +226,8 @@ public class ConfigurationWizardMainPage extends SVNWizardPage {
 		
 		setControl(composite);
 	}
-	/**
+
+    /**
 	 * Utility method to create an editable combo box
 	 * 
 	 * @param parent  the parent of the combo box
@@ -203,7 +254,48 @@ public class ConfigurationWizardMainPage extends SVNWizardPage {
 		group.setLayout(layout);
 		return group;
 	}
-	
+
+    private SVNUrl getRepositoryUrl() {
+        String urlString = urlCombo.getText();
+        if (urlString.length() == 0) {
+            return null;
+        }
+        try {
+            return new SVNUrl(urlString);
+        } catch (MalformedURLException e) {
+            return null;
+        }
+    }
+
+    private SVNUrl getRootUrl() {
+        String urlString = rootUrlText.getText();
+        if (urlString.length() == 0) {
+            return null;
+        }
+        try {
+            return new SVNUrl(urlString);
+        } catch (MalformedURLException e) {
+            return null;
+        }
+    }
+
+    /**
+     * open a dialog for the user to choose the root repository url
+     * @return
+     */
+    private void openChooseRootDialog() {
+        SVNUrl reposUrl = getRepositoryUrl();
+        if (reposUrl == null) {
+        	return;   
+        }
+        
+        ChooseRootUrlDialog dialog = new ChooseRootUrlDialog(getShell(),reposUrl);
+
+        if (dialog.open() == Window.OK) {
+            rootUrlText.setText(dialog.getRootUrl().toString());
+        }        
+    }    
+    
 	/**
 	 * @see SVNWizardPage#finish
 	 */
@@ -213,6 +305,7 @@ public class ConfigurationWizardMainPage extends SVNWizardPage {
 		result.setProperty("user", userCombo.getText()); //$NON-NLS-1$
 		result.setProperty("password", passwordText.getText()); //$NON-NLS-1$
 		result.setProperty("url", urlCombo.getText()); //$NON-NLS-1$
+        result.setProperty("rootUrl", rootUrlText.getText()); //$NON-NLS-1$ 
 		this.properties = result;
 		
 		saveWidgetValues();
@@ -253,8 +346,6 @@ public class ConfigurationWizardMainPage extends SVNWizardPage {
 		}
 		
 		if(properties != null) {
-			
-	
 			String user = properties.getProperty("user"); //$NON-NLS-1$
 			if (user != null) {
 				userCombo.setText(user);
@@ -269,6 +360,11 @@ public class ConfigurationWizardMainPage extends SVNWizardPage {
 			if (host != null) {
 				urlCombo.setText(host);
 			}
+            
+            String rootUrl = properties.getProperty("rootUrl"); //$NON-NLS-1$
+            if (rootUrl != null) {
+            	rootUrlText.setText(rootUrl);
+            }
 		}
 	}
 
@@ -316,7 +412,8 @@ public class ConfigurationWizardMainPage extends SVNWizardPage {
 	 * and error messages appropriately. Call each time url or username is modified 
 	 */
 	private void validateFields() {
-		String url = urlCombo.getText();
+		// first check the url of the repository
+        String url = urlCombo.getText();
 		if (url.length() == 0) {
 			setErrorMessage(null);
 			setPageComplete(false);
@@ -329,10 +426,35 @@ public class ConfigurationWizardMainPage extends SVNWizardPage {
 			setPageComplete(false);			
 			return;
 		}
+        
+        // check the root url
+        if (validateRepositoryUrl() == false) {
+            setErrorMessage("Root url is not valid"); //$NON-NLS-1$);
+            setPageComplete(false);         
+            return;            
+        }
+        
 		setErrorMessage(null);
 		setPageComplete(true);
 	}
 	
+    private boolean validateRepositoryUrl() {
+        SVNUrl rootUrl = getRootUrl();
+        if (rootUrl == null) {
+        	// if the user does not want to give the root url, he can
+            return true;
+        }
+        SVNUrl reposUrl = getRepositoryUrl();
+        SVNUrl url = reposUrl;
+        while (url != null) {
+        	if (url.equals(rootUrl)) {
+                return true;
+            }
+            url = url.getParent();
+        }
+        return false;
+    }
+    
     /**
      * true if validate has been checked
      * @return
