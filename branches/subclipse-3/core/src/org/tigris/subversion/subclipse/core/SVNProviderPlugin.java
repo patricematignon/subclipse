@@ -128,6 +128,7 @@ public class SVNProviderPlugin extends Plugin {
 		adapterFactories.startup(null);
 	
         statusCacheManager = new StatusCacheManager();
+        getPluginPreferences().addPropertyChangeListener(statusCacheManager);
         statusCacheManager.startup(null);
         
 		// Initialize SVN change listeners. Note tha the report type is important.
@@ -159,7 +160,7 @@ public class SVNProviderPlugin extends Plugin {
         repositories.shutdown();
 		
 		adapterFactories.shutdown(null);
-        
+        getPluginPreferences().removePropertyChangeListener(statusCacheManager);
         statusCacheManager.shutdown(null);
 		
         // save the plugin preferences
@@ -183,7 +184,7 @@ public class SVNProviderPlugin extends Plugin {
 	 * @see org.eclipse.core.runtime.Plugin#initializeDefaultPluginPreferences()
 	 */
 	protected void initializeDefaultPluginPreferences() {
-
+	    getPluginPreferences().setDefault(ISVNCoreConstants.PREF_RECURSIVE_STATUS_UPDATE, true);
 	}
 
 	private static List listeners = new ArrayList();

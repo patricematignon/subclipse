@@ -11,14 +11,14 @@ package org.tigris.subversion.subclipse.core.status;
 
 import org.eclipse.core.internal.resources.IManager;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Preferences;
+import org.eclipse.core.runtime.Preferences.PropertyChangeEvent;
+import org.tigris.subversion.subclipse.core.ISVNCoreConstants;
 import org.tigris.subversion.subclipse.core.SVNException;
+import org.tigris.subversion.subclipse.core.SVNProviderPlugin;
 import org.tigris.subversion.subclipse.core.resources.LocalResourceStatus;
-import org.tigris.subversion.svnclientadapter.SVNNodeKind;
 import org.tigris.subversion.svnclientadapter.SVNStatusUnversioned;
 
 /**
@@ -30,9 +30,9 @@ import org.tigris.subversion.svnclientadapter.SVNStatusUnversioned;
  * 
  * @author cedric chabanois (cchab at tigris.org)
  */
-public class StatusCacheManager implements IManager{
+public class StatusCacheManager implements IManager, Preferences.IPropertyChangeListener {
     private StatusCacheComposite treeCacheRoot = new StatusCacheComposite();
-    private StatusUpdateStrategy statusUpdateStrategy = new NonRecursiveStatusUpdateStrategy();
+    private StatusUpdateStrategy statusUpdateStrategy;
     
     public StatusCacheManager() {
     }
@@ -41,6 +41,12 @@ public class StatusCacheManager implements IManager{
      * @see org.eclipse.core.internal.resources.IManager#startup(org.eclipse.core.runtime.IProgressMonitor)
      */
     public void startup(IProgressMonitor monitor) throws CoreException {
+        chooseUpdateStrategy();
+    }
+
+    private void chooseUpdateStrategy() {
+        boolean recursiveStatusUpdate = SVNProviderPlugin.getPlugin().getPluginPreferences().getBoolean(ISVNCoreConstants.PREF_RECURSIVE_STATUS_UPDATE);
+        statusUpdateStrategy = recursiveStatusUpdate ? (StatusUpdateStrategy)new RecursiveStatusUpdateStrategy() : (StatusUpdateStrategy)new NonRecursiveStatusUpdateStrategy();
     }
     
     /* (non-Javadoc)
@@ -126,7 +132,12 @@ public class StatusCacheManager implements IManager{
         treeCacheRoot.removeStatus(resource,depth);
     }
 
-
-    
-    
+    /* (non-Javadoc)
+     * @see org.eclipse.core.runtime.Preferences.IPropertyChangeListener#propertyChange(org.eclipse.core.runtime.Preferences.PropertyChangeEvent)
+     */
+    public void propertyChange(PropertyChangeEvent event) {
+        if (ISVNCoreConstants.PREF_RECURSIVE_STATUS_UPDATE.equals(event.getProperty()))  {
+            chooseUpdateStrategy();
+        }
+    }
 }
