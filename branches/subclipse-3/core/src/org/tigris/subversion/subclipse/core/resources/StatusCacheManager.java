@@ -10,9 +10,6 @@
  *******************************************************************************/
 package org.tigris.subversion.subclipse.core.resources;
 
-import java.io.File;
-import java.io.IOException;
-
 import org.eclipse.core.internal.resources.IManager;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
@@ -97,16 +94,13 @@ public class StatusCacheManager implements IManager{
             throw SVNException.wrapException(e1);
         }
         
+        IPath baseResourceLocation = resource.getLocation();
+        int segments = baseResourceLocation.segmentCount();
+        
         for (int i = 0; i < statuses.length;i++) {
             ISVNStatus status = statuses[i];
-            IPath pathEclipse = null;
-            File file = status.getFile();
-            try {
-                String canonicalPath = file.getCanonicalPath();
-                pathEclipse = new Path(canonicalPath);
-            } catch (IOException e) {
-                // should never occur ...
-            }
+            
+            IPath pathEclipse = baseResourceLocation.append(new Path(status.getFile().getAbsolutePath()).removeFirstSegments(segments));
             
             IResource resourceStatus = null;
             
