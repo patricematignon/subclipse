@@ -1,62 +1,26 @@
-/*
- * Created on Apr 7, 2004
+/******************************************************************************
+ * This program and the accompanying materials are made available under
+ * the terms of the Common Public License v1.0 which accompanies this
+ * distribution, and is available at the following URL:
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * Copyright(c) 2003-2005 by the authors indicated in the @author tags.
  *
- * @todo To change the template for this generated file go to
- * Window - Preferences - Java - Code Generation - Code and Comments
- */
+ * All Rights are Reserved by the various authors.
+ *******************************************************************************/
 package org.tigris.subversion.subclipse.core.sync;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.core.variants.IResourceVariant;
 import org.eclipse.team.core.variants.IResourceVariantComparator;
-import org.tigris.subversion.subclipse.core.ISVNLocalFile;
-import org.tigris.subversion.subclipse.core.ISVNLocalFolder;
+import org.tigris.subversion.subclipse.core.ISVNLocalResource;
 import org.tigris.subversion.subclipse.core.SVNException;
 import org.tigris.subversion.subclipse.core.SVNProviderPlugin;
 import org.tigris.subversion.subclipse.core.resources.SVNWorkspaceRoot;
 
 /**
  * Describes the synchronization of a <b>local</b> resource 
- * relative to a <b>remote</b> resource variant. There are two
- * types of comparison: two-way and three-way. 
- * The {@link IResourceVariantComparator} is used to decide which 
- * comparison type to use. 
- * </p>
- * <p>
- * For two-way comparisons, a <code>SyncInfo</code> node has a change
- * type. This will be one of IN-SYNC, ADDITION, DELETION or CHANGE determined
- * in the following manner.
- * <ul>
- * <li>A resource is considered an ADDITION if it exists locally and there is no remote.
- * <li>A resource is considered an DELETION if it does not exists locally and there is remote.
- * <li>A resource is considered a CHANGE if both the local and remote exist but the 
- * comparator indicates that they differ. The comparator may be comparing contents or
- * timestamps or some other resource state.
- * <li>A resource is considered IN_SYNC in all other cases.
- * </ul>
- * </p><p>
- * For three-way comparisons, the sync info node has a direction as well as a change
- * type. The direction is one of INCOMING, OUTGOING or CONFLICTING. The comparison
- * of the local and remote resources with a <b>base</b> resource is used to determine
- * the direction of the change.
- * <ul>
- * <li>Differences between the base and local resources
- * are classified as <b>outgoing changes</b>; if there is
- * a difference, the local resource is considered the
- * <b>outgoing resource</b>.
- * <li>Differences between the base and remote resources
- * are classified as <b>incoming changes</b>; if there is
- * a difference, the remote resource is considered the
- * <b>incoming resource</b>.
- * <li>If there are both incoming and outgoing changes, the resource 
- * is considered a <b>conflicting change</b>.
- * Again, the comparison of resources is done using the variant comparator provided
- * when the sync info was created.
- * </p>
- * @since 3.0
+ * relative to a <b>remote</b> resource variant. 
  */
 public class SVNSyncInfo extends SyncInfo {
 
@@ -107,18 +71,13 @@ public class SVNSyncInfo extends SyncInfo {
 	 * @see org.eclipse.team.core.synchronize.SyncInfo#getLocalContentIdentifier()
 	 */
 	public String getLocalContentIdentifier() {
-		IResource local = getLocal();
+		// return a string could be displayed to the user to identify this resource
+        // we return the revision
+        IResource local = getLocal();
 		try {
-			if (local != null || local.getType() == IResource.FILE) {
-				// it's a file, return the revision number if we can find one
-				ISVNLocalFile cvsFile = SVNWorkspaceRoot
-						.getSVNFileFor((IFile) local);
-				return cvsFile.getStatus().getLastChangedRevision().toString();
-			} else if (local != null || local.getType() == IResource.FOLDER) {
-				ISVNLocalFolder svnFolder = SVNWorkspaceRoot
-						.getSVNFolderFor((IFolder) local);
-				return svnFolder.getStatus().getLastChangedRevision()
-						.toString();
+			if (local != null) {
+                ISVNLocalResource svnResource = SVNWorkspaceRoot.getSVNResourceFor(local);
+                return svnResource.getStatus().getRevision().toString();
 			}
 		} catch (SVNException e) {
 			SVNProviderPlugin.log(e);

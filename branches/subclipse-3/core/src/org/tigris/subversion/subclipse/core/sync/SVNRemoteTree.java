@@ -27,6 +27,7 @@ import org.eclipse.team.core.variants.IResourceVariant;
 import org.eclipse.team.core.variants.ThreeWayRemoteTree;
 import org.tigris.subversion.subclipse.core.ISVNLocalResource;
 import org.tigris.subversion.subclipse.core.ISVNRemoteResource;
+import org.tigris.subversion.subclipse.core.SVNException;
 import org.tigris.subversion.subclipse.core.SVNProviderPlugin;
 import org.tigris.subversion.subclipse.core.SVNSubscriber;
 import org.tigris.subversion.subclipse.core.resources.RemoteFile;
@@ -39,108 +40,125 @@ import org.tigris.subversion.svnclientadapter.SVNClientException;
 import org.tigris.subversion.svnclientadapter.SVNNodeKind;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
 
-
 /**
- * The file sytem three-way remote resource varant tree taht provides
- * the ability to traverse the file system for the creation of resource variants.
+ * The resource variant tree
  */
 public class SVNRemoteTree extends ThreeWayRemoteTree {
-	
+
 	/**
-	 * Create the file syetm remote resource variant tree
-	 * @param subscriber the file system subscriber
+	 * Create the svn remote resource variant tree
+	 * 
+	 * @param subscriber
+	 *            the file system subscriber
 	 */
 	public SVNRemoteTree(SVNSubscriber subscriber) {
 		super(subscriber);
 	}
-	
-//	/* (non-Javadoc)
-//	 * @see org.eclipse.team.core.variants.AbstractResourceVariantTree#fetchMembers(org.eclipse.team.core.variants.IResourceVariant, org.eclipse.core.runtime.IProgressMonitor)
-//	 */
-//	protected IResourceVariant[] fetchMembers(IResourceVariant variant, IProgressMonitor progress) throws TeamException {
-//		return (IResourceVariant[])((RemoteResource)variant).members(null);//returns ISVNRemoteResources
-//	}
-//	
-//	/* (non-Javadoc)
-//	 * @see org.eclipse.team.core.variants.AbstractResourceVariantTree#fetchVariant(org.eclipse.core.resources.IResource, int, org.eclipse.core.runtime.IProgressMonitor)
-//	 */
-//	protected IResourceVariant fetchVariant(IResource resource, int depth, IProgressMonitor monitor) throws TeamException {
-//		RepositoryProvider provider = RepositoryProvider.getProvider(resource.getProject(), SVNProviderPlugin.PROVIDER_ID);
-//		if (provider != null) {
-//			return ((SVNTeamProvider)provider).getResourceVariant(resource);
-//		}
-//		return null;
-//	}
-    /* (non-Javadoc)
-	 * @see org.eclipse.team.core.variants.AbstractResourceVariantTree#fetchMembers(org.eclipse.team.core.variants.IResourceVariant, org.eclipse.core.runtime.IProgressMonitor)
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.team.core.variants.AbstractResourceVariantTree#fetchMembers(org.eclipse.team.core.variants.IResourceVariant,
+	 *      org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	protected IResourceVariant[] fetchMembers(IResourceVariant remote, IProgressMonitor progress) throws TeamException {
-		ISVNRemoteResource[] children = remote != null ? (ISVNRemoteResource[])((RemoteResource)remote).members(progress) : new ISVNRemoteResource[0];
+	protected IResourceVariant[] fetchMembers(IResourceVariant remote,
+			IProgressMonitor progress) throws TeamException {
+		ISVNRemoteResource[] children;
+		if (remote != null) {
+			children = (ISVNRemoteResource[]) ((RemoteResource) remote)
+					.members(progress);
+		} else {
+			children = new ISVNRemoteResource[0];
+		}
 		IResourceVariant[] result = new IResourceVariant[children.length];
 		for (int i = 0; i < children.length; i++) {
-			result[i] = (IResourceVariant)children[i];
+			result[i] = (IResourceVariant) children[i];
 		}
 		return result;
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.core.variants.AbstractResourceVariantTree#fetchVariant(org.eclipse.core.resources.IResource, int, org.eclipse.core.runtime.IProgressMonitor)
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.team.core.variants.AbstractResourceVariantTree#fetchVariant(org.eclipse.core.resources.IResource,
+	 *      int, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	protected IResourceVariant fetchVariant(IResource resource, int depth, IProgressMonitor monitor) throws TeamException {
-	    System.out.println("Populating remote tree:"+resource);
-        IWorkspace workspace = ResourcesPlugin.getWorkspace();
-        IWorkspaceRoot workspaceRoot = workspace.getRoot();
+	protected IResourceVariant fetchVariant(IResource resource, int depth,
+			IProgressMonitor monitor) throws TeamException {
+		System.out.println("Populating remote tree:" + resource);
+		IWorkspace workspace = ResourcesPlugin.getWorkspace();
+		IWorkspaceRoot workspaceRoot = workspace.getRoot();
 
-	    ISVNClientAdapter client = SVNProviderPlugin.getPlugin().createSVNClient();
-	    ISVNLocalResource rootResource = SVNWorkspaceRoot.getSVNResourceFor( resource );
-	    RemoteFolderTree rootVariant = new RemoteFolderTree(null, rootResource.getRepository(), rootResource.getUrl(), null, rootResource.getStatus().getLastChangedRevision(), null, null);
+		ISVNClientAdapter client = SVNProviderPlugin.getPlugin()
+				.createSVNClient();
+		ISVNLocalResource rootResource = SVNWorkspaceRoot
+				.getSVNResourceFor(resource);
+		RemoteFolderTree rootVariant = new RemoteFolderTree(null, rootResource
+				.getRepository(), rootResource.getUrl(), null, rootResource
+				.getStatus().getLastChangedRevision(), null, null);
 
-	    Map folders = new HashMap();
-	    folders.put(resource, new ArrayList());
-	    Map resourceVariantMap = new HashMap();
-	    resourceVariantMap.put( resource, rootVariant);
-        try {
-            ISVNDirEntry[] entries = client.getList(resource.getLocation().toFile(),SVNRevision.HEAD,true);
-            for (int i = 0; i < entries.length; i++) {
-                ISVNDirEntry entry = entries[i];
-                IPath entryPath = resource.getLocation().append( entry.getPath() );
-                System.out.println(entryPath);
+		Map folders = new HashMap();
+		folders.put(resource, new ArrayList());
+		Map resourceVariantMap = new HashMap();
+		resourceVariantMap.put(resource, rootVariant);
+		try {
+            // we get the children recursively
+			ISVNDirEntry[] entries = client.getList(resource.getLocation()
+					.toFile(), SVNRevision.HEAD, true);
+			for (int i = 0; i < entries.length; i++) {
+				ISVNDirEntry entry = entries[i];
+				IPath entryPath = resource.getLocation()
+						.append(entry.getPath());
+				System.out.println(entryPath);
 
-                IResource memberResource = null;
-                IResourceVariant memberVariant = null;
-                if ( entry.getNodeKind() == SVNNodeKind.DIR ) {
-                    memberResource = workspaceRoot.getContainerForLocation(entryPath);
-                    ISVNLocalResource localResource = SVNWorkspaceRoot.getSVNResourceFor( memberResource );
-                    memberVariant = new RemoteFolderTree(null, localResource.getRepository(), localResource.getUrl(), null, entry.getLastChangedRevision(), entry.getLastChangedDate(), entry.getLastCommitAuthor());
-                    folders.put(memberResource, new ArrayList());
-                    resourceVariantMap.put(memberResource, memberVariant);
-                }
-                else if ( entry.getNodeKind() == SVNNodeKind.FILE ) {
-                    memberResource = workspaceRoot.getFileForLocation(entryPath);
-                    ISVNLocalResource localResource = SVNWorkspaceRoot.getSVNResourceFor( memberResource );
-                    memberVariant = new RemoteFile(null, localResource.getRepository(), localResource.getUrl(), null, entry.getLastChangedRevision(), entry.getLastChangedDate(), entry.getLastCommitAuthor());
-                }
+				IResource memberResource = null;
+				IResourceVariant memberVariant = null;
+				
+                if (entry.getNodeKind() == SVNNodeKind.DIR) {
+					memberResource = workspaceRoot
+							.getContainerForLocation(entryPath);
+					ISVNLocalResource localResource = SVNWorkspaceRoot
+							.getSVNResourceFor(memberResource);
+					memberVariant = new RemoteFolderTree(null, localResource
+							.getRepository(), localResource.getUrl(), null,
+							entry.getLastChangedRevision(), entry
+									.getLastChangedDate(), entry
+									.getLastCommitAuthor());
+					folders.put(memberResource, new ArrayList());
+					resourceVariantMap.put(memberResource, memberVariant);
+				} else if (entry.getNodeKind() == SVNNodeKind.FILE) {
+					memberResource = workspaceRoot
+							.getFileForLocation(entryPath);
+					ISVNLocalResource localResource = SVNWorkspaceRoot
+							.getSVNResourceFor(memberResource);
+					memberVariant = new RemoteFile(null, localResource
+							.getRepository(), localResource.getUrl(), null,
+							entry.getLastChangedRevision(), entry
+									.getLastChangedDate(), entry
+									.getLastCommitAuthor());
+				}
 
-                List children = (List) folders.get( memberResource.getParent() );
-                if( children == null ) {
-                    children = new ArrayList();
-                    folders.put(memberResource.getParent(), children);
-                }
-                children.add( memberVariant );
-            }
+				List children = (List) folders.get(memberResource.getParent());
+				if (children == null) {
+					children = new ArrayList();
+					folders.put(memberResource.getParent(), children);
+				}
+				children.add(memberVariant);
+			}
 
-            for (Iterator i = folders.entrySet().iterator(); i.hasNext();) {
-                Map.Entry entry = (Map.Entry) i.next();
-                IResource r = (IResource) entry.getKey();
-                List children = (List) entry.getValue();
-                ISVNRemoteResource[] children2 = (ISVNRemoteResource[]) children.toArray(new ISVNRemoteResource[ children.size()]);
-                RemoteFolderTree tree = (RemoteFolderTree) resourceVariantMap.get(r);
-                tree.setChildren( children2 );
-            }
-        } catch (SVNClientException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+			for (Iterator i = folders.entrySet().iterator(); i.hasNext();) {
+				Map.Entry entry = (Map.Entry) i.next();
+				IResource r = (IResource) entry.getKey();
+				List children = (List) entry.getValue();
+				ISVNRemoteResource[] children2 = (ISVNRemoteResource[]) children
+						.toArray(new ISVNRemoteResource[children.size()]);
+				RemoteFolderTree tree = (RemoteFolderTree) resourceVariantMap
+						.get(r);
+				tree.setChildren(children2);
+			}
+		} catch (SVNClientException e) {
+			throw SVNException.wrapException(e);
+		}
 		return rootVariant;
 	}
 }

@@ -28,12 +28,12 @@ import org.tigris.subversion.subclipse.core.sync.SVNRemoteTree;
 import org.tigris.subversion.subclipse.core.sync.SVNSyncInfo;
 
 /**
- * This is an example file system subscriber that overrides
- * ThreeWaySubscriber. It uses a repository
- * provider (<code>SVNTeamProvider</code>) to determine and
- * manage the roots and to create resource variants. It also makes
- * use of a file system specific remote tree (<code>SVNRemoteTree</code>)
- * for provided the remote tree access and refresh.
+ * The subscriber for svn.
+ * - Provides access to the synchronization state between resources in workspace and
+ * a set of resource variants.
+ * - It uses a ThreeWaySynchronizer to manage the synchronization state between 
+ * workspace and a remote location
+ * - It uses a ThreeWayRemoteTree to provide the remote tree access and refresh
  * 
  * @see ThreeWaySubscriber
  * @see ThreeWaySynchronizer
@@ -42,10 +42,11 @@ import org.tigris.subversion.subclipse.core.sync.SVNSyncInfo;
  */
 public class SVNSubscriber extends ThreeWaySubscriber {
 
-	private static SVNSubscriber instance; 
-	
+	private static SVNSubscriber instance;
+
 	/**
 	 * Return the file system subscriber singleton.
+	 * 
 	 * @return the file system subscriber singleton.
 	 */
 	public static synchronized SVNSubscriber getInstance() {
@@ -54,41 +55,50 @@ public class SVNSubscriber extends ThreeWaySubscriber {
 		}
 		return instance;
 	}
-	
+
 	/**
 	 * Create the file system subscriber.
 	 */
 	private SVNSubscriber() {
-		super(new ThreeWaySynchronizer(new QualifiedName(SVNProviderPlugin.ID, "workpsace-sync"))); //$NON-NLS-1$
+		super(new ThreeWaySynchronizer(new QualifiedName(SVNProviderPlugin.ID,
+				"workspace-sync"))); //$NON-NLS-1$
 	}
 
-	
-
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.team.core.variants.ThreeWaySubscriber#createRemoteTree()
 	 */
 	protected ThreeWayRemoteTree createRemoteTree() {
 		return new SVNRemoteTree(this);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.team.core.subscribers.Subscriber#getName()
 	 */
 	public String getName() {
 		return "SVNSubscriber"; //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.team.core.subscribers.Subscriber#roots()
 	 */
 	public IResource[] roots() {
-		List result = new ArrayList();
-		IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
+		// root resources this subscriber considers for synchronization ie
+        // projects which have a svn nature
+        List result = new ArrayList();
+		IProject[] projects = ResourcesPlugin.getWorkspace().getRoot()
+				.getProjects();
 		for (int i = 0; i < projects.length; i++) {
 			IProject project = projects[i];
-			if(project.isAccessible()) {
-				RepositoryProvider provider = RepositoryProvider.getProvider(project, SVNProviderPlugin.PROVIDER_ID);
-				if(provider != null) {
+			if (project.isAccessible()) {
+				RepositoryProvider provider = RepositoryProvider.getProvider(
+						project, SVNProviderPlugin.PROVIDER_ID);
+				if (provider != null) {
 					result.add(project);
 				}
 			}
@@ -96,36 +106,47 @@ public class SVNSubscriber extends ThreeWaySubscriber {
 		return (IProject[]) result.toArray(new IProject[result.size()]);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.core.variants.ThreeWaySubscriber#handleRootChanged(org.eclipse.core.resources.IResource, boolean)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.team.core.variants.ThreeWaySubscriber#handleRootChanged(org.eclipse.core.resources.IResource,
+	 *      boolean)
 	 */
 	public void handleRootChanged(IResource resource, boolean added) {
-		// Override to allow SVNTeamProvider to signal the addition and removal of roots
+		// Override to allow SVNTeamProvider to signal the addition and removal
+		// of roots
 		super.handleRootChanged(resource, added);
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.core.variants.ResourceVariantTreeSubscriber#getSyncInfo(org.eclipse.core.resources.IResource, org.eclipse.team.core.variants.IResourceVariant, org.eclipse.team.core.variants.IResourceVariant)
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.team.core.variants.ResourceVariantTreeSubscriber#getSyncInfo(org.eclipse.core.resources.IResource,
+	 *      org.eclipse.team.core.variants.IResourceVariant,
+	 *      org.eclipse.team.core.variants.IResourceVariant)
 	 */
-	protected SyncInfo getSyncInfo(IResource local, IResourceVariant base, IResourceVariant remote) throws TeamException {
+	protected SyncInfo getSyncInfo(IResource local, IResourceVariant base,
+			IResourceVariant remote) throws TeamException {
 		// Override to use a custom sync info
-		SVNSyncInfo info = new SVNSyncInfo(local, base, remote, new SVNRevisionComparator());
+		SVNSyncInfo info = new SVNSyncInfo(local, base, remote,
+				new SVNRevisionComparator());
 		info.init();
 		return info;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.core.variants.ThreeWaySubscriber#getResourceVariant(org.eclipse.core.resources.IResource, byte[])
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.team.core.variants.ThreeWaySubscriber#getResourceVariant(org.eclipse.core.resources.IResource,
+	 *      byte[])
 	 */
-	public IResourceVariant getResourceVariant(IResource resource, byte[] bytes) throws TeamException {
-	    if( bytes != null ) {
-	        String str = new String(bytes);
-	        if( str.equals("file:") )
-	            return null;
-	    }
-		RepositoryProvider provider = RepositoryProvider.getProvider(resource.getProject(), SVNProviderPlugin.PROVIDER_ID);
+	public IResourceVariant getResourceVariant(IResource resource, byte[] bytes)
+			throws TeamException {
+		RepositoryProvider provider = RepositoryProvider.getProvider(resource
+				.getProject(), SVNProviderPlugin.PROVIDER_ID);
 		if (provider != null) {
-			return ((SVNTeamProvider)provider).getResourceVariant(resource, bytes);
+			return ((SVNTeamProvider) provider).getResourceVariant(resource,
+					bytes);
 		}
 		return null;
 	}

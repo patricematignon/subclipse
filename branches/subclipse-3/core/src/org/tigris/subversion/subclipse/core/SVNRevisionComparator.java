@@ -1,15 +1,19 @@
-/*
- * Created on Jul 10, 2004
+/******************************************************************************
+ * This program and the accompanying materials are made available under
+ * the terms of the Common Public License v1.0 which accompanies this
+ * distribution, and is available at the following URL:
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * Copyright(c) 2003-2005 by the authors indicated in the @author tags.
  *
- * TODO To change the template for this generated file go to
- * Window - Preferences - Java - Code Style - Code Templates
- */
+ * All Rights are Reserved by the various authors.
+ *******************************************************************************/
 package org.tigris.subversion.subclipse.core;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.team.core.variants.IResourceVariant;
 import org.eclipse.team.core.variants.IResourceVariantComparator;
 import org.tigris.subversion.subclipse.core.resources.SVNWorkspaceRoot;
+import org.tigris.subversion.subclipse.core.util.Util;
 
 /**
  * @author mml
@@ -29,8 +33,7 @@ public class SVNRevisionComparator implements IResourceVariantComparator {
 		try {
 			return a.getStatus().getLastChangedRevision().getNumber() == b.getLastChangedRevision().getNumber();
 		} catch (SVNException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+            Util.logError("Cannot compare local resource with remote resource",e);
 		}
 		return false;
 		
@@ -53,7 +56,6 @@ public class SVNRevisionComparator implements IResourceVariantComparator {
 	 * @see org.eclipse.team.core.variants.IResourceVariantComparator#isThreeWay()
 	 */
 	public boolean isThreeWay() {
-		// TODO Auto-generated method stub
 		return true;
 	}
 
