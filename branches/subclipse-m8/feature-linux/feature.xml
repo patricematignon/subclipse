@@ -5,8 +5,8 @@
       version="0.9.3"
       provider-name="tigris.org"
       os="linux"
-      ws="gtk"
-      nl="de,en_US,fr"
+      ws="gtk,motif"
+      nl="en_US,de,fr"
       arch="x86">
 
    <install-handler/>
