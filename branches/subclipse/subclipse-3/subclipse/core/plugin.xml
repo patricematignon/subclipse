@@ -21,6 +21,7 @@
       <import plugin="org.eclipse.core.resources"/>
       <import plugin="org.eclipse.ui"/>
       <import plugin="org.eclipse.team.core"/>
+      <import plugin="org.eclipse.platform" version="3.0.0" match="compatible"/>
    </requires>
 
 
@@ -32,8 +33,8 @@
             id="org.tigris.subversion.subclipse.core.svnnature">
       </repository>
    </extension>
-<!--           typeClass="org.tigris.subversion.subclipse.core.SVNTeamProviderType" -->
 <!-- *************** Markers **************** -->
+<!--           typeClass="org.tigris.subversion.subclipse.core.SVNTeamProviderType" -->
    <extension
          id="svnmarker"
          point="org.eclipse.core.resources.markers">
