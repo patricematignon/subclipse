@@ -34,11 +34,13 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.util.SWTResourceUtil;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.tigris.subversion.subclipse.core.ISVNLocalResource;
 import org.tigris.subversion.subclipse.core.resources.LocalResourceStatus;
 import org.tigris.subversion.subclipse.core.resources.SVNWorkspaceRoot;
+import org.tigris.subversion.subclipse.ui.IHelpContextIds;
 import org.tigris.subversion.subclipse.ui.Policy;
 import org.tigris.subversion.svnclientadapter.SVNStatusKind;
 
@@ -74,6 +76,7 @@ public class RevertDialog extends Dialog {
 		else label.setText(Policy.bind("RevertDialog.url") + " " + url); //$NON-NLS-1$
 
 		addResourcesArea(composite);
+		WorkbenchHelp.setHelp(composite, IHelpContextIds.REVERT_DIALOG);
 
 		return composite;
 	}

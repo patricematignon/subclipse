@@ -21,14 +21,20 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.console.ConsolePlugin;
 import org.eclipse.ui.console.IConsole;
 import org.eclipse.ui.console.IConsoleManager;
+import org.eclipse.ui.console.IConsoleView;
 import org.eclipse.ui.console.MessageConsole;
 import org.eclipse.ui.console.MessageConsoleStream;
+import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.internal.console.MessageConsolePage;
+import org.eclipse.ui.part.IPageBookViewPage;
 import org.tigris.subversion.subclipse.core.SVNProviderPlugin;
 import org.tigris.subversion.subclipse.core.client.IConsoleListener;
+import org.tigris.subversion.subclipse.ui.IHelpContextIds;
 import org.tigris.subversion.subclipse.ui.ISVNUIConstants;
 import org.tigris.subversion.subclipse.ui.Policy;
 import org.tigris.subversion.subclipse.ui.SVNUIPlugin;
@@ -150,6 +156,21 @@ public class SVNOutputConsole extends MessageConsole implements IConsoleListener
 		}
 	}
 
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.console.IConsole#createPage(org.eclipse.ui.console.IConsoleView)
+     */
+    public IPageBookViewPage createPage(IConsoleView view) {
+    	return new MessageConsolePage(view, this) {
+    	    /* (non-Javadoc)
+             * @see org.eclipse.ui.internal.console.MessageConsolePage#createControl(org.eclipse.swt.widgets.Composite)
+             */
+            public void createControl(Composite parent) {
+                super.createControl(parent);
+                WorkbenchHelp.setHelp(getControl(), IHelpContextIds.CONSOLE_VIEW);
+            }
+    	};
+    }
+    
 	private void dump() {
 		synchronized(document) {
 			visible = true;

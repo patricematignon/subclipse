@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?NLS TYPE="org.eclipse.help.toc"?>
 
+<!--
+  Convention is: Omit prefixes for "SVN" (as in "SVN Resource History View") and don't use
+  menu qualifiers (such as "Team -> Foo". Just put "Foo".) We have enough context.
+-->
+
 <toc label="Getting Started" link_to="toc.xml#gettingstarted"> 
 	<topic label="Connecting to a Subversion Repository"  href="html/gettingstarted/connecting.html"> 
 		<topic label="Setting up a Repository" href="html/gettingstarted/settingup.html" /> 

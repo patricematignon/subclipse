@@ -24,11 +24,13 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.ui.dialogs.PropertyPage;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.tigris.subversion.subclipse.core.ISVNLocalResource;
 import org.tigris.subversion.subclipse.core.SVNProviderPlugin;
 import org.tigris.subversion.subclipse.core.SVNTeamProvider;
 import org.tigris.subversion.subclipse.core.resources.LocalResourceStatus;
 import org.tigris.subversion.subclipse.core.resources.SVNWorkspaceRoot;
+import org.tigris.subversion.subclipse.ui.IHelpContextIds;
 import org.tigris.subversion.subclipse.ui.SVNUIPlugin;
 
 public class SVNPropertyPage extends PropertyPage {
@@ -210,6 +212,9 @@ public class SVNPropertyPage extends PropertyPage {
         addSecondSection(composite);
         
         Dialog.applyDialogFont(parent);
+        
+        WorkbenchHelp.setHelp(composite, IHelpContextIds.SVN_RESOURCE_PROPERTIES_PAGE);
+
         return composite;
     }
 

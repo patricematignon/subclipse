@@ -1,24 +1,42 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?NLS TYPE="org.eclipse.help.toc"?>
 
+<!--
+  Convention is: Omit prefixes for "SVN" (as in "SVN Resource History View") and don't use
+  menu qualifiers (such as "Team -> Foo". Just put "Foo".) We have enough context.
+-->
+
 <toc label="Reference" link_to="toc.xml#reference"> 
-	<topic label="SVN Repository View" href="html/reference/svn-repository.html" />
-	<topic label="Importing" href="html/reference/import.html" />
-	<topic label="Check out" href="html/reference/checkout.html" />
-	<topic label="Update" href="html/reference/update.html" />
-	<topic label="Commit" href="html/reference/commit.html" />	
-	<topic label="Resource History" href="html/reference/resource-history.html" />
-	<topic label="Revert" href="html/reference/revert.html" />
-	<topic label="Mark Resolved" href="html/reference/mark-resolved.html" />
-	<topic label="SVN Ignore" href="html/reference/svn-ignore.html" />
-	<topic label="SVN Annotations View" href="html/reference/svn-ignore.html" />
-	<topic label="Add" href="html/reference/add.html" />						
-	<topic label="Compare" href="html/reference/compare.html" />						
-	<topic label="Pending Operations" href="html/reference/pending-operations.html" />						
-	<topic label="Preferences" href="html/reference/preferences.html" />
-	<topic label="Tagging" href="html/reference/tagging.html" />		
-	<topic label="Branching" href="html/reference/branching.html" />		
-	<topic label="Merging" href="html/reference/merging.html" />				
-	<topic label="SVN Console" href="html/reference/svn-console.html" />		
-		
+	<topic label="Repository Exporing Perspective" href="html/reference/svn-repository.html" />
+	<topic label="Team Synchronize Perspective" href="html/reference/team-synchronize.html" />
+	<topic label="Subversion Views">
+		<topic label="Annotations View" href="html/reference/svn-annotations.html" />
+		<topic label="Console View" href="html/reference/svn-console.html" />
+		<topic label="Pending Operations View" href="html/reference/pending-operations-view.html" />
+		<topic label="Properties View" href="html/reference/svn-properties-view.html" />
+		<topic label="Resource History View" href="html/reference/history-view.html" />
+		<topic label="Repository View" href="html/reference/svn-repository-view.html" />
+	</topic>
+	<topic label="Team Menu">
+		<topic label="Add to svn:ignore" href="html/reference/svn-ignore.html" />
+		<topic label="Add to Version Control" href="html/reference/add.html" />
+		<topic label="Commit" href="html/reference/commit.html" />
+		<topic label="Edit conflicts" href="html/reference/edit-conflicts.html" />
+		<topic label="Mark Resolved" href="html/reference/mark-resolved.html" />
+		<topic label="Revert" href="html/reference/revert.html" />
+		<topic label="Share" href="html/reference/share.html" />
+		<topic label="Switch" href="html/reference/switch.html" />
+		<topic label="Update" href="html/reference/update.html" />
+	</topic>
+	<topic label="Compare Menu" href="html/reference/compare.html" />
+	<topic label="Replace Menu" href="html/reference/replace.html" />
+	<topic label="Other Actions">
+		<topic label="Check out" href="html/reference/checkout.html" />
+		<topic label="Branching" href="html/reference/branching.html" />
+		<topic label="Importing" href="html/reference/import.html" />
+		<topic label="Merging" href="html/reference/merging.html" />
+		<topic label="Preferences Pages" href="html/reference/preferences.html" />
+		<topic label="Subversion Properties Page" href="html/reference/properties.html" />
+		<topic label="Tagging" href="html/reference/tagging.html" />
+	</topic>
 </toc>
