@@ -35,6 +35,8 @@ import org.tigris.subversion.subclipse.core.resources.SVNWorkspaceRoot;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 import org.tigris.subversion.svnclientadapter.SVNClientAdapterFactory;
 import org.tigris.subversion.svnclientadapter.SVNUrl;
+import org.tigris.subversion.svnclientadapter.commandline.CmdLineClientAdapterFactory;
+import org.tigris.subversion.svnclientadapter.javahl.JhlClientAdapterFactory;
 
 public abstract class SubclipseTest extends TestCase {
     protected SVNRepositories repositories;
@@ -63,20 +65,6 @@ public abstract class SubclipseTest extends TestCase {
      * @see junit.framework.TestCase#setUp()
      */
     protected void setUp() throws Exception {
-        // first, we create the repository
-        ISVNClientAdapter svnClientCmd = SVNClientAdapterFactory
-                .createSVNClient(SVNClientAdapterFactory.JAVAHL_CLIENT);
-        reposPath = new File(System.getProperty("java.io.tmpdir")
-                + "/test_repos").getAbsoluteFile();
-        removeDir(reposPath);
-
-        svnClientCmd.createRepository(reposPath,
-                ISVNClientAdapter.REPOSITORY_FSFS);
-        assertTrue(reposPath.exists());
-        // we need the corresponding url
-        url = new SVNUrl(reposPath.toURI().toString().replaceFirst("file:/",
-                "file:///"));
-
         // in case we're testing auth or something.
         remoteHttpUrl = System.getProperty("remote.http.url");
         remoteHttpsUrl = System.getProperty("remote.https.url");
@@ -90,14 +78,14 @@ public abstract class SubclipseTest extends TestCase {
 
         
         if (mode == null || mode.equalsIgnoreCase("javahl")) {
-            svnClientManager.setSvnClientInterface(SVNClientAdapterFactory.JAVAHL_CLIENT);
-            if (svnClientManager.getSvnClientInterface() != SVNClientAdapterFactory.JAVAHL_CLIENT) {
+            svnClientManager.setSvnClientInterface(JhlClientAdapterFactory.JAVAHL_CLIENT);
+            if (svnClientManager.getSvnClientInterface().equals(JhlClientAdapterFactory.JAVAHL_CLIENT)) {
                 System.out.println("Warning : Can't use Javahl");
             }
         } else if (mode.equalsIgnoreCase("cli")) {
             svnClientManager
-                    .setSvnClientInterface(SVNClientAdapterFactory.COMMANDLINE_CLIENT);
-            if (svnClientManager.getSvnClientInterface() != SVNClientAdapterFactory.JAVAHL_CLIENT) {
+                    .setSvnClientInterface(CmdLineClientAdapterFactory.COMMANDLINE_CLIENT);
+            if (svnClientManager.getSvnClientInterface().equals(CmdLineClientAdapterFactory.COMMANDLINE_CLIENT)) {
                 System.out
                         .println("Warning : Can't use command line interface");
             }
@@ -105,6 +93,20 @@ public abstract class SubclipseTest extends TestCase {
             throw new RuntimeException("Unknown svn.mode: " + mode);
         }
 
+        // we create the repository
+        ISVNClientAdapter svnClient = svnClientManager.createSVNClient();
+        reposPath = new File(System.getProperty("java.io.tmpdir")
+                + "/test_repos").getAbsoluteFile();
+        removeDir(reposPath);
+
+        svnClient.createRepository(reposPath,
+                ISVNClientAdapter.REPOSITORY_FSFS);
+        assertTrue(reposPath.exists());
+        // we need the corresponding url
+        url = new SVNUrl(reposPath.toURI().toString().replaceFirst("file:/",
+                "file:///"));
+        
+        
         // get the ISVNRepositoryLocation corresponding to our repository
         repositories = plugin.getRepositories();
         Properties properties = new Properties();
