@@ -72,7 +72,7 @@ public abstract class RemoteResource
         SVNRevision revision,
 		SVNRevision.Number lastChangedRevision,
 		Date date,
-		String author) throws SVNException {
+		String author) {
 
 		this.parent = parent;
 		this.repository = repository;

@@ -55,7 +55,7 @@ public class RemoteFolder extends RemoteResource implements ISVNRemoteFolder, IS
         SVNRevision revision,
         SVNRevision.Number lastChangedRevision,
         Date date,
-        String author) throws SVNException {
+        String author) {
 		super(parent, repository, url, revision, lastChangedRevision, date, author);
 	}
 
