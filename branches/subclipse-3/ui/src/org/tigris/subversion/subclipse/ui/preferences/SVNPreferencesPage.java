@@ -140,15 +140,17 @@ public class SVNPreferencesPage extends PreferencePage implements IWorkbenchPref
         
         // group for config location
         group = new Group(composite, SWT.NULL);
-        group.setText("Configuration location :");
+        group.setText(Policy.bind("SVNPreferencePage.configurationLocation")); //$NON-NLS-1$
         gridData = new GridData(GridData.FILL_HORIZONTAL);
         gridData.horizontalSpan = 2;
         group.setLayoutData(gridData);
         layout = new GridLayout();
         layout.numColumns = 3;
         group.setLayout(layout); 
-        defaultConfigLocationRadio = createRadio(group,"Use default config location",3); 
-        useDirectoryLocationRadio = createRadio(group,"Use directory :",1);
+        defaultConfigLocationRadio = createRadio(group,
+                Policy.bind("SVNPreferencePage.useDefaultConfigLocation"),3); //$NON-NLS-1$ 
+        useDirectoryLocationRadio = createRadio(group,
+                Policy.bind("SVNPreferencePage.useDirectoryConfig"),1); //$NON-NLS-1$
         directoryLocationText = new Text(group, SWT.SINGLE | SWT.BORDER);
         gridData = new GridData();
         gridData.horizontalAlignment = GridData.FILL;
@@ -157,7 +159,7 @@ public class SVNPreferencesPage extends PreferencePage implements IWorkbenchPref
         directoryLocationText.setLayoutData(gridData);
         directoryLocationText.setEditable(false);
         browseConfigDirButton = new Button(group, SWT.NONE);
-        browseConfigDirButton.setText("Browse...");
+        browseConfigDirButton.setText(Policy.bind("SVNPreferencePage.browseDirectory")); //$NON-NLS-1$
 
         Listener configUpdateEnablements = new Listener() {
             public void handleEvent(Event event) {
@@ -198,7 +200,7 @@ public class SVNPreferencesPage extends PreferencePage implements IWorkbenchPref
         
         String configLocation = store.getString(ISVNUIConstants.PREF_SVNCONFIGDIR); 
         directoryLocationText.setText(configLocation);
-        if (configLocation.equals("")) {
+        if (configLocation.equals("")) { //$NON-NLS-1$
             defaultConfigLocationRadio.setSelection(true);
             useDirectoryLocationRadio.setSelection(false);
             browseConfigDirButton.setEnabled(false);
@@ -236,7 +238,7 @@ public class SVNPreferencesPage extends PreferencePage implements IWorkbenchPref
         
         // save config location pref
         if (defaultConfigLocationRadio.getSelection()) {
-        	store.setValue(ISVNUIConstants.PREF_SVNCONFIGDIR, "");
+        	store.setValue(ISVNUIConstants.PREF_SVNCONFIGDIR, ""); //$NON-NLS-1$
         } else {
             store.setValue(ISVNUIConstants.PREF_SVNCONFIGDIR,directoryLocationText.getText());
         }
@@ -273,12 +275,12 @@ public class SVNPreferencesPage extends PreferencePage implements IWorkbenchPref
         if (useDirectoryLocationRadio.getSelection()) {
             File configDir = new File(directoryLocationText.getText());
             if (!configDir.exists()) {
-            	setErrorMessage("Svn config directory does not exist.");
+            	setErrorMessage(Policy.bind("SVNPreferencePage.svnConfigDirDoesNotExist")); //$NON-NLS-1$
             } else {
-                File serversFile = new File(configDir,"servers");
-                File configFile = new File(configDir,"config");
+                File serversFile = new File(configDir,"servers"); //$NON-NLS-1$
+                File configFile = new File(configDir,"config"); //$NON-NLS-1$
                 if (!serversFile.exists() && !configFile.exists()) {
-                	setErrorMessage("Selected directory is not a svn config dir");
+                	setErrorMessage(Policy.bind("SVNPreferencePage.isNotSvnConfigDir"));
                 }
             }
         }
