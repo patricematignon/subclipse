@@ -52,7 +52,7 @@ import org.tigris.subversion.svnclientadapter.SVNStatusKind;
 public class RevertDialog extends Dialog {
     
 	private static final int WIDTH_HINT = 500;
-	private final static int SELECTION_HEIGHT_HINT = 100;
+	private final static int SELECTION_HEIGHT_HINT = 250;
     
     private IResource[] resourcesToRevert;
     private String url;
@@ -114,10 +114,14 @@ public class RevertDialog extends Dialog {
 	            case 1:
 	                if (url == null) result = ((IResource)element).getFullPath().toString();
 	                else result = getResource((IResource)element);
+	                if (result.length() == 0) result = ((IResource)element).getFullPath().toString();
 	                break;
 	            case 2:
 				    result = getStatus((IResource)element);
 	                break;
+	            case 3:
+				    result = getPropertyStatus((IResource)element);
+	                break;	                
 	            default:
 	                result = "";
 	                break;
@@ -138,7 +142,7 @@ public class RevertDialog extends Dialog {
 			                return resource.getFullPath().toString().substring(path.length());
 			        }
 			    }
-                return resource.getFullPath().toString();
+			    return resource.getFullPath().toString();
             }
             public Image getColumnImage(Object element, int columnIndex) {
 			    if (columnIndex == 1) {
@@ -212,9 +216,6 @@ public class RevertDialog extends Dialog {
                if (status.isTextModified())
                    result = Policy.bind("CommitDialog.modified"); //$NON-NLS-1$				           
                else
-               if (svnResource.getStatus().getPropStatus().equals(SVNStatusKind.MODIFIED))
-                   result = Policy.bind("CommitDialog.propertiesModified"); //$NON-NLS-1$
-               else
                if (!status.isManaged())
                    result = Policy.bind("CommitDialog.unversioned"); //$NON-NLS-1$
                else
@@ -224,6 +225,23 @@ public class RevertDialog extends Dialog {
 			}                   
 	    return result;
     }
+	
+	private static String getPropertyStatus(IResource resource) {
+	    ISVNLocalResource svnResource = SVNWorkspaceRoot.getSVNResourceFor(resource);
+        String result = null;
+	       try {
+	            LocalResourceStatus status = svnResource.getStatus();
+	            if ((svnResource.getStatus() != null) &&
+	                (svnResource.getStatus().getPropStatus() != null) &&
+	                (svnResource.getStatus().getPropStatus().equals(SVNStatusKind.MODIFIED)))
+	                result = Policy.bind("CommitDialog.modified"); //$NON-NLS-1$		
+                else
+                    result = "";
+			} catch (TeamException e) {
+			    result = "";
+			}                   
+	    return result;
+    }	
 	
     /**
 	 * Method createColumns.
@@ -261,14 +279,21 @@ public class RevertDialog extends Dialog {
 		layout.addColumnData(new ColumnWeightData(120, true));
 		col.addSelectionListener(headerListener);
 
-		// status
+		// text status
 		col = new TableColumn(table, SWT.NONE);
 		col.setResizable(true);
-		col.setText(Policy.bind("ResourcePropertiesPage.status")); //$NON-NLS-1$
+		col.setText(Policy.bind("CommitDialog.status")); //$NON-NLS-1$
 		layout.addColumnData(new ColumnWeightData(50, true));
 		col.addSelectionListener(headerListener);
+		
+		// property status
+		col = new TableColumn(table, SWT.NONE);
+		col.setResizable(true);
+		col.setText(Policy.bind("CommitDialog.property")); //$NON-NLS-1$
+		layout.addColumnData(new ColumnWeightData(50, true));
+		col.addSelectionListener(headerListener);		
 
-	}
+	}	
 	
 	/**
 	 * Add the selection and deselection buttons to the dialog.
@@ -338,11 +363,12 @@ public class RevertDialog extends Dialog {
 	private static class RevertSorter extends ViewerSorter {
 		private boolean reversed = false;
 		private int columnNumber;
-		private static final int NUM_COLUMNS = 3;
+		private static final int NUM_COLUMNS = 4;
 		private static final int[][] SORT_ORDERS_BY_COLUMN = {
-		    {0, 1, 2}, /* check */    
-			{1, 0, 2},	/* resource */ 
-			{2, 0, 1}	/* status */
+		    {0, 1, 2, 3}, 	/* check */    
+			{1, 0, 2, 3},	/* resource */ 
+			{2, 0, 1, 3},	/* status */
+			{3, 0, 1, 2},	/* prop status */
 		};
 		
 		public RevertSorter(int columnNumber) {
@@ -372,6 +398,8 @@ public class RevertDialog extends Dialog {
 					return collator.compare(r1.getFullPath().toString(), r2.getFullPath().toString());					
 				case 2: /* status */
 					return collator.compare(getStatus(r1), getStatus(r2));
+				case 3: /* prop status */
+					return collator.compare(getPropertyStatus(r1), getPropertyStatus(r2));					
 				default:
 					return 0;
 			}
@@ -389,6 +417,6 @@ public class RevertDialog extends Dialog {
 			reversed = newReversed;
 		}
 
-	}		
+	}	
 
 }
