@@ -1,0 +1,57 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+	<link rel="stylesheet" href="../book.css" charset="ISO-8859-1" type="text/css">		
+	<title>Maintaining branches</title>
+</head>
+
+<body>
+	<h1>Maintaining branches with Subclipse</h1>
+	
+	<p>Like many other SCM systems, Subversion has the notion of working with separate
+	branches of the same project, meaning that different lines of development are isolated
+	in different parts of the repository, but that it is possible to work with sets of changes,
+	including comparing whole branches and copying changes between branches.
+	<p>Typically, the 'main' line of development in a project using the Subversion SCM system is
+	called the <em>trunk</em>, but this is not a technical requirement, it is a convention.
+	<p>In Subversion, tagging and branching is a quite efficient mechanism, which may help you in
+	your day-to-day work.
+	
+	<h2>Tagging</h2>
+	<p>Assuming that most of the work in a project is done in the 'trunk' of the repository,
+	you may want to "save the state" of the repository, for instance whenever you release a version
+	of the ensuing product or otherwise reach a milestone. Obviously, you could just write down which
+	revision number was the current one and then you could always use that information to restore
+	the contents of the project, use it for comparison, etc. However, you can also give the tag an
+	explicit name so that it is easier to refer to.
+	
+	<p>To compare: In the Subversion command line, this is done simply by copying the repository location
+	(like <tt>http://svn-server/bigproj/trunk/</tt>) on to a new, different location which could
+		(like <tt>http://svn-server/bigproj/tags/client-release-0.99/</tt>) using <tt>svn cp</tt>.
+	<p>By convention, you never commit anything to a tag repository locations, they merely exist pinpoint
+	a specific repository content. There is nothing which stops you from doing this (although Subclipse
+	will warn you), it's just a convention. If you need to make a copy and work in a different direction,
+	use a branch.
+			 
+	<h2>Branching</h2>
+	<p>TODO - How to make a branch. Hint: it's the same as making a tag.
+
+	<h2>Merging changes</h2>
+	<p>TODO - How to copy the changes from one or more revisions from the trunk to a branch.
+
+	<h2>Backporting</h2>
+	<p>TODO - How to copy the changes from a branch back to the main trunk (hint: It's the same as above)
+
+	<hr>
+	<h3>Reference:</h3>
+	<p><a href="../reference/branch-tag.html">Team > Branch/Tag</a></p>
+	<p><a href="../reference/switch.html">Team > Switch</a></p>
+	<p><a href="../reference/merge.html">Team > Merge</a></p>
+	<p><a href="../reference/commit.html">Team > Commit</a></p>
+	<p><a href="../reference/edit-conflicts.html">Team > Edit conflicts</a></p>
+	<p><a href="../reference/mark-resolved.html">Team > Mark Resolved</a></p>
+		
+</body>
+</html>
