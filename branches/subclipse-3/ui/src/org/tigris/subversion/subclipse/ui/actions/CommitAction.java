@@ -134,9 +134,6 @@ public class CommitAction extends WorkspaceAction {
 						} catch (SVNException e) {
 							exception[0] = e;
 						}
-						// don't add folders to avoid comitting empty folders
-						if (resource.getType() == IResource.FOLDER)
-							return true;
 						// file is unshared so record it
 						unadded.add(resource);
 						// no need to go into children because add is deep
