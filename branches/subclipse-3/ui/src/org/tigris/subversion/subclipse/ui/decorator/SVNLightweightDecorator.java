@@ -47,6 +47,7 @@ import org.tigris.subversion.subclipse.ui.ISVNUIConstants;
 import org.tigris.subversion.subclipse.ui.SVNUIPlugin;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
 import org.tigris.subversion.svnclientadapter.SVNStatusKind;
+import org.tigris.subversion.svnclientadapter.SVNUrl;
  
 /**
  * The decorator for svn resources 
@@ -248,7 +249,7 @@ public class SVNLightweightDecorator
      */
 	public void decorateTextLabel(IResource resource, IDecoration decoration, boolean isDirty) {
 		try {
-			Map bindings = new HashMap(5);
+			Map bindings = new HashMap(6);
 
 			// if the resource does not have a location then return. This can happen if the resource
 			// has been deleted after we where asked to decorate it.
@@ -279,6 +280,16 @@ public class SVNLightweightDecorator
 				bindings.put(
 					SVNDecoratorConfiguration.RESOURCE_URL,
 					status.getUrl().toString());
+				
+                // short url is the path relative to root url of repository
+                SVNUrl repositoryRoot = svnResource.getRepository().getRepositoryRoot();
+                if (repositoryRoot != null) {
+                    String shortUrl = status.getUrl().toString().substring(
+                            repositoryRoot.toString().length()+1);    
+                    bindings.put(
+                            SVNDecoratorConfiguration.RESOURCE_URL_SHORT, 
+                            shortUrl);
+                }
 			}
 			
 			if (status.isAdded()) {

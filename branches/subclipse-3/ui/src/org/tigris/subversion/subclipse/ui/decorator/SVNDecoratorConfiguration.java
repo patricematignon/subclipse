@@ -63,6 +63,7 @@ public class SVNDecoratorConfiguration {
     public static final String RESOURCE_AUTHOR = "author"; //$NON-NLS-1$
     public static final String RESOURCE_DATE = "date"; //$NON-NLS-1$
 	public static final String RESOURCE_URL = "url"; //$NON-NLS-1$
+	public static final String RESOURCE_URL_SHORT = "url_short"; //$NON-NLS-1$
     
 	// bindings for resource states
 	public static final String DIRTY_FLAG = "dirty_flag"; //$NON-NLS-1$

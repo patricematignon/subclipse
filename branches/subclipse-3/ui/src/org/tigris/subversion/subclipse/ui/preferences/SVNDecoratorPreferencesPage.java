@@ -180,7 +180,8 @@ public class SVNDecoratorPreferencesPage extends PreferencePage implements IWork
 		bindings.put(SVNDecoratorConfiguration.RESOURCE_REVISION, "74"); //$NON-NLS-1$
         bindings.put(SVNDecoratorConfiguration.RESOURCE_AUTHOR, "cchab"); //$NON-NLS-1$
         bindings.put(SVNDecoratorConfiguration.RESOURCE_DATE, DateFormat.getInstance().format(new Date())); //$NON-NLS-1$
-        bindings.put(SVNDecoratorConfiguration.RESOURCE_URL, "http://localhost:8080/svn/repos/"); //$NON-NLS-1$
+        bindings.put(SVNDecoratorConfiguration.RESOURCE_URL, "http://localhost:8080/svn/repos/trunk/project1"); //$NON-NLS-1$
+        bindings.put(SVNDecoratorConfiguration.RESOURCE_URL_SHORT, "trunk/project1"); //$NON-NLS-1$
 		bindings.put(SVNDecoratorConfiguration.DIRTY_FLAG, dirtyFlag.getText());
 		bindings.put(SVNDecoratorConfiguration.ADDED_FLAG, addedFlag.getText());
         bindings.put(SVNDecoratorConfiguration.EXTERNAL_FLAG, externalFlag.getText());
@@ -499,6 +500,7 @@ public class SVNDecoratorPreferencesPage extends PreferencePage implements IWork
         bindings.put(SVNDecoratorConfiguration.RESOURCE_NAME, Policy.bind("SVNDecoratorPreferencesPage.nameResourceVariable")); //$NON-NLS-1$
         bindings.put(SVNDecoratorConfiguration.DIRTY_FLAG, Policy.bind("SVNDecoratorPreferencesPage.flagDirtyVariable")); //$NON-NLS-1$
         bindings.put(SVNDecoratorConfiguration.RESOURCE_URL, Policy.bind("SVNDecoratorPreferencesPage.remoteLocationVariable")); //$NON-NLS-1$                    
+        bindings.put(SVNDecoratorConfiguration.RESOURCE_URL_SHORT, Policy.bind("SVNDecoratorPreferencesPage.remoteLocationVariableShort")); //$NON-NLS-1$                    
         return bindings;
     }    
     
