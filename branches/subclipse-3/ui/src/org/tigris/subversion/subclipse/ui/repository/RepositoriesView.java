@@ -277,7 +277,7 @@ public class RepositoriesView extends ViewPart implements ISelectionListener {
         getSite().setSelectionProvider(treeViewer);
         root = new AllRootsElement();
         treeViewer.setInput(root);
-//      viewer.setSorter(new RepositorySorter());
+		treeViewer.setSorter(new RepositorySorter());
         drillPart = new DrillDownAdapter(treeViewer);
         
         contributeActions(); 
