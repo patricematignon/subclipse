@@ -300,9 +300,6 @@ public class SVNWorkspaceRoot {
 		// Determine if the repository is known
 		boolean alreadyExists = SVNProviderPlugin.getPlugin().getRepositories().isKnownRepository(location.getLocation());
 		
-        // Set the folder sync info of the project to point to the remote module
-		SVNWorkspaceRoot.getSVNResourceFor(project);
-			
 		try {
 			// Get the import properties
 			String projectName = project.getName();
@@ -329,11 +326,15 @@ public class SVNWorkspaceRoot {
                                 // checkout it so that we have .svn
                                 svnClient.checkout(url,project.getLocation().toFile(),SVNRevision.HEAD,false);
                             } catch (SVNClientException e) {
-                                throw new SVNException("Error while creating module:"+e.getMessage(),e);  
+                                throw new SVNException("Error while creating module: "+e.getMessage(),e);  
                             } catch (MalformedURLException e) {
                                 throw new SVNException("Error while creating module: "+e.getMessage(),e);
                             }
-                                                       
+
+                            // SharingWizard.doesSVNDirectoryExist calls getStatus on the folder which poplulates the status cache
+                            // Need to clear the cache so we can get the new hasRemote value
+                            SVNProviderPlugin.getPlugin().getStatusCacheManager().refreshStatus(project, IResource.DEPTH_INFINITE);
+                    		
 							//Register it with Team.  If it already is, no harm done.
 							RepositoryProvider.map(project, SVNProviderPlugin.getTypeId());
 						} catch (TeamException e) {
