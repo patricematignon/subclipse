@@ -52,10 +52,12 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.part.ResourceTransfer;
 import org.eclipse.ui.part.ViewPart;
 import org.tigris.subversion.subclipse.core.IResourceStateChangeListener;
@@ -354,7 +356,13 @@ public class PendingOperationsView extends ViewPart implements IResourceStateCha
                 refresh();                
             }
         };
-        toggleAddedAction.setChecked(store.getBoolean(ISVNUIConstants.PREF_SHOW_ADDED_RESOURCES));
+        
+        // we want the default to be true if it doesn't exist in store. getBoolean will return false as a default.
+        if(store.contains(ISVNUIConstants.PREF_SHOW_ADDED_RESOURCES))
+        	toggleAddedAction.setChecked(store.getBoolean(ISVNUIConstants.PREF_SHOW_ADDED_RESOURCES));
+        else
+			toggleAddedAction.setChecked(true);
+			
 //        WorkbenchHelp.setHelp(toggleTextAction, IHelpContextIds.SHOW_COMMENT_IN_HISTORY_ACTION);    
     
         // Toggle show deleted resources action
@@ -364,7 +372,12 @@ public class PendingOperationsView extends ViewPart implements IResourceStateCha
                 refresh();                
             }
         };
-        toggleDeletedAction.setChecked(store.getBoolean(ISVNUIConstants.PREF_SHOW_DELETED_RESOURCES));
+
+		if(store.contains(ISVNUIConstants.PREF_SHOW_DELETED_RESOURCES))
+			toggleDeletedAction.setChecked(store.getBoolean(ISVNUIConstants.PREF_SHOW_DELETED_RESOURCES));
+		else
+			toggleDeletedAction.setChecked(true);
+        
 //        WorkbenchHelp.setHelp(toggleTextAction, IHelpContextIds.SHOW_COMMENT_IN_HISTORY_ACTION);    
 
         // Toggle show modified resources action
@@ -374,7 +387,13 @@ public class PendingOperationsView extends ViewPart implements IResourceStateCha
                 refresh();                
             }
         };
-        toggleModifiedAction.setChecked(store.getBoolean(ISVNUIConstants.PREF_SHOW_MODIFIED_RESOURCES));
+
+		if(store.contains(ISVNUIConstants.PREF_SHOW_MODIFIED_RESOURCES))
+			toggleModifiedAction.setChecked(store.getBoolean(ISVNUIConstants.PREF_SHOW_MODIFIED_RESOURCES));
+		else
+			toggleModifiedAction.setChecked(true);
+
+        
 //        WorkbenchHelp.setHelp(toggleTextAction, IHelpContextIds.SHOW_COMMENT_IN_HISTORY_ACTION);
         
         // Contribute toggle text visible to the toolbar drop-down
@@ -503,15 +522,18 @@ public class PendingOperationsView extends ViewPart implements IResourceStateCha
     }
 
     private ISVNStatus[] getStatus() throws SVNException {
-        ISVNStatus[] status = null;
+    	// can be a null parent if we have the view open before we select anything
+    	if(parent == null)
+    		return null;
+        ISVNStatus[] statuses = null;
         ISVNLocalResource svnResource = SVNWorkspaceRoot.getSVNResourceFor(parent);
         ISVNClientAdapter svnClient = svnResource.getRepository().getSVNClient();
         try { 
-            status = svnClient.getStatusRecursively(parent.getLocation().toFile(),false);
+            statuses = svnClient.getStatusRecursively(parent.getLocation().toFile(),true);
         } catch (SVNClientException e) {
             throw SVNException.wrapException(e);
         }
-        return status;
+        return statuses;
     }
 
     /**
@@ -530,7 +552,7 @@ public class PendingOperationsView extends ViewPart implements IResourceStateCha
                     if ((!svnResource.getStatus().isDeleted()) && (!svnResource.isFolder())) {                
                         IWorkbench workbench = SVNUIPlugin.getPlugin().getWorkbench();
                         IWorkbenchPage page = workbench.getActiveWorkbenchWindow().getActivePage();
-                        page.openEditor((IFile)svnResource.getIResource());
+                        page.openEditor(new FileEditorInput((IFile)svnResource.getIResource()), IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID);
                     }
                 } catch (SVNException ex) {
                     SVNUIPlugin.log(ex);

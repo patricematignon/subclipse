@@ -144,7 +144,7 @@ public class SVNDecoratorPreferencesPage extends PreferencePage implements IWork
   
 		bindings.put(SVNDecoratorConfiguration.RESOURCE_REVISION, "74"); //$NON-NLS-1$
         bindings.put(SVNDecoratorConfiguration.RESOURCE_AUTHOR, "cchab"); //$NON-NLS-1$
-        bindings.put(SVNDecoratorConfiguration.RESOURCE_DATE, DateFormat.getInstance().format(new Date(2003,10,17,22,31))); //$NON-NLS-1$
+        bindings.put(SVNDecoratorConfiguration.RESOURCE_DATE, DateFormat.getInstance().format(new Date())); //$NON-NLS-1$
         bindings.put(SVNDecoratorConfiguration.RESOURCE_URL, "http://localhost:8080/svn/repos/"); //$NON-NLS-1$
 		bindings.put(SVNDecoratorConfiguration.DIRTY_FLAG, dirtyFlag.getText());
 		bindings.put(SVNDecoratorConfiguration.ADDED_FLAG, addedFlag.getText());

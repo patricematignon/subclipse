@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.tigris.subversion.subclipse.core.client;
 
-import java.io.IOException;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -106,16 +105,9 @@ public class OperationManager implements ISVNNotifyListener {
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		IWorkspaceRoot workspaceRoot = workspace.getRoot();
 		
-        // path is sometimes absolute, sometimes relative.
-        // here we make sure it is absolute
-        IPath pathEclipse = null;
-        try {
-            pathEclipse = new Path( (new Path(path)).toFile().getCanonicalPath());
-        } catch (IOException e)
-        {
-            // should never occur ...
-            return;
-        }
+        IPath pathEclipse; 
+        pathEclipse = new Path(path);
+        
 
         if (kind == SVNNodeKind.UNKNOWN)  { // delete, revert 
             IPath pathEntries = pathEclipse.removeLastSegments(1).append(".svn/entries");

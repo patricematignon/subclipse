@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
+
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -31,6 +32,7 @@ import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.osgi.framework.BundleContext;
 import org.tigris.subversion.subclipse.core.ISVNRemoteFile;
 import org.tigris.subversion.subclipse.core.ISVNRemoteFolder;
 import org.tigris.subversion.subclipse.core.ISVNRepositoryLocation;
@@ -47,7 +49,7 @@ public class SVNUIPlugin extends AbstractUIPlugin {
 	 */
 	public static final String ID = "org.tigris.subversion.subclipse.ui"; //$NON-NLS-1$
 	public static final String DECORATOR_ID = "org.tigris.subversion.subclipse.ui.decorator"; //$NON-NLS-1$
-	
+
 
 	/**
 	 * The singleton plug-in instance
@@ -71,6 +73,7 @@ public class SVNUIPlugin extends AbstractUIPlugin {
 //			}
 //		}
 //	};
+	
 		
 	/**
 	 * SVNUIPlugin constructor
@@ -82,6 +85,12 @@ public class SVNUIPlugin extends AbstractUIPlugin {
 		plugin = this;
 	}
 
+	
+	public SVNUIPlugin(){
+		super();
+		plugin = this;
+	
+	}
 
 	/**
 	 * Returns the active workbench page. Note that the active page may not be
@@ -109,7 +118,7 @@ public class SVNUIPlugin extends AbstractUIPlugin {
 
 	public static void runWithProgress(Shell parent, boolean cancelable,
 		final IRunnableWithProgress runnable) throws InvocationTargetException, InterruptedException {
-		TeamUIPlugin.runWithProgress(parent, cancelable, runnable);
+		TeamUIPlugin.run(runnable);
 	}
 	
 	
@@ -314,6 +323,11 @@ public class SVNUIPlugin extends AbstractUIPlugin {
 		} else {
 			outerRunnable.run();
 		}
+	}
+	
+	public void start(BundleContext ctxt)throws Exception{
+		this.bundle = ctxt.getBundle();
+		startup();
 	}
 
 

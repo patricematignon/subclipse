@@ -38,6 +38,7 @@ import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.dialogs.PropertyDialogAction;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
@@ -177,7 +178,7 @@ public class RepositoriesView extends ViewPart implements ISelectionListener {
 		WorkbenchHelp.setHelp(removeRootAction, IHelpContextIds.REMOVE_REPOSITORY_LOCATION_ACTION);
 		
 		IActionBars bars = getViewSite().getActionBars();
-		bars.setGlobalActionHandler(IWorkbenchActionConstants.DELETE, removeRootAction);
+		bars.setGlobalActionHandler(ActionFactory.DELETE.getId(), removeRootAction);
 		
         // Refresh action (toolbar)
         SVNUIPlugin plugin = SVNUIPlugin.getPlugin();
@@ -189,7 +190,7 @@ public class RepositoriesView extends ViewPart implements ISelectionListener {
         refreshAction.setToolTipText(Policy.bind("RepositoriesView.refreshTooltip")); //$NON-NLS-1$
         refreshAction.setDisabledImageDescriptor(plugin.getImageDescriptor(ISVNUIConstants.IMG_REFRESH_DISABLED));
         refreshAction.setHoverImageDescriptor(plugin.getImageDescriptor(ISVNUIConstants.IMG_REFRESH));
-        getViewSite().getActionBars().setGlobalActionHandler(IWorkbenchActionConstants.REFRESH, refreshAction);
+        getViewSite().getActionBars().setGlobalActionHandler(ActionFactory.REFRESH.getId(), refreshAction);
 
         // Collapse action
         collapseAllAction = new Action(Policy.bind("RepositoriesView.collapseAll"), SVNUIPlugin.getPlugin().getImageDescriptor(ISVNUIConstants.IMG_COLLAPSE_ALL_ENABLED)) { //$NON-NLS-1$

@@ -30,6 +30,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.team.core.TeamException;
+import org.osgi.framework.BundleContext;
 import org.tigris.subversion.subclipse.core.client.IConsoleListener;
 import org.tigris.subversion.subclipse.core.repo.SVNRepositories;
 import org.tigris.subversion.subclipse.core.resources.RepositoryResourcesManager;
@@ -77,6 +78,15 @@ public class SVNProviderPlugin extends Plugin {
 	}
 	
 	/**
+	 * This constructor required by the bundle loader (calls newInstance())
+	 *
+	 */
+	public SVNProviderPlugin(){
+		super();
+		instance = this;
+	}
+	
+	/**
 	 * Convenience method for logging CVSExceptiuons to the plugin log
 	 */
 	public static void log(TeamException e) {
@@ -94,19 +104,17 @@ public class SVNProviderPlugin extends Plugin {
 	 * @return the plugin instance
 	 */
 	public static SVNProviderPlugin getPlugin() {
-		// If the instance has not been initialized, we will wait.
-		// This can occur if multiple threads try to load the plugin at the same
-		// time (see bug 33825: http://bugs.eclipse.org/bugs/show_bug.cgi?id=33825)
-		while (instance == null) {
-			try {
-				Thread.sleep(50);
-			} catch (InterruptedException e) {
-				// ignore and keep trying
-			}
-		}
+		
 		return instance;
 	}
 	
+	public void start(BundleContext ctxt)throws Exception{
+		this.bundle = ctxt.getBundle();
+		startup();
+		
+		
+		
+	}
 	/**
 	 * @see Plugin#startup()
 	 */
