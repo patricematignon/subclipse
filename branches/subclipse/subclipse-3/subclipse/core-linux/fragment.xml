@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fragment
+   id="corelinux"
+   name="%fragmentName"
+   version="0.8.1"
+   provider-name="%providerName"
+   plugin-id="org.tigris.subversion.subclipse.core"
+   plugin-version="0.8.1"
+   match="perfect">
+
+   <runtime>
+   </runtime>
+
+   <requires>
+      <import plugin="org.tigris.subversion.subclipse.core"/>
+   </requires>
+
+
+</fragment>
