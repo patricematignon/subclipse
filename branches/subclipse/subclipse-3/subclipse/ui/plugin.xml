@@ -7,7 +7,9 @@
    class="org.tigris.subversion.subclipse.ui.SVNUIPlugin">
 
    <runtime>
-      <library name="SVNPluginUI.jar"/>
+      <library name="SVNPluginUI.jar">
+         <export name="*"/>
+      </library>
    </runtime>
    <requires>
       <import plugin="org.apache.xerces"/>
@@ -359,6 +361,7 @@
             id="org.tigris.subversion.subclipse.ui.SVNPreferences">
       </page>
    </extension>
+<!-- **************** Markers ******************* -->
 <!--extension
          point="org.eclipse.ui.preferencePages">
       <page
@@ -368,7 +371,6 @@
             id="org.tigris.subversion.subclipse.ui.SVNDecoratorPreferences">
       </page>
    </extension-->
-<!-- **************** Markers ******************* -->
    <extension
          point="org.eclipse.ui.markerResolution">
       <markerResolutionGenerator
