@@ -11,12 +11,20 @@
 package org.tigris.subversion.subclipse.ui.subscriber;
 
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.team.core.synchronize.FastSyncInfoFilter;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.core.synchronize.FastSyncInfoFilter.SyncInfoDirectionFilter;
+import org.eclipse.team.ui.synchronize.ISynchronizeModelElement;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.team.ui.synchronize.SynchronizeModelAction;
 import org.eclipse.team.ui.synchronize.SynchronizeModelOperation;
+import org.tigris.subversion.subclipse.core.ISVNLocalFolder;
+import org.tigris.subversion.subclipse.core.ISVNLocalResource;
+import org.tigris.subversion.subclipse.core.SVNException;
+import org.tigris.subversion.subclipse.core.resources.SVNWorkspaceRoot;
+import org.tigris.subversion.svnclientadapter.SVNUrl;
 
 /**
  * Put action that appears in the synchronize view. It's main purpose is
@@ -39,6 +47,31 @@ public class CommitSynchronizeAction extends SynchronizeModelAction {
 	 * @see org.eclipse.team.ui.synchronize.SynchronizeModelAction#getSubscriberOperation(org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration, org.eclipse.compare.structuremergeviewer.IDiffElement[])
 	 */
 	protected SynchronizeModelOperation getSubscriberOperation(ISynchronizePageConfiguration configuration, IDiffElement[] elements) {
-		return new CommitSynchronizeOperation(configuration, elements);
+		String url = null;
+	    IStructuredSelection selection = getStructuredSelection();
+	    if (selection.size() == 1) {
+	        ISynchronizeModelElement element = (ISynchronizeModelElement)selection.getFirstElement();
+		    IResource resource = element.getResource();
+		    ISVNLocalResource svnResource = SVNWorkspaceRoot.getSVNResourceFor(resource);
+			SVNUrl svnUrl = null;
+            try {
+                svnUrl = svnResource.getStatus().getUrl();
+                if ((svnUrl == null) || (resource.getType() == IResource.FILE)) url = getParentUrl(svnResource);
+    			else url = svnResource.getStatus().getUrl().toString();
+            } catch (SVNException e) {
+                e.printStackTrace();
+            }	    
+	    }
+	    return new CommitSynchronizeOperation(configuration, elements, url);
 	}
+	
+	private String getParentUrl(ISVNLocalResource svnResource) throws SVNException {
+        ISVNLocalFolder parent = svnResource.getParent();
+        while (parent != null) {
+            SVNUrl url = parent.getStatus().getUrl();
+            if (url != null) return url.toString();
+            parent = parent.getParent();
+        }
+        return null;
+    }
 }
