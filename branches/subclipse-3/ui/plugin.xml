@@ -57,9 +57,10 @@
             id="org.tigris.subversion.subclipse.ui.console.ConsoleView">
       </view>
       <view
-            name="%PendingOperationsView.name"
-            category="org.tigris.subversion.subclipse"
+            icon="icons/full/clcl16/pending.png"
             class="org.tigris.subversion.subclipse.ui.pending.PendingOperationsView"
+            category="org.tigris.subversion.subclipse"
+            name="%PendingOperationsView.name"
             id="org.tigris.subversion.subclipse.ui.pending.PendingOperationsView">
       </view>
       <view
