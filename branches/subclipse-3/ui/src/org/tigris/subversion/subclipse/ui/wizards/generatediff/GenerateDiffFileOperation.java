@@ -30,7 +30,6 @@ import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.widgets.Shell;
 import org.tigris.subversion.subclipse.core.ISVNLocalResource;
-import org.tigris.subversion.subclipse.core.SVNException;
 import org.tigris.subversion.subclipse.core.resources.SVNWorkspaceRoot;
 import org.tigris.subversion.subclipse.ui.Policy;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
@@ -120,8 +119,6 @@ public class GenerateDiffFileOperation implements IRunnableWithProgress {
 			}
         } catch (SVNClientException e) {    
             throw new InvocationTargetException(e);
-		} catch (SVNException e) {
-			throw new InvocationTargetException(e);
 		} catch(IOException e) {
 			throw new InvocationTargetException(e);
 		} finally {
