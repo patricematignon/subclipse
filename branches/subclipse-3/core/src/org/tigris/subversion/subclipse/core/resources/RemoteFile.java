@@ -21,6 +21,7 @@ import org.tigris.subversion.subclipse.core.ISVNRemoteFile;
 import org.tigris.subversion.subclipse.core.ISVNRemoteResource;
 import org.tigris.subversion.subclipse.core.ISVNRepositoryLocation;
 import org.tigris.subversion.subclipse.core.Policy;
+import org.tigris.subversion.svnclientadapter.ISVNAnnotations;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
@@ -110,5 +111,30 @@ public class RemoteFile extends RemoteResource implements ISVNRemoteFile {
 		return super.equals(target)
 				&& remote.getLastChangedRevision() == getLastChangedRevision();
 	}
+
+	/**
+	 * get annotations
+	 * @param monitor
+	 * @return
+	 * @throws TeamException
+	 */
+	public ISVNAnnotations getAnnotations(IProgressMonitor monitor) throws TeamException {
+		monitor.beginTask(Policy.bind("RemoteFile.getAnnotations"), 100);//$NON-NLS-1$
+		try {
+			
+				ISVNClientAdapter svnClient = repository.getSVNClient();
+				InputStream inputStream;
+				try {
+					return svnClient.annotate(url,null,getRevision()); 
+				} catch (SVNClientException e) {
+					throw new TeamException(
+							"Failed in remoteFile.getAnnotations()", e);
+				}
+		} finally {
+			monitor.done();
+		}
+		
+	}
+	
 	
 }

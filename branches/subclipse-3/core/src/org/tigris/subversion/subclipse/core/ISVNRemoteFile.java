@@ -11,6 +11,10 @@
  *******************************************************************************/
 package org.tigris.subversion.subclipse.core;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.team.core.TeamException;
+import org.tigris.subversion.svnclientadapter.ISVNAnnotations;
+
  
 
  /**
@@ -21,6 +25,7 @@ package org.tigris.subversion.subclipse.core;
   */
 public interface ISVNRemoteFile extends ISVNRemoteResource, ISVNFile {
 
+	public ISVNAnnotations getAnnotations(IProgressMonitor monitor) throws TeamException;	
 	
 }
 
