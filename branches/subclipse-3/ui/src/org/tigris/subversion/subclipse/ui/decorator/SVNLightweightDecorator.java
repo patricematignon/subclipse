@@ -274,17 +274,19 @@ public class SVNLightweightDecorator
 			ISVNLocalResource svnResource =
 				SVNWorkspaceRoot.getSVNResourceFor(resource);
 			ISVNStatus status = svnResource.getStatus();
-			if (status.getUrl() != null)
+			if (status.getUrl() != null) {
 				bindings.put(
 					SVNDecoratorConfiguration.RESOURCE_URL,
 					status.getUrl().toString());
+			}
+			
 			if (status.isAdded()) {
 				bindings.put(
 					SVNDecoratorConfiguration.ADDED_FLAG, addedFlag);
 			} else {
-                if ((status.getRevision().getNumber() != SVNRevision.SVN_INVALID_REVNUM) &&
-                    (status.getRevision().getNumber() != 0))
-                {
+				if ((status.getTextStatus() != ISVNStatus.Kind.UNVERSIONED) &&
+                    (status.getRevision().getNumber() != SVNRevision.SVN_INVALID_REVNUM) &&
+                    (status.getRevision().getNumber() != 0)) {
 				    bindings.put(
 					   SVNDecoratorConfiguration.RESOURCE_REVISION,
 					   status.getLastChangedRevision().toString());
@@ -292,10 +294,11 @@ public class SVNLightweightDecorator
 					   SVNDecoratorConfiguration.RESOURCE_AUTHOR,
 					   status.getLastCommitAuthor());
                 }				
-                if (status.getLastChangedDate() != null)
+				if (status.getLastChangedDate() != null) {
                     bindings.put(
 					   SVNDecoratorConfiguration.RESOURCE_DATE,
 						dateFormat.format(status.getLastChangedDate()));
+				}
 			}
 
 			SVNDecoratorConfiguration.decorate(decoration, format, bindings);
