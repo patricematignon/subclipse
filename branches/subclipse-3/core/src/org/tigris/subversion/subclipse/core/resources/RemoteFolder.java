@@ -249,11 +249,6 @@ public class RemoteFolder extends RemoteResource implements ISVNRemoteFolder, IS
     }    
 
     
-    public String getContentIdentifier(){
-        return this.getRevision().toString();
-    }
-   
-
     public IStorage getBufferedStorage(IProgressMonitor monitor)
     {
     	return null;
@@ -267,29 +262,4 @@ public class RemoteFolder extends RemoteResource implements ISVNRemoteFolder, IS
 		
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.core.variants.CachedResourceVariant#getCachePath()
-	 */
-	protected String getCachePath() {
-		return this.getUrl().toString();
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.core.variants.CachedResourceVariant#getCacheId()
-	 */
-	protected String getCacheId() {
-		return SVNProviderPlugin.ID;
-	}
-
-	
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.core.variants.IResourceVariant#asBytes()
-	 */
-	public byte[] asBytes() {
-
-		return getCachePath().getBytes();
-	}
-
-    
 }

@@ -21,6 +21,7 @@ import org.tigris.subversion.subclipse.core.ISVNRemoteResource;
 import org.tigris.subversion.subclipse.core.ISVNRepositoryLocation;
 import org.tigris.subversion.subclipse.core.Policy;
 import org.tigris.subversion.subclipse.core.SVNException;
+import org.tigris.subversion.subclipse.core.SVNProviderPlugin;
 import org.tigris.subversion.subclipse.core.history.LogEntry;
 import org.tigris.subversion.subclipse.core.util.Util;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
@@ -212,4 +213,33 @@ public abstract class RemoteResource
         return logEntries;
     }
 
+    public String getContentIdentifier() {
+		return this.getRevision().toString();
+	}
+	
+	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.team.core.variants.CachedResourceVariant#getCachePath()
+	 */
+	protected String getCachePath() {
+		return this.getUrl().toString()+" "+getContentIdentifier();
+	}
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.team.core.variants.CachedResourceVariant#getCacheId()
+	 */
+	protected String getCacheId() {
+		return SVNProviderPlugin.ID;
+	}
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.team.core.variants.IResourceVariant#asBytes()
+	 */
+	public byte[] asBytes() {
+		return getCachePath().getBytes();
+	}
 }
