@@ -72,8 +72,8 @@ public abstract class CompareWithRemoteAction extends WorkspaceAction {
 	 * 
 	 * @see org.eclipse.team.internal.ccvs.ui.actions.WorkspaceAction#isEnabledForCVSResource(org.eclipse.team.internal.ccvs.core.ICVSResource)
 	 */
-	protected boolean isEnabledForCVSResource(ISVNLocalResource cvsResource) throws SVNException {
-		return super.isEnabledForSVNResource(cvsResource) || cvsResource.getParent().isManaged();
+	protected boolean isEnabledForSVNResource(ISVNLocalResource svnResource) throws SVNException {
+		return super.isEnabledForSVNResource(svnResource) || svnResource.getParent().isManaged();
 	}
 
 	/**
@@ -81,6 +81,22 @@ public abstract class CompareWithRemoteAction extends WorkspaceAction {
 	 * TODO if the addition is because of a copy this should be allowed (requires some way to get the remote resource from the original location)
 	 */
 	protected boolean isEnabledForAddedResources() {
+		return false;
+	}
+    
+	/* (non-Javadoc)
+	 * @see org.tigris.subversion.subclipse.ui.actions.WorkspaceAction#isEnabledForInaccessibleResources()
+	 */
+	protected boolean isEnabledForInaccessibleResources() {
+        // it can be useful to compare the content of a file that has been deleted with the remote resource
+        // this is particulary useful for CompareWithBaseRevisionAction
+		return true;
+	}
+    
+	/* (non-Javadoc)
+	 * @see org.tigris.subversion.subclipse.ui.actions.WorkspaceAction#isEnabledForMultipleResources()
+	 */
+	protected boolean isEnabledForMultipleResources() {
 		return false;
 	}
 }

@@ -74,6 +74,8 @@ import org.tigris.subversion.subclipse.core.resources.SVNWorkspaceRoot;
 import org.tigris.subversion.subclipse.ui.ISVNUIConstants;
 import org.tigris.subversion.subclipse.ui.Policy;
 import org.tigris.subversion.subclipse.ui.SVNUIPlugin;
+import org.tigris.subversion.subclipse.ui.actions.CompareWithBaseRevisionAction;
+import org.tigris.subversion.subclipse.ui.actions.SVNPropertyModifyAction;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 import org.tigris.subversion.svnclientadapter.ISVNStatus;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
@@ -100,6 +102,8 @@ public class PendingOperationsView extends ViewPart implements IResourceStateCha
     private IResource[] changedResources = null;
     private boolean shutdown = false;
     private ComputeStatusJob computeStatusJob = null;
+    
+    private Action compareWithBaseAction;
     
     public PendingOperationsView() {
         SVNProviderPlugin.addResourceStateChangeListener(this);
@@ -488,19 +492,21 @@ public class PendingOperationsView extends ViewPart implements IResourceStateCha
     public void refresh()  {
         changedResources = null;
 
-        // show a Busy Cursor during refresh
-		BusyIndicator.showWhile(tableViewer.getTable().getDisplay(), new Runnable() {
-			public void run() {
-				tableViewer.refresh();
-			}
-		});
+        // refresh is not always called from UI thread 
+        getSite().getShell().getDisplay().syncExec(new Runnable() {
+            public void run() {
+                tableViewer.refresh();
+            }
+        });
     }
 
     public void resourceSyncInfoChanged(IResource[] changedResources) {
         refresh();
     }
 
-    public void resourceModified(IResource[] changedResources) {}
+    public void resourceModified(IResource[] changedResources) {
+        refresh();
+    }
     
     public void projectConfigured(IProject project) {}
     
@@ -518,30 +524,30 @@ public class PendingOperationsView extends ViewPart implements IResourceStateCha
     }
 
     /**
+     * get the action for comparing with base revision
+     * @return
+     */
+    private Action getCompareWithBaseAction() {
+        if (compareWithBaseAction == null) {
+            compareWithBaseAction = new Action("") {
+                public void run() {
+                    CompareWithBaseRevisionAction delegate = new CompareWithBaseRevisionAction();
+                    delegate.init(this);
+                    delegate.selectionChanged(this,tableViewer.getSelection());
+                    if (this.isEnabled()) {
+                    	delegate.run(this);
+                    }
+                }
+            };          
+        }
+        return compareWithBaseAction;
+    }    
+    
+    /**
      * The mouse has been double-clicked in the table, open the file
      */
     private void handleDoubleClick(DoubleClickEvent e) {
-        // Only act on single selection
-        ISelection selection = e.getSelection();
-        if (selection instanceof IStructuredSelection) {
-            IStructuredSelection structured = (IStructuredSelection)selection;
-            if (structured.size() == 1) {
-                Object first = structured.getFirstElement();
-                ISVNLocalResource svnResource = SVNWorkspaceRoot.getSVNResourceFor((IResource)first);
-                try {
-                    // don't open file for directory or deleted files                 
-                    if ((!svnResource.getStatus().isDeleted()) && (!svnResource.isFolder())) {                
-                        IWorkbench workbench = SVNUIPlugin.getPlugin().getWorkbench();
-                        IWorkbenchPage page = workbench.getActiveWorkbenchWindow().getActivePage();
-                        page.openEditor(new FileEditorInput((IFile)svnResource.getIResource()), IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID);
-                    }
-                } catch (SVNException ex) {
-                    SVNUIPlugin.log(ex);
-                } catch (PartInitException ex) {
-                    SVNUIPlugin.log(SVNException.wrapException(ex));
-                }
-            }
-        } 
+        getCompareWithBaseAction().run();
     }
 
 	private class ComputeStatusJob extends Job {
