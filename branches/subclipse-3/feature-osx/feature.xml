@@ -163,6 +163,7 @@ This Agreement is governed by the laws of the State of New York and the intellec
       <import plugin="org.eclipse.ui.editors"/>
       <import plugin="org.eclipse.team.ui"/>
       <import plugin="org.eclipse.compare"/>
+      <import plugin="org.eclipse.ui.console"/>
    </requires>
 
    <plugin
@@ -176,12 +177,5 @@ This Agreement is governed by the laws of the State of New York and the intellec
          download-size="0"
          install-size="0"
          version="0.9.14"/>
-
-   <plugin
-         id="org.tigris.subversion.javahl.osx"
-         download-size="0"
-         install-size="0"
-         version="0.9.14"
-         fragment="true"/>
 
 </feature>
