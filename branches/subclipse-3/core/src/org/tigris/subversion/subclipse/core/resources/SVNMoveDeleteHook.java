@@ -149,7 +149,7 @@ public class SVNMoveDeleteHook extends DefaultMoveDeleteHook {
 					//can't move a file that's in state added, so copy to new location
 					//remove old location, add new location  
 					//fix for issue 87 -mml
-					source.copy(destination.getFullPath(), updateFlags==IResource.FORCE, monitor);
+					source.copy(destination.getFullPath(), force, monitor);
 
 					svnClient.addFile(destination.getLocation().toFile());
 					svnClient.remove(new File[]{source.getLocation().toFile()},true);
@@ -157,12 +157,14 @@ public class SVNMoveDeleteHook extends DefaultMoveDeleteHook {
 				}else{
 					svnClient.move(source.getLocation().toFile(), destination
 						.getLocation().toFile(), true);
+					
 
 				}
 				 //movedFile must be done before endOperation because
 				// destination file must not already exist in the workspace
 				// resource tree.
 				tree.movedFile(source, destination);
+				destination.refreshLocal(IResource.DEPTH_ZERO, monitor);
 			} catch (SVNClientException e) {
 				throw SVNException.wrapException(e);
 			} catch (TeamException e) {
@@ -231,7 +233,7 @@ public class SVNMoveDeleteHook extends DefaultMoveDeleteHook {
 					//can't rename a folder that's in state added, so copy to new location
 					//remove old location, add new location  
 					//fix for issue 87 -mml
-					source.copy(destination.getFullPath(), updateFlags==IResource.FORCE, monitor);
+					source.copy(destination.getFullPath(), force, monitor);
 					svnClient.remove(new File[]{source.getLocation().toFile()},true);
 					tree.deletedFolder(source);
 				}else{
