@@ -14,7 +14,7 @@ package org.tigris.subversion.subclipse.ui.preferences;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -59,13 +59,13 @@ import org.tigris.subversion.subclipse.ui.decorator.SVNLightweightDecorator;
 public class SVNDecoratorPreferencesPage extends PreferencePage implements IWorkbenchPreferencePage {
 
 	private Text fileTextFormat;
-	private Text fileTextFormatExample;
+	private Label fileTextFormatExample;
 	
 	private Text folderTextFormat;
-	private Text folderTextFormatExample;
+	private Label folderTextFormatExample;
 	
 	private Text projectTextFormat;
-	private Text projectTextFormatExample;
+	private Label projectTextFormatExample;
 	
 	private Text dirtyFlag;
 	private Text addedFlag;
@@ -76,12 +76,12 @@ public class SVNDecoratorPreferencesPage extends PreferencePage implements IWork
 	}
 	
 	class TextPair {
-		TextPair(Text t1, Text t2) {
+		TextPair(Text t1, Label t2) {
 			this.t1 = t1;
 			this.t2 = t2;
 		}
 		Text t1;
-		Text t2;
+		Label t2;
 	}
 	
 	/**
@@ -128,9 +128,11 @@ public class SVNDecoratorPreferencesPage extends PreferencePage implements IWork
 			}			
 		});
 		
-		createLabel(composite, Policy.bind("Example__1"), 1); //$NON-NLS-1$
-		Text example = new Text(composite, SWT.BORDER);
-		example.setEditable(false);
+		createLabel(composite, "", 1); //$NON-NLS-1$
+		//blank labels to balance the grid.  there is probably a better way to do this... -mml 11/11/03
+		Label example = new Label(composite,SWT.SHADOW_IN);
+		
+
 		example.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		createLabel(composite, "", 1); // spacer //$NON-NLS-1$
 		return new TextPair(format, example);
@@ -144,7 +146,7 @@ public class SVNDecoratorPreferencesPage extends PreferencePage implements IWork
   
 		bindings.put(SVNDecoratorConfiguration.RESOURCE_REVISION, "74"); //$NON-NLS-1$
         bindings.put(SVNDecoratorConfiguration.RESOURCE_AUTHOR, "cchab"); //$NON-NLS-1$
-        bindings.put(SVNDecoratorConfiguration.RESOURCE_DATE, DateFormat.getInstance().format(new Date(2003,10,17,22,31))); //$NON-NLS-1$
+        bindings.put(SVNDecoratorConfiguration.RESOURCE_DATE, DateFormat.getInstance().format(Calendar.getInstance().getTime())); //$NON-NLS-1$
         bindings.put(SVNDecoratorConfiguration.RESOURCE_URL, "http://localhost:8080/svn/repos/"); //$NON-NLS-1$
 		bindings.put(SVNDecoratorConfiguration.DIRTY_FLAG, dirtyFlag.getText());
 		bindings.put(SVNDecoratorConfiguration.ADDED_FLAG, addedFlag.getText());
