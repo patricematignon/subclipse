@@ -26,6 +26,7 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.ui.IConfigurationWizard;
 import org.eclipse.ui.IWorkbench;
@@ -377,7 +378,12 @@ public class SharingWizard extends Wizard implements IConfigurationWizard {
 		  isSVNFolder = info.hasRemote();
           
 		} catch (final TeamException e) {
-            SVNUIPlugin.openError(getContainer().getShell(), null, null, e);
+			Shell shell = null;
+			// If this is called before the pages have been added, getContainer will return null
+			if (getContainer() != null) {
+				shell = getContainer().getShell();
+			}
+            SVNUIPlugin.openError(shell, null, null, e);
 		}
         return isSVNFolder; 
 	}
