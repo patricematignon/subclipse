@@ -20,7 +20,7 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Path;
 import org.tigris.subversion.subclipse.core.resources.LocalResourceStatus;
-import org.tigris.subversion.subclipse.core.resources.StatusCacheComposite;
+import org.tigris.subversion.subclipse.core.status.StatusCacheComposite;
 import org.tigris.subversion.subclipse.test.TestProject;
 
 
