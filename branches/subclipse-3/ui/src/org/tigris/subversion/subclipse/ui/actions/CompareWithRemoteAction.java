@@ -10,14 +10,40 @@
  *******************************************************************************/
 package org.tigris.subversion.subclipse.ui.actions;
  
+import org.eclipse.compare.CompareUI;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.tigris.subversion.subclipse.core.ISVNLocalResource;
 import org.tigris.subversion.subclipse.core.SVNException;
+import org.tigris.subversion.subclipse.core.resources.SVNWorkspaceRoot;
+import org.tigris.subversion.subclipse.ui.compare.SVNLocalCompareInput;
+import org.tigris.subversion.svnclientadapter.SVNRevision;
 
 public class CompareWithRemoteAction extends WorkspaceAction {
 
 	public void execute(IAction action) {
+		IResource[] resources = getSelectedResources();
+		if (resources.length != 1) return;
 		
+		try {
+			final ISVNLocalResource localResource= SVNWorkspaceRoot.getSVNResourceFor(resources[0]);
+			
+			run(new IRunnableWithProgress() {
+				public void run(IProgressMonitor monitor) {
+					try {
+						CompareUI.openCompareEditorOnPage(
+								new SVNLocalCompareInput(localResource, SVNRevision.HEAD),
+								getTargetPage());
+					} catch (SVNException e) {
+						handle(e, null, null);
+					}
+				}
+			}, false /* cancelable */, PROGRESS_BUSYCURSOR);
+		} catch (Exception e) {
+			handle(e, null, null);
+		}
 		
 		
 	}
