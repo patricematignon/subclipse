@@ -30,6 +30,7 @@
    <extension
          point="org.eclipse.team.core.repository">
       <repository
+            typeClass="org.tigris.subversion.subclipse.core.SVNTeamProviderType"
             class="org.tigris.subversion.subclipse.core.SVNTeamProvider"
             id="org.tigris.subversion.subclipse.core.svnnature">
       </repository>
