@@ -3,6 +3,7 @@
 	<name>core</name>
 	<comment></comment>
 	<projects>
+		<project>svnClientAdapter</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
