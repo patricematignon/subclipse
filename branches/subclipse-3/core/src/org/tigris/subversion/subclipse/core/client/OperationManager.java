@@ -33,14 +33,9 @@ import org.tigris.subversion.svnclientadapter.ISVNNotifyListener;
 import org.tigris.subversion.svnclientadapter.SVNNodeKind;
 
 /**
-<<<<<<< .working
- * This class manages jsvn operations. beginOperation must be called before a
- * batch of svn operations and endOperation after
-=======
  * This class manages svn operations.
  * beginOperation must be called before a batch of svn operations
  * and endOperation after
->>>>>>> .merge-right.r612
  * 
  * All changed .svn directories are refreshed using resource.refreshLocal
  * SyncFileChangeListener will then find that some meta files have changed and will refresh
