@@ -6,7 +6,6 @@
       provider-name="tigris"
       os="win32"
       ws="win32"
-      nl=""
       arch="x86">
 
    <install-handler/>

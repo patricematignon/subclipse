@@ -6,7 +6,6 @@
       provider-name="tigris.org"
       os="linux"
       ws="gtk,motif"
-      nl=""
       arch="x86">
 
    <install-handler/>
