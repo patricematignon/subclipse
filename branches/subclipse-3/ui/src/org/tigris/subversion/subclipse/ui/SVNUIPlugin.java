@@ -372,8 +372,6 @@ public class SVNUIPlugin extends AbstractUIPlugin {
 	
 	public void start(BundleContext ctxt)throws Exception{
 		super.start(ctxt);
-		Policy.localize("org.tigris.subversion.subclipse.ui.messages"); //$NON-NLS-1$
-        
 		SVNAdapterFactory factory = new SVNAdapterFactory();
 		
 		Platform.getAdapterManager().registerAdapters(factory, ISVNRemoteFile.class); 
