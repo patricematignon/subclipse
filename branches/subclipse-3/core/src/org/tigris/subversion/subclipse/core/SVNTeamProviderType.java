@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.tigris.subversion.subclipse.core;
 
+import org.eclipse.team.core.ProjectSetCapability;
 import org.eclipse.team.core.RepositoryProviderType;
 
 
@@ -28,5 +29,10 @@ public class SVNTeamProviderType extends RepositoryProviderType {
 		return false;
 	}
 
-
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.RepositoryProviderType#getProjectSetCapability()
+	 */
+	public ProjectSetCapability getProjectSetCapability() {
+		return new SVNProjectSetCapability();
+	}
 }
