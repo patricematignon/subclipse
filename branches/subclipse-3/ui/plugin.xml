@@ -242,7 +242,7 @@
                helpContextId="org.tigris.subversion.subclipse.ui.compare_remote_resources_action_context"
                enablesFor="2"
                label="%CompareRemoteResourcesAction.label"
-               icon="icons/full/tortoise/diff.gif"
+               icon="icons/full/tortoise/compare.gif"
                tooltip="%CompareRemoteResourcesAction.tooltip"
                class="org.tigris.subversion.subclipse.ui.actions.CompareRemoteResourcesAction"
                id="org.tigris.subversion.subclipse.ui.compareLogEntries">
