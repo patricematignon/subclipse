@@ -50,5 +50,6 @@ public interface ILogEntry extends IAdaptable {
 	 */
 	public ISVNRemoteResource getRemoteResource();
 	
+    public LogEntryChangePath[] getLogEntryChangePaths();
 }
 

@@ -18,7 +18,7 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.variants.IResourceVariant;
-import org.tigris.subversion.subclipse.core.history.LogEntry;
+import org.tigris.subversion.subclipse.core.history.ILogEntry;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
 
 /**
@@ -77,7 +77,7 @@ public interface ISVNRemoteResource extends ISVNResource, IAdaptable, IResourceV
     /**
      * Get all the log entries of the remote resource
      */
-    public LogEntry[] getLogEntries(IProgressMonitor monitor) throws TeamException;
+    public ILogEntry[] getLogEntries(IProgressMonitor monitor) throws TeamException;
 
     public ISVNRemoteFolder getParent();
     

@@ -51,12 +51,21 @@ import org.tigris.subversion.svnclientadapter.SVNUrl;
 public class SVNRepositoryLocation
 	implements ISVNRepositoryLocation, IUserInfo, IAdaptable {
 
-	private String label = null; // friendly name of the location
-	private String user;
+	// friendly name of the location
+	private String label = null; 
+	
+    private String user;
 	private String password;
-	private SVNUrl url;
-	private RemoteFolder rootFolder;
+	
+    // url of this location
+    private SVNUrl url;
+	
+    // url of the root repository
+    private SVNUrl repositoryRootUrl;
+    
 	// the folder corresponding to this repository location
+    private RemoteFolder rootFolder;
+	
 
 	// fields needed for caching the password
 	public static final String INFO_PASSWORD = "org.tigris.subversion.subclipse.core.password"; //$NON-NLS-1$ 
@@ -503,6 +512,18 @@ public class SVNRepositoryLocation
 			return Platform.getAdapterManager().getAdapter(this, adapter);
 	}
 
+    /**
+     * get the url of the repository root <br>
+     * Ex : if url is http://svn.collab.net/viewcvs/svn/trunk/subversion/, the
+     * repository root is http://svn.collab.net/viewcvs/svn/trunk
+     * @return
+     */
+    public SVNUrl getRepositoryRoot() {
+    	if (repositoryRootUrl == null) {
+    		repositoryRootUrl = getSVNClient().getRepositoryRoot(getUrl());
+        }
+        return repositoryRootUrl;
+    }
 	
 
 	/**

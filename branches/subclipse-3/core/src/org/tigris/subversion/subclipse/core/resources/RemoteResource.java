@@ -21,14 +21,11 @@ import org.tigris.subversion.subclipse.core.ISVNLocalResource;
 import org.tigris.subversion.subclipse.core.ISVNRemoteFolder;
 import org.tigris.subversion.subclipse.core.ISVNRemoteResource;
 import org.tigris.subversion.subclipse.core.ISVNRepositoryLocation;
-import org.tigris.subversion.subclipse.core.Policy;
 import org.tigris.subversion.subclipse.core.SVNException;
 import org.tigris.subversion.subclipse.core.SVNProviderPlugin;
-import org.tigris.subversion.subclipse.core.history.LogEntry;
+import org.tigris.subversion.subclipse.core.commands.GetLogsCommand;
+import org.tigris.subversion.subclipse.core.history.ILogEntry;
 import org.tigris.subversion.subclipse.core.util.Util;
-import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
-import org.tigris.subversion.svnclientadapter.ISVNLogMessage;
-import org.tigris.subversion.svnclientadapter.SVNClientException;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
 import org.tigris.subversion.svnclientadapter.SVNUrl;
 
@@ -187,34 +184,10 @@ public abstract class RemoteResource
     /**
      * @see ISVNRemoteResource#getLogEntries()
      */
-    public LogEntry[] getLogEntries(IProgressMonitor monitor) throws SVNException {
-        ISVNClientAdapter client = getRepository().getSVNClient();
-        monitor = Policy.monitorFor(monitor);
-        monitor.beginTask(Policy.bind("RemoteFile.getLogEntries"), 100); //$NON-NLS-1$
-        
-        ISVNLogMessage[] logMessages;
-		try {
-			logMessages =
-				client.getLogMessages(
-					getUrl(),
-					new SVNRevision.Number(0),
-					SVNRevision.HEAD);
-		} catch (SVNClientException e) {
-            throw SVNException.wrapException(e);
-		}
-        
-        LogEntry[] logEntries = new LogEntry[logMessages.length];
-        
-        for (int i = 0; i < logMessages.length;i++) {
-            logEntries[i] = new LogEntry(this, 
-                              logMessages[i].getRevision(), 
-                              logMessages[i].getAuthor(),
-                              logMessages[i].getDate(),
-                              logMessages[i].getMessage());
-        }
-             
-        monitor.done();
-        return logEntries;
+    public ILogEntry[] getLogEntries(IProgressMonitor monitor) throws SVNException {
+        GetLogsCommand command = new GetLogsCommand(this);
+        command.run(monitor);
+        return command.getLogEntries();
     }
 
     public String getContentIdentifier() {
