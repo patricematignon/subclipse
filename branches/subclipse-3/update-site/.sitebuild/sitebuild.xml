@@ -5,7 +5,7 @@
       autobuild="false"
       scrub-output="false"
       use-console="true">
-   <feature id="feature.win32" version="0.9.3"/>
    <feature id="featurelinux" version="0.9.3"/>
    <feature id="featureosx" version="0.9.3"/>
+   <feature id="featurewin32" version="0.9.3"/>
 </site-build>

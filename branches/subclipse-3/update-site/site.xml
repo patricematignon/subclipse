@@ -4,13 +4,13 @@
    <description url="http://www.loonsoft.com/updates">
       LoonSoft Eclipse Plugins Update Site
    </description>
-   <feature url="features/feature.win32_0.9.3.jar" id="feature.win32" version="0.9.3" os="win32" ws="win32"  arch="x86">
+   <feature url="features/featureosx_0.9.3.jar" id="featureosx" version="0.9.3" os="macosx" ws="carbon" arch="ppc">
       <category name="subclipse"/>
    </feature>
-   <feature url="features/featureosx_0.9.3.jar" id="featureosx" version="0.9.3" os="macosx" ws="carbon"  arch="ppc">
+   <feature url="features/featurelinux_0.9.3.jar" id="featurelinux" version="0.9.3" os="linux" ws="gtk,motif" arch="x86">
       <category name="subclipse"/>
    </feature>
-   <feature url="features/featurelinux_0.9.3.jar" id="featurelinux" version="0.9.3" os="linux" ws="gtk,motif"  arch="x86">
+   <feature url="features/featurewin32_0.9.3.jar" id="featurewin32" version="0.9.3" os="win32" ws="win32" arch="x86">
       <category name="subclipse"/>
    </feature>
    <category-def name="subclipse" label="Subclipse Plugin">
