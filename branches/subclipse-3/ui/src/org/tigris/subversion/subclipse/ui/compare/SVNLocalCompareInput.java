@@ -25,10 +25,8 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.internal.ui.Utils;
@@ -38,10 +36,8 @@ import org.eclipse.ui.IWorkbenchPartSite;
 import org.tigris.subversion.subclipse.core.ISVNLocalResource;
 import org.tigris.subversion.subclipse.core.ISVNRemoteResource;
 import org.tigris.subversion.subclipse.core.SVNException;
-import org.tigris.subversion.subclipse.core.history.ILogEntry;
 import org.tigris.subversion.subclipse.ui.Policy;
 import org.tigris.subversion.subclipse.ui.SVNUIPlugin;
-import org.tigris.subversion.subclipse.ui.history.HistoryTableProvider;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
 
 /**
@@ -53,15 +49,9 @@ import org.tigris.subversion.svnclientadapter.SVNRevision;
  * - revision numbers don't match
  */
 public class SVNLocalCompareInput extends CompareEditorInput implements ISaveableWorkbenchPart {
-	ISVNLocalResource resource;
-	ILogEntry[] logEntries;
-	TableViewer viewer;
-	Action getContentsAction;
-	Action getRevisionAction;
-	Shell shell;
-	
-	private HistoryTableProvider historyTableProvider;
-	private final ISVNRemoteResource remoteResource;
+	private ISVNLocalResource resource;
+	private Shell shell;
+	private final ISVNRemoteResource remoteResource; // the remote resource to compare to or null if it does not exist
 	
 	/**
 	 * Special handling to allow saving of resource nodes
@@ -127,8 +117,11 @@ public class SVNLocalCompareInput extends CompareEditorInput implements ISaveabl
 	public SVNLocalCompareInput(ISVNLocalResource resource, SVNRevision revision) throws SVNException {
 		super(new CompareConfiguration());
 		this.resource = resource;
-		// TODO should this be get[Base|Latest]Resource depending on a flag?
+		// SVNRevision can be any valid revision : BASE, HEAD, number ...
 		this.remoteResource = resource.getRemoteResource(revision);
+        
+        // remoteResouce can be null if there is no corresponding remote resource
+        // (for example no base because resource has just been added)
 	}
 	
 	
