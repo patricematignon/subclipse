@@ -21,7 +21,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
-import org.tigris.subversion.subclipse.core.ISVNFolder;
 import org.tigris.subversion.subclipse.core.ISVNLocalFolder;
 import org.tigris.subversion.subclipse.core.ISVNLocalResource;
 import org.tigris.subversion.subclipse.core.ISVNRemoteResource;
@@ -190,8 +189,9 @@ public class LocalFolder extends LocalResource implements ISVNLocalFolder {
             
                 ISVNResource[] members = members(Policy.subMonitorFor(monitor, 20),FOLDER_MEMBERS | MANAGED_MEMBERS);
                 ArrayList dirs = new ArrayList();
-                for (int i = 0; i < members.length;i++)
+                for (int i = 0; i < members.length;i++) {
                     dirs.add(((ISVNLocalResource)members[i]).getIResource());
+                }
                 dirs.add(getIResource()); // we add the current folder to the list : we want to delete .svn dir for it too 
                 
                 IProgressMonitor monitorDel = Policy.subMonitorFor(monitor,80);
@@ -201,16 +201,39 @@ public class LocalFolder extends LocalResource implements ISVNLocalFolder {
                 for (int i = 0; i < dirs.size();i++) {
                     monitorDel.worked(1);
                     IContainer container = (IContainer)dirs.get(i);
-                    IFolder svnFolder = container.getFolder(new Path(SVNConstants.SVN_DIRNAME));
+                    recursiveUnmanage(container, monitorDel);
+                                        
+                }
+                monitorDel.done();
+                monitor.done(); 
+            }
+            
+            private void recursiveUnmanage(IContainer container, IProgressMonitor monitor) {
+        		try {
+        			monitor.beginTask(null, 10);
+        			monitor.subTask(container.getFullPath().toOSString());
+        			
+        			IResource[] members = container.members(true);
+        			for (int i = 0; i < members.length; i++) {
+        				monitor.worked(1);
+        				IResource resource = members[i];
+        				if (members[i].getType() != IResource.FILE) {
+        					recursiveUnmanage((IContainer) resource, monitor);
+        				}
+        			}
+        			// Post order traversal to make sure resources are not orphaned 
+        			IFolder svnFolder = container.getFolder(new Path(SVNConstants.SVN_DIRNAME));
                     if (svnFolder.exists()) {
                         try {
 							svnFolder.delete(true,null);
 						} catch (CoreException e) {
 						}
-                    }                    
-                }
-                monitorDel.done();
-                monitor.done(); 
+                    }
+        		} catch (CoreException e) {
+        			// Just ignore and continue
+        		} finally {
+        			monitor.done();
+        		}
             }
         }, Policy.subMonitorFor(monitor, 99));
     }
