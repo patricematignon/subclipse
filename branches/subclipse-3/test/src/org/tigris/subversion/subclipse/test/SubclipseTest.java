@@ -9,19 +9,12 @@
  *     Cédric Chabanois (cchabanois@ifrance.com) - modified for Subversion 
  *******************************************************************************/
 package org.tigris.subversion.subclipse.test;
-import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.Enumeration;
 import java.util.Properties;
 
 import junit.framework.TestCase;
 
-import org.apache.tools.zip.ZipEntry;
-import org.apache.tools.zip.ZipFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
@@ -37,18 +30,20 @@ import org.tigris.subversion.subclipse.core.SVNProviderPlugin;
 import org.tigris.subversion.subclipse.core.SVNTeamProvider;
 import org.tigris.subversion.subclipse.core.repo.SVNRepositories;
 import org.tigris.subversion.subclipse.core.resources.SVNWorkspaceRoot;
+import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 import org.tigris.subversion.svnclientadapter.SVNClientAdapterFactory;
+import org.tigris.subversion.svnclientadapter.SVNUrl;
 
 
 public abstract class SubclipseTest extends TestCase {
 	protected SVNRepositories repositories;
 	protected ISVNRepositoryLocation repositoryLocation;
-	protected String url;
+	protected File reposPath;
+	protected SVNUrl url;
 	protected String user;
 	protected String pass;
 	protected String remoteHttpsUrl;
 	protected String remoteHttpUrl;
-	protected String testRepoArchive;
 	public SubclipseTest(String name) {
 		super(name);
 	}
@@ -58,28 +53,25 @@ public abstract class SubclipseTest extends TestCase {
 	 * @see junit.framework.TestCase#setUp()
 	 */
 	protected void setUp() throws Exception {
-		url = "file:///" + System.getProperty("java.io.tmpdir")  + "/trepo";
-		testRepoArchive = System.getProperty("svn.repo.arch");
+		// first, we create the repository
+		ISVNClientAdapter svnClientCmd = SVNClientAdapterFactory.createSVNClient(SVNClientAdapterFactory.COMMANDLINE_CLIENT);
+		reposPath = new File(System.getProperty("java.io.tmpdir")+"/test_repos").getAbsoluteFile();
+		removeDir(reposPath);
+		svnClientCmd.createRepository(reposPath);
 		
-		remoteHttpUrl = System.getProperty("remote.http.url");//in case we're
-		// testing auth or
-		// something.
+		// we need the corresponding url
+		url = new SVNUrl(reposPath.toURI().toString().replaceFirst("file:/","file:///"));
+		
+		// in case we're testing auth or something.
+		remoteHttpUrl = System.getProperty("remote.http.url");
 		remoteHttpsUrl = System.getProperty("remote.https.url");
 		user = System.getProperty("svn.user");
 		pass = System.getProperty("svn.pass");
+
+		// do we use javahl or command line ? 
 		String mode = System.getProperty("svn.mode");
-		File archFile = new File(testRepoArchive);
-		if (testRepoArchive == null)
-			throw new RuntimeException(
-					"svn.repo.arch property must be an absolute path to trepo.zip");
-		if (!archFile.exists())
-			throw new RuntimeException("can't find file: "
-					+ archFile.getAbsolutePath());
-		if (!url.startsWith("file://"))
-			throw new RuntimeException("svn.url must be a file:// url.");
-		extractArchive(archFile,new File(System.getProperty("java.io.tmpdir")));
 		SVNProviderPlugin plugin = SVNProviderPlugin.getPlugin();
-		// do we use javahl or command line ?
+
 		if (mode == null || mode.equalsIgnoreCase("javahl")) {
 			plugin.setSvnClientInterface(SVNClientAdapterFactory.JAVAHL_CLIENT);
 			if (plugin.getSvnClientInterface() != SVNClientAdapterFactory.JAVAHL_CLIENT) {
@@ -95,13 +87,12 @@ public abstract class SubclipseTest extends TestCase {
 		} else {
 			throw new RuntimeException("Unknown svn.mode: " + mode);
 		}
+
 		// get the ISVNRepositoryLocation corresponding to our repository
 		repositories = plugin.getRepositories();
 		Properties properties = new Properties();
-		if (url == null)
-			throw new RuntimeException(
-					"You must set at least set the svn.url property to run these tests.");
-		properties.setProperty("url", url);
+
+		properties.setProperty("url", url.toString());
 		if (user != null)
 			properties.setProperty("user", user);
 		if (pass != null)
@@ -109,39 +100,41 @@ public abstract class SubclipseTest extends TestCase {
 		
 		repositoryLocation = repositories.createRepository(properties);
 	}
+	
 	/**
-	 * @param archFile
-	 * @todo Generated comment
+	 * remove the given directory 
+	 * @param d
+	 * @throws IOException
 	 */
-	private void extractArchive(File archFile, File destination) throws IOException {
-		ZipFile zf = new ZipFile(archFile);
-		Enumeration entries = zf.getEntries();
-		while (entries.hasMoreElements()) {
-			ZipEntry entry = (ZipEntry) entries.nextElement();
-			File destFile = new File(destination, entry.getName());
-			File destParent = destFile.getParentFile();
-			destParent.mkdirs();
-			
-			if (!entry.isDirectory()) {
-				int len;
-				OutputStream out = new BufferedOutputStream(new FileOutputStream(
-						destFile));
-				InputStream in = zf.getInputStream(entry);
-				byte[] buffer = new byte[1024];
-				while ((len = in.read(buffer)) >= 0)
-					out.write(buffer, 0, len);
-				in.close();
-				out.close();
-			} else {
-				if (!destFile.exists() && !destFile.mkdirs()) {
-					throw new RuntimeException("Failed to create: "
-							+ destination.getAbsolutePath() + " :"
-							+ entry.getName());
-				}
-			}
-		}
-		
-	}
+    private void removeDir(File d) throws IOException {
+        if (!d.exists()) {
+        	return;
+        }
+        
+    	String[] list = d.list();
+        if (list == null) {
+            list = new String[0];
+        }
+        for (int i = 0; i < list.length; i++) {
+            String s = list[i];
+            File f = new File(d, s);
+            if (f.isDirectory()) {
+                removeDir(f);
+            } else {
+                if (!f.delete()) {
+                    String message = "Unable to delete file " 
+                        + f.getAbsolutePath();
+                    throw new IOException(message);
+                }
+            }
+        }
+        if (!d.delete()) {
+            String message = "Unable to delete directory " 
+                + d.getAbsolutePath();
+            throw new IOException(message);
+        }
+    }	
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -174,6 +167,9 @@ public abstract class SubclipseTest extends TestCase {
 		for (int i = 0; i < svnRepositoryLocations.length; i++) {
 			repositories.disposeRepository(svnRepositoryLocations[i]);
 		}
+		
+		// delete the repository
+		removeDir(reposPath);
 	}
 	/**
 	 * create a project with a Class
