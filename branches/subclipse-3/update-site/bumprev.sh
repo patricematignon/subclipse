@@ -11,7 +11,5 @@ version2=$2
 
 for f in ${files[@]};do
     echo "bumping $f"
-    mv $f $f.bak
-    cat $f.bak | sed "s/$version1/$version2/g" > $f
-    rm -f $f.bak
+    perl -p -i -e "s/$version1/$version2/g" $f
 done
