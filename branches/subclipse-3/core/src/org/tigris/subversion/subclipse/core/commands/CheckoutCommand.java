@@ -55,6 +55,138 @@ public class CheckoutCommand implements ISVNCommand {
 		this.resources = resources;
 		this.projects = projects;
 	}
+	
+	public void run() throws SVNException {
+		ISVNLocalFolder root = SVNWorkspaceRoot
+		.getSVNFolderFor(ResourcesPlugin.getWorkspace()
+				.getRoot());	
+		try {	
+			// Prepare the target projects to receive resources
+			scrubProjects(projects);
+			for (int i = 0; i < resources.length; i++) {
+				IProject project = null;
+				RemoteFolder resource = (RemoteFolder) resources[i];
+
+				project = projects[i];
+				boolean deleteDotProject = false;
+				// Perform the checkout
+				ISVNClientAdapter svnClient = resource.getRepository()
+						.getSVNClient();
+
+				// check if the remote project has a .project file
+				ISVNDirEntry[] rootFiles = svnClient.getList(resource
+						.getUrl(), SVNRevision.HEAD, false);
+				for (int j = 0; j < rootFiles.length; j++) {
+					if ((rootFiles[j].getNodeKind() == SVNNodeKind.FILE)
+							&& (".project".equals(rootFiles[j]
+									.getPath()))) {
+						deleteDotProject = true;
+					}
+				}
+
+				File destPath;
+				if (project.getLocation() == null) {
+					// project.getLocation is null if the project does
+					// not exist in the workspace
+					destPath = new File(root.getIResource()
+							.getLocation().toFile(), project.getName());
+					try {
+						// we create the directory corresponding to the
+						// project and we open it
+						project.create(null);
+                        project.open(null);
+					} catch (CoreException e1) {
+						throw new SVNException("Cannot create project to checkout to", e1);
+					}
+					
+
+				} else {
+					destPath = project.getLocation().toFile();
+				}
+
+				//delete the project file if the flag gets set.
+				//fix for 54
+				if (deleteDotProject) {
+
+					IFile projectFile = project.getFile(".project");
+					if (projectFile != null) {
+						try {
+							// delete the project file, force, no history,
+							// without progress monitor
+							projectFile.delete(true, false, null);
+						} catch (CoreException e1) {
+							throw new SVNException("Cannot delete .project before checkout",e1);
+						}
+					}
+				}
+
+				OperationManager operationHandler = OperationManager
+						.getInstance();
+				try {
+					operationHandler.beginOperation(svnClient);
+					svnClient.checkout(resource.getUrl(), destPath,
+							SVNRevision.HEAD, true);
+				} catch (SVNClientException e) {
+					throw new SVNException("cannot checkout");
+				} finally {
+					operationHandler.endOperation();
+				}
+
+				// Bring the project into the workspace
+				refreshProjects(new IProject[] { project }, null);
+			} //for			
+        } catch (SVNClientException ce) {
+			throw new SVNException("Error Getting Dir list", ce);
+		}
+	}
+	
+	/*
+	 * Delete the target projects before checking out
+	 */
+	private void scrubProjects(IProject[] projects)
+			throws SVNException {
+		if (projects == null) return;
+		try {
+			for (int i = 0; i < projects.length; i++) {
+				IProject project = projects[i];
+				if (project != null && project.exists()) {
+					if (!project.isOpen()) {
+						project.open(null);
+					}
+					// We do not want to delete the project to avoid a project
+					// deletion delta
+					// We do not want to delete the .project to avoid core
+					// exceptions
+
+					// unmap the project from any previous repository provider
+					if (RepositoryProvider.getProvider(project) != null)
+						RepositoryProvider.unmap(project);
+					IResource[] children = project
+							.members(IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS);
+					try {
+						for (int j = 0; j < children.length; j++) {
+							if (!children[j].getName().equals(".project")) {//$NON-NLS-1$
+								children[j].delete(true /* force */, null);
+							}
+						}
+					} finally {
+			//			subMonitor.done();
+					}
+				} else if (project != null) {
+					// Make sure there is no directory in the local file system.
+					File location = new File(project.getParent().getLocation()
+							.toFile(), project.getName());
+					if (location.exists()) {
+						deepDelete(location);
+					}
+				}
+			}
+		} catch (CoreException e) {
+			throw SVNException.wrapException(e);
+		} finally {
+//			monitor.done();
+		}
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -235,8 +367,8 @@ public class CheckoutCommand implements ISVNCommand {
 	 */
 	private void refreshProjects(IProject[] projects, IProgressMonitor monitor)
 			throws SVNException {
-		monitor
-				.beginTask(
+	    if (monitor != null)
+	        monitor.beginTask(
 						Policy.bind("SVNProvider.Creating_projects_2"), projects.length * 100); //$NON-NLS-1$
 		try {
 			for (int i = 0; i < projects.length; i++) {
@@ -249,7 +381,7 @@ public class CheckoutCommand implements ISVNCommand {
 		} catch (TeamException e) {
 			throw new SVNException("Cannot map the project with svn provider",e);
 		} finally {
-			monitor.done();
+			if (monitor != null) monitor.done();
 		}
 	}
 
