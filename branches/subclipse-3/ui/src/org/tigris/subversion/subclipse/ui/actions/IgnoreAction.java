@@ -19,6 +19,7 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.tigris.subversion.subclipse.core.ISVNLocalResource;
+import org.tigris.subversion.subclipse.core.SVNException;
 import org.tigris.subversion.subclipse.core.resources.SVNWorkspaceRoot;
 import org.tigris.subversion.subclipse.ui.Policy;
 import org.tigris.subversion.subclipse.ui.dialogs.IgnoreResourcesDialog;
@@ -54,6 +55,17 @@ public class IgnoreAction extends WorkspaceAction {
 		return Policy.bind("IgnoreAction.ignore"); //$NON-NLS-1$
 	}
 
+	/* (non-Javadoc)
+	 * @see org.tigris.subversion.subclipse.ui.actions.WorkspaceAction#isEnabledForSVNResource(org.tigris.subversion.subclipse.core.ISVNLocalResource)
+	 */
+	protected boolean isEnabledForSVNResource(ISVNLocalResource svnResource) throws SVNException {
+		// If the parent is not managed there is no way to set the svn:ignore property
+		if (!svnResource.getParent().isManaged()) {
+			return false;
+		}
+		return super.isEnabledForSVNResource(svnResource);
+	}
+	
 	/**
 	 * @see org.eclipse.team.internal.ccvs.ui.actions.WorkspaceAction#isEnabledForManagedResources()
 	 */
