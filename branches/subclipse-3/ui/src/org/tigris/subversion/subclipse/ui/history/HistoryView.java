@@ -847,6 +847,6 @@ public class HistoryView extends ViewPart implements IResourceStateChangeListene
      * @see org.tigris.subversion.subclipse.core.IResourceStateChangeListener#projectDeconfigured(org.eclipse.core.resources.IProject)
      */
     public void projectDeconfigured(IProject project) {
-    };
+    }
 	
 }

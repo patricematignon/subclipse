@@ -38,7 +38,7 @@ import org.tigris.subversion.svnclientadapter.ISVNDirEntry;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
 import org.tigris.subversion.svnclientadapter.SVNNodeKind;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
-;
+
 
 /**
  * The file sytem three-way remote resource varant tree taht provides

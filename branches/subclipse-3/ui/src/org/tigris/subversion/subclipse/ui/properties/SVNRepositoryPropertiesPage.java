@@ -8,8 +8,6 @@ package org.tigris.subversion.subclipse.ui.properties;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
