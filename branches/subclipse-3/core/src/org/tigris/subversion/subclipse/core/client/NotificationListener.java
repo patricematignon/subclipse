@@ -53,6 +53,9 @@ public class NotificationListener implements ISVNNotifyListener {
         }
 	}
 
+    public void logRevision(long revision) {
+    }
+
 	/* (non-Javadoc)
 	 * @see org.tigris.subversion.svnclientadapter.ISVNNotifyListener#logCompleted(java.lang.String)
 	 */

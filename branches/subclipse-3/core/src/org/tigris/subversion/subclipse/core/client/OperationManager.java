@@ -150,6 +150,8 @@ public class OperationManager implements ISVNNotifyListener {
 
 	public void logCommandLine(String commandLine) {
 	}
+    public void logRevision(long revision) {
+    }
 	public void logCompleted(String message) {
 	}
 	public void logError(String message) {
