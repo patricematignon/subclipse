@@ -19,7 +19,6 @@ import org.tigris.subversion.subclipse.core.SVNException;
 import org.tigris.subversion.subclipse.core.history.ILogEntry;
 import org.tigris.subversion.subclipse.core.history.LogEntry;
 import org.tigris.subversion.subclipse.core.resources.RemoteFile;
-import org.tigris.subversion.subclipse.core.resources.RemoteFolder;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 import org.tigris.subversion.svnclientadapter.ISVNLogMessage;
 import org.tigris.subversion.svnclientadapter.ISVNLogMessageChangePath;
@@ -60,7 +59,13 @@ public class GetLogsCommand implements ISVNCommand {
             throw SVNException.wrapException(e);
         }
         
-        logEntries = createLogEntries(logMessages);
+        if (remoteResource.isFolder()) {
+            // if we get the history for a folder, we get the history for all
+            // its members
+            logEntries = createLogEntriesForFolder(logMessages);   
+        } else {
+        	logEntries = createLogEntriesForFile(logMessages);
+        }
              
         monitor.done();
     }    
@@ -165,25 +170,29 @@ public class GetLogsCommand implements ISVNCommand {
      * @param logMessages
      * @return
      */
-    private ILogEntry[] createLogEntries(ISVNLogMessage[] logMessages) {
+    private ILogEntry[] createLogEntriesForFolder(ISVNLogMessage[] logMessages) {
+        // if we get the history for a folder, we get the history for all
+        // its members
+    	// so there is no remoteResource associated with each LogEntry
+        ILogEntry[] logEntries = new ILogEntry[logMessages.length]; 
+        for (int i = 0; i < logMessages.length;i++) {
+        	logEntries[i] = new LogEntry(logMessages[i], remoteResource, null); 
+        }
+        return logEntries;
+    }
+    
+    /**
+     * create the LogEntry for the logMessages
+     * @param logMessages
+     * @return
+     */
+    private ILogEntry[] createLogEntriesForFile(ISVNLogMessage[] logMessages) {
         SVNUrl[] urls = getUrls(logMessages);
         ILogEntry[] logEntries = new ILogEntry[logMessages.length]; 
         for (int i = 0; i < logMessages.length;i++) {
             ISVNLogMessage logMessage = logMessages[i];
             ISVNRemoteResource correspondingResource;
-            if (remoteResource.isFolder()) {
-                correspondingResource = new RemoteFolder(
-                        null,
-                        remoteResource.getRepository(), 
-                        urls[i], 
-                        logMessage.getRevision(), 
-                        logMessage.getRevision(), 
-                        logMessage.getDate(), 
-                        logMessage.getAuthor());
-            } 
-            else
-            {
-                correspondingResource = new RemoteFile(
+            correspondingResource = new RemoteFile(
                         null,
                         remoteResource.getRepository(), 
                         urls[i], 
@@ -191,8 +200,7 @@ public class GetLogsCommand implements ISVNCommand {
                         logMessage.getRevision(), 
                         logMessage.getDate(), 
                         logMessage.getAuthor());  
-            }
-            logEntries[i] = new LogEntry(logMessage, correspondingResource);
+            logEntries[i] = new LogEntry(logMessage, remoteResource, correspondingResource);
         }
         return logEntries;
     }

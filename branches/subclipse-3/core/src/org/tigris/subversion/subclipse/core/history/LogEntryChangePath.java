@@ -64,7 +64,7 @@ public class LogEntryChangePath {
     }
     
     public SVNUrl getUrl() {
-    	SVNUrl repositoryRoot = logEntry.getRemoteResource().getRepository().getRepositoryRoot();
+    	SVNUrl repositoryRoot = logEntry.getResource().getRepository().getRepositoryRoot();
         if (repositoryRoot != null) {
             try {
 				return new SVNUrl(repositoryRoot.get()+getPath());

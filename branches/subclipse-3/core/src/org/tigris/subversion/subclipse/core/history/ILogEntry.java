@@ -16,6 +16,7 @@ import java.util.Date;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.tigris.subversion.subclipse.core.ISVNRemoteResource;
+import org.tigris.subversion.subclipse.core.ISVNResource;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
 
 /**
@@ -46,10 +47,21 @@ public interface ILogEntry extends IAdaptable {
 	public String getComment();
 	
 	/**
-	 * Get the remote file for this entry
+	 * Get the remote file for this entry <br>
+     * Returns null if this cannot be determined (which is the case
+     * when we ask the history of a folder)
 	 */
 	public ISVNRemoteResource getRemoteResource();
 	
+	/**
+     * get the resource for which we asked history 
+	 */
+    public ISVNResource getResource();
+    
+    /**
+     * get the change paths
+     */
     public LogEntryChangePath[] getLogEntryChangePaths();
+    
 }
 

@@ -16,6 +16,7 @@ import java.util.Date;
 
 import org.eclipse.core.runtime.PlatformObject;
 import org.tigris.subversion.subclipse.core.ISVNRemoteResource;
+import org.tigris.subversion.subclipse.core.ISVNResource;
 import org.tigris.subversion.svnclientadapter.ISVNLogMessage;
 import org.tigris.subversion.svnclientadapter.ISVNLogMessageChangePath;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
@@ -26,50 +27,77 @@ import org.tigris.subversion.svnclientadapter.SVNRevision;
  */
 public class LogEntry extends PlatformObject implements ILogEntry {
 
-	private ISVNRemoteResource resource; // the corresponding remote resource
+	private ISVNRemoteResource remoteResource; // the corresponding remote resource
     private ISVNLogMessage logMessage;
+    private ISVNResource resource; // the resource for which we asked the history 
 
-    
-	public LogEntry(ISVNLogMessage logMessage, ISVNRemoteResource resource) {
+    /**
+     * creates a LogEntry
+     * @param logMessage
+     * @param resource the corresponding remote resource or null
+     * @param repository
+     */
+	public LogEntry(
+            ISVNLogMessage logMessage,
+            ISVNResource resource,
+            ISVNRemoteResource remoteResource) {
         this.logMessage = logMessage;
+        this.remoteResource = remoteResource;
         this.resource = resource;
 	}
-	
-	/**
-	 * @see ILogEntry#getRevision()
-	 */
+
+    /*
+     * (non-Javadoc)
+     * @see org.tigris.subversion.subclipse.core.history.ILogEntry#getRevision()
+     */
 	public SVNRevision.Number getRevision() {
 		return logMessage.getRevision();
 	}
 
-	/**
-	 * @see ILogEntry#getAuthor()
-	 */
+    /*
+     * (non-Javadoc)
+     * @see org.tigris.subversion.subclipse.core.history.ILogEntry#getAuthor()
+     */
 	public String getAuthor() {
 		return logMessage.getAuthor();
 	}
 
-	/**
-	 * @see ILogEntry#getDate()
-	 */
+    /*
+     * (non-Javadoc)
+     * @see org.tigris.subversion.subclipse.core.history.ILogEntry#getDate()
+     */
 	public Date getDate() {
 		return logMessage.getDate();
 	}
 
-	/**
-	 * @see ILogEntry#getComment()
-	 */
+    /*
+     * (non-Javadoc)
+     * @see org.tigris.subversion.subclipse.core.history.ILogEntry#getComment()
+     */
 	public String getComment() {
 		return logMessage.getMessage();
 	}
 
-	/**
-	 * @see ILogEntry#getRemoteFile()
-	 */
+    /*
+     * (non-Javadoc)
+     * @see org.tigris.subversion.subclipse.core.history.ILogEntry#getResource()
+     */
+    public ISVNResource getResource() {
+    	return resource;
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see org.tigris.subversion.subclipse.core.history.ILogEntry#getRemoteResource()
+     */
 	public ISVNRemoteResource getRemoteResource() {
-		return resource;
+		return remoteResource;
 	}
-    
+
+    /*
+     * (non-Javadoc)
+     * @see org.tigris.subversion.subclipse.core.history.ILogEntry#getLogEntryChangePaths()
+     */
     public LogEntryChangePath[] getLogEntryChangePaths() {
     	ISVNLogMessageChangePath[] changePaths = logMessage.getChangedPaths();
         LogEntryChangePath[] logEntryChangePaths = new LogEntryChangePath[changePaths.length]; 
@@ -84,8 +112,8 @@ public class LogEntry extends PlatformObject implements ILogEntry {
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
 	public Object getAdapter(Class adapter) {
-		if (adapter.isInstance(resource)) {
-			return resource;
+		if (adapter.isInstance(remoteResource)) {
+			return remoteResource;
 		}
 		return super.getAdapter(adapter);
 	}
