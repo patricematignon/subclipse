@@ -66,6 +66,8 @@ private IPreferenceStore store;
         
         store.setDefault(ISVNUIConstants.PREF_SVNINTERFACE, JhlClientAdapterFactory.JAVAHL_CLIENT);
         store.setDefault(ISVNUIConstants.PREF_SVNCONFIGDIR, ""); //$NON-NLS-1$
+        
+        store.setDefault(ISVNUIConstants.PREF_FETCH_CHANGE_PATH_ON_DEMAND, true);
 
         store.setDefault(ISVNUIConstants.PREF_MERGE_USE_EXTERNAL, false);
         store.setDefault(ISVNUIConstants.PREF_MERGE_PROGRAM_LOCATION,""); //$NON-NLS-1$
@@ -73,6 +75,8 @@ private IPreferenceStore store;
         
         setSvnClientInterface(store.getString(ISVNUIConstants.PREF_SVNINTERFACE));
         setSvnClientConfigDir(store.getString(ISVNUIConstants.PREF_SVNCONFIGDIR));
+        
+        setSvnChangePathOnDemand((store.getBoolean(ISVNUIConstants.PREF_FETCH_CHANGE_PATH_ON_DEMAND)));
     }
 
     /**
@@ -111,8 +115,21 @@ private IPreferenceStore store;
         	String configDir = (String)event.getNewValue();
             setSvnClientConfigDir(configDir);
         }
+        if (property == ISVNUIConstants.PREF_FETCH_CHANGE_PATH_ON_DEMAND) {
+        	boolean fetchChangePathOnDemand = ((Boolean) event.getNewValue()).booleanValue();
+        	setSvnChangePathOnDemand(fetchChangePathOnDemand);        	
+        }
             
     }
+
+	/**
+	 * @param fetchChangePathOnDemand
+	 */
+	private void setSvnChangePathOnDemand(boolean fetchChangePathOnDemand) {
+		SVNProviderPlugin plugin = SVNProviderPlugin.getPlugin();
+		SVNClientManager svnClientManager = plugin.getSVNClientManager();
+		svnClientManager.setFetchChangePathOnDemand(fetchChangePathOnDemand);
+	}
 
 
 }

@@ -38,6 +38,8 @@ import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.ITextOperationTarget;
 import org.eclipse.jface.text.TextViewer;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
@@ -95,6 +97,7 @@ import org.tigris.subversion.subclipse.core.SVNProviderPlugin;
 import org.tigris.subversion.subclipse.core.SVNStatus;
 import org.tigris.subversion.subclipse.core.history.ILogEntry;
 import org.tigris.subversion.subclipse.core.history.LogEntry;
+import org.tigris.subversion.subclipse.core.history.LogEntryChangePath;
 import org.tigris.subversion.subclipse.core.resources.SVNWorkspaceRoot;
 import org.tigris.subversion.subclipse.ui.IHelpContextIds;
 import org.tigris.subversion.subclipse.ui.ISVNUIConstants;
@@ -128,6 +131,8 @@ public class HistoryView extends ViewPart implements IResourceStateChangeListene
 
 	// cached for efficiency
 	private ILogEntry[] entries;
+	
+	private LogEntryChangePath[] currentLogEntryChangePath;
 
 	private HistoryTableProvider historyTableProvider;
 	private ChangePathsTableProvider changePathsTableProvider;
@@ -155,6 +160,8 @@ public class HistoryView extends ViewPart implements IResourceStateChangeListene
 	
 	private FetchLogEntriesJob fetchLogEntriesJob = null;
 	private boolean shutdown = false;
+	
+	private FetchChangePathJob fetchChangePathJob = null;
     
     // we disable editor activation when double clicking on a log entry
     private boolean disableEditorActivation = false;
@@ -162,6 +169,17 @@ public class HistoryView extends ViewPart implements IResourceStateChangeListene
 	public static final String VIEW_ID = "org.tigris.subversion.subclipse.ui.history.HistoryView"; //$NON-NLS-1$
 
 	public HistoryView() {
+		SVNUIPlugin.getPlugin().getPreferenceStore().addPropertyChangeListener(new IPropertyChangeListener() {
+			public void propertyChange(PropertyChangeEvent event) {
+				if (event.getProperty().equals(ISVNUIConstants.PREF_FETCH_CHANGE_PATH_ON_DEMAND)) {
+					entries = null;
+					currentLogEntryChangePath = null;
+					tableHistoryViewer.refresh();
+					tableChangePathViewer.refresh();
+				}
+			}
+		});
+		
 	    SVNProviderPlugin.addResourceStateChangeListener(this);
 	    this.projectProperties = new ProjectProperties();
 	}
@@ -541,12 +559,20 @@ public class HistoryView extends ViewPart implements IResourceStateChangeListene
 		if (handCursor != null) handCursor.dispose();
 	}   
 
-    
     protected TableViewer createTableChangePath(Composite parent) {
         changePathsTableProvider = new ChangePathsTableProvider();
         tableChangePathViewer = changePathsTableProvider.createTable(parent);
         
-        tableChangePathViewer.setContentProvider(new IStructuredContentProvider() {
+        if (SVNProviderPlugin.getPlugin().getSVNClientManager().isFetchChangePathOnDemand()) {
+          fetchChangePathOnDemand();
+        } else {
+          fetchChangePathGlobal();
+        }
+        return tableChangePathViewer;
+    }
+    
+    private void fetchChangePathGlobal() {
+    	tableChangePathViewer.setContentProvider(new IStructuredContentProvider() {
 
 			public Object[] getElements(Object inputElement) {
                 if ((inputElement == null) || (!(inputElement instanceof ILogEntry))) {
@@ -563,9 +589,52 @@ public class HistoryView extends ViewPart implements IResourceStateChangeListene
 			}
             
         });
-        return tableChangePathViewer;
     }
     
+	/**
+	 * 
+	 */
+	private void fetchChangePathOnDemand() {
+		tableChangePathViewer.setContentProvider(new IStructuredContentProvider() {
+
+			public Object[] getElements(Object inputElement) {
+				
+				if (currentLogEntryChangePath != null) {
+					return currentLogEntryChangePath;
+				}
+				
+				if (!(inputElement instanceof ILogEntry)) return null;
+				final ILogEntry logEntry = (ILogEntry)inputElement;
+
+				if(fetchChangePathJob == null) {
+					fetchChangePathJob = new FetchChangePathJob();
+				}
+				if(fetchChangePathJob.getState() != Job.NONE) {
+					fetchChangePathJob.cancel();
+					try {
+						fetchChangePathJob.join();
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+						//SVNUIPlugin.log(new SVNException(Policy.bind("HistoryView.errorFetchingEntries", remoteResource.getName()), e)); //$NON-NLS-1$
+					}
+				}
+				fetchChangePathJob.setLogEntry(logEntry);
+				Utils.schedule(fetchChangePathJob, getViewSite());
+				
+      
+				return new Object[0];
+			}
+
+			public void dispose() {
+			}
+
+			public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+				currentLogEntryChangePath = null;
+			}
+            
+        });
+	}
+
 	/**
 	 * Creates the table that displays the log history
 	 *
@@ -784,26 +853,6 @@ public class HistoryView extends ViewPart implements IResourceStateChangeListene
 	}
 	
 	/**
-	 * Shows the history for the given ISVNRemoteFile in the view.
-	 */
-	public void showHistory(ISVNRemoteResource remoteResource, boolean refetch) {
-		if (remoteResource == null) {
-			tableHistoryViewer.setInput(null);
-			setContentDescription(Policy.bind("HistoryView.title")); //$NON-NLS-1$
-			setTitleToolTip(""); //$NON-NLS-1$
-			return;
-		}
-		ISVNRemoteResource existingRemoteResource = historyTableProvider.getRemoteResource(); 
-		if(!refetch && existingRemoteResource != null && existingRemoteResource.equals(remoteResource)) return;
-		this.resource = null;
-        projectProperties = ProjectProperties.getProjectProperties(remoteResource);
-		historyTableProvider.setRemoteResource(remoteResource);
-		tableHistoryViewer.setInput(remoteResource);
-		setContentDescription(Policy.bind("HistoryView.titleWithArgument", remoteResource.getName())); //$NON-NLS-1$
-		setTitleToolTip(remoteResource.getRepositoryRelativePath());
-	}
-
-	/**
 	 * Shows the history for the given IResource in the view.
 	 * 
 	 */
@@ -849,6 +898,26 @@ public class HistoryView extends ViewPart implements IResourceStateChangeListene
 		tableHistoryViewer.setInput(remoteResource);
 		setContentDescription(Policy.bind("HistoryView.titleWithArgument", remoteResource.getName())); //$NON-NLS-1$
 		setTitleToolTip(""); //$NON-NLS-1$
+	}
+
+	/**
+	 * Shows the history for the given ISVNRemoteFile in the view.
+	 */
+	public void showHistory(ISVNRemoteResource remoteResource, boolean refetch) {
+		if (remoteResource == null) {
+			tableHistoryViewer.setInput(null);
+			setContentDescription(Policy.bind("HistoryView.title")); //$NON-NLS-1$
+			setTitleToolTip(""); //$NON-NLS-1$
+			return;
+		}
+		ISVNRemoteResource existingRemoteResource = historyTableProvider.getRemoteResource(); 
+		if(!refetch && existingRemoteResource != null && existingRemoteResource.equals(remoteResource)) return;
+		this.resource = null;
+	    projectProperties = ProjectProperties.getProjectProperties(remoteResource);
+		historyTableProvider.setRemoteResource(remoteResource);
+		tableHistoryViewer.setInput(remoteResource);
+		setContentDescription(Policy.bind("HistoryView.titleWithArgument", remoteResource.getName())); //$NON-NLS-1$
+		setTitleToolTip(remoteResource.getRepositoryRelativePath());
 	}
 	
     
@@ -994,6 +1063,39 @@ public class HistoryView extends ViewPart implements IResourceStateChangeListene
 			} catch (TeamException e) {
 				return e.getStatus();
 			}
+		}
+	}
+	
+	private class FetchChangePathJob extends Job {
+		public ILogEntry logEntry;
+		public FetchChangePathJob() {
+			super(Policy.bind("HistoryView.fetchChangePathJob"));  //$NON-NLS-1$;
+		}
+		
+		public void setLogEntry(ILogEntry logEntry) {
+			this.logEntry = logEntry;
+		}
+		
+		
+		public IStatus run(IProgressMonitor monitor) {
+			    
+				if(logEntry.getResource() != null && !shutdown) {
+					//Getting the changePaths
+					currentLogEntryChangePath = logEntry.getLogEntryChangePaths();
+					/*
+					final SVNRevision.Number revisionId = remoteResource.getLastChangedRevision();
+					*/
+					getSite().getShell().getDisplay().asyncExec(new Runnable() {
+						public void run() {
+							if(currentLogEntryChangePath != null && tableChangePathViewer != null && ! tableChangePathViewer.getTable().isDisposed()) {
+                                // once we got the changePath, we refresh the table 
+                                tableChangePathViewer.refresh();
+								//selectRevision(revisionId);
+							}
+						}
+					});
+				}
+				return Status.OK_STATUS;	
 		}
 	}
 
