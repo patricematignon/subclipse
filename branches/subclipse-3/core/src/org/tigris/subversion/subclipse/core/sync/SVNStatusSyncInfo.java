@@ -32,26 +32,23 @@ public class SVNStatusSyncInfo extends SyncInfo {
         this.localStatusInfo = localStatusInfo;
         this.remoteStatusInfo = remoteStatusInfo;
     }
+
     /* (non-Javadoc)
      * @see org.eclipse.team.core.synchronize.SyncInfo#calculateKind()
-     */
+     */    
     protected int calculateKind() throws TeamException {
         SVNStatusKind localKind = localStatusInfo.getKind();
         SVNStatusKind repositoryKind = SVNStatusKind.NORMAL;
         if( remoteStatusInfo != null)
             repositoryKind = remoteStatusInfo.getKind();
-
-        if( localKind == SVNStatusKind.NONE 
-         || localKind == SVNStatusKind.MISSING
-         || localKind == SVNStatusKind.INCOMPLETE) {
-            return SyncInfo.INCOMING | SyncInfo.ADDITION;
-        }
-        else if( isDeletion( localKind ) ) {
-            if( isChange( repositoryKind ) )
-                return SyncInfo.CONFLICTING | SyncInfo.DELETION;
-            if( isDeletion( repositoryKind ) )
-                return SyncInfo.IN_SYNC;
-            return SyncInfo.OUTGOING | SyncInfo.DELETION;
+        IResource local = getLocal();
+        
+        if (!local.exists()) {
+            if (isDeletion(localKind)) {
+                if (isChange(repositoryKind)) return SyncInfo.CONFLICTING | SyncInfo.DELETION;
+                if (isDeletion(repositoryKind)) return SyncInfo.IN_SYNC;
+                return SyncInfo.OUTGOING | SyncInfo.DELETION;
+            } else return SyncInfo.INCOMING | SyncInfo.ADDITION;
         }
         else if( isChange(localKind) ) {
             if( isChange( repositoryKind )
@@ -73,13 +70,16 @@ public class SVNStatusSyncInfo extends SyncInfo {
                 return SyncInfo.INCOMING | SyncInfo.DELETION;
             if( repositoryKind == SVNStatusKind.ADDED )
                 return SyncInfo.INCOMING | SyncInfo.ADDITION;
+            if (getComparator().compare(local, getRemote())) 
+                return SyncInfo.IN_SYNC;
             return SyncInfo.INCOMING | SyncInfo.CHANGE;
         }
         else if( localKind == SVNStatusKind.EXTERNAL)
-            return SyncInfo.IN_SYNC;
-
-       return SyncInfo.IN_SYNC;
+            return SyncInfo.IN_SYNC;       
+        
+        return super.calculateKind();
     }
+    
     private boolean isDeletion(SVNStatusKind kind) {
         return kind == SVNStatusKind.DELETED;
     }
@@ -93,7 +93,8 @@ public class SVNStatusSyncInfo extends SyncInfo {
     }
     private boolean isNotModified(SVNStatusKind kind) {
         return kind == SVNStatusKind.NORMAL
-              || kind == SVNStatusKind.IGNORED;
+              || kind == SVNStatusKind.IGNORED 
+              || kind == SVNStatusKind.NONE;
     }
     private static boolean isAddition(SVNStatusKind kind) {
         return kind == SVNStatusKind.ADDED || kind == SVNStatusKind.UNVERSIONED;
