@@ -134,7 +134,7 @@ public class CommitSynchronizeOperation extends SVNSynchronizeOperation {
 		List result = new ArrayList();
 		for (int i = 0; i < resources.length; i++) {
 			IResource resource = resources[i];
-			if (!isAdded(resource)) {
+			if (isAdded(resource)) {
 				result.add(resource);
 			}
 		}
