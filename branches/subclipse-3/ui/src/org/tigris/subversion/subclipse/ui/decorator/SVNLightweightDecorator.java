@@ -285,15 +285,21 @@ public class SVNLightweightDecorator
 					SVNDecoratorConfiguration.ADDED_FLAG, addedFlag);
 			} else {
 				if ((status.getTextStatus() != ISVNStatus.Kind.UNVERSIONED) &&
+					(status.getTextStatus() != ISVNStatus.Kind.ADDED) &&
 				    (status.getRevision() != null) &&
-                    (status.getRevision().getNumber() != SVNRevision.SVN_INVALID_REVNUM) &&
-                    (status.getRevision().getNumber() != 0)) {
-				    bindings.put(
-					   SVNDecoratorConfiguration.RESOURCE_REVISION,
-					   status.getLastChangedRevision().toString());
-				    bindings.put(
-					   SVNDecoratorConfiguration.RESOURCE_AUTHOR,
-					   status.getLastCommitAuthor());
+                    (status.getRevision().getNumber() != SVNRevision.SVN_INVALID_REVNUM)) {
+					
+					if (status.getLastChangedRevision() != null) {
+						bindings.put(
+						   SVNDecoratorConfiguration.RESOURCE_REVISION,
+						   status.getLastChangedRevision().toString());
+					}
+					
+					if (status.getLastCommitAuthor() != null) {
+					    bindings.put(
+						   SVNDecoratorConfiguration.RESOURCE_AUTHOR,
+						   status.getLastCommitAuthor());
+					}
                 }				
 				if (status.getLastChangedDate() != null) {
                     bindings.put(
