@@ -118,6 +118,10 @@ public interface ISVNUIConstants {
 	
 	public final String PREF_SHOW_SYNCINFO_AS_TEXT = "pref_show_syncinfo_as_text"; //$NON-NLS-1$
 
+    // merge program preferences
+    public final String PREF_MERGE_PROGRAM_LOCATION = "pref_merge_program_location";
+    public final String PREF_MERGE_PROGRAM_PARAMETERS = "pref_merge_program_parameters";
+    
 	// watch/edit preferences
 	public final String PREF_CHECKOUT_READ_ONLY = "pref_checkout_read_only"; //$NON-NLS-1$
 	public final String PREF_EDIT_ACTION = "pref_edit_action"; //$NON-NLS-1$
@@ -149,6 +153,7 @@ public interface ISVNUIConstants {
 	public final String PROP_COMMENT = "svn.comment"; //$NON-NLS-1$
 	public final String PROP_DATE = "svn.date"; //$NON-NLS-1$
 	public final String PROP_DIRTY = "svn.dirty"; //$NON-NLS-1$
+
 	public final String PROP_MODIFIED = "svn.modified"; //$NON-NLS-1$
 	public final String PROP_KEYWORD = "svn.date"; //$NON-NLS-1$
 	public final String PROP_TAG = "svn.tag"; //$NON-NLS-1$
