@@ -46,6 +46,31 @@ public class StatusCacheManager implements IManager{
     }
     
     /**
+     * A resource which ancestor is not managed is not managed
+     * @param resource
+     * @return true if an ancestor of the resource is not managed and false 
+     *         if we don't know 
+     */
+    private boolean isAncestorNotManaged(IResource resource) {
+        IResource parent = resource.getParent();
+        if (parent == null) {
+            return false;
+        }
+        
+        while (parent != null) {
+            LocalResourceStatus statusParent = treeCacheRoot.getStatus(parent);
+            
+            if (statusParent != null) {
+            	if (!statusParent.isManaged()) {
+            		return true;
+            	}
+            }
+            parent = parent.getParent();
+        }
+        return false;
+    }
+    
+    /**
      * get the status of the given resource
      * @throws SVNException
      */
@@ -57,9 +82,15 @@ public class StatusCacheManager implements IManager{
         // we get it using svn 
         if (status == null)
         {
-            statusUpdateStrategy.setTreeCacheRoot(treeCacheRoot);
-            statusUpdateStrategy.updateStatus(resource);
-            status = treeCacheRoot.getStatus(resource);
+            if (isAncestorNotManaged(resource)) {
+                // we know the resource is not managed because one of its ancestor is not managed
+            	status = new LocalResourceStatus(new SVNStatusUnversioned(resource.getLocation().toFile(),false)); 
+            } else {
+                // we don't know if resource is managed or not, we must update its status
+            	statusUpdateStrategy.setTreeCacheRoot(treeCacheRoot);
+            	statusUpdateStrategy.updateStatus(resource);
+            	status = treeCacheRoot.getStatus(resource);
+            }
         }
         
         if (status == null) {
