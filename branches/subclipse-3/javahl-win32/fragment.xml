@@ -3,10 +3,10 @@
 <fragment
    id="org.tigris.subversion.javahl.win32"
    name="Win32 Fragment"
-   version="0.9.23"
+   version="0.9.24"
    provider-name="tigris.org"
    plugin-id="org.tigris.subversion.subclipse.core"
-   plugin-version="0.9.23"
+   plugin-version="0.9.24"
    match="perfect">
 
    <runtime>
