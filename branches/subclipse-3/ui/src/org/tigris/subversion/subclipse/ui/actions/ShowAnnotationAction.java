@@ -14,20 +14,12 @@ package org.tigris.subversion.subclipse.ui.actions;
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.WorkbenchException;
 import org.tigris.subversion.subclipse.core.ISVNRemoteFile;
 import org.tigris.subversion.subclipse.core.SVNException;
 import org.tigris.subversion.subclipse.core.resources.SVNWorkspaceRoot;
-import org.tigris.subversion.subclipse.ui.annotations.AnnotateBlocks;
-import org.tigris.subversion.subclipse.ui.annotations.AnnotateView;
-import org.tigris.subversion.svnclientadapter.ISVNAnnotations;
+import org.tigris.subversion.subclipse.ui.operations.ShowAnnotationOperation;
 
 public class ShowAnnotationAction extends WorkspaceAction {
 
@@ -46,44 +38,8 @@ public class ShowAnnotationAction extends WorkspaceAction {
 			return;
 		}
 
-		final ISVNAnnotations[] annotations = { null };
-		final AnnotateBlocks[] annotateBlocks = { null };
-		
-		// Run the SVN Annotate action with a progress monitor
-		run(new IRunnableWithProgress() {
-			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-				try {
-					monitor.beginTask(null, 100);
-					annotations[0] = svnResource.getAnnotations(monitor);
+        new ShowAnnotationOperation(getTargetPart(), svnResource).run();
 
-				
-					annotateBlocks[0] = new AnnotateBlocks(annotations[0]); 
-					monitor.done();
-				} catch (TeamException e) {
-					throw new InvocationTargetException(e);
-				}
-				
-			}
-		}, false /* cancelable */, PROGRESS_DIALOG);
-
-		
-		// Open the view
-		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-		if (window != null) {
-			try {
-				PlatformUI.getWorkbench().showPerspective("org.tigris.subversion.subclipse.ui.svnPerspective", window); //$NON-NLS-1$
-			} catch (WorkbenchException e1) {              
-				// If this does not work we will just open the view in the
-				// current perspective.
-			}
-		}
-
-		try {
-			AnnotateView view = AnnotateView.openInActivePerspective();
-			view.showAnnotations(svnResource, annotateBlocks[0].getAnnotateBlocks(), annotations[0].getInputStream());
-		} catch (PartInitException e1) {
-			handle(e1);
-		}
 	}
 	
 	/**

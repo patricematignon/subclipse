@@ -13,7 +13,6 @@ package org.tigris.subversion.subclipse.ui.annotations;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.Iterator;
 
@@ -117,9 +116,9 @@ public class AnnotateView extends ViewPart implements ISelectionChangedListener 
 	 * @param svnFile
 	 * @param svnAnnotateBlocks
 	 * @param contents
-	 * @throws InvocationTargetException
+	 * @throws PartInitException
 	 */
-	public void showAnnotations(ISVNRemoteFile svnFile, Collection svnAnnotateBlocks, InputStream contents) throws InvocationTargetException {
+	public void showAnnotations(ISVNRemoteFile svnFile, Collection svnAnnotateBlocks, InputStream contents) throws PartInitException {
 		showAnnotations(svnFile, svnAnnotateBlocks, contents, true);		
 	}
 	
@@ -129,9 +128,9 @@ public class AnnotateView extends ViewPart implements ISelectionChangedListener 
 	 * @param svnAnnotateBlocks
 	 * @param contents
 	 * @param useHistoryView
-	 * @throws InvocationTargetException
+	 * @throws PartInitException
 	 */
-	public void showAnnotations(ISVNRemoteFile svnFile, Collection svnAnnotateBlocks, InputStream contents, boolean useHistoryView) throws InvocationTargetException {
+	public void showAnnotations(ISVNRemoteFile svnFile, Collection svnAnnotateBlocks, InputStream contents, boolean useHistoryView) throws PartInitException {
 
 		// Disconnect from old annotation editor
 		disconnect();
@@ -171,13 +170,8 @@ public class AnnotateView extends ViewPart implements ISelectionChangedListener 
 		}
 
 		// Get hook to the HistoryView
-				
-		try {
-			historyView = (HistoryView) page.showView(HistoryView.VIEW_ID);
-			historyView.showHistory(svnFile, false /* don't refetch */);
-		} catch (PartInitException e) {
-			throw new InvocationTargetException(e);
-		} 
+		historyView = (HistoryView) page.showView(HistoryView.VIEW_ID);
+		historyView.showHistory(svnFile, false /* don't refetch */);
 	}
 	
 	protected void disconnect() {
@@ -260,7 +254,7 @@ public class AnnotateView extends ViewPart implements ISelectionChangedListener 
 			try {
 				contents.reset();
 				showAnnotations(svnFile, svnAnnotateBlocks, contents, false);
-			} catch (InvocationTargetException e) {
+			} catch (PartInitException e) {
 				return;
 			} catch (IOException e) {
 				return;
@@ -276,6 +270,11 @@ public class AnnotateView extends ViewPart implements ISelectionChangedListener 
 		ITextSelection textSelection = (ITextSelection) selectionProvider.getSelection();
 		AnnotateBlock listSelection = (AnnotateBlock) selection.getFirstElement();
 
+        // IStructuredSelection#getFirstElement can return null
+        if (listSelection == null) {
+            return;
+        }
+        
 		/**
 		 * Ignore event if the current text selection is already equal to the corresponding
 		 * list selection.  Nothing to do.  This prevents infinite event looping.
@@ -312,9 +311,9 @@ public class AnnotateView extends ViewPart implements ISelectionChangedListener 
 
 	/**
 	 * Try and open the correct registered editor type for the file.
-	 * @throws InvocationTargetException
+	 * @throws PartInitException Unable to create view
 	 */
-	private IEditorPart openEditor() throws InvocationTargetException {
+	private IEditorPart openEditor() throws PartInitException {
 		// Open the editor
 		IEditorPart part;
 		IEditorRegistry registry;
@@ -344,26 +343,17 @@ public class AnnotateView extends ViewPart implements ISelectionChangedListener 
 		}
 		
 		// Either reuse an existing editor or open a new editor of the correct type.
-		try {
-			try {
-				if (editor != null && editor instanceof IReusableEditor && page.isPartVisible(editor) && editor.getSite().getId().equals(id)) {
-					// We can reuse the editor
-					((IReusableEditor) editor).setInput(new RemoteAnnotationEditorInput(svnFile, contents));
-					part = editor;
-				} else {
-					// We can not reuse the editor so close the existing one and open a new one.
-					if (editor != null) {
-						page.closeEditor(editor, false);
-						editor = null;
-					}
-					part = page.openEditor(new RemoteAnnotationEditorInput(svnFile, contents), id);
-				}
-			} catch (PartInitException e) {
-				throw e;
+		if (editor != null && editor instanceof IReusableEditor && page.isPartVisible(editor) && editor.getSite().getId().equals(id)) {
+			// We can reuse the editor
+			((IReusableEditor) editor).setInput(new RemoteAnnotationEditorInput(svnFile, contents));
+			part = editor;
+		} else {
+			// We can not reuse the editor so close the existing one and open a new one.
+			if (editor != null) {
+				page.closeEditor(editor, false);
+				editor = null;
 			}
-		} catch (PartInitException e) {
-			// Total failure.
-			throw new InvocationTargetException(e);
+			part = page.openEditor(new RemoteAnnotationEditorInput(svnFile, contents), id);
 		}
 		
 		// Hook Editor post selection listener.
