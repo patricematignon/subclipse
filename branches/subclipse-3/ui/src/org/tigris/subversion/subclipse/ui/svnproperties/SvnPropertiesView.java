@@ -61,6 +61,7 @@ import org.tigris.subversion.subclipse.ui.Policy;
 import org.tigris.subversion.subclipse.ui.SVNUIPlugin;
 import org.tigris.subversion.subclipse.ui.actions.SVNPropertyDeleteAction;
 import org.tigris.subversion.subclipse.ui.actions.SVNPropertyModifyAction;
+import org.tigris.subversion.subclipse.ui.dialogs.AddKeywordsDialog;
 import org.tigris.subversion.svnclientadapter.ISVNProperty;
 import org.tigris.subversion.svnclientadapter.ISVNStatus;
 
@@ -80,6 +81,7 @@ public class SvnPropertiesView extends ViewPart {
 	private Action addPropertyAction;
 	private Action modifyPropertyAction;
 	private Action deletePropertyAction;
+	private Action setKeywordsAction;
 	private Label statusLabel;
 	private ISelectionListener pageSelectionListener;
 	private IResourceStateChangeListener resourceStateChangeListener;
@@ -307,6 +309,29 @@ public class SvnPropertiesView extends ViewPart {
 		return addPropertyAction;
 	}
 
+	private Action getSetKeywordsAction() {
+		if (setKeywordsAction == null) {
+			SVNUIPlugin plugin = SVNUIPlugin.getPlugin();
+			setKeywordsAction = new Action(Policy.bind("SvnPropertiesView.addKeywordsLabel")) { //$NON-NLS-1$
+				public void run() {
+					try {
+						AddKeywordsDialog dialog = new AddKeywordsDialog(getSite().getShell(),new IResource[] { resource.getIResource() });
+						if (dialog.open() != AddKeywordsDialog.OK) return;
+						dialog.updateKeywords();
+					} catch (SVNException e) {
+						SVNUIPlugin.openError(
+						getSite().getShell(), 
+						Policy.bind("SvnPropertiesView.errorAddKeywordsTitle"), //$NON-NLS-1$
+						Policy.bind("SvnPropertiesView.errorAddKeywordsMessage"),//$NON-NLS-1$ 
+						e);
+					}
+				}
+			};
+			setKeywordsAction.setToolTipText(Policy.bind("SvnPropertiesView.addKeywordsTooltip")); //$NON-NLS-1$
+		}
+		return setKeywordsAction;		
+	}
+
 	private Action getModifyPropertyAction() {
 		if (modifyPropertyAction == null) {
 			SVNUIPlugin plugin = SVNUIPlugin.getPlugin();
@@ -411,8 +436,16 @@ public class SvnPropertiesView extends ViewPart {
 		} catch (SVNException e) {
 			action.setEnabled(false);
 		}
-
 		manager.add(action);
+
+		action = getSetKeywordsAction();
+		try { 		
+			action.setEnabled(resource.isManaged());
+		} catch (SVNException e) {
+			action.setEnabled(false);
+		}
+		manager.add(action);		
+		
 		manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 	}
     
@@ -475,21 +508,21 @@ public class SvnPropertiesView extends ViewPart {
 		try {
 			ISVNStatus status = resource.getStatus();
 			if (!status.isManaged()) {
-				statusLabel.setText("Resource is not managed");
+				statusLabel.setText(Policy.bind("SvnPropertiesView.resourceNotManaged")); //$NON-NLS-1$
 			} else 
 			if (status.getPropStatus().equals(ISVNStatus.Kind.MODIFIED))
 			{
-				statusLabel.setText("Some properties have been modified since last commit");
+				statusLabel.setText(Policy.bind("SvnPropertiesView.somePropertiesModified")); //$NON-NLS-1$
 			} else
 			if (status.getPropStatus().equals(ISVNStatus.Kind.NORMAL)) {
-				statusLabel.setText("No properties have been modified since last commit");
+				statusLabel.setText(Policy.bind("SvnPropertiesView.noPropertiesModified")); //$NON-NLS-1$
 			} else
 			if (status.getPropStatus().equals(ISVNStatus.Kind.CONFLICTED))
 			{
-				statusLabel.setText("Conflict on one or more properties ");
+				statusLabel.setText(Policy.bind("SvnPropertiesView.conflictOnProperties")); //$NON-NLS-1$
 			}
 		} catch (SVNException e) {
-			statusLabel.setText("Error while getting resource status");		
+			statusLabel.setText(Policy.bind("SvnPropertiesView.errorGettingStatus")); //$NON-NLS-1$
 		}
 	}
 
