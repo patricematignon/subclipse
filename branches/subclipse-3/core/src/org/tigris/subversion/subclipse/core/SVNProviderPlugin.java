@@ -36,6 +36,7 @@ import org.tigris.subversion.subclipse.core.resourcesListeners.FileModificationM
 import org.tigris.subversion.subclipse.core.resourcesListeners.SyncFileChangeListener;
 import org.tigris.subversion.subclipse.core.status.StatusCacheManager;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
+import org.tigris.subversion.svnclientadapter.ISVNPromptUserPassword;
 
 /**
  * The plugin itself
@@ -73,6 +74,8 @@ public class SVNProviderPlugin extends Plugin {
     private SVNClientManager svnClientManager; 
     
     private SVNAdapterFactories adapterFactories;
+    
+    private ISVNPromptUserPassword svnPromptUserPassword;
     
 	/**
 	 * This constructor required by the bundle loader (calls newInstance())
@@ -413,4 +416,11 @@ public class SVNProviderPlugin extends Plugin {
 		return repositoryResourcesManager;
 	}
 
+    public ISVNPromptUserPassword getSvnPromptUserPassword() {
+        return svnPromptUserPassword;
+    }
+    public void setSvnPromptUserPassword(
+            ISVNPromptUserPassword svnPromptUserPassword) {
+        this.svnPromptUserPassword = svnPromptUserPassword;
+    }
 }

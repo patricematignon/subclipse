@@ -109,7 +109,9 @@ public class SVNClientManager implements IManager {
         	ISVNClientAdapter svnClient = SVNClientAdapterFactory.createSVNClient(svnClientInterface);
         	if (configDir != null) {
         		svnClient.setConfigDirectory(configDir);
-        	}        
+        	} 
+        	if (SVNProviderPlugin.getPlugin().getSvnPromptUserPassword() != null)
+        	    svnClient.addPasswordCallback(SVNProviderPlugin.getPlugin().getSvnPromptUserPassword());
         	return svnClient;
         } catch (SVNClientException e) {
         	throw SVNException.wrapException(e);
