@@ -21,7 +21,7 @@ import org.tigris.subversion.subclipse.core.SVNTeamProvider;
 import org.tigris.subversion.subclipse.core.resources.SVNWorkspaceRoot;
 import org.tigris.subversion.subclipse.test.SubclipseTest;
 import org.tigris.subversion.subclipse.test.TestProject;
-import org.tigris.subversion.svnclientadapter.ISVNStatus.Kind;
+import org.tigris.subversion.svnclientadapter.SVNStatusKind;
 
 public class RefactorTest extends SubclipseTest {
 
@@ -53,7 +53,7 @@ public class RefactorTest extends SubclipseTest {
 		
 		// the initial resource should have "DELETED" status
 		ISVNLocalResource svnResource = SVNWorkspaceRoot.getSVNResourceFor(resource);
-		assertEquals(svnResource.getStatus().getTextStatus(), Kind.DELETED);
+		assertEquals(svnResource.getStatus().getTextStatus(), SVNStatusKind.DELETED);
 		
 		// the renamed resource should exist now
 		resource = testProject.getProject().getFile(new Path("src/pack1/AClassRenamed.java"));
@@ -61,7 +61,7 @@ public class RefactorTest extends SubclipseTest {
 		
 		// and should have "ADDED" status
 		svnResource = SVNWorkspaceRoot.getSVNResourceFor(resource);
-		assertEquals(svnResource.getStatus().getTextStatus(), Kind.ADDED);
+		assertEquals(svnResource.getStatus().getTextStatus(), SVNStatusKind.ADDED);
 	}
 	
 	public void testPackageRenameFailsWithForceFalse() throws Exception {
