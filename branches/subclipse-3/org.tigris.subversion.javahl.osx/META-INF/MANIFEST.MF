@@ -4,5 +4,5 @@ Bundle-SymbolicName: org.tigris.subversion.javahl.osx
 Bundle-Vendor: tigris
 Bundle-Name: Osx Fragment
 Bundle-ClassPath: osx.jar
-Fragment-Host: org.tigris.subversion.subclipse.core;bundle-version="0.9.5"
-Bundle-Version: 0.9.5
+Fragment-Host: org.tigris.subversion.subclipse.core;bundle-version="0.9.6"
+Bundle-Version: 0.9.6
