@@ -88,7 +88,7 @@ public class RepositoriesView extends ViewPart implements ISelectionListener {
     
     private RemoteContentProvider contentProvider;
     // this listener is used when a repository is added, removed or changed
-	IRepositoryListener repositoryListener = new IRepositoryListener() {
+	private IRepositoryListener repositoryListener = new IRepositoryListener() {
 		public void repositoryAdded(final ISVNRepositoryLocation root) {
 			getViewer().getControl().getDisplay().syncExec(new Runnable() {
 				public void run() {
@@ -426,7 +426,7 @@ public class RepositoriesView extends ViewPart implements ISelectionListener {
      * @see org.eclipse.ui.IWorkbenchPart#dispose()
      */
     public void dispose() {
-//      SVNUIPlugin.getPlugin().getRepositoryManager().removeRepositoryListener(listener);
+        SVNUIPlugin.getPlugin().getRepositoryManager().removeRepositoryListener(repositoryListener);
         super.dispose();
         treeViewer = null;
     }
