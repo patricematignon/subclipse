@@ -21,15 +21,12 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.variants.IResourceVariant;
-import org.tigris.subversion.subclipse.core.commands.AddIgnoredPatternCommand;
 import org.tigris.subversion.subclipse.core.commands.AddResourcesCommand;
 import org.tigris.subversion.subclipse.core.commands.CheckinResourcesCommand;
-import org.tigris.subversion.subclipse.core.commands.UpdateResourcesCommand;
 import org.tigris.subversion.subclipse.core.resources.RemoteFile;
 import org.tigris.subversion.subclipse.core.resources.RemoteFolder;
 import org.tigris.subversion.subclipse.core.resources.SVNMoveDeleteHook;
 import org.tigris.subversion.subclipse.core.resources.SVNWorkspaceRoot;
-import org.tigris.subversion.svnclientadapter.SVNRevision;
 
 /**
  * This class is responsible for configuring a project for repository management
@@ -104,22 +101,6 @@ public class SVNTeamProvider extends RepositoryProvider {
 		CheckinResourcesCommand command = new CheckinResourcesCommand(getSVNWorkspaceRoot(), resources, depth, comment);
         command.run(progress);
 	}
-
-    /**
-     * Update to given revision
-     */
-    public void update(final IResource[] resources, final SVNRevision revision, IProgressMonitor progress) throws TeamException {
-    	UpdateResourcesCommand command = new UpdateResourcesCommand(getSVNWorkspaceRoot(),resources, revision);
-        command.run(progress);
-    }
-
-    /**
-     * update to HEAD revision
-     */
-    public void update(final IResource[] resources, IProgressMonitor progress) throws TeamException {
-        update(resources, SVNRevision.HEAD, progress);
-    }
-
 
     public SVNWorkspaceRoot getSVNWorkspaceRoot() {
         return workspaceRoot;

@@ -63,6 +63,9 @@ public interface ISVNUIConstants {
 
     // views
     public final String IMG_SVN_CONSOLE = "cview16/console_view.gif";
+    
+    //operations
+    public final String IMG_CHECKOUT = "ctool16/checkout.gif";
 	
 	// preferences
 	public final String PREF_SHOW_COMMENTS = "pref_show_comments"; //$NON-NLS-1$

@@ -7,24 +7,17 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Cédric Chabanois (cchabanois@ifrance.com) - modified for Subversion 
+ *     Cédric Chabanois (cchabanois@ifrance.com) - modified for Subversion
+ *     Panagiotis Korros (panagiotis.korros@gmail.com) - added operations support
  *******************************************************************************/
 package org.tigris.subversion.subclipse.ui.actions;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
 
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.team.core.TeamException;
-import org.eclipse.ui.actions.WorkspaceModifyOperation;
-import org.tigris.subversion.subclipse.core.SVNTeamProvider;
 import org.tigris.subversion.subclipse.ui.Policy;
+import org.tigris.subversion.subclipse.ui.operations.UpdateOperation;
+import org.tigris.subversion.svnclientadapter.SVNRevision;
 
 /**
  * UpdateAction performs a 'svn update' command on the selected resources.
@@ -37,37 +30,14 @@ public class UpdateAction extends WorkspaceAction {
 	 * @see IActionDelegate#run(IAction)
 	 */
 	public void execute(IAction action) throws InterruptedException, InvocationTargetException {
-		run(new WorkspaceModifyOperation() {
-			public void execute(IProgressMonitor monitor) throws InvocationTargetException {
-				try {					
-                    // maps the selected resources to their providers
-					Hashtable table = getProviderMapping();
-					Set keySet = table.keySet();
-					monitor.beginTask("", keySet.size() * 1000); //$NON-NLS-1$
-					monitor.setTaskName(Policy.bind("UpdateAction.updating")); //$NON-NLS-1$
-					Iterator iterator = keySet.iterator();
-					while (iterator.hasNext()) {
-						IProgressMonitor subMonitor = new SubProgressMonitor(monitor, 1000);
-						SVNTeamProvider provider = (SVNTeamProvider)iterator.next();
-						List list = (List)table.get(provider);
-						IResource[] providerResources = (IResource[])list.toArray(new IResource[list.size()]);
-						provider.update(providerResources, subMonitor);
-					}
-				} catch (TeamException e) {
-					throw new InvocationTargetException(e);
-				} finally {
-					monitor.done();
-				}
-			}
-		}, true /* cancelable */, PROGRESS_DIALOG);
-
+	    new UpdateOperation(getTargetPart(), getSelectedResources(), SVNRevision.HEAD).run();
 	}
 
 	/**
 	 * @see org.tigris.subversion.subclipse.ui.actions.SVNAction#getErrorTitle()
 	 */
 	protected String getErrorTitle() {
-		return Policy.bind("UpdateAction.update"); //$NON-NLS-1$
+		return Policy.bind("UpdateAction.updateerror"); //$NON-NLS-1$
 	}
 
 	/**

@@ -48,7 +48,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
-import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.variants.IResourceVariant;
 import org.eclipse.team.internal.ui.Utils;
@@ -59,13 +58,13 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.tigris.subversion.subclipse.core.ISVNRemoteFile;
 import org.tigris.subversion.subclipse.core.ISVNRemoteResource;
-import org.tigris.subversion.subclipse.core.SVNTeamProvider;
 import org.tigris.subversion.subclipse.core.history.ILogEntry;
 import org.tigris.subversion.subclipse.core.resources.SVNWorkspaceRoot;
 import org.tigris.subversion.subclipse.ui.IHelpContextIds;
 import org.tigris.subversion.subclipse.ui.Policy;
 import org.tigris.subversion.subclipse.ui.SVNUIPlugin;
 import org.tigris.subversion.subclipse.ui.history.HistoryTableProvider;
+import org.tigris.subversion.subclipse.ui.operations.UpdateOperation;
 
 /**
  * A compare input for comparing local resource with remote ones 
@@ -319,32 +318,26 @@ public class SVNCompareRevisionsInput extends CompareEditorInput implements ISav
 		getRevisionAction = new Action(Policy.bind("HistoryView.getRevisionAction"), null) { //$NON-NLS-1$
 			public void run() {
 				try {
-					new ProgressMonitorDialog(shell).run(false, true, new WorkspaceModifyOperation() {
-						protected void execute(IProgressMonitor monitor) throws InvocationTargetException {
-							IStructuredSelection selection = (IStructuredSelection)viewer.getSelection();
+				    new ProgressMonitorDialog(shell).run(false, true, new WorkspaceModifyOperation(null) {
+						protected void execute(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+						    IStructuredSelection selection = (IStructuredSelection)viewer.getSelection();
 							if (selection.size() != 1) return;
 							VersionCompareDiffNode node = (VersionCompareDiffNode)selection.getFirstElement();
 							ResourceEditionNode right = (ResourceEditionNode)node.getRight();
-							ISVNRemoteFile edition = (ISVNRemoteFile)right.getRemoteResource();
-							// Do the load. This just consists of setting the local contents. We don't
-							// actually want to change the base.
-							try {
-								SVNTeamProvider provider = (SVNTeamProvider)RepositoryProvider.getProvider(resource.getProject());
-                                provider.update(new IResource[] {resource},edition.getLastChangedRevision(),monitor);
-								getHistoryTableProvider().setRemoteResource(edition);
-							} catch (TeamException e) {
-								throw new InvocationTargetException(e);
-							}
+							final ISVNRemoteFile edition = (ISVNRemoteFile)right.getRemoteResource();
+							new UpdateOperation(null, new IResource[] {resource},edition.getLastChangedRevision()).run(monitor);
+							    
+							// recompute the labels on the viewer
+							getHistoryTableProvider().setRemoteResource(edition);
+							viewer.refresh();
 						}
-					});
+				    });
 				} catch (InterruptedException e) {
 					// Do nothing
 					return;
 				} catch (InvocationTargetException e) {
 					handle(e);
 				}
-				// recompute the labels on the viewer
-				viewer.refresh();
 			}
 		};
 	}

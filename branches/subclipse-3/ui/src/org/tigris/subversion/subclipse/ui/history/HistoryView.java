@@ -33,7 +33,7 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.ITextOperationTarget;
@@ -54,6 +54,7 @@ import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
@@ -71,7 +72,7 @@ import org.eclipse.ui.IPartListener2;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
-import org.eclipse.ui.actions.WorkspaceModifyOperation;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.part.ResourceTransfer;
 import org.eclipse.ui.part.ViewPart;
@@ -83,7 +84,7 @@ import org.tigris.subversion.subclipse.core.ISVNRemoteFile;
 import org.tigris.subversion.subclipse.core.ISVNRemoteResource;
 import org.tigris.subversion.subclipse.core.SVNException;
 import org.tigris.subversion.subclipse.core.SVNProviderPlugin;
-import org.tigris.subversion.subclipse.core.SVNTeamProvider;
+import org.tigris.subversion.subclipse.core.SVNStatus;
 import org.tigris.subversion.subclipse.core.history.ILogEntry;
 import org.tigris.subversion.subclipse.core.history.LogEntry;
 import org.tigris.subversion.subclipse.core.resources.SVNWorkspaceRoot;
@@ -94,6 +95,7 @@ import org.tigris.subversion.subclipse.ui.SVNUIPlugin;
 import org.tigris.subversion.subclipse.ui.actions.OpenRemoteFileAction;
 import org.tigris.subversion.subclipse.ui.console.TextViewerAction;
 import org.tigris.subversion.subclipse.ui.editor.RemoteFileEditorInput;
+import org.tigris.subversion.subclipse.ui.operations.ReplaceOperation;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
 
 
@@ -201,8 +203,8 @@ public class HistoryView extends ViewPart implements IResourceStateChangeListene
                     if (!(selection instanceof IStructuredSelection)) return;
                     IStructuredSelection ss = (IStructuredSelection)selection;
                     currentSelection = (ILogEntry)ss.getFirstElement();
-                    new ProgressMonitorDialog(getViewSite().getShell()).run(false, true, new WorkspaceModifyOperation() {
-                        protected void execute(IProgressMonitor monitor) throws InvocationTargetException {
+                    PlatformUI.getWorkbench().getProgressService().run(true, true, new IRunnableWithProgress() {
+                        public void run(IProgressMonitor monitor) throws InvocationTargetException {
                             try {               
                                 action.run(monitor);
                             } catch (CoreException e) {
@@ -345,20 +347,19 @@ public class HistoryView extends ViewPart implements IResourceStateChangeListene
 					try {
                         if (remoteFile != null) {
     						if(confirmOverwrite()) {
-    							// Update does not support overwriting the WC, so it must be reverted first
-    							ISVNLocalFile svnFile = SVNWorkspaceRoot.getSVNFileFor(file);
-    							if (svnFile.isModified()) {
-    								svnFile.revert();
-    							}
-    	
-    							SVNTeamProvider provider = (SVNTeamProvider)RepositoryProvider.getProvider(file.getProject());
-    	                        provider.update(new IResource[] {file}, remoteFile.getLastChangedRevision(), monitor);					 
-    							historyTableProvider.setRemoteResource(remoteFile);
-    							tableHistoryViewer.refresh();
+                                new ReplaceOperation(HistoryView.this, new IResource[] {file}, remoteFile.getLastChangedRevision()).run(monitor);
+      							historyTableProvider.setRemoteResource(remoteFile);
+    							Display.getDefault().asyncExec(new Runnable() {
+    								public void run() {
+    								    tableHistoryViewer.refresh();
+    								}
+    							});
     						}
                         }
-					} catch (TeamException e) {
-						throw new CoreException(e.getStatus());
+					} catch (InvocationTargetException e) {
+						throw new CoreException(new SVNStatus(IStatus.ERROR, 0, e.getMessage()));
+					} catch (InterruptedException e) {
+						// Cancelled by user
 					}
 				} 
 			});
