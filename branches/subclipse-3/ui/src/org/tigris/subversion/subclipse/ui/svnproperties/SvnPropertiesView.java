@@ -256,8 +256,14 @@ public class SvnPropertiesView extends ViewPart {
 				Object adapter = a.getAdapter(IResource.class);
 				if (adapter instanceof IResource) {
 					IResource resource = (IResource)adapter;
-					ISVNLocalResource svnResource = (ISVNLocalResource)resource.getAdapter(ISVNLocalResource.class);
-					showSvnProperties(svnResource);
+					
+					// If the resource isn't open or doesn't exist it won't have properties
+					if (!resource.isAccessible()) {
+						showSvnProperties(null);
+					} else {
+						ISVNLocalResource svnResource = (ISVNLocalResource)resource.getAdapter(ISVNLocalResource.class);
+						showSvnProperties(svnResource);
+					}
 				}
 			}
 		} catch (SVNException e) {
@@ -531,8 +537,11 @@ public class SvnPropertiesView extends ViewPart {
 	 */
 	public void showSvnProperties(ISVNLocalResource resource) throws SVNException {
 		this.resource = resource;
-		setPartName(Policy.bind("SvnPropertiesView.titleWithArgument", resource.getName())); //$NON-NLS-1$
-		setContentDescription(Policy.bind("SvnPropertiesView.titleWithArgument", resource.getName())); //$NON-NLS-1$
+		if (resource != null) {
+			setContentDescription(Policy.bind("SvnPropertiesView.titleWithArgument", resource.getName()));
+		} else {
+			setContentDescription("");
+		}
 		refresh();
 	}
 
