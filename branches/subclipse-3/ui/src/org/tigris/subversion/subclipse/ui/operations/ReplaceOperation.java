@@ -1,6 +1,12 @@
-/*
- * Created on 29 Ïêô 2004
- */
+/******************************************************************************
+ * This program and the accompanying materials are made available under
+ * the terms of the Common Public License v1.0 which accompanies this
+ * distribution, and is available at the following URL:
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * Copyright(c) 2003-2005 by the authors indicated in the @author tags.
+ *
+ * All Rights are Reserved by the various authors.
+ *******************************************************************************/
 package org.tigris.subversion.subclipse.ui.operations;
 
 import org.eclipse.core.resources.IResource;
@@ -46,15 +52,18 @@ public class ReplaceOperation extends UpdateOperation {
     protected void execute(SVNTeamProvider provider, IResource[] resources, IProgressMonitor monitor) throws SVNException, InterruptedException {
         monitor.beginTask(null, 100);
 		try {
+            // first we revert to base (otherwise it will do a merge instead of
+            // replace resources)
 		    for (int i = 0; i < resources.length; i++) {
                 IResource resource = resources[i];
 
                 ISVNLocalResource localResource = SVNWorkspaceRoot.getSVNResourceFor(resource);
-    			if (localResource.isModified()) {
+    			if (localResource.isDirty()) {
     				localResource.revert();
     			}
             }
 
+            // then we update to revision
 		    super.execute(provider, resources, monitor);
 		} catch (SVNException e) {
 		    collectStatus(e.getStatus());
