@@ -44,8 +44,8 @@ public class SynchronizeWizard extends Wizard {
 	 */
 	public void addPages() {
 		selectionPage = new GlobalRefreshResourceSelectionPage(SVNWorkspaceSubscriber.getInstance().roots());
-		selectionPage.setTitle("Synchronize File System Example");
-		selectionPage.setMessage("Synchronize File System Example");
+		selectionPage.setTitle(org.tigris.subversion.subclipse.ui.Policy.bind("SynchronizeWizard.title")); //$NON-NLS-1$
+		selectionPage.setMessage(org.tigris.subversion.subclipse.ui.Policy.bind("SynchronizeWizard.message")); //$NON-NLS-1$
 		addPage(selectionPage);
 	}
 
