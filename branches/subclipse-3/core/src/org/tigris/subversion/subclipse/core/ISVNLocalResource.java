@@ -107,6 +107,13 @@ public interface ISVNLocalResource extends ISVNResource, IAdaptable {
 	 */
 	public boolean isModified() throws SVNException;
 
+    /**    
+     * resource is considered dirty if either 
+     * <ul>
+     * <li>text status is added, deleted, replaced, modified, merged or conflicted.</li>
+     * <li>prop status is either conflicted or modified 
+     * </ul>
+     */    
     public boolean isDirty() throws SVNException;
     
 	public void accept(ISVNResourceVisitor visitor) throws SVNException;
