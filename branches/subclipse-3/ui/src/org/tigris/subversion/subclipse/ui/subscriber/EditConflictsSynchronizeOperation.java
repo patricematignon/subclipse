@@ -1,7 +1,6 @@
 package org.tigris.subversion.subclipse.ui.subscriber;
 
 import java.io.File;
-import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 
 import org.apache.commons.lang.StringUtils;
@@ -32,7 +31,6 @@ import org.tigris.subversion.subclipse.ui.ISVNUIConstants;
 import org.tigris.subversion.subclipse.ui.Policy;
 import org.tigris.subversion.subclipse.ui.SVNUIPlugin;
 import org.tigris.subversion.subclipse.ui.conflicts.ConflictsCompareInput;
-import org.tigris.subversion.subclipse.ui.dialogs.RevertDialog;
 import org.tigris.subversion.svnclientadapter.utils.Command;
 
 public class EditConflictsSynchronizeOperation extends SVNSynchronizeOperation {
