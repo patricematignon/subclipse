@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ * 	   Korros Panagiotis - pkorros@tigris.org
  *******************************************************************************/
 package org.tigris.subversion.subclipse.core.sync;
 
@@ -34,39 +35,30 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.TeamStatus;
+import org.eclipse.team.core.subscribers.ISubscriberChangeEvent;
 import org.eclipse.team.core.subscribers.Subscriber;
 import org.eclipse.team.core.subscribers.SubscriberChangeEvent;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.core.variants.IResourceVariantComparator;
-import org.eclipse.team.core.variants.ThreeWaySubscriber;
-import org.eclipse.team.core.variants.ThreeWaySynchronizer;
+import org.eclipse.team.core.variants.ResourceVariantByteStore;
+import org.eclipse.team.core.variants.SessionResourceVariantByteStore;
 import org.eclipse.team.internal.core.Policy;
 import org.eclipse.team.internal.core.TeamPlugin;
+import org.tigris.subversion.subclipse.core.IResourceStateChangeListener;
 import org.tigris.subversion.subclipse.core.ISVNLocalResource;
 import org.tigris.subversion.subclipse.core.SVNProviderPlugin;
 import org.tigris.subversion.subclipse.core.SVNRevisionComparator;
-import org.tigris.subversion.subclipse.core.SVNTeamProvider;
 import org.tigris.subversion.subclipse.core.client.StatusCommand;
 import org.tigris.subversion.subclipse.core.resources.SVNWorkspaceRoot;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 import org.tigris.subversion.svnclientadapter.ISVNStatus;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
 import org.tigris.subversion.svnclientadapter.SVNNodeKind;
+import org.tigris.subversion.svnclientadapter.SVNRevision;
+import org.tigris.subversion.svnclientadapter.ISVNStatus.Kind;
+import org.tigris.subversion.svnclientadapter.SVNRevision.Number;
 
-/**
- * This is an example file system subscriber that overrides
- * ThreeWaySubscriber. It uses a repository
- * provider (<code>SVNTeamProvider</code>) to determine and
- * manage the roots and to create resource variants. It also makes
- * use of a file system specific remote tree (<code>SVNRemoteTree</code>)
- * for provided the remote tree access and refresh.
- * 
- * @see ThreeWaySubscriber
- * @see ThreeWaySynchronizer
- * @see SVNTeamProvider
- * @see SVNRemoteTree
- */
-public class SVNWorkspaceSubscriber extends Subscriber {
+public class SVNWorkspaceSubscriber extends Subscriber implements IResourceStateChangeListener {
 
 	private static SVNWorkspaceSubscriber instance; 
 	
@@ -82,7 +74,13 @@ public class SVNWorkspaceSubscriber extends Subscriber {
 	}
 
 	protected SVNRevisionComparator comparator = new SVNRevisionComparator();
-	protected Map syncState = new HashMap();
+
+	protected ResourceVariantByteStore localSyncStateStore = new SessionResourceVariantByteStore();
+	protected ResourceVariantByteStore remoteSyncStateStore = new SessionResourceVariantByteStore();
+
+	public SVNWorkspaceSubscriber() {
+	    SVNProviderPlugin.addResourceStateChangeListener(this);
+	}
 
     /* (non-Javadoc)
      * @see org.eclipse.team.core.subscribers.Subscriber#getResourceComparator()
@@ -162,7 +160,14 @@ public class SVNWorkspaceSubscriber extends Subscriber {
      * @see org.eclipse.team.core.subscribers.Subscriber#getSyncInfo(org.eclipse.core.resources.IResource)
      */
     public SyncInfo getSyncInfo(IResource resource) throws TeamException {
-        SyncInfo syncInfo = (SyncInfo) syncState.get(resource);
+        StatusInfo localStatusInfo = StatusInfo.fromBytes(localSyncStateStore.getBytes( resource ));
+        StatusInfo remoteStatusInfo = StatusInfo.fromBytes(remoteSyncStateStore.getBytes( resource ));
+        if( localStatusInfo ==  null && remoteStatusInfo == null )
+            return null;
+
+        SyncInfo syncInfo = new SVNStatusSyncInfo(resource, localStatusInfo, remoteStatusInfo, comparator);
+        syncInfo.init();
+
         return syncInfo;
     }
 
@@ -212,6 +217,9 @@ public class SVNWorkspaceSubscriber extends Subscriber {
         IWorkspace workspace = ResourcesPlugin.getWorkspace();
         IWorkspaceRoot workspaceRoot = workspace.getRoot();
         
+        localSyncStateStore.flushBytes(resource, depth);
+        remoteSyncStateStore.flushBytes(resource, depth);
+
         ISVNClientAdapter client = SVNProviderPlugin.getPlugin().createSVNClient();
 
         ISVNLocalResource svnResource = SVNWorkspaceRoot.getSVNResourceFor( resource );
@@ -239,27 +247,157 @@ public class SVNWorkspaceSubscriber extends Subscriber {
                 else if ( status.getNodeKind() == SVNNodeKind.UNKNOWN ) {
                     changedResource = workspaceRoot.getContainerForLocation(path);
                     
-                    if( !containerSet.contains( changedResource ) )
+                    if( changedResource.exists() )
+                        containerSet.add( changedResource );
+                    else  if( !containerSet.contains( changedResource ) )
                         changedResource = workspaceRoot.getFileForLocation(path);
                 }
 
                 if( changedResource != null ) {
                     containerSet.add(changedResource.getParent());
+                    
+                    StatusInfo localInfo = new StatusInfo(status.getLastChangedRevision(), status.getTextStatus() );
+                    localSyncStateStore.setBytes( changedResource,  localInfo.asBytes() );
 
-                    if( ! (changedResource instanceof IContainer) ) {
-                        SyncInfo syncInfo = new SVNStatusSyncInfo(changedResource, status, cmd.getRevision(), comparator);
-                        syncInfo.init();
-                        syncState.put(changedResource, syncInfo);
+                    StatusInfo remoteInfo = new StatusInfo(cmd.getRevision(), status.getRepositoryTextStatus() );
+                    remoteSyncStateStore.setBytes( changedResource, remoteInfo.asBytes() );
 
-                        System.out.println("Resource changed:"+changedResource+" "+syncInfo);
-                        allChanges.add(changedResource);
-                    }
+                    System.out.println(cmd.getRevision()+" "+changedResource+" R:"+status.getLastChangedRevision()+" L:"+status.getTextStatus()+" R:"+status.getRepositoryTextStatus());
+                    allChanges.add(changedResource);
                 }
             }
-            this.syncState = syncState;
+
             return (IResource[]) allChanges.toArray(new IResource[allChanges.size()]);
         } catch (SVNClientException e) {
             throw new TeamException("Error getting status for resource "+resource, e);
         }
+    }
+
+    /* (non-Javadoc)
+     * @see org.tigris.subversion.subclipse.core.IResourceStateChangeListener#resourceSyncInfoChanged(org.eclipse.core.resources.IResource[])
+     */
+    public void resourceSyncInfoChanged(IResource[] changedResources) {
+        internalResourceChanged(changedResources);
+    }
+
+    /* (non-Javadoc)
+     * @see org.tigris.subversion.subclipse.core.IResourceStateChangeListener#resourceModified(org.eclipse.core.resources.IResource[])
+     */
+    public void resourceModified(IResource[] changedResources) {
+        internalResourceChanged(changedResources);
+    }
+
+	/**
+     * @param changedResources
+     */
+    private void internalResourceChanged(IResource[] changedResources) {
+        for (int i = 0; i < changedResources.length; i++) {
+            IResource resource = changedResources[i];
+            System.out.println("refresing "+resource);
+            refresh(resource, IResource.DEPTH_ZERO );
+        }
+		fireTeamResourceChange(SubscriberChangeEvent.asSyncChangedDeltas(this, changedResources));
+    }
+
+    /* (non-Javadoc)
+	 * @see org.tigris.subversion.subclipse.core.IResourceStateChangeListener#projectConfigured(org.eclipse.core.resources.IProject)
+	 */
+	public void projectConfigured(IProject project) {
+		SubscriberChangeEvent delta = new SubscriberChangeEvent(this, ISubscriberChangeEvent.ROOT_ADDED, project);
+		fireTeamResourceChange(new SubscriberChangeEvent[] {delta});
+	}
+
+	/* (non-Javadoc)
+	 * @see org.tigris.subversion.subclipse.core.IResourceStateChangeListener#projectDeconfigured(org.eclipse.core.resources.IProject)
+	 */
+	public void projectDeconfigured(IProject project) {
+/*	    localSyncStateStore.flushBytes( project, IResource.DEPTH_INFINITE);
+	    remoteSyncStateStore.flushBytes( project, IResource.DEPTH_INFINITE);
+*/		SubscriberChangeEvent delta = new SubscriberChangeEvent(this, ISubscriberChangeEvent.ROOT_REMOVED, project);
+		fireTeamResourceChange(new SubscriberChangeEvent[] {delta});
+	}
+}
+
+class StatusInfo {
+    private final Number revision;
+    private final Kind kind;
+
+    StatusInfo(SVNRevision.Number revision, ISVNStatus.Kind kind) {
+        this.revision = revision;
+        this.kind = kind;
+    }
+
+    StatusInfo(byte[] fromBytes) {
+        String[] segments = new String( fromBytes ).split(";");
+        if( segments[0].length() > 0 )
+            this.revision = new SVNRevision.Number( Long.parseLong( segments[0] ) );
+        else
+            this.revision = null;
+        this.kind = fromString( segments[1] );
+    }
+
+    byte[] asBytes() {
+        return new String( ((revision != null) ? revision.toString() : "" ) + ";"+ kind).getBytes();
+    }
+
+    public Kind getKind() {
+        return kind;
+    }
+
+    public Number getRevision() {
+        return revision;
+    }
+
+    private static Kind fromString(String kind) {
+        if( kind.equals( "non-svn" ) ) {
+            return Kind.NONE;
+        }
+        if( kind.equals( "normal" ) ) {
+            return Kind.NORMAL;
+        }
+        if( kind.equals( "added" ) ) {
+            return Kind.ADDED;
+        }
+        if( kind.equals( "missing" ) ) {
+            return Kind.MISSING;
+        }
+        if( kind.equals( "incomplete" ) ) {
+            return Kind.INCOMPLETE;
+        }
+        if( kind.equals( "deleted" ) ) {
+            return Kind.DELETED;
+        }
+        if( kind.equals( "replaced" ) ) {
+            return Kind.REPLACED;
+        }
+        if( kind.equals( "modified" ) ) {
+            return Kind.MODIFIED;
+        }
+        if( kind.equals( "merged" ) ) {
+            return Kind.MERGED;
+        }
+        if( kind.equals( "conflicted" ) ) {
+            return Kind.CONFLICTED;
+        }
+        if( kind.equals( "obstructed" ) ) {
+            return Kind.OBSTRUCTED;
+        }
+        if( kind.equals( "ignored" ) ) {
+            return Kind.IGNORED;
+        }
+        if( kind.equals( "external" ) ) {
+            return Kind.EXTERNAL;
+        }
+        if( kind.equals( "unversioned" ) ) {
+            return Kind.UNVERSIONED;
+        }
+        return Kind.NONE;
+    }
+
+    static StatusInfo fromBytes(byte[] bytes) {
+        if( bytes == null )
+            return null;
+        
+        return new StatusInfo( bytes );
     }
 }

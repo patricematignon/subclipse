@@ -11,7 +11,6 @@ import org.eclipse.team.core.variants.IResourceVariantComparator;
 import org.tigris.subversion.subclipse.core.ISVNLocalResource;
 import org.tigris.subversion.subclipse.core.resources.RemoteFile;
 import org.tigris.subversion.subclipse.core.resources.SVNWorkspaceRoot;
-import org.tigris.subversion.svnclientadapter.ISVNStatus;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
 import org.tigris.subversion.svnclientadapter.ISVNStatus.Kind;
 
@@ -19,25 +18,26 @@ import org.tigris.subversion.svnclientadapter.ISVNStatus.Kind;
  * @author Panagiotis K
  */
 public class SVNStatusSyncInfo extends SyncInfo {
-    
-    private final ISVNStatus status;
+    private final StatusInfo localStatusInfo;
+    private final StatusInfo remoteStatusInfo;
 
     public SVNStatusSyncInfo(IResource local,
-            				 ISVNStatus status,
-            				 SVNRevision.Number revision,
+            				 StatusInfo localStatusInfo,
+            				 StatusInfo remoteStatusInfo,
             				 IResourceVariantComparator comparator) {
         super(local,
-              createBaseResourceVariant( local, status),
-              createLatestResourceVariant( local, status, revision),
+              createBaseResourceVariant( local, localStatusInfo, remoteStatusInfo ),
+              createLatestResourceVariant( local, localStatusInfo, remoteStatusInfo),
               comparator);
-        this.status = status;
+        this.localStatusInfo = localStatusInfo;
+        this.remoteStatusInfo = remoteStatusInfo;
     }
     /* (non-Javadoc)
      * @see org.eclipse.team.core.synchronize.SyncInfo#calculateKind()
      */
     protected int calculateKind() throws TeamException {
-        Kind localKind = status.getTextStatus();
-        Kind repositoryKind = status.getRepositoryTextStatus();
+        Kind localKind = localStatusInfo.getKind();
+        Kind repositoryKind = remoteStatusInfo.getKind();
 
         if( localKind == Kind.NONE 
          || localKind == Kind.MISSING
@@ -70,7 +70,7 @@ public class SVNStatusSyncInfo extends SyncInfo {
             if( repositoryKind == Kind.DELETED )
                 return SyncInfo.INCOMING | SyncInfo.DELETION;
             if( repositoryKind == Kind.ADDED )
-                return SyncInfo.CONFLICTING | SyncInfo.ADDITION;
+                return SyncInfo.INCOMING | SyncInfo.ADDITION;
             return SyncInfo.INCOMING | SyncInfo.CHANGE;
         }
 
@@ -95,35 +95,27 @@ public class SVNStatusSyncInfo extends SyncInfo {
     private static boolean isAddition(Kind kind) {
         return kind == Kind.ADDED || kind == Kind.UNVERSIONED;
     }
-    private static IResourceVariant createBaseResourceVariant(IResource resource, ISVNStatus status) {
-        if( status.getRepositoryTextStatus() == Kind.ADDED )
+
+    private static IResourceVariant createBaseResourceVariant(IResource local, StatusInfo localStatusInfo, StatusInfo remoteStatusInfo) {
+        if( localStatusInfo == null
+                || localStatusInfo.getRevision() == null )
+          return null;
+        return createResourceVariant(local, localStatusInfo.getRevision());
+    }
+    private static IResourceVariant createLatestResourceVariant(IResource local, StatusInfo localStatusInfo, StatusInfo remoteStatusInfo) {
+        if( remoteStatusInfo == null
+                || remoteStatusInfo.getKind() == Kind.DELETED )
             return null;
-        ISVNLocalResource svnResource = SVNWorkspaceRoot.getSVNResourceFor( resource );
-        if( resource.getType() == IResource.FILE ) {
-            return new RemoteFile( null, 
-                  svnResource.getRepository(),
-      			  status.getUrl(),
-      			  status.getLastChangedRevision(),
-    			  status.getLastChangedRevision(),
-    			  status.getLastChangedDate(),
-    			  status.getLastCommitAuthor());
+        if( remoteStatusInfo.getKind() == Kind.NONE && 
+            localStatusInfo != null && isAddition(localStatusInfo.getKind()) ) {
+            return null;
         }
-        else {
-            return new RemoteFile( null,
-                  svnResource.getRepository(),
-        		  status.getUrl(),
-        		  status.getLastChangedRevision(),
-      			  status.getLastChangedRevision(),
-      			  status.getLastChangedDate(),
-      			  status.getLastCommitAuthor());
-        }
+        return createResourceVariant(local, remoteStatusInfo.getRevision());
     }
 
-    private static IResourceVariant createLatestResourceVariant(IResource resource, ISVNStatus status, SVNRevision.Number revision) {
-        if( status.getRepositoryTextStatus() == Kind.DELETED )
-            return null;
-        ISVNLocalResource svnResource = SVNWorkspaceRoot.getSVNResourceFor( resource );
-        if( resource.getType() == IResource.FILE ) {
+    private static IResourceVariant createResourceVariant(IResource local, SVNRevision.Number revision) {
+        ISVNLocalResource svnResource = SVNWorkspaceRoot.getSVNResourceFor( local );
+        if( local.getType() == IResource.FILE ) {
             return new RemoteFile( null, 
                   svnResource.getRepository(),
                   svnResource.getUrl(),
