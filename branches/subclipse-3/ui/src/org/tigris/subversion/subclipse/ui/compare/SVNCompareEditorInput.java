@@ -17,10 +17,6 @@ import java.lang.reflect.InvocationTargetException;
 import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.CompareEditorInput;
 import org.eclipse.compare.ITypedElement;
-import org.eclipse.compare.structuremergeviewer.DiffNode;
-import org.eclipse.compare.structuremergeviewer.Differencer;
-import org.eclipse.compare.structuremergeviewer.IDiffContainer;
-import org.eclipse.compare.structuremergeviewer.IStructureComparator;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -46,59 +42,6 @@ public class SVNCompareEditorInput extends CompareEditorInput {
 	private Image leftImage;
 	private Image rightImage;
 	private Image ancestorImage;
-	
-	// comparison constants
-	private static final int NODE_EQUAL = 0;
-	private static final int NODE_NOT_EQUAL = 1;
-	private static final int NODE_UNKNOWN = 2;
-
-    /**
-     * differencing engine
-     */
-    private final Differencer differencer = new Differencer() {
-        
-        /**
-         * compare two ResourceEditionNode
-         */
-        protected boolean contentsEqual(Object input1, Object input2) {
-            int compare = teamEqual(input1, input2);
-            if (compare == NODE_EQUAL) {
-                return true;
-            }
-            if (compare == NODE_NOT_EQUAL) {
-                return false;
-            }
-            //revert to slow content comparison
-            return super.contentsEqual(input1, input2);
-        }
-        
-        /** 
-         * Called for every leaf or node compare to update progress information.
-         */
-        protected void updateProgress(IProgressMonitor progressMonitor, Object node) {
-            if (node instanceof ITypedElement) {
-                ITypedElement element = (ITypedElement)node;
-                progressMonitor.subTask(Policy.bind("CompareEditorInput.fileProgress", new String[] {element.getName()})); //$NON-NLS-1$
-                progressMonitor.worked(1);
-            }
-        }
-        
-        /**
-         * Returns the children of the given input or <code>null</code> if there are no children. 
-         */
-        protected Object[] getChildren(Object input) {
-            if (input instanceof IStructureComparator) {
-                Object[] children= ((IStructureComparator)input).getChildren();
-                if (children != null)
-                    return children;
-            }
-            return null;
-        }
-        protected Object visit(Object data, int result, Object ancestor, Object left, Object right) {
-            return new DiffNode((IDiffContainer) data, result, (ITypedElement)ancestor, (ITypedElement)left, (ITypedElement)right);
-        }
-    }; // differencer
-
 	
 	/**
 	 * Creates a new SVNCompareEditorInput.
@@ -271,7 +214,7 @@ public class SVNCompareEditorInput extends CompareEditorInput {
 			IProgressMonitor sub = new SubProgressMonitor(monitor, 30);
 			sub.beginTask(Policy.bind("SVNCompareEditorInput.comparing"), 100); //$NON-NLS-1$
 			try {
-				result[0] = differencer.findDifferences(threeWay, sub, null, ancestor, left, right);
+				result[0] = new RevisionAwareDifferencer().findDifferences(threeWay, sub, null, ancestor, left, right);
 			} finally {
 				sub.done();
 			}
@@ -285,70 +228,4 @@ public class SVNCompareEditorInput extends CompareEditorInput {
 			monitor.done();
 		}
 	}
-	
-	/**
-	 * Compares two nodes to determine if they are equal.  Returns NODE_EQUAL
-	 * of they are the same, NODE_NOT_EQUAL if they are different, and
-	 * NODE_UNKNOWN if comparison was not possible.
-	 */
-	protected int teamEqual(Object left, Object right) {
-		// calculate the type for the left contribution
-		ISVNRemoteResource leftEdition = null;
-		if (left instanceof ResourceEditionNode) {
-			leftEdition = ((ResourceEditionNode)left).getRemoteResource();
-		}
-		
-		// calculate the type for the right contribution
-		ISVNRemoteResource rightEdition = null;
-		if (right instanceof ResourceEditionNode)
-			rightEdition = ((ResourceEditionNode)right).getRemoteResource();
-		
-		
-		// compare them
-			
-		if (leftEdition == null || rightEdition == null) {
-			return NODE_UNKNOWN;
-		}
-		// if they're both non-files, they're the same
-		if (leftEdition.isContainer() && rightEdition.isContainer()) {
-			return NODE_EQUAL;
-		}
-		// if they have different types, they're different
-		if (leftEdition.isContainer() != rightEdition.isContainer()) {
-			return NODE_NOT_EQUAL;
-		}
-		
-		String leftLocation = leftEdition.getRepository().getLocation();
-		String rightLocation = rightEdition.getRepository().getLocation();
-		if (!leftLocation.equals(rightLocation)) {
-			return NODE_UNKNOWN;
-		}
-
-		if (leftEdition.getUrl().equals(rightEdition.getUrl()) &&
-            leftEdition.getLastChangedRevision().equals(rightEdition.getLastChangedRevision())) {
-			return NODE_EQUAL;
-	   } else {
-//				if(considerContentIfRevisionOrPathDiffers()) {
-			return NODE_UNKNOWN;
-//				} else {
-//					return NODE_NOT_EQUAL;
-//				}
-		}
-	}
-	
-//	private boolean considerContentIfRevisionOrPathDiffers() {
-//		return SVNUIPlugin.getPlugin().getPreferenceStore().getBoolean(ISVNUIConstants.PREF_CONSIDER_CONTENTS);
-//	}
-//	
-//	public Viewer createDiffViewer(Composite parent) {
-//		Viewer viewer = super.createDiffViewer(parent);
-//		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
-//			public void selectionChanged(SelectionChangedEvent event) {
-//				CompareConfiguration cc = getCompareConfiguration();
-//				setLabels(cc, (IStructuredSelection)event.getSelection());
-//			}
-//		});
-//		return viewer;
-//	}
-	
 }

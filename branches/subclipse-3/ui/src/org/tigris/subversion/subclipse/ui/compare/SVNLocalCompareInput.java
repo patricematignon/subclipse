@@ -14,6 +14,7 @@ package org.tigris.subversion.subclipse.ui.compare;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 
 import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.CompareEditorInput;
@@ -22,7 +23,6 @@ import org.eclipse.compare.ResourceNode;
 import org.eclipse.compare.structuremergeviewer.Differencer;
 import org.eclipse.compare.structuremergeviewer.IStructureComparator;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
@@ -33,6 +33,8 @@ import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.ui.ISaveableWorkbenchPart;
 import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.IWorkbenchPartSite;
+import org.tigris.subversion.subclipse.core.ISVNFolder;
+import org.tigris.subversion.subclipse.core.ISVNLocalFolder;
 import org.tigris.subversion.subclipse.core.ISVNLocalResource;
 import org.tigris.subversion.subclipse.core.ISVNRemoteResource;
 import org.tigris.subversion.subclipse.core.SVNException;
@@ -42,30 +44,68 @@ import org.tigris.subversion.svnclientadapter.SVNRevision;
 
 /**
  * A compare input for comparing local resource with its remote revision
- * TODO add a revert action
- * TODO use smarter diff nodes that use the status to determine changes
  * Perform textual check on:
  * - any local modification
  * - revision numbers don't match
  */
 public class SVNLocalCompareInput extends CompareEditorInput implements ISaveableWorkbenchPart {
+    private final SVNRevision remoteRevision;
 	private ISVNLocalResource resource;
 	private Shell shell;
 	private final ISVNRemoteResource remoteResource; // the remote resource to compare to or null if it does not exist
 	
+    /**
+     * Differencer that only uses teh status to determine if a file has changed
+     */
+    class StatusAwareDifferencer extends Differencer {
+        
+        /* (non-Javadoc)
+         * @see org.eclipse.compare.structuremergeviewer.Differencer#contentsEqual(java.lang.Object, java.lang.Object)
+         */
+        protected boolean contentsEqual(Object left, Object right) {
+            ISVNLocalResource local = null;
+            
+            if (left instanceof SVNLocalCompareInput.SVNLocalResourceNode) {
+                local = ((SVNLocalCompareInput.SVNLocalResourceNode)left).getLocalResource();
+            }
+            
+            if (local == null || right == null) {
+                return false;
+            }
+            
+            try {
+                if (!local.isManaged()) {
+                    return false;
+                }
+                return !(local.isDirty());
+            } catch (SVNException e) {
+            }
+            
+            return super.contentsEqual(left, right);
+        }
+    }
+    
 	/**
-	 * Special handling to allow saving of resource nodes
-	 * TODO shouldn't need a special node to save back to a resource
+	 * Node representing a local SVN file.  We can query the status of the resource to determine if
+     * it has changed.  It is also used to write the contents back to the file when setContent is called.
 	 */
-	class TypedBufferedContent extends ResourceNode {
+	class SVNLocalResourceNode extends ResourceNode {
 		
-		public TypedBufferedContent(IResource resource) {
-			super(resource);
+		private final ISVNLocalResource svnResource;
+		private ArrayList fChildren = null;
+        
+        public SVNLocalResourceNode(ISVNLocalResource svnResource) {
+			super(svnResource.getIResource());
+            this.svnResource = svnResource;
 		}
 		protected InputStream createStream() throws CoreException {
 			return ((IFile)getResource()).getContents();
 		}
 		
+        public ISVNLocalResource getLocalResource() {
+            return svnResource;
+        }
+        
 		// used by getContentsAction
 		public void setContent(byte[] contents) {
 			if (contents == null) contents = new byte[0];
@@ -98,11 +138,31 @@ public class SVNLocalCompareInput extends CompareEditorInput implements ISaveabl
 			fireContentChanged();
 		}
 		
+        public Object[] getChildren() {
+            if (fChildren == null) {
+                fChildren= new ArrayList();
+                
+                if (svnResource instanceof ISVNLocalFolder) {
+                    try {
+                        ISVNLocalResource[] members = (ISVNLocalResource[])((ISVNLocalFolder)svnResource).members(null, ISVNFolder.ALL_EXISTING_MEMBERS);
+                        for (int i= 0; i < members.length; i++) {
+                            IStructureComparator child= createChild(members[i]);
+                            if (child != null)
+                                fChildren.add(child);
+                        }
+                    } catch (CoreException ex) {
+                        // NeedWork
+                    }
+                }
+            }
+            return fChildren.toArray();
+        }
+        
 		/* (non-Javadoc)
 		 * @see org.eclipse.compare.ResourceNode#createChild(org.eclipse.core.resources.IResource)
 		 */
-		protected IStructureComparator createChild(IResource child) {
-			return new TypedBufferedContent(child);
+		protected IStructureComparator createChild(ISVNLocalResource child) {
+			return new SVNLocalResourceNode(child);
 		}
 		
 		public ITypedElement replace(ITypedElement child, ITypedElement other) {
@@ -116,6 +176,7 @@ public class SVNLocalCompareInput extends CompareEditorInput implements ISaveabl
 	 */
 	public SVNLocalCompareInput(ISVNLocalResource resource, SVNRevision revision) throws SVNException {
 		super(new CompareConfiguration());
+        this.remoteRevision = revision;
 		this.resource = resource;
 		// SVNRevision can be any valid revision : BASE, HEAD, number ...
 		this.remoteResource = resource.getRemoteResource(revision);
@@ -146,10 +207,12 @@ public class SVNLocalCompareInput extends CompareEditorInput implements ISaveabl
 	 */
 	protected Object prepareInput(IProgressMonitor monitor){
 		initLabels();
-		ITypedElement left = new TypedBufferedContent(resource.getIResource());
+		ITypedElement left = new SVNLocalResourceNode(resource);
 		ITypedElement right = new ResourceEditionNode(remoteResource);
-		Differencer diff = new Differencer();
-		return diff.findDifferences(false, monitor,null,null,left,right);
+        if (SVNRevision.BASE.equals(remoteRevision)) {
+            return new StatusAwareDifferencer().findDifferences(false, monitor,null,null,left,right);
+        }
+        return new RevisionAwareDifferencer().findDifferences(false, monitor,null,null,left,right);
 	}
 	
 	/* (non-Javadoc)
@@ -235,4 +298,5 @@ public class SVNLocalCompareInput extends CompareEditorInput implements ISaveabl
 	 */
 	public void removePropertyListener(IPropertyListener listener) {
 	}
+    
 }
