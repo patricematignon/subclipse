@@ -79,9 +79,6 @@ public class SVNLightweightDecorator
 	private boolean showHasRemote;
 	private DateFormat dateFormat;
 
-	// re-use the bindings map to reduce amount of garbage created
-	private final Map bindings;
-
 	/*
 	 * Define a cached image descriptor which only creates the image data once
 	 */
@@ -110,14 +107,13 @@ public class SVNLightweightDecorator
 	}
 
 	public SVNLightweightDecorator() {
-        bindings = new HashMap(5);
 		dateFormat = DateFormat.getInstance();
 
 		IPreferenceStore store = SVNUIPlugin.getPlugin().getPreferenceStore();
 		computeDeepDirtyCheck = store.getBoolean(ISVNUIConstants.PREF_CALCULATE_DIRTY);
-		folderDecoratorFormat = SVNDecoratorConfiguration.compileFormatString(store.getString(ISVNUIConstants.PREF_FOLDERTEXT_DECORATION), bindings);
-		projectDecoratorFormat = SVNDecoratorConfiguration.compileFormatString(store.getString(ISVNUIConstants.PREF_PROJECTTEXT_DECORATION), bindings);
-		fileDecoratorFormat = SVNDecoratorConfiguration.compileFormatString(store.getString(ISVNUIConstants.PREF_FILETEXT_DECORATION), bindings);
+		folderDecoratorFormat = SVNDecoratorConfiguration.compileFormatString(store.getString(ISVNUIConstants.PREF_FOLDERTEXT_DECORATION));
+		projectDecoratorFormat = SVNDecoratorConfiguration.compileFormatString(store.getString(ISVNUIConstants.PREF_PROJECTTEXT_DECORATION));
+		fileDecoratorFormat = SVNDecoratorConfiguration.compileFormatString(store.getString(ISVNUIConstants.PREF_FILETEXT_DECORATION));
 		dirtyFlag = store.getString(ISVNUIConstants.PREF_DIRTY_FLAG);
 		addedFlag = store.getString(ISVNUIConstants.PREF_ADDED_FLAG);
 		showNewResources = store.getBoolean(ISVNUIConstants.PREF_SHOW_NEWRESOURCE_DECORATION);
@@ -130,11 +126,11 @@ public class SVNLightweightDecorator
 							if (ISVNUIConstants.PREF_CALCULATE_DIRTY.equals(event.getProperty())) {
 								computeDeepDirtyCheck = ((Boolean)event.getNewValue()).booleanValue();					
 							} else if (ISVNUIConstants.PREF_FOLDERTEXT_DECORATION.equals(event.getProperty())) {
-								folderDecoratorFormat = SVNDecoratorConfiguration.compileFormatString((String)event.getNewValue(), bindings);
+								folderDecoratorFormat = SVNDecoratorConfiguration.compileFormatString((String)event.getNewValue());
 							} else if (ISVNUIConstants.PREF_PROJECTTEXT_DECORATION.equals(event.getProperty())) {
-								projectDecoratorFormat = SVNDecoratorConfiguration.compileFormatString((String)event.getNewValue(), bindings);
+								projectDecoratorFormat = SVNDecoratorConfiguration.compileFormatString((String)event.getNewValue());
 							} else if (ISVNUIConstants.PREF_FILETEXT_DECORATION.equals(event.getProperty())) {
-								fileDecoratorFormat = SVNDecoratorConfiguration.compileFormatString((String)event.getNewValue(), bindings);
+								fileDecoratorFormat = SVNDecoratorConfiguration.compileFormatString((String)event.getNewValue());
 							} else if (ISVNUIConstants.PREF_DIRTY_FLAG.equals(event.getProperty())) {
 								dirtyFlag = (String)event.getNewValue();
 							} else if (ISVNUIConstants.PREF_ADDED_FLAG.equals(event.getProperty())) {
@@ -249,6 +245,7 @@ public class SVNLightweightDecorator
      */
 	public void decorateTextLabel(IResource resource, IDecoration decoration, boolean isDirty) {
 		try {
+			Map bindings = new HashMap(5);
 
 			// if the resource does not have a location then return. This can happen if the resource
 			// has been deleted after we where asked to decorate it.
@@ -313,8 +310,6 @@ public class SVNLightweightDecorator
 			
 		} catch (SVNException e) {
 			SVNUIPlugin.log(e.getStatus());
-		} finally {
-			bindings.clear();
 		}
 	}
 

@@ -29,7 +29,7 @@ public class SVNDecoratorConfiguration {
 			this.value = value;
 		}
 
-		public String getValue() {
+		public String getValue(Map bindings) {
 			return value;
 		}
 		public String toString() {
@@ -43,14 +43,12 @@ public class SVNDecoratorConfiguration {
 	private static class MappedValueDecoratorComponent implements IDecoratorComponent {
 
 		private final String key;
-		private final Map bindings;
-		public MappedValueDecoratorComponent(Map bindings, String key) {
-			this.bindings = bindings;
+		public MappedValueDecoratorComponent(String key) {
 			this.key = key;
 			
 		}
 
-		public String getValue() {
+		public String getValue(Map bindings) {
 			return (String)bindings.get(key);
 		}
 		
@@ -99,7 +97,7 @@ public class SVNDecoratorConfiguration {
      * @return
      */
     public static String decorate(String name, String formatString, Map bindings) {
-    	IDecoratorComponent[][] format = compileFormatString(formatString, bindings);
+    	IDecoratorComponent[][] format = compileFormatString(formatString);
         String[] prefixSuffix = decorate(format, bindings);
 
         return prefixSuffix[0] + name + prefixSuffix[1];
@@ -111,7 +109,7 @@ public class SVNDecoratorConfiguration {
      * @param bindings Bindings to link components to
      * @return Decorator components for prefix and suffix
      */
-    public static IDecoratorComponent[][] compileFormatString(String format, Map bindings) {
+    public static IDecoratorComponent[][] compileFormatString(String format) {
 		int length = format.length();
 		int start = -1;
 		int end = length;
@@ -138,7 +136,7 @@ public class SVNDecoratorConfiguration {
 						// Start working on the suffix
 						isPrefix = false;
 					} else {
-						IDecoratorComponent component = new MappedValueDecoratorComponent(bindings, key);
+						IDecoratorComponent component = new MappedValueDecoratorComponent(key);
 						if (isPrefix) {
 							prefix.add(component);
 						} else {
@@ -185,14 +183,14 @@ public class SVNDecoratorConfiguration {
     	StringBuffer suffix = new StringBuffer(80);
 
     	for (int iPrefix = 0; iPrefix < format[0].length; iPrefix++) {
-    		String value = format[0][iPrefix].getValue();
+    		String value = format[0][iPrefix].getValue(bindings);
     		if (value != null) {
     			prefix.append(value);
     		}
     	}
 
     	for (int iSuffix = 0; iSuffix < format[1].length; iSuffix++) {
-    		String value = format[1][iSuffix].getValue();
+    		String value = format[1][iSuffix].getValue(bindings);
     		if (value != null) {
     			suffix.append(value);
     		}
