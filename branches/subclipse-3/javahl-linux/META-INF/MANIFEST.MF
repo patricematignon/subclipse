@@ -1,8 +1,0 @@
-Manifest-Version: 1.0
-Bundle-Localization: plugin
-Bundle-SymbolicName: org.tigris.subversion.javahl.linux
-Bundle-Vendor: tigris.org
-Bundle-Name: Linux Fragment
-Bundle-ClassPath: linux.jar
-Fragment-Host: org.tigris.subversion.subclipse.core;bundle-version="0.9.14"
-Bundle-Version: 0.9.14
