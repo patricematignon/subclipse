@@ -1,19 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <fragment
-   id="corelinux"
-   name="%fragmentName"
+   id="org.tigris.subversion.subclipse.native.linux.x86"
+   name="subclipse linux native support"
    version="0.8.1"
-   provider-name="%providerName"
+   provider-name="%tigris"
    plugin-id="org.tigris.subversion.subclipse.core"
    plugin-version="0.8.1"
    match="perfect">
 
    <runtime>
    </runtime>
-
-   <requires>
-      <import plugin="org.tigris.subversion.subclipse.core"/>
-   </requires>
 
 
 </fragment>
