@@ -21,7 +21,9 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.tigris.subversion.subclipse.core.Policy;
 import org.tigris.subversion.subclipse.core.SVNException;
@@ -87,14 +89,18 @@ public class OperationManager implements ISVNNotifyListener {
 				svnClient.removeNotifyListener(this);
 				for (Iterator it = changedResources.iterator(); it.hasNext();) {
 					IResource resource = (IResource) it.next();
-					// .svn directory will be refreshed so all files in the
-					// directory including resource will
-					// be refreshed later (@see SyncFileChangeListener)
-					if (Policy.DEBUG_METAFILE_CHANGES) {
-						System.out
-								.println("[svn] .svn dir refreshed : " + resource.getFullPath()); //$NON-NLS-1$
-					}
-
+                    try {
+                        // .svn directory will be refreshed so all files in the
+                        // directory including resource will
+                        // be refreshed later (@see SyncFileChangeListener)
+                        resource.refreshLocal(IResource.DEPTH_INFINITE,new NullProgressMonitor());
+                        if(Policy.DEBUG_METAFILE_CHANGES) {
+                            System.out.println("[svn] .svn dir refreshed : " + resource.getFullPath()); //$NON-NLS-1$
+                        }
+                    } catch (CoreException e) {
+                        throw SVNException.wrapException(e);
+                    }                    
+                    
 				}
 			}
 		} finally {
@@ -114,13 +120,16 @@ public class OperationManager implements ISVNNotifyListener {
 			return;
 		}
 
-		if (kind == SVNNodeKind.UNKNOWN) { // delete, revert
-			IPath pathEntries = pathEclipse.removeLastSegments(1).append(
-					SVNConstants.SVN_DIRNAME);
-			IResource entries = workspaceRoot.getFolder(pathEntries);
-			changedResources.add(entries);
-		} else {
-			IResource resource = null;
+		
+        if (kind == SVNNodeKind.UNKNOWN)  { // delete, revert 
+            IPath pathEntries = pathEclipse.removeLastSegments(1).append(
+                    SVNConstants.SVN_DIRNAME);
+            IResource entries = workspaceRoot.getContainerForLocation(pathEntries);
+            changedResources.add(entries);
+        }
+        else
+        {
+            IResource resource = null;
 			IResource svnDir = null;
 			if (kind == SVNNodeKind.DIR) {
 				// when the resource is a directory, two .svn directories can
