@@ -9,8 +9,8 @@
  *     Cédric Chabanois (cchabanois@ifrance.com) - modified for Subversion 
  *******************************************************************************/
 package org.tigris.subversion.subclipse.test.core;
-import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.Path;

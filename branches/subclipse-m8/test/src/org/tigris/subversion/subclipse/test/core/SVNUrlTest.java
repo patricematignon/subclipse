@@ -3,9 +3,9 @@
  */
 package org.tigris.subversion.subclipse.test.core;
 
-import org.tigris.subversion.svnclientadapter.SVNUrl;
-
 import junit.framework.TestCase;
+
+import org.tigris.subversion.svnclientadapter.SVNUrl;
 
 /**
  * @author mml
