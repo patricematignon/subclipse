@@ -7,6 +7,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -31,11 +32,13 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.util.SWTResourceUtil;
@@ -47,6 +50,7 @@ import org.tigris.subversion.subclipse.core.resources.SVNWorkspaceRoot;
 import org.tigris.subversion.subclipse.ui.IHelpContextIds;
 import org.tigris.subversion.subclipse.ui.Policy;
 import org.tigris.subversion.subclipse.ui.comments.CommitCommentArea;
+import org.tigris.subversion.subclipse.ui.settings.ProjectProperties;
 import org.tigris.subversion.svnclientadapter.SVNStatusKind;
 
 public class CommitDialog extends Dialog {
@@ -58,10 +62,13 @@ public class CommitDialog extends Dialog {
     private IResource[] resourcesToCommit;
     private String url;
     private boolean unaddedResources;
+    private ProjectProperties projectProperties;
     private Object[] selectedResources;
     private CheckboxTableViewer listViewer;
+    private Text issueText;
+    private String issue;
 
-    public CommitDialog(Shell parentShell, IResource[] resourcesToCommit, String url, boolean unaddedResources) {
+    public CommitDialog(Shell parentShell, IResource[] resourcesToCommit, String url, boolean unaddedResources, ProjectProperties projectProperties) {
         super(parentShell);
 		int shellStyle = getShellStyle();
 		setShellStyle(shellStyle | SWT.RESIZE);
@@ -69,20 +76,23 @@ public class CommitDialog extends Dialog {
 		this.resourcesToCommit = resourcesToCommit;
 		this.url = url;
 		this.unaddedResources = unaddedResources;
+		this.projectProperties = projectProperties;
     }
     
 	/*
 	 * @see Dialog#createDialogArea(Composite)
 	 */
 	protected Control createDialogArea(Composite parent) {
-		getShell().setText(Policy.bind("CommitDialog.title")); //$NON-NLS-1$
+		if (url == null) getShell().setText(Policy.bind("CommitDialog.commitTo") + " " + Policy.bind("CommitDialog.multiple")); //$NON-NLS-1$
+		else getShell().setText(Policy.bind("CommitDialog.commitTo") + " " + url);
 		Composite composite = new Composite(parent, SWT.NULL);
 		composite.setLayout(new GridLayout());
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
-		Label label = createWrappingLabel(composite);
-		if (url == null) label.setText(Policy.bind("CommitDialog.commitTo") + " " + Policy.bind("CommitDialog.multiple")); //$NON-NLS-1$
-		else label.setText(Policy.bind("CommitDialog.commitTo") + " " + url); //$NON-NLS-1$
+		if (projectProperties != null) {
+		    addBugtrackingArea(composite);
+		}
+
 		commitCommentArea.createArea(composite);
 		commitCommentArea.addPropertyChangeListener(new IPropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent event) {
@@ -92,7 +102,7 @@ public class CommitDialog extends Dialog {
 		});
 
 		addResourcesArea(composite);
-		
+				
 		// set F1 help
 		WorkbenchHelp.setHelp(composite, IHelpContextIds.RELEASE_COMMENT_DIALOG);	
 		
@@ -216,7 +226,43 @@ public class CommitDialog extends Dialog {
 		
     }
 	
-	private static String getStatus(IResource resource) {
+	private void addBugtrackingArea(Composite composite) {
+		Composite bugtrackingComposite = new Composite(composite, SWT.NULL);
+		GridLayout bugtrackingLayout = new GridLayout();
+		bugtrackingLayout.numColumns = 2;
+		bugtrackingComposite.setLayout(bugtrackingLayout);
+		
+		Label label = new Label(bugtrackingComposite, SWT.NONE);
+		label.setText(projectProperties.getLabel());
+		issueText = new Text(bugtrackingComposite, SWT.BORDER);
+		GridData data = new GridData();
+		data.widthHint = 150;
+		issueText.setLayoutData(data);
+    }
+	
+    protected void okPressed() {
+        if (projectProperties != null) {
+            issue = issueText.getText().trim();
+            if (projectProperties.isWarnIfNoIssue() && (issueText.getText().trim().length() == 0)) {
+                if (!MessageDialog.openQuestion(getShell(), Policy.bind("CommitDialog.title"), Policy.bind("CommitDialog.0", projectProperties.getLabel()))) {
+                    issueText.setFocus();
+                    return; //$NON-NLS-1$
+                }
+            }
+            if (issueText.getText().trim().length() > 0) {
+                String issueError = projectProperties.validateIssue(issueText.getText().trim());
+                if (issueError != null) {
+                    MessageDialog.openError(getShell(), Policy.bind("CommitDialog.title"), issueError); //$NON-NLS-1$
+                    issueText.selectAll();
+                    issueText.setFocus();
+                    return;
+                }
+            }
+        }
+        super.okPressed();
+    }
+
+    private static String getStatus(IResource resource) {
 	    ISVNLocalResource svnResource = SVNWorkspaceRoot.getSVNResourceFor(resource);
         String result = null;
 	       try {
@@ -366,6 +412,12 @@ public class CommitDialog extends Dialog {
 	 * @return String
 	 */
 	public String getComment() {
+	    if ((projectProperties != null) && (issue != null) && (issue.length() > 0)) {
+	        if (projectProperties.isAppend()) 
+	            return commitCommentArea.getComment() + "\n" + projectProperties.getResolvedMessage(issue) + "\n";
+	        else
+	            return projectProperties.getResolvedMessage(issue) + "\n" + commitCommentArea.getComment();
+	    }
 		return commitCommentArea.getComment();
 	}
 	
