@@ -10,9 +10,8 @@
  *******************************************************************************/
 package org.tigris.subversion.subclipse.ui.pending;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
@@ -22,7 +21,6 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.Action;
@@ -61,16 +59,13 @@ import org.tigris.subversion.subclipse.core.IResourceStateChangeListener;
 import org.tigris.subversion.subclipse.core.ISVNLocalResource;
 import org.tigris.subversion.subclipse.core.SVNException;
 import org.tigris.subversion.subclipse.core.SVNProviderPlugin;
+import org.tigris.subversion.subclipse.core.commands.GetStatusCommand;
 import org.tigris.subversion.subclipse.core.resources.LocalResourceStatus;
 import org.tigris.subversion.subclipse.core.resources.SVNWorkspaceRoot;
 import org.tigris.subversion.subclipse.ui.ISVNUIConstants;
 import org.tigris.subversion.subclipse.ui.Policy;
 import org.tigris.subversion.subclipse.ui.SVNUIPlugin;
 import org.tigris.subversion.subclipse.ui.actions.CompareWithBaseRevisionAction;
-import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
-import org.tigris.subversion.svnclientadapter.ISVNStatus;
-import org.tigris.subversion.svnclientadapter.SVNClientException;
-import org.tigris.subversion.svnclientadapter.SVNNodeKind;
 
 /**
  * 
@@ -416,10 +411,6 @@ public class PendingOperationsView extends ViewPart implements IResourceStateCha
         tableViewer.addDropSupport(ops, transfers, new PendingDropAdapter(tableViewer, this));
     }
     
-//	public void setInput(ISVNStatus[] status) {
-//		tableViewer.setInput(status);
-//	}
-
     /**
      * fill the popup menu for the table
      */
@@ -482,21 +473,51 @@ public class PendingOperationsView extends ViewPart implements IResourceStateCha
      */
     public void refresh()  {
         changedResources = null;
+        updateTable();
+    }
 
-        // refresh is not always called from UI thread 
+    private void updateTable() {
+        // updateTable is not always called from UI thread 
         getSite().getShell().getDisplay().syncExec(new Runnable() {
             public void run() {
                 tableViewer.refresh();
             }
         });
     }
-
+    
+    /**
+     * updates the changes resources
+     * 
+     * @param resources resources for which status changed
+     * @throws SVNException
+     */
+    private void updateChangedResourcesWith(IResource[] resources) throws SVNException {
+        Set set = new HashSet();
+        for (int i = 0; i < this.changedResources.length;i++) {
+            set.add(this.changedResources[i]);
+        }
+        for (int i = 0; i < resources.length;i++) {
+            set.add(resources[i]);
+        }
+        this.changedResources = getChangedResources((IResource[])set.toArray(new IResource[0]));
+    }
+    
     public void resourceSyncInfoChanged(IResource[] changedResources) {
-        refresh();
+        // we don't refresh because it takes a long time
+        try {
+            updateChangedResourcesWith(changedResources);
+        } catch (SVNException e) {
+        }
+        updateTable();
     }
 
     public void resourceModified(IResource[] changedResources) {
-        refresh();
+        // we don't refresh because it takes a long time
+        try {
+            updateChangedResourcesWith(changedResources);
+        } catch (SVNException e) {
+        }
+        updateTable();
     }
     
     public void projectConfigured(IProject project) {}
@@ -552,7 +573,7 @@ public class PendingOperationsView extends ViewPart implements IResourceStateCha
 		public IStatus run(IProgressMonitor monitor) {
 			try {
 				if(container != null && !shutdown) {
-					ISVNStatus[] status = getStatus( container );
+                    LocalResourceStatus[] status = getStatus( container );
 					changedResources = getChangedResources( status ); 
 					
 					getSite().getShell().getDisplay().asyncExec(new Runnable() {
@@ -571,53 +592,59 @@ public class PendingOperationsView extends ViewPart implements IResourceStateCha
 		}
 	}
 
-    private ISVNStatus[] getStatus(IContainer container) throws SVNException {
+    /**
+     * get the statuses (recursively) of resources in given container 
+     * @param container
+     * @return
+     * @throws SVNException
+     */
+    private LocalResourceStatus[] getStatus(IContainer container) throws SVNException {
     	// can be a null parent if we have the view open before we select anything
-    	if(parent == null)
+    	if(container == null)
     		return null;
-        ISVNStatus[] statuses = null;
-        ISVNLocalResource svnResource = SVNWorkspaceRoot.getSVNResourceFor(parent);
-        ISVNClientAdapter svnClient = svnResource.getRepository().getSVNClient();
-        try { 
-            statuses = svnClient.getStatus(container.getLocation().toFile(),true,true);
-        } catch (SVNClientException e) {
-            throw SVNException.wrapException(e);
-        }
-        return statuses;
+        GetStatusCommand command = new GetStatusCommand(SVNWorkspaceRoot.getSVNResourceFor(container));
+        command.run(null);
+        return command.getStatuses();
     }
 
-    private IResource[] getChangedResources(ISVNStatus[] status) {
+    
+    /**
+     * filters the given resources depending on the settings of the view
+     * @param resources
+     * @return
+     * @throws SVNException
+     */
+    private IResource[] getChangedResources(IResource[] resources) throws SVNException {
+        LocalResourceStatus[] statuses = new LocalResourceStatus[resources.length];
+        for (int i = 0; i < resources.length;i++) {
+            ISVNLocalResource svnResource = SVNWorkspaceRoot.getSVNResourceFor(resources[i]);
+            statuses[i] = svnResource.getStatus();
+        }
+        return getChangedResources(statuses);
+    }
+    
+    /**
+     * filters the given statuses depending on the settings of the view and returns 
+     * the corresponding resources
+     * 
+     * @param status
+     * @return
+     */
+    private IResource[] getChangedResources(LocalResourceStatus[] status) {
         if( status == null )
             return null;
         IWorkspaceRoot workspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
         
-        List resourceList = new ArrayList();
+        Set resourceSet = new HashSet();
         for (int i = 0; i < status.length;i++) {
             if ( ((status[i].isAdded()) && (toggleAddedAction.isChecked())) ||
                     ((status[i].isDeleted()) && (toggleDeletedAction.isChecked())) ||
-                    ((status[i].isModified()) && (toggleModifiedAction.isChecked())) ) {
+                    ((status[i].isTextModified()) && (toggleModifiedAction.isChecked())) ) {
                 
-                // path is sometimes absolute, sometimes relative.
-                // here we make sure it is absolute
-                IPath pathEclipse = null;
-                try {
-                    pathEclipse = new Path( (new Path(status[i].getPath())).toFile().getCanonicalPath());
-                } catch (IOException e)
-                {
-                    break; // should never occur ...
-                }
-                
-                IResource resource = null;
-                if (status[i].getNodeKind()  == SVNNodeKind.DIR)       
-                    resource = workspaceRoot.getContainerForLocation(pathEclipse);
-                else
-                    if (status[i].getNodeKind() == SVNNodeKind.FILE)
-                        resource =  workspaceRoot.getFileForLocation(pathEclipse);
-                    
-                resourceList.add(resource);
+                IResource resource = GetStatusCommand.getResource(status[i]);
+                resourceSet.add(resource);
             }
         }
-        IResource[] resourceArray = new IResource[resourceList.size()];
-        return (IResource[]) resourceList.toArray(resourceArray);
+        return (IResource[]) resourceSet.toArray(new IResource[0]);
     }
 }
