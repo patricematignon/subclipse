@@ -75,6 +75,8 @@ public class SVNUrl {
 
     public SVNUrl(String svnUrl) throws MalformedURLException {
         this.svnUrl = svnUrl;
+        if(svnUrl == null)throw new MalformedURLException("Svn url cannot be null. Is this  a versioned resource?");
+        //this shouldn't be called with null, bug indicates trying to call svn url on non versioned resource.
         parseUrl();
     }
 
@@ -86,11 +88,13 @@ public class SVNUrl {
         // for now, we don't verify the url, we let subversion do it
         // we just make sure the protocol is one we support
         // (scheme)://(optional_stuff)
-        int i = svnUrl.indexOf("://");
-        if (i == -1)
+        String[] parts = svnUrl.split(":");
+        if(parts.length == 1){
             throw new MalformedURLException("Invalid svn url :"+svnUrl);
-        protocol = svnUrl.substring(0,i).toLowerCase();
-        if ((!protocol.equals("http")) &&
+        }
+        protocol =parts[0];
+        if ((!protocol.equalsIgnoreCase("http")) && 
+                !protocol.equalsIgnoreCase("https") &&
             (!protocol.equals("file")) &&
             (!protocol.equals("svn")) &&
             (!protocol.equals("svn+ssh")) ) {
