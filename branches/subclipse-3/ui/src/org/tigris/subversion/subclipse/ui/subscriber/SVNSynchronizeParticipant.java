@@ -11,21 +11,21 @@
 package org.tigris.subversion.subclipse.ui.subscriber;
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.subscribers.Subscriber;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.core.variants.IResourceVariant;
+import org.eclipse.team.internal.ui.synchronize.ScopableSubscriberParticipant;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.synchronize.ISynchronizeModelElement;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.team.ui.synchronize.ISynchronizeParticipantDescriptor;
 import org.eclipse.team.ui.synchronize.ISynchronizeScope;
-import org.eclipse.team.ui.synchronize.SubscriberParticipant;
 import org.eclipse.team.ui.synchronize.SynchronizePageActionGroup;
+import org.eclipse.ui.IMemento;
+import org.eclipse.ui.PartInitException;
 import org.tigris.subversion.subclipse.core.sync.SVNWorkspaceSubscriber;
 
 
@@ -36,7 +36,7 @@ import org.tigris.subversion.subclipse.core.sync.SVNWorkspaceSubscriber;
  * 
  * @since 3.0
  */
-public class SVNSynchronizeParticipant extends SubscriberParticipant {
+public class SVNSynchronizeParticipant extends ScopableSubscriberParticipant {
 	
 	/**
 	 * The particpant ID as defined in the plugin manifest
@@ -52,7 +52,7 @@ public class SVNSynchronizeParticipant extends SubscriberParticipant {
 	 * A custom label decorator that will show the remote mapped path for each
 	 * file.
 	 */
-	private class FileSystemParticipantLabelDecorator extends LabelProvider implements ILabelDecorator {
+	private class SVNParticipantLabelDecorator extends LabelProvider implements ILabelDecorator {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.ILabelDecorator#decorateImage(org.eclipse.swt.graphics.Image, java.lang.Object)
 		 */
@@ -102,32 +102,37 @@ public class SVNSynchronizeParticipant extends SubscriberParticipant {
 
 	}
 	
+	/**
+	 * No arg contructor used for
+	 * creation of persisted participant after startup
+	 */
+	public SVNSynchronizeParticipant() {
+	}
+
 	public SVNSynchronizeParticipant(ISynchronizeScope scope) {
 		super(scope);
 		setSubscriber(SVNWorkspaceSubscriber.getInstance());
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.ui.synchronize.SubscriberParticipant#setSubscriber(org.eclipse.team.core.subscribers.Subscriber)
+
+	/**
+	 * @see org.eclipse.team.ui.synchronize.ISynchronizeParticipant#init(org.eclipse.ui.IMemento)
 	 */
-	protected void setSubscriber(Subscriber subscriber) {
-		super.setSubscriber(subscriber);
-		try {
-			ISynchronizeParticipantDescriptor descriptor = TeamUI.getSynchronizeManager().getParticipantDescriptor(ID);
-			setInitializationData(descriptor);
-			setSecondaryId(Long.toString(System.currentTimeMillis()));
-		} catch (CoreException e) {
-			// ignore
-		}
+	public void init(String secondaryId, IMemento memento) throws PartInitException {
+		super.init(secondaryId, memento);
+		setSubscriber(SVNWorkspaceSubscriber.getInstance());
 	}
-	
-	/* (non-Javadoc)
+
+	 protected ISynchronizeParticipantDescriptor getDescriptor() {
+        return TeamUI.getSynchronizeManager().getParticipantDescriptor(ID);
+    }
+
+    /* (non-Javadoc)
 	 * @see org.eclipse.team.ui.synchronize.subscribers.SubscriberParticipant#initializeConfiguration(org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration)
 	 */
 	protected void initializeConfiguration(ISynchronizePageConfiguration configuration) {
 		super.initializeConfiguration(configuration);
 		
-		ILabelDecorator labelDecorator = new FileSystemParticipantLabelDecorator();
+		ILabelDecorator labelDecorator = new SVNParticipantLabelDecorator();
 		configuration.addLabelDecorator(labelDecorator);
 		
 		// Add support for showing mode buttons

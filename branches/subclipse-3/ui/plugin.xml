@@ -607,7 +607,6 @@
    <extension
          point="org.eclipse.team.ui.synchronizeParticipants">
       <participant
-            persistent="false"
             class="org.tigris.subversion.subclipse.ui.subscriber.SVNSynchronizeParticipant"
             icon="icons/full/eview16/cvs_persp.gif"
             name="%SVNWorkspaceParticipant"
