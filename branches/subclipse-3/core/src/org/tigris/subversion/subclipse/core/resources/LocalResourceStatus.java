@@ -287,6 +287,9 @@ public class LocalResourceStatus {
         return getTextStatus().equals(SVNStatusKind.MODIFIED);
     }
 
+    public boolean isTextConflicted() {
+        return getTextStatus().equals(SVNStatusKind.CONFLICTED);
+    }    
     
     public boolean isCopied() {
         return urlCopiedFrom != null; 
