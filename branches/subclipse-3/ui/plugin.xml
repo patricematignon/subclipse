@@ -658,8 +658,9 @@
    <extension
          point="org.eclipse.team.ui.synchronizeParticipants">
       <participant
+            persistent="false"
+            icon="icons/full/cview16/svn_persp.gif"
             class="org.tigris.subversion.subclipse.ui.subscriber.SVNSynchronizeParticipant"
-            icon="icons/full/eview16/cvs_persp.gif"
             name="%SVNWorkspaceParticipant"
             id="org.tigris.subversion.subclipse.participant">
       </participant>
@@ -668,7 +669,7 @@
          point="org.eclipse.team.ui.synchronizeWizards">
       <wizard
             class="org.tigris.subversion.subclipse.ui.SynchronizeWizard"
-            icon="icons/full/wizards/fsicon_wiz.gif"
+            icon="icons/full/cview16/svn_persp.gif"
             description="Synchronize files managed with SVN"
             name="Synchronize SVN Provider"
             id="org.tigris.subversion.subclipse.synchronizeWizard"/>
