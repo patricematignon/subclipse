@@ -26,6 +26,7 @@ import org.eclipse.team.core.TeamException;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.tigris.subversion.subclipse.core.ISVNRemoteFolder;
 import org.tigris.subversion.subclipse.core.ISVNRepositoryLocation;
+import org.tigris.subversion.subclipse.core.commands.CheckoutCommand;
 import org.tigris.subversion.subclipse.core.resources.SVNWorkspaceRoot;
 import org.tigris.subversion.subclipse.ui.Policy;
 import org.tigris.subversion.subclipse.ui.util.IPromptCondition;
@@ -85,7 +86,8 @@ public class CheckoutAsProjectAction extends SVNAction {
 						}
 						
 						monitor.setTaskName(getTaskName(remoteFolders));						
-						SVNWorkspaceRoot.checkout(remoteFolders, localFolders, Policy.subMonitorFor(monitor, 100));
+						CheckoutCommand command = new CheckoutCommand(remoteFolders, localFolders);
+                        command.run(Policy.subMonitorFor(monitor, 100));
 					}
 				} catch (TeamException e) {
 					throw new InvocationTargetException(e);

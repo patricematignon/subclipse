@@ -30,7 +30,7 @@ import org.eclipse.ui.actions.NewProjectAction;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.tigris.subversion.subclipse.core.ISVNRemoteFolder;
 import org.tigris.subversion.subclipse.core.SVNException;
-import org.tigris.subversion.subclipse.core.resources.SVNWorkspaceRoot;
+import org.tigris.subversion.subclipse.core.commands.CheckoutCommand;
 import org.tigris.subversion.subclipse.ui.Policy;
 import org.tigris.subversion.subclipse.ui.util.PromptingDialog;
 
@@ -99,7 +99,8 @@ public class CheckoutAsAction extends SVNAction {
 						used = 5;
 						createAndOpenProject(project, desc, Policy.subMonitorFor(monitor, used));
 					}
-                    SVNWorkspaceRoot.checkout(new ISVNRemoteFolder[] { remoteFolder }, new IProject[] { project }, Policy.subMonitorFor(monitor, 100 - used));
+                    CheckoutCommand command = new CheckoutCommand(new ISVNRemoteFolder[] { remoteFolder }, new IProject[] { project });
+                    command.run(Policy.subMonitorFor(monitor, 100 - used));
 				} catch (TeamException e) {
 					throw new InvocationTargetException(e);
 				} finally {
