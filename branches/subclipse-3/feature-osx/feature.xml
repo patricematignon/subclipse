@@ -2,7 +2,7 @@
 <feature
       id="org.tigris.subversion.subclipse.osx"
       label="Subclipse"
-      version="0.9.7"
+      version="0.9.8"
       provider-name="tigris.org"
       os="macosx"
       ws="carbon"
@@ -169,19 +169,19 @@ This Agreement is governed by the laws of the State of New York and the intellec
          id="org.tigris.subversion.subclipse.core"
          download-size="0"
          install-size="0"
-         version="0.9.7"/>
+         version="0.9.8"/>
 
    <plugin
          id="org.tigris.subversion.subclipse.ui"
          download-size="0"
          install-size="0"
-         version="0.9.7"/>
+         version="0.9.8"/>
 
    <plugin
          id="org.tigris.subversion.javahl.osx"
          download-size="0"
          install-size="0"
-         version="0.9.7"
+         version="0.9.8"
          fragment="true"/>
 
 </feature>
