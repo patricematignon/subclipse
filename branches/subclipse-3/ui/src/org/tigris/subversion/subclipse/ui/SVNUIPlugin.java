@@ -20,7 +20,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -37,8 +36,9 @@ import org.osgi.framework.BundleContext;
 import org.tigris.subversion.subclipse.core.ISVNRemoteFile;
 import org.tigris.subversion.subclipse.core.ISVNRemoteFolder;
 import org.tigris.subversion.subclipse.core.ISVNRepositoryLocation;
+import org.tigris.subversion.subclipse.core.SVNProviderPlugin;
 import org.tigris.subversion.subclipse.core.SVNStatus;
-import org.tigris.subversion.subclipse.ui.console.ConsoleView;
+import org.tigris.subversion.subclipse.ui.console.SVNOutputConsole;
 import org.tigris.subversion.subclipse.ui.repository.RepositoryManager;
 import org.tigris.subversion.subclipse.ui.repository.model.SVNAdapterFactory;
 /**
@@ -221,6 +221,7 @@ public class SVNUIPlugin extends AbstractUIPlugin {
 	public static final int LOG_CORE_EXCEPTIONS = 4;
 	public static final int LOG_OTHER_EXCEPTIONS = 8;
 	public static final int LOG_NONTEAM_EXCEPTIONS = LOG_CORE_EXCEPTIONS | LOG_OTHER_EXCEPTIONS;
+	private SVNOutputConsole console;
 	
 	/**
 	 * Convenience method for showing an error dialog 
@@ -389,7 +390,7 @@ public class SVNUIPlugin extends AbstractUIPlugin {
 //		// if the global ignores list is changed then update decorators.
 		//TeamUI.getSynchronizeManager().addSynchronizeParticipants(new ISynchronizeParticipant[]{new SVNWorkspaceSynchronizeParticipant()});
 		
-		ConsoleView.startup();
+		console = new SVNOutputConsole();
 	}
 	
 	/**
@@ -405,25 +406,21 @@ public class SVNUIPlugin extends AbstractUIPlugin {
 			throw new CoreException(e.getStatus());
 		}
 
-		ConsoleView.shutdown();
+        console.shutdown();
 	}
 	
-
-	/**
-	 * disable the console listener. There will be no output on the console for the svn commands
-	 * executed until enableConsoleListener is called
-	 */	
-	public void disableConsoleListener() {
-		ConsoleView.disableConsoleListener();
-	}
-
-	/**
-	 * enable the console listener. There will be some output for each svn command executed 
-	 */	
-	public void enableConsoleListener() {
-		ConsoleView.enableConsoleListener();
-	}
-
+    /**
+     * Returns the standard display to be used. The method first checks, if
+     * the thread calling this method has an associated display. If so, this
+     * display is returned. Otherwise the method returns the default display.
+     */
+    public static Display getStandardDisplay() {
+        Display display= Display.getCurrent();
+        if (display == null) {
+            display= Display.getDefault();
+        }
+        return display;     
+    }
 
     /**
      * Returns the image descriptor for the given image ID.
@@ -432,6 +429,18 @@ public class SVNUIPlugin extends AbstractUIPlugin {
     public ImageDescriptor getImageDescriptor(String id) {
         return imageDescriptors.getImageDescriptor(id);
     }
-	  
-    
+
+	/**
+	 * Temporarily detach the console from the message source
+	 */
+	public void disableConsoleListener() {
+		SVNProviderPlugin.getPlugin().setConsoleListener(null);
+	}
+
+	/**
+	 * Reconnect the console view to the message source
+	 */
+	public void enableConsoleListener() {
+        SVNProviderPlugin.getPlugin().setConsoleListener(console);
+	}
 }

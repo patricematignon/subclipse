@@ -58,7 +58,9 @@ public interface ISVNUIConstants {
     public final String IMG_FOLDERDELETE_PENDING = "pending16/folderdelete_pending.gif"; //$NON-NLS-1$    
     public final String IMG_FILEMODIFIED_PENDING = "pending16/filemodified_pending.gif"; //$NON-NLS-1$
     public final String IMG_FOLDERMODIFIED_PENDING = "pending16/foldermodified_pending.gif"; //$NON-NLS-1$
-    
+
+    // views
+    public final String IMG_SVN_CONSOLE = "icons/full/cview16/console_view.gif";
 	
 	// preferences
 	public final String PREF_SHOW_COMMENTS = "pref_show_comments"; //$NON-NLS-1$
@@ -72,7 +74,9 @@ public interface ISVNUIConstants {
 	public final String PREF_REPLACE_UNMANAGED = "pref_replace_unmanaged"; //$NON-NLS-1$
 	public final String PREF_COMPRESSION_LEVEL = "pref_compression_level"; //$NON-NLS-1$
 	public final String PREF_TEXT_KSUBST = "pref_text_ksubst"; //$NON-NLS-1$
+
 	public final String PREF_PROMPT_ON_MIXED_TAGS = "pref_prompt_on_mixed_tags"; //$NON-NLS-1$
+
 	public final String PREF_PROMPT_ON_SAVING_IN_SYNC = "pref_prompt_on_saving_in_sync"; //$NON-NLS-1$
 	public final String PREF_SAVE_DIRTY_EDITORS = "pref_save_dirty_editors"; //$NON-NLS-1$
 	public final String PREF_PROMPT_ON_CHANGE_GRANULARITY = "pref_prompt_on_change_granularity"; //$NON-NLS-1$
@@ -87,6 +91,8 @@ public interface ISVNUIConstants {
 	public final String PREF_CONSOLE_MESSAGE_COLOR = "pref_console_message_color"; //$NON-NLS-1$
 	public final String PREF_CONSOLE_ERROR_COLOR = "pref_console_error_color"; //$NON-NLS-1$
 	public final String PREF_CONSOLE_FONT = "pref_console_font"; //$NON-NLS-1$
+    public final String PREF_CONSOLE_SHOW_ON_ERROR = "pref_console_show_on_error";
+    public final String PREF_CONSOLE_SHOW_ON_MESSAGE = "pref_console_show_on_message";
 		
 	// decorator preferences
 	public final String PREF_FILETEXT_DECORATION = "pref_filetext_decoration"; //$NON-NLS-1$
