@@ -20,7 +20,10 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -30,7 +33,6 @@ import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.ITextOperationTarget;
@@ -40,6 +42,7 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
@@ -57,6 +60,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.variants.IResourceVariant;
+import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
@@ -76,6 +80,7 @@ import org.tigris.subversion.subclipse.core.ISVNRemoteFile;
 import org.tigris.subversion.subclipse.core.SVNException;
 import org.tigris.subversion.subclipse.core.SVNProviderPlugin;
 import org.tigris.subversion.subclipse.core.SVNTeamProvider;
+import org.tigris.subversion.subclipse.core.history.ILogEntry;
 import org.tigris.subversion.subclipse.core.history.LogEntry;
 import org.tigris.subversion.subclipse.core.resources.SVNWorkspaceRoot;
 import org.tigris.subversion.subclipse.ui.IHelpContextIds;
@@ -85,6 +90,7 @@ import org.tigris.subversion.subclipse.ui.SVNUIPlugin;
 import org.tigris.subversion.subclipse.ui.actions.OpenRemoteFileAction;
 import org.tigris.subversion.subclipse.ui.console.TextViewerAction;
 import org.tigris.subversion.subclipse.ui.editor.RemoteFileEditorInput;
+import org.tigris.subversion.svnclientadapter.SVNRevision;
 
 
 /**
@@ -116,6 +122,9 @@ public class HistoryView extends ViewPart {
 	private boolean linkingEnabled;
 
 	private IPreferenceStore settings;
+	
+	private FetchLogEntriesJob fetchLogEntriesJob = null;
+	private boolean shutdown = false;
 
 	public static final String VIEW_ID = "org.tigris.subversion.subclipse.ui.history.HistoryView"; //$NON-NLS-1$
 
@@ -347,6 +356,7 @@ public class HistoryView extends ViewPart {
 	}
 
 	public void dispose() {
+	    shutdown = true;
 		getSite().getPage().removePartListener(partListener);
 		getSite().getPage().removePartListener(partListener2);
 	}   
@@ -363,7 +373,7 @@ public class HistoryView extends ViewPart {
 		historyTableProvider = new HistoryTableProvider();
 		TableViewer viewer = historyTableProvider.createTable(parent);
 		
-        // set the content provider for the table
+		// set the content provider for the table
 		viewer.setContentProvider(new IStructuredContentProvider() {
 			public Object[] getElements(Object inputElement) {
 				// Short-circuit to optimize
@@ -371,25 +381,22 @@ public class HistoryView extends ViewPart {
 				
 				if (!(inputElement instanceof ISVNRemoteFile)) return null;
 				final ISVNRemoteFile remoteFile = (ISVNRemoteFile)inputElement;
-				final Object[][] result = new Object[1][];
-				try {
-					new ProgressMonitorDialog(getViewer().getTable().getShell()).run(true, true, new IRunnableWithProgress() {
-						public void run(IProgressMonitor monitor) throws InvocationTargetException {
-							try {
-								entries = remoteFile.getLogEntries(monitor);
-								result[0] = entries;
-							} catch (TeamException e) {
-								throw new InvocationTargetException(e);
-							}
-						}
-					});
-				} catch (InterruptedException e) { // ignore cancellation
-					result[0] = new Object[0];
-				} catch (InvocationTargetException e) {
-					SVNUIPlugin.openError(getViewSite().getShell(), null, null, e);
-					result[0] = new Object[0];
+
+				if(fetchLogEntriesJob == null) {
+					fetchLogEntriesJob = new FetchLogEntriesJob();
 				}
-				return result[0];
+				if(fetchLogEntriesJob.getState() != Job.NONE) {
+					fetchLogEntriesJob.cancel();
+					try {
+						fetchLogEntriesJob.join();
+					} catch (InterruptedException e) {
+						SVNUIPlugin.log(new SVNException(Policy.bind("HistoryView.errorFetchingEntries", remoteFile.getName()), e)); //$NON-NLS-1$
+					}
+				}
+				fetchLogEntriesJob.setRemoteFile(remoteFile);
+				Utils.schedule(fetchLogEntriesJob, getViewSite());
+
+				return new Object[0];
 			}
 			public void dispose() {
 			}
@@ -689,4 +696,62 @@ public class HistoryView extends ViewPart {
 	private boolean isLinkingEnabled() {
 		return linkingEnabled;
 	}
+
+	/**
+	 * Select the revision in the receiver.
+	 */
+	public void selectRevision(SVNRevision revision) {
+		if (entries == null) {
+			return;
+		}
+	
+		ILogEntry entry = null;
+		for (int i = 0; i < entries.length; i++) {
+			if (entries[i].getRevision().equals(revision)) {
+				entry = entries[i];
+				break;
+			}
+		}
+	
+		if (entry != null) {
+			IStructuredSelection selection = new StructuredSelection(entry);
+			tableViewer.setSelection(selection, true);
+		}
+	}
+
+	private class FetchLogEntriesJob extends Job {
+		public ISVNRemoteFile remoteFile;
+		public FetchLogEntriesJob() {
+			super(Policy.bind("HistoryView.fetchHistoryJob"));  //$NON-NLS-1$;
+		}
+		public void setRemoteFile(ISVNRemoteFile file) {
+			this.remoteFile = file;
+		}
+		public IStatus run(IProgressMonitor monitor) {
+			try {
+			    try {
+                    Thread.sleep(5000);
+                } catch (InterruptedException e1) {
+                    // TODO Auto-generated catch block
+                    e1.printStackTrace();
+                }
+				if(remoteFile != null && !shutdown) {
+					entries = remoteFile.getLogEntries(monitor);
+					final SVNRevision revisionId = remoteFile.getRevision();
+					getSite().getShell().getDisplay().asyncExec(new Runnable() {
+						public void run() {
+							if(entries != null && tableViewer != null && ! tableViewer.getTable().isDisposed()) {
+								tableViewer.add(entries);
+								selectRevision(revisionId);
+							}
+						}
+					});
+				}
+				return Status.OK_STATUS;
+			} catch (TeamException e) {
+				return e.getStatus();
+			}
+		}
+	};
+	
 }
