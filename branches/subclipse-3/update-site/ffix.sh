@@ -1,6 +1,9 @@
 #!/bin/bash
-#usage: ffix.sh <oldrev>
-
+usage="usage: ffix.sh <newrev>"
+if [ "$#" -ne "1" ];then
+    echo $usage
+    exit 1
+fi
 jars=`ls features/*.jar`
 rev=$1
 
