@@ -486,17 +486,21 @@
    <extension
          point="org.eclipse.team.ui.synchronizeParticipants">
       <participant
-            name="SVNWorkspaceSynchronizeParticipant"
-            icon="icons/full/cview16/compare_view.gif"
-            class="org.tigris.subversion.subclipse.ui.subcsriber.SVNWorkspaceSynchronizeParticipant"
-            id="org.tigris.subversion.subclipse.workspace-sync-participant">
-      </participant>
+            class="org.tigris.subversion.subclipse.ui.subscriber.SVNWorkspaceSynchronizeParticipant"
+            icon="icons/full/eview16/cvs_persp.gif"
+            name="%SVNWorkspaceParticipant"
+            id="org.tigris.subversion.subclipse.ui.workspace-participant"/>
       <participant
-            name="SVN Compare"
-            icon="icons/full/cview16/compare_view.gif"
+            class="org.tigris.subversion.subclipse.ui.subscriber.SVNMergeSynchronizeParticipant"
+            icon="icons/full/elcl16/newstream_wiz.gif"
+            name="%SVNMergeParticipant"
+            id="org.tigris.subversion.subclipse.ui.merge-participant"/>
+      <participant
+            persistent="false"
             class="org.tigris.subversion.subclipse.ui.subscriber.SVNCompareParticipant"
-            id="org.tigris.subversion.subclipse.ui.subscriber.compare-participant">
-      </participant>
+            icon="icons/full/eview16/compare_view.gif"
+            name="%SVNCompareParticipant"
+            id="org.tigris.subversion.subclipse.ui.compare-participant"/>
    </extension>
 
 </plugin>
