@@ -729,12 +729,6 @@ public class HistoryView extends ViewPart {
 		}
 		public IStatus run(IProgressMonitor monitor) {
 			try {
-			    try {
-                    Thread.sleep(5000);
-                } catch (InterruptedException e1) {
-                    // TODO Auto-generated catch block
-                    e1.printStackTrace();
-                }
 				if(remoteFile != null && !shutdown) {
 					entries = remoteFile.getLogEntries(monitor);
 					final SVNRevision revisionId = remoteFile.getRevision();
