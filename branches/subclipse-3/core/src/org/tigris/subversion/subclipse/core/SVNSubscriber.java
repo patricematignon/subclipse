@@ -118,6 +118,11 @@ public class SVNSubscriber extends ThreeWaySubscriber {
 	 * @see org.eclipse.team.core.variants.ThreeWaySubscriber#getResourceVariant(org.eclipse.core.resources.IResource, byte[])
 	 */
 	public IResourceVariant getResourceVariant(IResource resource, byte[] bytes) throws TeamException {
+	    if( bytes != null ) {
+	        String str = new String(bytes);
+	        if( str.equals("file:") )
+	            return null;
+	    }
 		RepositoryProvider provider = RepositoryProvider.getProvider(resource.getProject(), SVNProviderPlugin.PROVIDER_ID);
 		if (provider != null) {
 			return ((SVNTeamProvider)provider).getResourceVariant(resource, bytes);

@@ -55,6 +55,7 @@ public abstract class RemoteResource
 		String nfo = new String(bytes);
 		
 		lastChangedRevision = new SVNRevision.Number(Long.parseLong(nfo));
+		revision = lastChangedRevision;
 		ISVNLocalResource res = SVNWorkspaceRoot.getSVNResourceFor(local);
 
 		url = res.getUrl();

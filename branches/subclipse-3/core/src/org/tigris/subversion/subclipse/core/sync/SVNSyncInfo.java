@@ -82,28 +82,28 @@ public class SVNSyncInfo extends SyncInfo {
 	 * 
 	 * @see org.eclipse.team.core.synchronize.SyncInfo#calculateKind()
 	 */
-	protected int calculateKind() throws TeamException {
-
-		RemoteResource remote = (RemoteResource) getRemote();
-		RemoteResource base = (RemoteResource)getBase();
-		ISVNLocalResource local = SVNWorkspaceRoot.getSVNResourceFor(getLocal());
-		boolean remoteExists = (remote != null);
-		//TODO: make 3 way
-		//diff between base & local
-		//diff between base & remote
-		//diff between base & both
-		if (!remoteExists && local.exists()) {
-			return ADDITION;
-		} else if (local.getStatus().getTextStatus() == ISVNStatus.Kind.MODIFIED) {
-			return CHANGE;
-		} else if (!local.exists() && remoteExists) {
-			return DELETION;
-		} else if (!getComparator().compare(getLocal(), getRemote())) {
-			return CHANGE;
-		} else {
-			return IN_SYNC;
-		}
-	}
+//	protected int calculateKind() throws TeamException {
+//
+//		RemoteResource remote = (RemoteResource) getRemote();
+//		RemoteResource base = (RemoteResource)getBase();
+//		ISVNLocalResource local = SVNWorkspaceRoot.getSVNResourceFor(getLocal());
+//		boolean remoteExists = (remote != null);
+//		//TODO: make 3 way
+//		//diff between base & local
+//		//diff between base & remote
+//		//diff between base & both
+//		if (!remoteExists && local.exists()) {
+//			return ADDITION;
+//		} else if (local.getStatus().getTextStatus() == ISVNStatus.Kind.MODIFIED) {
+//			return CHANGE;
+//		} else if (!local.exists() && remoteExists) {
+//			return DELETION;
+//		} else if (!getComparator().compare(getLocal(), getRemote())) {
+//			return CHANGE;
+//		} else {
+//			return IN_SYNC;
+//		}
+//	}
 
 	/*
 	 * (non-Javadoc)
