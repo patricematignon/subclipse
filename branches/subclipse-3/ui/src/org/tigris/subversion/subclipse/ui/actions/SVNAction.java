@@ -13,9 +13,11 @@ package org.tigris.subversion.subclipse.ui.actions;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -27,6 +29,7 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.team.internal.ui.actions.TeamAction;
+import org.eclipse.team.internal.ui.dialogs.IPromptCondition;
 import org.eclipse.ui.PlatformUI;
 import org.tigris.subversion.subclipse.core.ISVNRemoteFile;
 import org.tigris.subversion.subclipse.core.ISVNRemoteFolder;
@@ -406,4 +409,20 @@ abstract public class SVNAction extends TeamAction {
 		SVNUIPlugin.openError(getShell(), title, message, exception, SVNUIPlugin.LOG_NONTEAM_EXCEPTIONS);
 	}
 
+	/**
+	 * A helper prompt condition for prompting for SVN dirty state.
+	 * @param dirtyResources Resources that have been modified
+	 * @return IPromptCondition that prompts when a resource is in the <code>dirtyResources</code> list
+	 */
+	public static IPromptCondition getOverwriteLocalChangesPrompt(final IResource[] dirtyResources) {
+		return new IPromptCondition() {
+			List resources = Arrays.asList(dirtyResources);
+			public boolean needsPrompt(IResource resource) {
+				return resources.contains(resource);
+			}
+			public String promptMessage(IResource resource) {
+				return Policy.bind("ReplaceWithAction.localChanges", resource.getName());//$NON-NLS-1$
+			}
+		};
+	}
 }

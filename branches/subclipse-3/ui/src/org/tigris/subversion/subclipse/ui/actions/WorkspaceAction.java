@@ -22,10 +22,13 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.internal.ui.dialogs.IPromptCondition;
+import org.eclipse.team.internal.ui.dialogs.PromptingDialog;
 import org.tigris.subversion.subclipse.core.ISVNLocalResource;
 import org.tigris.subversion.subclipse.core.SVNException;
 import org.tigris.subversion.subclipse.core.SVNProviderPlugin;
 import org.tigris.subversion.subclipse.core.resources.SVNWorkspaceRoot;
+import org.tigris.subversion.subclipse.ui.Policy;
 
 /**
  * This class represents an action performed on a local SVN workspace
@@ -241,4 +244,35 @@ public abstract class WorkspaceAction extends SVNAction {
 		return getNonOverlapping(super.getSelectedResources());
 	}
 
+	/**
+	 * Prompts user to overwrite resources that are in the <code>resources<code> list and are modified
+	 * @param resources Resources to prompt for overwrite if modified
+	 * @return Array of resources that the user did want overwriting
+	 * @throws SVNException Exception getting state of SVN resources
+	 * @throws InterruptedException Prompt dialog was shut down abnormally
+	 */
+	protected IResource[] checkOverwriteOfDirtyResources(IResource[] resources) throws SVNException, InterruptedException {
+		List dirtyResources = new ArrayList();
+		IResource[] selectedResources = getSelectedResources();
+		
+		for (int i = 0; i < selectedResources.length; i++) {
+			IResource resource = selectedResources[i];
+			ISVNLocalResource svnResource = SVNWorkspaceRoot.getSVNResourceFor(resource);
+			if (svnResource.isModified()) {
+				dirtyResources.add(resource);
+			}			
+		}
+		
+		PromptingDialog dialog = new PromptingDialog(getShell(), selectedResources, 
+				getPromptCondition((IResource[]) dirtyResources.toArray(new IResource[dirtyResources.size()])), Policy.bind("ReplaceWithAction.confirmOverwrite"));//$NON-NLS-1$
+		return dialog.promptForMultiple();
+	}
+
+	/**
+	 * This is a helper for the SVN UI automated tests. It allows the tests to ignore prompting dialogs.
+	 * @param resources
+	 */
+	protected IPromptCondition getPromptCondition(IResource[] resources) {
+		return getOverwriteLocalChangesPrompt(resources);
+	}
 }
