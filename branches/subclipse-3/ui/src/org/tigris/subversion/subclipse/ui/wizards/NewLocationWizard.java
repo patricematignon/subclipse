@@ -97,7 +97,7 @@ public class NewLocationWizard extends Wizard {
 					}
 				}
 			}
-			provider.getRepositories().addRepository(root[0]);
+			provider.getRepositories().addOrUpdateRepository(root[0]);
 		} catch (TeamException e) {
 			if (root[0] == null) {
 				// Exception creating the root, we cannot continue
@@ -120,7 +120,7 @@ public class NewLocationWizard extends Wizard {
 				}
 				try {
 					if (keep) {
-						provider.getRepositories().addRepository(root[0]);
+						provider.getRepositories().addOrUpdateRepository(root[0]);
 					} else {
 						provider.getRepositories().disposeRepository(root[0]);
 					}

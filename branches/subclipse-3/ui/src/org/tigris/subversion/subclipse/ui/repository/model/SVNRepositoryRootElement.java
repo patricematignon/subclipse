@@ -32,7 +32,7 @@ public class SVNRepositoryRootElement extends SVNModelElement {
 	public String getLabel(Object o) {
 		if (o instanceof ISVNRepositoryLocation) {
 			ISVNRepositoryLocation root = (ISVNRepositoryLocation)o;
-			return root.getLocation();
+			return root.toString();
 		}
 		return null;
 	}

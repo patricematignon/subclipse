@@ -70,7 +70,18 @@ public class RepositoryManager {
 			listener.repositoryAdded(root);
 		}
 	}
-	
+
+    /**
+     * A repository root has been modified. Notify any listeners.
+     */
+    public void rootModified(ISVNRepositoryLocation root) {
+        Iterator it = listeners.iterator();
+        while (it.hasNext()) {
+            IRepositoryListener listener = (IRepositoryListener)it.next();
+            listener.repositoryModified(root);
+        }
+    }    
+    
 	/**
 	 * A repository root has been removed.
 	 */
@@ -153,6 +164,9 @@ public class RepositoryManager {
             public void remoteResourceMoved(ISVNRemoteResource resource, ISVNRemoteFolder destinationFolder, String destinationResourceName) {
                 resourceMoved(resource, destinationFolder, destinationResourceName);
             }
+			public void repositoryModified(ISVNRepositoryLocation root) {
+				rootModified(root);
+			}
                        
 		});
 	}

@@ -20,6 +20,7 @@ import org.tigris.subversion.subclipse.core.ISVNRepositoryLocation;
  */
 public interface IRepositoryListener {
 	public void repositoryAdded(ISVNRepositoryLocation root);
+    public void repositoryModified(ISVNRepositoryLocation root);
 	public void repositoryRemoved(ISVNRepositoryLocation root);
 	public void repositoriesChanged(ISVNRepositoryLocation[] roots);
     public void remoteResourceDeleted(ISVNRemoteResource resource);

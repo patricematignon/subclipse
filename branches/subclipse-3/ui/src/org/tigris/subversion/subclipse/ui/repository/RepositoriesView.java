@@ -20,7 +20,9 @@ import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.wizard.WizardDialog;
@@ -38,10 +40,12 @@ import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.actions.ActionFactory;
+import org.eclipse.ui.dialogs.PropertyDialogAction;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.part.DrillDownAdapter;
 import org.eclipse.ui.part.ViewPart;
+import org.eclipse.ui.part.WorkbenchPart;
 import org.tigris.subversion.subclipse.core.ISVNRemoteFile;
 import org.tigris.subversion.subclipse.core.ISVNRemoteFolder;
 import org.tigris.subversion.subclipse.core.ISVNRemoteResource;
@@ -82,6 +86,7 @@ public class RepositoriesView extends ViewPart implements ISelectionListener {
     private Action refreshAction;
     private Action collapseAllAction;
     private OpenRemoteFileAction openAction;
+    private Action propertiesAction;
     
     private RemoteContentProvider contentProvider;
     // this listener is used when a repository is added, removed or changed
@@ -121,6 +126,9 @@ public class RepositoriesView extends ViewPart implements ISelectionListener {
 				}
 			});
 		}
+		public void repositoryModified(ISVNRepositoryLocation root) {
+			refresh(false);
+		}
 	};
 
 	/**
@@ -151,22 +159,24 @@ public class RepositoriesView extends ViewPart implements ISelectionListener {
 		};
 		WorkbenchHelp.setHelp(newAction, IHelpContextIds.NEW_REPOSITORY_LOCATION_ACTION);
 		
-/*		// Properties
-		propertiesAction = new PropertyDialogAction(shell, getViewer());
-		getViewSite().getActionBars().setGlobalActionHandler(IWorkbenchActionConstants.PROPERTIES, propertiesAction);		
-		IStructuredSelection selection = (IStructuredSelection)getViewer().getSelection();
-		if (selection.size() == 1 && selection.getFirstElement() instanceof RepositoryRoot) {
-			propertiesAction.setEnabled(true);
-		} else {
-			propertiesAction.setEnabled(false);
-		}
-		getViewer().addSelectionChangedListener(new ISelectionChangedListener() {
-			public void selectionChanged(SelectionChangedEvent event) {
-				IStructuredSelection ss = (IStructuredSelection)event.getSelection();
-				boolean enabled = ss.size() == 1 && ss.getFirstElement() instanceof RepositoryRoot;
-				propertiesAction.setEnabled(enabled);
-			}
-		}); */
+		// Properties
+        propertiesAction = new PropertyDialogAction(shell, getViewer());
+        getViewSite().getActionBars().setGlobalActionHandler(ActionFactory.PROPERTIES.getId(), propertiesAction);       
+        IStructuredSelection selection = (IStructuredSelection)getViewer().getSelection();
+        if (selection.size() == 1 && selection.getFirstElement() instanceof ISVNRepositoryLocation) {
+            propertiesAction.setEnabled(true);
+        } else {
+            propertiesAction.setEnabled(false);
+        }
+        getViewer().addSelectionChangedListener(new ISelectionChangedListener() {
+            public void selectionChanged(SelectionChangedEvent event) {
+                IStructuredSelection ss = (IStructuredSelection)event.getSelection();
+                boolean enabled = ss.size() == 1 && ss.getFirstElement() instanceof ISVNRepositoryLocation;
+                propertiesAction.setEnabled(enabled);
+            }
+        });
+        
+        // Remove Root
 		removeRootAction = new RemoveRootAction(treeViewer.getControl().getShell());
 		removeRootAction.selectionChanged((IStructuredSelection)null);
 		WorkbenchHelp.setHelp(removeRootAction, IHelpContextIds.REMOVE_REPOSITORY_LOCATION_ACTION);
@@ -251,11 +261,10 @@ public class RepositoriesView extends ViewPart implements ISelectionListener {
 			manager.add(removeRootAction);
 		}		
 
-/*
-		if (selection.size() == 1 && selection.getFirstElement() instanceof RepositoryRoot) {
+		if (selection.size() == 1 && selection.getFirstElement() instanceof ISVNRepositoryLocation) {
 			manager.add(new Separator());
 			manager.add(propertiesAction);
-		} */
+		}
 		sub.add(newAction);
 	}
 	

@@ -502,6 +502,12 @@
                value="org.eclipse.team.core.repository=org.tigris.subversion.subclipse.core.svnnature">
          </filter>
       </page>
+	  <page
+            objectClass="org.tigris.subversion.subclipse.core.ISVNRepositoryLocation"
+            name="%SVN"
+            class="org.tigris.subversion.subclipse.ui.properties.SVNRepositoryPropertiesPage"
+            id="org.tigris.subversion.subclipse.ui.properties.SVNRepositoryPropertiesPage">
+      </page>
    </extension>
    <extension
          point="org.eclipse.help.toc">

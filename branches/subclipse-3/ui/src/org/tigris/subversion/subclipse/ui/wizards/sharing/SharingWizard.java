@@ -253,7 +253,7 @@ public class SharingWizard extends Wizard implements IConfigurationWizard {
 							
                             // Add the location to the provider if it is new
 							if (!isKnown) {
-								SVNProviderPlugin.getPlugin().getRepositories().addRepository(location);
+								SVNProviderPlugin.getPlugin().getRepositories().addOrUpdateRepository(location);
 							}
 							
 							// Create the remote module for the project
