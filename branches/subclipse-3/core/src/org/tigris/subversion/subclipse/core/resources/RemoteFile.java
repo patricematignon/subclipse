@@ -13,6 +13,7 @@ package org.tigris.subversion.subclipse.core.resources;
 import java.io.InputStream;
 import java.util.Date;
 
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.team.core.TeamException;
@@ -32,6 +33,14 @@ import org.tigris.subversion.svnclientadapter.SVNUrl;
 public class RemoteFile extends RemoteResource implements ISVNRemoteFile {
 	
 	
+	/**
+	 * @param local
+	 * @param bytes
+	 */
+	public RemoteFile(IResource local, byte[] bytes) {
+		super(local, bytes);
+		
+	}
 	public RemoteFile(RemoteFolder parent, ISVNRepositoryLocation repository,
 			SVNUrl url, SVNRevision revision, boolean hasProps,
 			SVNRevision.Number lastChangedRevision, Date date, String author)

@@ -29,7 +29,6 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.subscribers.Subscriber;
 import org.osgi.framework.BundleContext;
 import org.tigris.subversion.subclipse.core.client.IConsoleListener;
 import org.tigris.subversion.subclipse.core.repo.SVNRepositories;
@@ -421,15 +420,6 @@ public class SVNProviderPlugin extends Plugin {
 	 */
 	public RepositoryResourcesManager getRepositoryResourcesManager() {
 		return repositoryResourcesManager;
-	}
-
-	/**
-	 * @return
-	 * @todo Generated comment
-	 */
-	public Subscriber getSVNWorkspaceSubscriber() {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 }

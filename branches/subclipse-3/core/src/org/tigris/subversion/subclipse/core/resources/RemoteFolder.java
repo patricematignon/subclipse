@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.TeamException;
@@ -64,6 +65,15 @@ public class RemoteFolder extends RemoteResource implements ISVNRemoteFolder, IS
         super(repository, url,revision);
     }
 	
+	/**
+	 * @param resource
+	 * @param bytes
+	 */
+	public RemoteFolder(IResource resource, byte[] bytes) {
+		
+		super(resource, bytes);
+	}
+
 	/*
 	 * @see ISVNRemoteResource#exists(IProgressMonitor)
 	 */

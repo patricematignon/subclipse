@@ -13,9 +13,11 @@ package org.tigris.subversion.subclipse.core.resources;
 
 import java.util.Date;
 
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.variants.CachedResourceVariant;
+import org.tigris.subversion.subclipse.core.ISVNLocalResource;
 import org.tigris.subversion.subclipse.core.ISVNRemoteFolder;
 import org.tigris.subversion.subclipse.core.ISVNRemoteResource;
 import org.tigris.subversion.subclipse.core.ISVNRepositoryLocation;
@@ -50,6 +52,21 @@ public abstract class RemoteResource
 	private Date date;
 	private String author;
 
+	public RemoteResource(IResource local, byte[] bytes){
+		String nfo = new String(bytes);
+		
+		lastChangedRevision = new SVNRevision.Number(Long.parseLong(nfo));
+		ISVNLocalResource res = SVNWorkspaceRoot.getSVNResourceFor(local);
+		try {
+			url = res.getUrl();
+			repository = res.getRepository();
+			
+		} catch (SVNException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
 	/**
 	 * Constructor for RemoteResource.
 	 */
@@ -114,6 +131,7 @@ public abstract class RemoteResource
 	 * @see ISVNRemoteResource#exists(IProgressMonitor)
 	 */
 	public boolean exists(IProgressMonitor monitor) throws TeamException {
+		
 		return parent.exists(this, monitor);
 	}
 	
@@ -214,7 +232,7 @@ public abstract class RemoteResource
     }
 
     public String getContentIdentifier() {
-		return this.getRevision().toString();
+		return this.getLastChangedRevision().getNumber()+"";
 	}
 	
 	
@@ -224,7 +242,7 @@ public abstract class RemoteResource
 	 * @see org.eclipse.team.core.variants.CachedResourceVariant#getCachePath()
 	 */
 	protected String getCachePath() {
-		return this.getUrl().toString()+" "+getContentIdentifier();
+		return this.getUrl().toString()+":"+getContentIdentifier();
 	}
 	/*
 	 * (non-Javadoc)
@@ -240,6 +258,15 @@ public abstract class RemoteResource
 	 * @see org.eclipse.team.core.variants.IResourceVariant#asBytes()
 	 */
 	public byte[] asBytes() {
-		return getCachePath().getBytes();
+		System.out.println("returning bytes for: "+getCachePath());
+		return new Long(getContentIdentifier()).toString().getBytes();
+	}
+	
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString() {
+		return getCachePath();
 	}
 }

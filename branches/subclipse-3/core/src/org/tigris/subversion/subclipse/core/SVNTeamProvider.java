@@ -334,27 +334,40 @@ public class SVNTeamProvider extends RepositoryProvider {
 
 	public IResourceVariant getResourceVariant(IResource resource) throws SVNException{
 		ISVNLocalResource local = SVNWorkspaceRoot.getSVNResourceFor(resource);
-		return new RemoteFile(local.getRepository(), local.getUrl(),  SVNRevision.HEAD); 
+		return local.getLatestRemoteResource();
         
 		
 	}
 
 	/**
-	 * @param resource
-	 * @param bytes
-	 * @return
-	 * @throws SVNException
+	 * Create the resource variant for the given local resource from the 
+	 * given bytes. The bytes are those that were previously returned
+	 * from a call to <code>IResourceVariant#asBytes()</code>.  This means it's already been fetched,
+	 * so we should be able to create enough nfo about it to rebuild it to a minimally useable form for
+	 * synchronization.
+	 * @param resource the local resource
+	 * @param bytes the bytes that identify a variant of the resource
+	 * @return the resouce variant handle recreated from the bytes
+	 * @throws TeamException
 	 */
-	public IResourceVariant getResourceVariant(IResource resource, byte[] bytes) throws SVNException {
-		if (bytes == null) return null;
+	public IResourceVariant getResourceVariant(IResource resource, byte[] bytes) throws TeamException {
 		
-		ISVNLocalResource local = SVNWorkspaceRoot.getSVNResourceFor(resource);
+		//in this case, asBytes() will return the revision string, so we create 
+		//the variant resource with this minimal info.
 		
-		if(local.isFolder()){
-			return new RemoteFolder(local.getRepository(), local.getUrl(), SVNRevision.HEAD);
+		if(bytes==null)return null;
+		if(resource.getType()==IResource.FILE){
+			return new RemoteFile(resource, bytes);
+		}else if(resource.getType()==IResource.FOLDER || resource.getType()==IResource.PROJECT){
+			return new RemoteFolder(resource, bytes);
 		}else{
-			return new RemoteFile(local.getRepository(), local.getUrl(), SVNRevision.HEAD);
+			return null;
 		}
+		
+		
+
+		
 	}
+
 
 }

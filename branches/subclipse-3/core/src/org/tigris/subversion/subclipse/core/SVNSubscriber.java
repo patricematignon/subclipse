@@ -42,7 +42,7 @@ import org.tigris.subversion.subclipse.core.sync.SVNSyncInfo;
  */
 public class SVNSubscriber extends ThreeWaySubscriber {
 
-	private static SVNSubscriber instance;
+	private static SVNSubscriber instance; 
 	
 	/**
 	 * Return the file system subscriber singleton.
@@ -62,16 +62,7 @@ public class SVNSubscriber extends ThreeWaySubscriber {
 		super(new ThreeWaySynchronizer(new QualifiedName(SVNProviderPlugin.ID, "workpsace-sync"))); //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.core.variants.ThreeWaySubscriber#getResourceVariant(org.eclipse.core.resources.IResource, byte[])
-	 */
-	public IResourceVariant getResourceVariant(IResource resource, byte[] bytes) throws TeamException {
-		RepositoryProvider provider = RepositoryProvider.getProvider(resource.getProject(), SVNProviderPlugin.PROVIDER_ID);
-		if (provider != null) {
-			return ((SVNTeamProvider)provider).getResourceVariant(resource, bytes);
-		}
-		return null;
-	}
+	
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.core.variants.ThreeWaySubscriber#createRemoteTree()
@@ -84,7 +75,7 @@ public class SVNSubscriber extends ThreeWaySubscriber {
 	 * @see org.eclipse.team.core.subscribers.Subscriber#getName()
 	 */
 	public String getName() {
-		return "File System Example"; //$NON-NLS-1$
+		return "SVNSubscriber"; //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
@@ -118,9 +109,20 @@ public class SVNSubscriber extends ThreeWaySubscriber {
 	 */
 	protected SyncInfo getSyncInfo(IResource local, IResourceVariant base, IResourceVariant remote) throws TeamException {
 		// Override to use a custom sync info
-		SVNSyncInfo info = new SVNSyncInfo(local, base, remote, this.getResourceComparator());
+		SVNSyncInfo info = new SVNSyncInfo(local, base, remote, new SVNRevisionComparator());
 		info.init();
 		return info;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.variants.ThreeWaySubscriber#getResourceVariant(org.eclipse.core.resources.IResource, byte[])
+	 */
+	public IResourceVariant getResourceVariant(IResource resource, byte[] bytes) throws TeamException {
+		RepositoryProvider provider = RepositoryProvider.getProvider(resource.getProject(), SVNProviderPlugin.PROVIDER_ID);
+		if (provider != null) {
+			return ((SVNTeamProvider)provider).getResourceVariant(resource, bytes);
+		}
+		return null;
 	}
 
 }

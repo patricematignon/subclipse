@@ -52,7 +52,7 @@ import org.tigris.subversion.svnclientadapter.SVNUrl;
  * @see LocalFolder
  * @see LocalFile
  */
-abstract class LocalResource implements ISVNLocalResource, Comparable {
+public abstract class LocalResource implements ISVNLocalResource, Comparable {
 	protected static final String SEPARATOR = "/"; //$NON-NLS-1$
 	protected static final String CURRENT_LOCAL_FOLDER = "."; //$NON-NLS-1$
 
