@@ -7,6 +7,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -27,6 +28,7 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -48,8 +50,10 @@ import org.tigris.subversion.subclipse.core.resources.LocalResourceStatus;
 import org.tigris.subversion.subclipse.core.resources.SVNWorkspaceRoot;
 import org.tigris.subversion.subclipse.ui.IHelpContextIds;
 import org.tigris.subversion.subclipse.ui.Policy;
+import org.tigris.subversion.subclipse.ui.SVNUIPlugin;
 import org.tigris.subversion.subclipse.ui.comments.CommitCommentArea;
 import org.tigris.subversion.subclipse.ui.settings.ProjectProperties;
+import org.tigris.subversion.subclipse.ui.util.TableSetter;
 import org.tigris.subversion.svnclientadapter.SVNStatusKind;
 
 public class CommitDialog extends Dialog {
@@ -66,6 +70,11 @@ public class CommitDialog extends Dialog {
     private CheckboxTableViewer listViewer;
     private Text issueText;
     private String issue;
+    
+    private IDialogSettings settings;
+    private TableSetter setter;
+    private int sorterColumn = 1;
+    private boolean sorterReversed = false;
 
     public CommitDialog(Shell parentShell, IResource[] resourcesToCommit, String url, boolean unaddedResources, ProjectProperties projectProperties) {
         super(parentShell);
@@ -76,12 +85,15 @@ public class CommitDialog extends Dialog {
 		this.url = url;
 		this.unaddedResources = unaddedResources;
 		this.projectProperties = projectProperties;
+		settings = SVNUIPlugin.getPlugin().getDialogSettings();
+		setter = new TableSetter();
     }
     
 	/*
 	 * @see Dialog#createDialogArea(Composite)
 	 */
 	protected Control createDialogArea(Composite parent) {
+	    
 		if (url == null) getShell().setText(Policy.bind("CommitDialog.commitTo") + " " + Policy.bind("CommitDialog.multiple")); //$NON-NLS-1$
 		else getShell().setText(Policy.bind("CommitDialog.commitTo") + " " + url);
 		Composite composite = new Composite(parent, SWT.NULL);
@@ -108,7 +120,7 @@ public class CommitDialog extends Dialog {
 		return composite;
 	}
 	
-	private void addResourcesArea(Composite composite) {
+    private void addResourcesArea(Composite composite) {
 	    
 		// add a description label
 		Label label = createWrappingLabel(composite);
@@ -199,8 +211,12 @@ public class CommitDialog extends Dialog {
             public void removeListener(ILabelProviderListener listener) {
             }
 		});
-		
-		listViewer.setSorter(new CommitSorter(1));
+
+		int sort = setter.getSorterColumn("CommitDialog"); //$NON-NLS-1$
+		if (sort != -1) sorterColumn = sort;
+		CommitSorter sorter = new CommitSorter(sorterColumn);
+		sorter.setReversed(setter.getSorterReversed("CommitDialog")); //$NON-NLS-1$
+		listViewer.setSorter(sorter);
 		
 		listViewer.setContentProvider(new IStructuredContentProvider() {
             public Object[] getElements(Object inputElement) {
@@ -242,6 +258,7 @@ public class CommitDialog extends Dialog {
     }
 	
     protected void okPressed() {
+        saveLocation();
         if (projectProperties != null) {
             issue = issueText.getText().trim();
             if (projectProperties.isWarnIfNoIssue() && (issueText.getText().trim().length() == 0)) {
@@ -261,6 +278,26 @@ public class CommitDialog extends Dialog {
             }
         }
         super.okPressed();
+    }
+    
+    protected void cancelPressed() {
+        saveLocation();
+        super.cancelPressed();
+    }
+
+    private void saveLocation() {
+        int x = getShell().getLocation().x;
+        int y = getShell().getLocation().y;
+        settings.put("CommitDialog.location.x", x); //$NON-NLS-1$
+        settings.put("CommitDialog.location.y", y); //$NON-NLS-1$
+        x = getShell().getSize().x;
+        y = getShell().getSize().y;
+        settings.put("CommitDialog.size.x", x); //$NON-NLS-1$
+        settings.put("CommitDialog.size.y", y); //$NON-NLS-1$   
+        TableSetter setter = new TableSetter();
+        setter.saveColumnWidths(listViewer.getTable(), "CommitDialog"); //$NON-NLS-1$
+        setter.saveSorterColumn("CommitDialog", sorterColumn); //$NON-NLS-1$
+        setter.saveSorterReversed("CommitDialog", sorterReversed); //$NON-NLS-1$
     }
 
     private static String getStatus(IResource resource) {
@@ -323,13 +360,17 @@ public class CommitDialog extends Dialog {
 				int column = listViewer.getTable().indexOf((TableColumn) e.widget);
 				CommitSorter oldSorter = (CommitSorter) listViewer.getSorter();
 				if (oldSorter != null && column == oldSorter.getColumnNumber()) {
-				oldSorter.setReversed(!oldSorter.isReversed());
-				listViewer.refresh();
+				    oldSorter.setReversed(!oldSorter.isReversed());
+				    sorterReversed = oldSorter.isReversed();
+				    listViewer.refresh();
 				} else {
 					listViewer.setSorter(new CommitSorter(column));
+					sorterColumn = column;
 				}
 			}
 		};
+		
+		int[] widths = setter.getColumnWidths("CommitDialog", 4); //$NON-NLS-1$
 
 		TableColumn col;
 		// check
@@ -342,21 +383,21 @@ public class CommitDialog extends Dialog {
 		col = new TableColumn(table, SWT.NONE);
 		col.setResizable(true);
 		col.setText(Policy.bind("PendingOperationsView.resource")); //$NON-NLS-1$
-		layout.addColumnData(new ColumnWeightData(120, true));
+		layout.addColumnData(new ColumnPixelData(widths[1], true));
 		col.addSelectionListener(headerListener);
 
 		// text status
 		col = new TableColumn(table, SWT.NONE);
 		col.setResizable(true);
 		col.setText(Policy.bind("CommitDialog.status")); //$NON-NLS-1$
-		layout.addColumnData(new ColumnWeightData(50, true));
+		layout.addColumnData(new ColumnPixelData(widths[2], true));
 		col.addSelectionListener(headerListener);
 		
 		// property status
 		col = new TableColumn(table, SWT.NONE);
 		col.setResizable(true);
 		col.setText(Policy.bind("CommitDialog.property")); //$NON-NLS-1$
-		layout.addColumnData(new ColumnWeightData(50, true));
+		layout.addColumnData(new ColumnPixelData(widths[3], true));
 		col.addSelectionListener(headerListener);		
 
 	}	
@@ -412,6 +453,24 @@ public class CommitDialog extends Dialog {
 		    });
 		}
 	}
+	
+    protected Point getInitialLocation(Point initialSize) {
+	    try {
+	        int x = settings.getInt("CommitDialog.location.x"); //$NON-NLS-1$
+	        int y = settings.getInt("CommitDialog.location.y"); //$NON-NLS-1$
+	        return new Point(x, y);
+	    } catch (NumberFormatException e) {}
+        return super.getInitialLocation(initialSize);
+    }
+    
+    protected Point getInitialSize() {
+	    try {
+	        int x = settings.getInt("CommitDialog.size.x"); //$NON-NLS-1$
+	        int y = settings.getInt("CommitDialog.size.y"); //$NON-NLS-1$
+	        return new Point(x, y);
+	    } catch (NumberFormatException e) {}
+        return super.getInitialSize();
+    }	
 
     /**
 	 * Returns the comment.
@@ -516,5 +575,5 @@ public class CommitDialog extends Dialog {
 		}
 
 	}	
-
+    
 }
