@@ -187,6 +187,22 @@
             enabled="true"
             pattern="_svn">
       </ignore>
+      <ignore
+            enabled="true"
+            pattern="svn-commit*.tmp">
+      </ignore>
+      <ignore
+            enabled="true"
+            pattern="*.merge-right*">
+      </ignore>
+      <ignore
+            enabled="true"
+            pattern="*.merge-left*">
+      </ignore>
+      <ignore
+            enabled="true"
+            pattern="*.working">
+      </ignore>
    </extension>
 
 </plugin>
