@@ -15,6 +15,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.internal.resources.Workspace;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.runtime.CoreException;
@@ -27,6 +28,7 @@ import org.tigris.subversion.subclipse.core.ISVNLocalResource;
 import org.tigris.subversion.subclipse.core.ISVNRunnable;
 import org.tigris.subversion.subclipse.core.SVNException;
 import org.tigris.subversion.subclipse.core.SVNProviderPlugin;
+import org.tigris.subversion.subclipse.core.SVNTeamProvider;
 import org.tigris.subversion.subclipse.core.resources.SVNWorkspaceRoot;
 import org.tigris.subversion.subclipse.ui.Policy;
 import org.tigris.subversion.subclipse.ui.SVNUIPlugin;
@@ -56,7 +58,9 @@ public class CommitAction extends WorkspaceAction {
 					// search for any non-added, non-ignored resources in the selection
 					IResource[] unadded = getUnaddedResources(resources, monitor);
 					resourcesToBeAdded[0] = promptForResourcesToBeAdded(manager, unadded);
-					if (resourcesToBeAdded[0] == null) return;
+					if (resourcesToBeAdded[0] == null) {
+						return;
+					}
 					comment[0] = promptForComment(manager, resources);
 				} catch (TeamException e) {
 					throw new InvocationTargetException(e);
@@ -64,7 +68,9 @@ public class CommitAction extends WorkspaceAction {
 			}
 		}, true /* cancelable */, PROGRESS_BUSYCURSOR); //$NON-NLS-1$
 		
-		if (comment[0] == null) return; // user canceled
+		if (comment[0] == null) {
+			return; // user canceled
+		}
 		
 		run(new WorkspaceModifyOperation() {
 			public void execute(IProgressMonitor monitor) throws  InvocationTargetException {
@@ -82,9 +88,17 @@ public class CommitAction extends WorkspaceAction {
 										ticks-=addTicks;
 									}
 									IResource[] shared = getSharedResources(resources);
-									if (shared.length == 0) return;
+									if (shared.length == 0) {
+										return;
+									}
 									manager.commit(shared, comment[0], Policy.subMonitorFor(monitor,ticks));
+									for (int i = 0; i < resources.length; i++) {
+										IResource projectHandle = resources[i].getProject();
+										projectHandle.refreshLocal(IResource.DEPTH_INFINITE, monitor);
+									}
 								} catch (TeamException e) {
+									throw SVNException.wrapException(e);
+								} catch (CoreException e) {
 									throw SVNException.wrapException(e);
 								}
 							}

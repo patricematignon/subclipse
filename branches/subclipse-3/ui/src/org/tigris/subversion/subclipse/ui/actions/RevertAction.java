@@ -37,7 +37,7 @@ public class RevertAction extends WorkspaceAction {
 						
                         ISVNLocalResource svnResource = SVNWorkspaceRoot.getSVNResourceFor(resources[i]);
                         svnResource.revert();
-                        resources[i].refreshLocal(0, monitor);
+                        resources[i].refreshLocal(IResource.DEPTH_INFINITE, monitor);
 					}
 					// fix the action enablement
 					if (action != null) action.setEnabled(isEnabled());
