@@ -183,7 +183,6 @@ public class SVNMoveDeleteHook extends DefaultMoveDeleteHook{
 		IFolder destination,
 		int updateFlags,
 		IProgressMonitor monitor) {
-		System.out.println("executing move from: "+source+" to dest: "+destination);
 		try {
             ISVNLocalFolder resource = new LocalFolder(source);
             if (!resource.isManaged())
@@ -197,7 +196,6 @@ public class SVNMoveDeleteHook extends DefaultMoveDeleteHook{
             // try and move all resources, doing it in a best-effort manner.
             boolean force = (updateFlags & IResource.FORCE) != 0;
             if (!force && !tree.isSynchronized(source, IResource.DEPTH_INFINITE)) {
-            	System.out.println("force is false and tree sync is false, short circuit");
                 String message = org.eclipse.core.internal.utils.Policy.bind("localstore.resourceIsOutOfSync", source.getFullPath().toString());//$NON-NLS-1$
                 IStatus status = new ResourceStatus(IResourceStatus.ERROR, source.getFullPath(), message);
                 tree.failed(status);
