@@ -12,10 +12,7 @@
 package org.tigris.subversion.subclipse.ui.actions;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Iterator;
 
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -25,7 +22,6 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.tigris.subversion.subclipse.core.ISVNRemoteFile;
-import org.tigris.subversion.subclipse.core.history.ILogEntry;
 import org.tigris.subversion.subclipse.ui.SVNUIPlugin;
 import org.tigris.subversion.subclipse.ui.editor.RemoteFileEditorInput;
 
@@ -33,41 +29,7 @@ import org.tigris.subversion.subclipse.ui.editor.RemoteFileEditorInput;
  * This action is used on ISVNRemoteFile or ILogEntry
  */
 public class OpenRemoteFileAction extends SVNAction {
-	/**
-	 * Returns the selected remote files
-	 */
-	protected ISVNRemoteFile[] getSelectedRemoteFiles() {
-		ArrayList resources = null;
-		if (!selection.isEmpty()) {
-			resources = new ArrayList();
-			Iterator elements = selection.iterator();
-			while (elements.hasNext()) {
-				Object next = elements.next();
-				if (next instanceof ISVNRemoteFile) {
-					resources.add(next);
-					continue;
-				}
-				if (next instanceof ILogEntry) {
-					resources.add(((ILogEntry)next).getRemoteResource());
-					continue;
-				}
-				if (next instanceof IAdaptable) {
-					IAdaptable a = (IAdaptable) next;
-					Object adapter = a.getAdapter(ISVNRemoteFile.class);
-					if (adapter instanceof ISVNRemoteFile) {
-						resources.add(adapter);
-						continue;
-					}
-				}
-			}
-		}
-		if (resources != null && !resources.isEmpty()) {
-			ISVNRemoteFile[] result = new ISVNRemoteFile[resources.size()];
-			resources.toArray(result);
-			return result;
-		}
-		return new ISVNRemoteFile[0];
-	}
+
 	/*
 	 * @see SVNAction#execute(IAction)
 	 */

@@ -77,6 +77,7 @@ import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.tigris.subversion.subclipse.core.ISVNLocalFile;
 import org.tigris.subversion.subclipse.core.ISVNRemoteFile;
+import org.tigris.subversion.subclipse.core.ISVNRemoteResource;
 import org.tigris.subversion.subclipse.core.SVNException;
 import org.tigris.subversion.subclipse.core.SVNProviderPlugin;
 import org.tigris.subversion.subclipse.core.SVNTeamProvider;
@@ -95,9 +96,13 @@ import org.tigris.subversion.svnclientadapter.SVNRevision;
 
 /**
  * The history view allows browsing of an array of resource revisions
+ * call either 
+ * - showHistory(IResource resource, boolean refetch) or
+ * - showHistory(ISVNRemoteFile remoteFile, boolean refetch)
  */
 public class HistoryView extends ViewPart {
-	private IFile file;
+	// the resource for which we want to see the history or null if we use showHistory(ISVNRemoteResource)
+	private IResource resource;
 
 	// cached for efficiency
 	private LogEntry[] entries;
@@ -107,11 +112,11 @@ public class HistoryView extends ViewPart {
 	private TableViewer tableViewer;
 	private TextViewer textViewer;
 	
-    private OpenRemoteFileAction openAction;
+    private Action openAction;
 	private TextViewerAction copyAction;
 	private TextViewerAction selectAllAction;
 	private Action getContentsAction;
-	private Action getRevisionAction;
+	private Action updateToRevisionAction;
 	private Action refreshAction;
 	private Action linkWithEditorAction;
 
@@ -169,7 +174,7 @@ public class HistoryView extends ViewPart {
 	};
 
     /**
-     * All Actions use this class 
+     * All context menu actions use this class 
      * This action :
      * - updates currentSelection
      * - action.run 
@@ -178,7 +183,7 @@ public class HistoryView extends ViewPart {
             return new Action(title) {
             public void run() {
                 try {
-                    if (file == null) return;
+                    if (resource == null) return;
                     ISelection selection = tableViewer.getSelection();
                     if (!(selection instanceof IStructuredSelection)) return;
                     IStructuredSelection ss = (IStructuredSelection)selection;
@@ -205,87 +210,126 @@ public class HistoryView extends ViewPart {
                 if (!(selection instanceof IStructuredSelection)) return false;
                 IStructuredSelection ss = (IStructuredSelection)selection;
                 if(ss.size() != 1) return false;
+                currentSelection = (LogEntry)ss.getFirstElement();
                 return true;
             }
         };
     }
 	
+    // open remote file action (double-click)
+	private Action getOpenRemoteFileAction() {
+		if (openAction == null) {
+			SVNUIPlugin plugin = SVNUIPlugin.getPlugin();
+			openAction = new Action() {
+				public void run() {
+					OpenRemoteFileAction delegate = new OpenRemoteFileAction();
+					delegate.init(this);
+					delegate.selectionChanged(this,tableViewer.getSelection());
+					if (isEnabled())
+						delegate.run(this); 
+				}
+			};			
+		}
+		return openAction;
+	}
+
+	// Refresh action (toolbar)
+	private Action getRefreshAction() {
+		if (refreshAction == null) {
+			SVNUIPlugin plugin = SVNUIPlugin.getPlugin();
+			refreshAction = new Action(Policy.bind("HistoryView.refreshLabel"), plugin.getImageDescriptor(ISVNUIConstants.IMG_REFRESH_ENABLED)) { //$NON-NLS-1$
+				public void run() {
+					refresh();
+				}
+			};
+			refreshAction.setToolTipText(Policy.bind("HistoryView.refresh")); //$NON-NLS-1$
+			refreshAction.setDisabledImageDescriptor(plugin.getImageDescriptor(ISVNUIConstants.IMG_REFRESH_DISABLED));
+			refreshAction.setHoverImageDescriptor(plugin.getImageDescriptor(ISVNUIConstants.IMG_REFRESH));			
+		}
+		return refreshAction;
+	}
+
+	//  Link with Editor action (toolbar)	
+	private Action getLinkWithEditorAction() {
+		if (linkWithEditorAction == null) {
+			SVNUIPlugin plugin = SVNUIPlugin.getPlugin();
+			linkWithEditorAction = new Action(Policy.bind("HistoryView.linkWithLabel"), plugin.getImageDescriptor(ISVNUIConstants.IMG_LINK_WITH_EDITOR_ENABLED)) { //$NON-NLS-1$
+				public void run() {
+					setLinkingEnabled(isChecked());
+				}
+			};
+			linkWithEditorAction.setToolTipText(Policy.bind("HistoryView.linkWithLabel")); //$NON-NLS-1$
+			linkWithEditorAction.setHoverImageDescriptor(plugin.getImageDescriptor(ISVNUIConstants.IMG_LINK_WITH_EDITOR));
+			linkWithEditorAction.setChecked(isLinkingEnabled());
+		}
+		return linkWithEditorAction;
+	}
+	
+	// get contents Action (context menu)
+	private Action getGetContentsAction() {
+		if (getContentsAction == null) {
+			getContentsAction = getContextMenuAction(Policy.bind("HistoryView.getContentsAction"), new IWorkspaceRunnable() { //$NON-NLS-1$
+				public void run(IProgressMonitor monitor) throws CoreException {
+					IFile file = (IFile)resource;
+					ISVNRemoteFile remoteFile = (ISVNRemoteFile)currentSelection.getRemoteResource();
+					monitor.beginTask(null, 100);
+					try {
+						if(confirmOverwrite()) {
+							InputStream in = ((IResourceVariant)remoteFile).getStorage(new SubProgressMonitor(monitor,50)).getContents();
+							file.setContents(in, false, true, new SubProgressMonitor(monitor, 50));				
+						}
+					} catch (TeamException e) {
+						throw new CoreException(e.getStatus());
+					} finally {
+						monitor.done();
+					}
+				}
+			});
+			WorkbenchHelp.setHelp(getContentsAction, IHelpContextIds.GET_FILE_CONTENTS_ACTION);
+		}
+		return getContentsAction;
+	}
+
+    // update to the selected revision (context menu)	
+	private Action getUpdateToRevisionAction() {
+		if (updateToRevisionAction == null) {
+			updateToRevisionAction = getContextMenuAction(Policy.bind("HistoryView.getRevisionAction"), new IWorkspaceRunnable() { //$NON-NLS-1$
+				public void run(IProgressMonitor monitor) throws CoreException {
+					IFile file = (IFile)resource;
+					ISVNRemoteFile remoteFile = (ISVNRemoteFile)currentSelection.getRemoteResource();
+					try {
+						if(confirmOverwrite()) {
+							// Update does not support overwriting the WC, so it must be reverted first
+							ISVNLocalFile svnFile = SVNWorkspaceRoot.getSVNFileFor(file);
+							if (svnFile.isModified()) {
+								svnFile.revert();
+							}
+	
+							SVNTeamProvider provider = (SVNTeamProvider)RepositoryProvider.getProvider(file.getProject());
+	                        provider.update(new IResource[] {file}, remoteFile.getLastChangedRevision(), monitor);					 
+							historyTableProvider.setRemoteResource(remoteFile);
+							tableViewer.refresh();
+						}
+					} catch (TeamException e) {
+						throw new CoreException(e.getStatus());
+					}
+				} 
+			});
+			WorkbenchHelp.setHelp(updateToRevisionAction, IHelpContextIds.GET_FILE_REVISION_ACTION);	
+		}
+		return updateToRevisionAction;
+	}
+	
 	/**
 	 * Adds the action contributions for this view.
 	 */
 	protected void contributeActions() {
-		// Refresh (toolbar)
-		SVNUIPlugin plugin = SVNUIPlugin.getPlugin();
-		refreshAction = new Action(Policy.bind("HistoryView.refreshLabel"), plugin.getImageDescriptor(ISVNUIConstants.IMG_REFRESH_ENABLED)) { //$NON-NLS-1$
-			public void run() {
-				refresh();
-			}
-		};
-		refreshAction.setToolTipText(Policy.bind("HistoryView.refresh")); //$NON-NLS-1$
-		refreshAction.setDisabledImageDescriptor(plugin.getImageDescriptor(ISVNUIConstants.IMG_REFRESH_DISABLED));
-		refreshAction.setHoverImageDescriptor(plugin.getImageDescriptor(ISVNUIConstants.IMG_REFRESH));
-		
-		//  Link with Editor (toolbar)
-		linkWithEditorAction = new Action(Policy.bind("HistoryView.linkWithLabel"), plugin.getImageDescriptor(ISVNUIConstants.IMG_LINK_WITH_EDITOR_ENABLED)) { //$NON-NLS-1$
-			public void run() {
-				setLinkingEnabled(isChecked());
-			}
-		};
-		linkWithEditorAction.setToolTipText(Policy.bind("HistoryView.linkWithLabel")); //$NON-NLS-1$
-		linkWithEditorAction.setHoverImageDescriptor(plugin.getImageDescriptor(ISVNUIConstants.IMG_LINK_WITH_EDITOR));
-		linkWithEditorAction.setChecked(isLinkingEnabled());
-
 		// Double click open action
-        openAction = new OpenRemoteFileAction();
 		tableViewer.getTable().addListener(SWT.DefaultSelection, new Listener() {
 			public void handleEvent(Event e) {
-				openAction.selectionChanged(null, tableViewer.getSelection());
-				openAction.run(null);
+				getOpenRemoteFileAction().run();
 			}
 		});
-
-        // get contents        
-		getContentsAction = getContextMenuAction(Policy.bind("HistoryView.getContentsAction"), new IWorkspaceRunnable() { //$NON-NLS-1$
-			public void run(IProgressMonitor monitor) throws CoreException {
-				ISVNRemoteFile remoteFile = (ISVNRemoteFile)currentSelection.getRemoteResource();
-				monitor.beginTask(null, 100);
-				try {
-					if(confirmOverwrite()) {
-						InputStream in = ((IResourceVariant)remoteFile).getStorage(new SubProgressMonitor(monitor,50)).getContents();
-						file.setContents(in, false, true, new SubProgressMonitor(monitor, 50));				
-					}
-				} catch (TeamException e) {
-					throw new CoreException(e.getStatus());
-				} finally {
-					monitor.done();
-				}
-			}
-		});
-		WorkbenchHelp.setHelp(getContentsAction, IHelpContextIds.GET_FILE_CONTENTS_ACTION);	
-
-        // update to the selected revision
-		getRevisionAction = getContextMenuAction(Policy.bind("HistoryView.getRevisionAction"), new IWorkspaceRunnable() { //$NON-NLS-1$
-			public void run(IProgressMonitor monitor) throws CoreException {
-				ISVNRemoteFile remoteFile = (ISVNRemoteFile)currentSelection.getRemoteResource();
-				try {
-					if(confirmOverwrite()) {
-						// Update does not support overwriting the WC, so it must be reverted first
-						ISVNLocalFile svnFile = SVNWorkspaceRoot.getSVNFileFor(file);
-						if (svnFile.isModified()) {
-							svnFile.revert();
-						}
-
-						SVNTeamProvider provider = (SVNTeamProvider)RepositoryProvider.getProvider(file.getProject());
-                        provider.update(new IResource[] {file}, remoteFile.getLastChangedRevision(), monitor);					 
-						historyTableProvider.setFile(remoteFile);
-						tableViewer.refresh();
-					}
-				} catch (TeamException e) {
-					throw new CoreException(e.getStatus());
-				}
-			}
-		});
-		WorkbenchHelp.setHelp(getRevisionAction, IHelpContextIds.GET_FILE_REVISION_ACTION);	
 
 		// Contribute actions to popup menu for the table
 		MenuManager menuMgr = new MenuManager();
@@ -301,8 +345,8 @@ public class HistoryView extends ViewPart {
 
 		// Create the local tool bar
 		IToolBarManager tbm = getViewSite().getActionBars().getToolBarManager();
-		tbm.add(refreshAction);
-		tbm.add(linkWithEditorAction);
+		tbm.add(getRefreshAction());
+		tbm.add(getLinkWithEditorAction());
 		tbm.update(false);
         
         IActionBars actionBars = getViewSite().getActionBars();
@@ -379,8 +423,8 @@ public class HistoryView extends ViewPart {
 				// Short-circuit to optimize
 				if (entries != null) return entries;
 				
-				if (!(inputElement instanceof ISVNRemoteFile)) return null;
-				final ISVNRemoteFile remoteFile = (ISVNRemoteFile)inputElement;
+				if (!(inputElement instanceof ISVNRemoteResource)) return null;
+				final ISVNRemoteResource remoteResource = (ISVNRemoteResource)inputElement;
 
 				if(fetchLogEntriesJob == null) {
 					fetchLogEntriesJob = new FetchLogEntriesJob();
@@ -390,10 +434,10 @@ public class HistoryView extends ViewPart {
 					try {
 						fetchLogEntriesJob.join();
 					} catch (InterruptedException e) {
-						SVNUIPlugin.log(new SVNException(Policy.bind("HistoryView.errorFetchingEntries", remoteFile.getName()), e)); //$NON-NLS-1$
+						SVNUIPlugin.log(new SVNException(Policy.bind("HistoryView.errorFetchingEntries", remoteResource.getName()), e)); //$NON-NLS-1$
 					}
 				}
-				fetchLogEntriesJob.setRemoteFile(remoteFile);
+				fetchLogEntriesJob.setRemoteFile(remoteResource);
 				Utils.schedule(fetchLogEntriesJob, getViewSite());
 
 				return new Object[0];
@@ -462,21 +506,23 @@ public class HistoryView extends ViewPart {
 	private void fillTableMenu(IMenuManager manager) {
 		// file actions go first (view file)
 		manager.add(new Separator(IWorkbenchActionConstants.GROUP_FILE));
-		if (file != null) {
+		if (resource != null) {
 			// Add the "Add to Workspace" action if 1 revision is selected.
 			ISelection sel = tableViewer.getSelection();
 			if (!sel.isEmpty()) {
 				if (sel instanceof IStructuredSelection) {
 					if (((IStructuredSelection)sel).size() == 1) {
-						manager.add(getContentsAction);
-						manager.add(getRevisionAction);
-						manager.add(new Separator());
+						if (resource instanceof IFile) {
+							manager.add(getGetContentsAction());
+							manager.add(getUpdateToRevisionAction());
+							manager.add(new Separator());
+						}
 					}
 				}
 			}
 		}
 		manager.add(new Separator("additions")); //$NON-NLS-1$
-		manager.add(refreshAction);
+		manager.add(getRefreshAction());
 		manager.add(new Separator("additions-end")); //$NON-NLS-1$
 	}
     
@@ -562,71 +608,61 @@ public class HistoryView extends ViewPart {
 	/**
 	 * Shows the history for the given ISVNRemoteFile in the view.
 	 */
-	public void showHistory(ISVNRemoteFile remoteFile, boolean refetch) {
-		if (remoteFile == null) {
+	public void showHistory(ISVNRemoteResource remoteResource, boolean refetch) {
+		if (remoteResource == null) {
 			tableViewer.setInput(null);
 			setContentDescription(Policy.bind("HistoryView.title")); //$NON-NLS-1$
 			setTitleToolTip(""); //$NON-NLS-1$
 			return;
 		}
-		ISVNRemoteFile existingFile = historyTableProvider.getISVNFile(); 
-		if(!refetch && existingFile != null && existingFile.equals(remoteFile)) return;
-		this.file = null;
-		historyTableProvider.setFile(remoteFile);
-		tableViewer.setInput(remoteFile);
-		setContentDescription(Policy.bind("HistoryView.titleWithArgument", remoteFile.getName())); //$NON-NLS-1$
-		setTitleToolTip(remoteFile.getRepositoryRelativePath());
+		ISVNRemoteResource existingRemoteResource = historyTableProvider.getRemoteResource(); 
+		if(!refetch && existingRemoteResource != null && existingRemoteResource.equals(remoteResource)) return;
+		this.resource = null;
+		historyTableProvider.setRemoteResource(remoteResource);
+		tableViewer.setInput(remoteResource);
+		setContentDescription(Policy.bind("HistoryView.titleWithArgument", remoteResource.getName())); //$NON-NLS-1$
+		setTitleToolTip(remoteResource.getRepositoryRelativePath());
 	}
 
 	/**
 	 * Shows the history for the given IResource in the view.
 	 * 
-	 * Only files are supported for now.
 	 */
 	public void showHistory(IResource resource, boolean refetch) {
-		if (resource instanceof IFile) {
-			IFile newfile = (IFile)resource;
-			if(!refetch && this.file != null && newfile.equals(this.file)) {
-				return;
-			} 
-			this.file = newfile;
-			RepositoryProvider teamProvider = RepositoryProvider.getProvider(file.getProject(), SVNProviderPlugin.getTypeId());
-			if (teamProvider != null) {
-				try {
-					ISVNRemoteFile remoteFile = (ISVNRemoteFile)SVNWorkspaceRoot.getBaseResourceFor(file);
-					if (remoteFile != null) {
-						historyTableProvider.setFile(remoteFile);
-						tableViewer.setInput(remoteFile);
-						setContentDescription(Policy.bind("HistoryView.titleWithArgument", remoteFile.getName())); //$NON-NLS-1$
-						setTitleToolTip(remoteFile.getRepositoryRelativePath());
-					}
-				} catch (TeamException e) {
-					SVNUIPlugin.openError(getViewSite().getShell(), null, null, e);
-				}				
-			}
-		} else {
-			this.file = null;
-			tableViewer.setInput(null);
-			setContentDescription(Policy.bind("HistoryView.title")); //$NON-NLS-1$
-			setTitleToolTip(""); //$NON-NLS-1$
+		if(!refetch && this.resource != null && resource.equals(this.resource)) {
+			return;
+		} 
+		this.resource = resource;
+		RepositoryProvider teamProvider = RepositoryProvider.getProvider(resource.getProject(), SVNProviderPlugin.getTypeId());
+		if (teamProvider != null) {
+			try {
+				ISVNRemoteResource remoteResource = (ISVNRemoteResource)SVNWorkspaceRoot.getBaseResourceFor(resource);
+				if (remoteResource != null) {
+					historyTableProvider.setRemoteResource(remoteResource);
+					tableViewer.setInput(remoteResource);
+					setContentDescription(Policy.bind("HistoryView.titleWithArgument", remoteResource.getName())); //$NON-NLS-1$
+					setTitleToolTip(remoteResource.getRepositoryRelativePath());
+				}
+			} catch (TeamException e) {
+				SVNUIPlugin.openError(getViewSite().getShell(), null, null, e);
+			}				
 		}
-		
 	}
 	
 	/**
 	 * Shows the history for the given ISVNRemoteFile in the view.
 	 */
-	public void showHistory(ISVNRemoteFile remoteFile, String currentRevision) {
-		if (remoteFile == null) {
+	public void showHistory(ISVNRemoteResource remoteResource, String currentRevision) {
+		if (remoteResource == null) {
 			tableViewer.setInput(null);
 			setContentDescription(Policy.bind("HistoryView.title")); //$NON-NLS-1$
 			setTitleToolTip(""); //$NON-NLS-1$
 			return;
 		}
-		this.file = null;
-		historyTableProvider.setFile(remoteFile);
-		tableViewer.setInput(remoteFile);
-		setContentDescription(Policy.bind("HistoryView.titleWithArgument", remoteFile.getName()));
+		this.resource = null;
+		historyTableProvider.setRemoteResource(remoteResource);
+		tableViewer.setInput(remoteResource);
+		setContentDescription(Policy.bind("HistoryView.titleWithArgument", remoteResource.getName()));
 		setTitleToolTip(""); //$NON-NLS-1$
 	}
 	
@@ -636,6 +672,7 @@ public class HistoryView extends ViewPart {
      * since last commit
 	 */
 	private boolean confirmOverwrite() {
+		IFile file = (IFile)resource;
 		if (file!=null && file.exists()) {
 			ISVNLocalFile svnFile = SVNWorkspaceRoot.getSVNFileFor(file);
 			try {
@@ -720,18 +757,18 @@ public class HistoryView extends ViewPart {
 	}
 
 	private class FetchLogEntriesJob extends Job {
-		public ISVNRemoteFile remoteFile;
+		public ISVNRemoteResource remoteResource;
 		public FetchLogEntriesJob() {
 			super(Policy.bind("HistoryView.fetchHistoryJob"));  //$NON-NLS-1$;
 		}
-		public void setRemoteFile(ISVNRemoteFile file) {
-			this.remoteFile = file;
+		public void setRemoteFile(ISVNRemoteResource resource) {
+			this.remoteResource = resource;
 		}
 		public IStatus run(IProgressMonitor monitor) {
 			try {
-				if(remoteFile != null && !shutdown) {
-					entries = remoteFile.getLogEntries(monitor);
-					final SVNRevision revisionId = remoteFile.getRevision();
+				if(remoteResource != null && !shutdown) {
+					entries = remoteResource.getLogEntries(monitor);
+					final SVNRevision revisionId = remoteResource.getRevision();
 					getSite().getShell().getDisplay().asyncExec(new Runnable() {
 						public void run() {
 							if(entries != null && tableViewer != null && ! tableViewer.getTable().isDisposed()) {

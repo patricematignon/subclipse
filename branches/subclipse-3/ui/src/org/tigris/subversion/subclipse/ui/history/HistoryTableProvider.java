@@ -37,7 +37,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
-import org.tigris.subversion.subclipse.core.ISVNRemoteFile;
+import org.tigris.subversion.subclipse.core.ISVNRemoteResource;
 import org.tigris.subversion.subclipse.core.history.ILogEntry;
 import org.tigris.subversion.subclipse.ui.Policy;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
@@ -49,7 +49,7 @@ import org.tigris.subversion.svnclientadapter.SVNRevision;
  */
 public class HistoryTableProvider {
 
-	private ISVNRemoteFile currentFile;
+	private ISVNRemoteResource currentRemoteResource;
 	private SVNRevision currentRevision;
 	private TableViewer viewer;
 	private Font currentRevisionFont;
@@ -80,7 +80,7 @@ public class HistoryTableProvider {
 			switch (columnIndex) {
 				case COL_REVISION:
 					String revision = entry.getRevision().toString();
-					if (currentFile.getLastChangedRevision().equals(entry.getRevision())) {
+					if (currentRemoteResource.getLastChangedRevision().equals(entry.getRevision())) {
 						revision = Policy.bind("currentRevision", revision); //$NON-NLS-1$
 					}
 					return revision;
@@ -341,21 +341,21 @@ public class HistoryTableProvider {
 	}
 	
 
-	private SVNRevision getRevision(ISVNRemoteFile currentEdition) {
+	private SVNRevision getRevision(ISVNRemoteResource currentEdition) {
 		if (currentEdition == null) return SVNRevision.INVALID_REVISION;
 		return currentEdition.getLastChangedRevision();
 	}
 	
-	public void setFile(ISVNRemoteFile file) {
-		this.currentFile = file;
-		this.currentRevision = getRevision(file);
+	public void setRemoteResource(ISVNRemoteResource remoteResource) {
+		this.currentRemoteResource = remoteResource;
+		this.currentRevision = getRevision(remoteResource);
 	}
 	
 	public SVNRevision getCurrentRevision() {
 		return currentRevision;
 	}
 	
-	public ISVNRemoteFile getISVNFile() {
-		return this.currentFile;
+	public ISVNRemoteResource getRemoteResource() {
+		return this.currentRemoteResource;
 	}
 }

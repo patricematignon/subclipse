@@ -67,7 +67,7 @@ public class ShowResourceInHistoryAction extends WorkspaceAction {
 	 * @see org.tigris.subversion.subclipse.ui.actions.WorkspaceAction#isEnabledForSVNResource(org.tigris.subversion.subclipse.core.ISVNResource)
 	 */
 	protected boolean isEnabledForSVNResource(ISVNLocalResource svnResource) throws SVNException {
-		return (!svnResource.isFolder() && super.isEnabledForSVNResource(svnResource));
+		return /* (!svnResource.isFolder() && */ super.isEnabledForSVNResource(svnResource);
 	}
 
 }

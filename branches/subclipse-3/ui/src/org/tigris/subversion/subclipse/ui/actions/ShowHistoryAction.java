@@ -12,14 +12,11 @@
 package org.tigris.subversion.subclipse.ui.actions;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Iterator;
 
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.tigris.subversion.subclipse.core.ISVNRemoteFile;
+import org.tigris.subversion.subclipse.core.ISVNRemoteResource;
 import org.tigris.subversion.subclipse.ui.Policy;
 import org.tigris.subversion.subclipse.ui.history.HistoryView;
 
@@ -27,47 +24,17 @@ import org.tigris.subversion.subclipse.ui.history.HistoryView;
  * Show history for selected remote file
  */
 public class ShowHistoryAction extends SVNAction {
-	/**
-	 * Returns the selected remote files
-	 */
-	protected ISVNRemoteFile[] getSelectedRemoteFiles() {
-		ArrayList resources = null;
-		if (!selection.isEmpty()) {
-			resources = new ArrayList();
-			Iterator elements = selection.iterator();
-			while (elements.hasNext()) {
-				Object next = elements.next();
-				if (next instanceof ISVNRemoteFile) {
-					resources.add(next);
-					continue;
-				}
-				if (next instanceof IAdaptable) {
-					IAdaptable a = (IAdaptable)next;
-					Object adapter = a.getAdapter(ISVNRemoteFile.class);
-					if (adapter instanceof ISVNRemoteFile) {
-						resources.add(adapter);
-						continue;
-					}
-				}
-			}
-		}
-		if (resources != null && !resources.isEmpty()) {
-			ISVNRemoteFile[] result = new ISVNRemoteFile[resources.size()];
-			resources.toArray(result);
-			return result;
-		}
-		return new ISVNRemoteFile[0];
-	}
-	/*
+
+		/*
 	 * @see SVNAction#executeIAction)
 	 */
 	public void execute(IAction action) throws InterruptedException, InvocationTargetException {
 		run(new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) {
-				ISVNRemoteFile[] files = getSelectedRemoteFiles();
+				ISVNRemoteResource[] resources = getSelectedRemoteResources();
 				HistoryView view = (HistoryView)showView(HistoryView.VIEW_ID);
 				if (view != null) {
-					view.showHistory(files[0], null /* no current revision */);
+					view.showHistory(resources[0], null /* no current revision */);
 				}
 			}
 		}, false /* cancelable */, PROGRESS_BUSYCURSOR);
@@ -76,7 +43,7 @@ public class ShowHistoryAction extends SVNAction {
 	 * @see TeamAction#isEnabled()
 	 */
 	protected boolean isEnabled() {
-		ISVNRemoteFile[] resources = getSelectedRemoteFiles();
+		ISVNRemoteResource[] resources = getSelectedRemoteResources();
 		return resources.length == 1;
 	}
 	/**
