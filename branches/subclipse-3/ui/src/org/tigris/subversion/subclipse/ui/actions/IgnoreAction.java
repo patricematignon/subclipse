@@ -17,38 +17,28 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.team.core.TeamException;
-import org.eclipse.ui.actions.WorkspaceModifyOperation;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.tigris.subversion.subclipse.core.ISVNLocalResource;
 import org.tigris.subversion.subclipse.core.SVNException;
-import org.tigris.subversion.subclipse.core.resources.SVNWorkspaceRoot;
 import org.tigris.subversion.subclipse.ui.Policy;
 import org.tigris.subversion.subclipse.ui.dialogs.IgnoreResourcesDialog;
+import org.tigris.subversion.subclipse.ui.operations.IgnoreOperation;
 
 public class IgnoreAction extends WorkspaceAction {
 	
 	protected void execute(final IAction action) throws InvocationTargetException, InterruptedException {
-		run(new WorkspaceModifyOperation() {
-			public void execute(IProgressMonitor monitor) throws InvocationTargetException {
-				IResource[] resources = getSelectedResources();
-				IgnoreResourcesDialog dialog = new IgnoreResourcesDialog(getShell(), resources);
-				if (dialog.open() != IgnoreResourcesDialog.OK) return;
-				
-				try {
-					for (int i = 0; i < resources.length; i++) {
-						IResource resource = resources[i];
-						String pattern = dialog.getIgnorePatternFor(resource);
-						ISVNLocalResource svnResource = SVNWorkspaceRoot.getSVNResourceFor(resource);
-						svnResource.getParent().setIgnoredAs(pattern);
-					}
-					// fix the action enablement
-					if (action != null) action.setEnabled(isEnabled());
-				} catch (TeamException e) {
-					throw new InvocationTargetException(e);
-				}
-			}
-		}, false /* cancelable */, PROGRESS_BUSYCURSOR);
+        run(new IRunnableWithProgress() {
+            public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+                IResource[] resources = getSelectedResources();
+                IgnoreResourcesDialog dialog = new IgnoreResourcesDialog(getShell(), resources);
+                if (dialog.open() != IgnoreResourcesDialog.OK) return;
+                new IgnoreOperation(getTargetPart(), resources, dialog).run();
+                
+                //if (action != null) action.setEnabled(isEnabled());
+            }
+        }, false /* cancelable */, PROGRESS_BUSYCURSOR);
 	}
+    
 	/**
 	 * @see org.eclipse.team.internal.ccvs.ui.actions.CVSAction#getErrorTitle()
 	 */
