@@ -37,6 +37,7 @@ import org.tigris.subversion.subclipse.core.resources.SVNWorkspaceRoot;
 import org.tigris.subversion.subclipse.ui.Policy;
 import org.tigris.subversion.subclipse.ui.SVNUIPlugin;
 import org.tigris.subversion.subclipse.ui.dialogs.CommitDialog;
+import org.tigris.subversion.subclipse.ui.operations.CommitOperation;
 import org.tigris.subversion.subclipse.ui.repository.RepositoryManager;
 import org.tigris.subversion.svnclientadapter.SVNStatusKind;
 import org.tigris.subversion.svnclientadapter.SVNUrl;
@@ -101,46 +102,48 @@ public class CommitAction extends WorkspaceAction {
 			return; // user canceled
 		}
 		
-		run(new WorkspaceModifyOperation() {
-			public void execute(IProgressMonitor monitor) throws  InvocationTargetException {
-				try {
-					// execute the add and commit in a single SVN runnable so sync changes are batched
-					SVNProviderPlugin.run(
-						new ISVNRunnable() {
-							public void run(IProgressMonitor monitor) throws SVNException {
-								try {
-									int ticks=100;
-									monitor.beginTask(null, ticks);
-									
-									// add unversioned resources.
-									if (resourcesToBeAdded[0].length > 0) {
-										int addTicks = 20;
-										manager.add(resourcesToBeAdded[0], Policy.subMonitorFor(monitor, addTicks));
-										ticks-=addTicks;
-									}
-									
-									// commit resources.
-									manager.commit(resourcesToCommit, commitComment, Policy.subMonitorFor(monitor,ticks));
-									resourcesToCommit = null;
-									commitComment = null;
-									for (int i = 0; i < resources.length; i++) {
-										IResource projectHandle = resources[i].getProject();
-										projectHandle.refreshLocal(IResource.DEPTH_INFINITE, monitor);
-									}
-								} catch (TeamException e) {
-									throw SVNException.wrapException(e);
-								} catch (CoreException e) {
-									throw SVNException.wrapException(e);
-								}
-							}
-						}, monitor);
-				} catch (SVNException e) {
-					throw new InvocationTargetException(e);
-				} finally {
-					monitor.done();
-				}
-			}
-		}, true /* cancelable */, PROGRESS_DIALOG); //$NON-NLS-1$
+		new CommitOperation(getTargetPart(), resources, resourcesToBeAdded[0], resourcesToCommit, commitComment).run();
+		
+//		run(new WorkspaceModifyOperation() {
+//			public void execute(IProgressMonitor monitor) throws  InvocationTargetException {
+//				try {
+//					// execute the add and commit in a single SVN runnable so sync changes are batched
+//					SVNProviderPlugin.run(
+//						new ISVNRunnable() {
+//							public void run(IProgressMonitor monitor) throws SVNException {
+//								try {
+//									int ticks=100;
+//									monitor.beginTask(null, ticks);
+//									
+//									// add unversioned resources.
+//									if (resourcesToBeAdded[0].length > 0) {
+//										int addTicks = 20;
+//										manager.add(resourcesToBeAdded[0], Policy.subMonitorFor(monitor, addTicks));
+//										ticks-=addTicks;
+//									}
+//									
+//									// commit resources.
+//									manager.commit(resourcesToCommit, commitComment, Policy.subMonitorFor(monitor,ticks));
+//									resourcesToCommit = null;
+//									commitComment = null;
+//									for (int i = 0; i < resources.length; i++) {
+//										IResource projectHandle = resources[i].getProject();
+//										projectHandle.refreshLocal(IResource.DEPTH_INFINITE, monitor);
+//									}
+//								} catch (TeamException e) {
+//									throw SVNException.wrapException(e);
+//								} catch (CoreException e) {
+//									throw SVNException.wrapException(e);
+//								}
+//							}
+//						}, monitor);
+//				} catch (SVNException e) {
+//					throw new InvocationTargetException(e);
+//				} finally {
+//					monitor.done();
+//				}
+//			}
+//		}, true /* cancelable */, PROGRESS_DIALOG); //$NON-NLS-1$
 	}
 	
 	/**
