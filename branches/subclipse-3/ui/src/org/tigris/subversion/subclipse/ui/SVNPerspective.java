@@ -12,6 +12,7 @@
 package org.tigris.subversion.subclipse.ui;
 
 
+import org.eclipse.team.ui.synchronize.ISynchronizeView;
 import org.eclipse.ui.IFolderLayout;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPerspectiveFactory;
@@ -45,6 +46,11 @@ public class SVNPerspective implements IPerspectiveFactory {
 		layout.addShowViewShortcut(IPageLayout.ID_TASK_LIST);
 		layout.addShowViewShortcut(HistoryView.VIEW_ID);
 		layout.addShowViewShortcut(RepositoriesView.VIEW_ID);
+		layout.addShowViewShortcut(ISynchronizeView.VIEW_ID);
+		
+		// Add  "perspective short cut"
+		layout.addPerspectiveShortcut("org.eclipse.ui.resourcePerspective"); //$NON-NLS-1$
+		layout.addPerspectiveShortcut("org.eclipse.team.ui.TeamSynchronizingPerspective"); //$NON-NLS-1$
 	}
 
 	/**

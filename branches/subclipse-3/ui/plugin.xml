@@ -84,6 +84,30 @@
    <extension
          point="org.eclipse.ui.perspectiveExtensions">
       <perspectiveExtension
+            targetID="org.eclipse.ui.resourcePerspective">
+         <perspectiveShortcut
+               id="org.tigris.subversion.subclipse.ui.svnPerspective">
+         </perspectiveShortcut>
+         <view
+               relative="org.eclipse.ui.views.TaskList"
+               visible="false"
+               id="org.tigris.subversion.subclipse.ui.history.HistoryView"
+               relationship="stack">
+         </view>
+         <view
+               relative="org.eclipse.ui.views.ResourceNavigator"
+               visible="false"
+               id="org.tigris.subversion.subclipse.ui.repository.RepositoriesView"
+               relationship="stack">
+         </view>
+         <view
+               relative="org.eclipse.ui.views.ResourceNavigator"
+               visible="false"
+               id="org.tigris.subversion.subclipse.ui.annotations.AnnotateView"
+               relationship="stack">
+         </view>
+      </perspectiveExtension>
+      <perspectiveExtension
             targetID="org.tigris.subversion.subclipse.ui.svnPerspective">
          <view
                relative="org.tigris.subversion.subclipse.ui.repository.RepositoriesView"
@@ -91,6 +115,24 @@
                relationship="stack">
          </view>
       </perspectiveExtension>
+      <perspectiveExtension
+            targetID="org.eclipse.team.ui.TeamSynchronizingPerspective">
+         <perspectiveShortcut
+               id="org.tigris.subversion.subclipse.ui.svnPerspective">
+         </perspectiveShortcut>
+         <view
+               relative="org.eclipse.ui.views.TaskList"
+               visible="false"
+               id="org.tigris.subversion.subclipse.ui.history.HistoryView"
+               relationship="stack">
+         </view>
+         <view
+               relative="org.eclipse.team.sync.views.SynchronizeView"
+               visible="false"
+               id="org.tigris.subversion.subclipse.ui.repository.RepositoriesView"
+               relationship="stack">
+         </view>
+       </perspectiveExtension>
    </extension>   
    <extension
          point="org.eclipse.ui.popupMenus">
