@@ -3,7 +3,10 @@
       id="featurelinux"
       label="feature-linux"
       version="0.9.0"
-      provider-name="tigris.org">
+      provider-name="tigris.org"
+      os="linux"
+      ws="gtk"
+      arch="x86">
 
    <install-handler/>
 
