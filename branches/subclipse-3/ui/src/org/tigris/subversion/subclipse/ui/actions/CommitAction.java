@@ -17,26 +17,43 @@ import java.util.List;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceVisitor;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
+import org.tigris.subversion.subclipse.core.ISVNLocalFolder;
 import org.tigris.subversion.subclipse.core.ISVNLocalResource;
 import org.tigris.subversion.subclipse.core.ISVNRunnable;
 import org.tigris.subversion.subclipse.core.SVNException;
 import org.tigris.subversion.subclipse.core.SVNProviderPlugin;
+import org.tigris.subversion.subclipse.core.commands.GetStatusCommand;
+import org.tigris.subversion.subclipse.core.resources.LocalResourceStatus;
 import org.tigris.subversion.subclipse.core.resources.SVNWorkspaceRoot;
 import org.tigris.subversion.subclipse.ui.Policy;
 import org.tigris.subversion.subclipse.ui.SVNUIPlugin;
+import org.tigris.subversion.subclipse.ui.dialogs.CommitDialog;
 import org.tigris.subversion.subclipse.ui.repository.RepositoryManager;
+import org.tigris.subversion.svnclientadapter.SVNStatusKind;
+import org.tigris.subversion.svnclientadapter.SVNUrl;
 
 /**
  * Action for checking in files to a subversion provider
- * Prompts the user for a release comment.
+ * Prompts the user for a release comment, and shows a selection
+ * list of added and modified resources, including unversioned resources.
+ * If selected, unversioned resources will be added to version control,
+ * and committed.
  */
 public class CommitAction extends WorkspaceAction {
+    private String commitComment;
+    private IResource[] resourcesToCommit;
+    private String url;
+    private boolean unaddedResources;
+    private boolean commit;
 	
 	/*
      * get non added resources and prompts for resources to be added
@@ -48,25 +65,39 @@ public class CommitAction extends WorkspaceAction {
 	public void execute(IAction action) throws InvocationTargetException, InterruptedException {
 		final IResource[] resources = getSelectedResources();
 		final RepositoryManager manager = SVNUIPlugin.getPlugin().getRepositoryManager();
-		final String[] comment = new String[] {null};
 		final IResource[][] resourcesToBeAdded = new IResource[][] { null };
 		run(new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException {
 				try {
-					// search for any non-added, non-ignored resources in the selection
-					IResource[] unadded = getUnaddedResources(resources, monitor);
-					resourcesToBeAdded[0] = promptForResourcesToBeAdded(manager, unadded);
-					if (resourcesToBeAdded[0] == null) {
-						return;
+				    // search for modified or added, non-ignored resources in the selection.
+				    IResource[] modified = getModifiedResources(resources, monitor);
+					
+				    // if no changes since last commit, do not show commit dialog.
+				    if (modified.length == 0) {
+					    MessageDialog.openInformation(getShell(), Policy.bind("CommitDialog.title"), Policy.bind("CommitDialog.noChanges")); //$NON-NLS-1$
+					    commit = false;
+					} else
+					    commit = confirmCommit(modified);
+
+				    // if commit was not canceled, create a list of any
+				    // unversioned resources that were selected.
+					if (commit) {
+					    List toBeAddedList = new ArrayList();
+					    for (int i = 0; i < resourcesToCommit.length; i++) {
+					        IResource resource = resourcesToCommit[i];
+					        ISVNLocalResource svnResource = SVNWorkspaceRoot.getSVNResourceFor(resource);
+					        if (!svnResource.isManaged()) toBeAddedList.add(resource);
+					    }
+					    resourcesToBeAdded[0] = new IResource[toBeAddedList.size()];
+					    toBeAddedList.toArray(resourcesToBeAdded[0]);					   
 					}
-					comment[0] = promptForComment(manager, resources);
 				} catch (TeamException e) {
 					throw new InvocationTargetException(e);
 				}
 			}
 		}, true /* cancelable */, PROGRESS_BUSYCURSOR); //$NON-NLS-1$
 		
-		if (comment[0] == null) {
+		if (!commit) {
 			return; // user canceled
 		}
 		
@@ -80,16 +111,16 @@ public class CommitAction extends WorkspaceAction {
 								try {
 									int ticks=100;
 									monitor.beginTask(null, ticks);
+									
+									// add unversioned resources.
 									if (resourcesToBeAdded[0].length > 0) {
 										int addTicks = 20;
 										manager.add(resourcesToBeAdded[0], Policy.subMonitorFor(monitor, addTicks));
 										ticks-=addTicks;
 									}
-									IResource[] shared = getSharedResources(resources);
-									if (shared.length == 0) {
-										return;
-									}
-									manager.commit(shared, comment[0], Policy.subMonitorFor(monitor,ticks));
+									
+									// commit resources.
+									manager.commit(resourcesToCommit, commitComment, Policy.subMonitorFor(monitor,ticks));
 									for (int i = 0; i < resources.length; i++) {
 										IResource projectHandle = resources[i].getProject();
 										projectHandle.refreshLocal(IResource.DEPTH_INFINITE, monitor);
@@ -109,7 +140,7 @@ public class CommitAction extends WorkspaceAction {
 			}
 		}, true /* cancelable */, PROGRESS_DIALOG); //$NON-NLS-1$
 	}
-
+	
 	/**
 	 * get the unadded resources in resources parameter
 	 */
@@ -145,42 +176,72 @@ public class CommitAction extends WorkspaceAction {
 			    if (exception[0] != null) throw exception[0];
             }
 		}
+		unaddedResources = unadded.size() > 0;
 		return (IResource[]) unadded.toArray(new IResource[unadded.size()]);
-	}
+	}	
 
-
-	/*
-	 * Return all resources in the provided collection that are shared with a repo
-	 * @param resources
-	 * @return IResource[]
-	 */
-	private IResource[] getSharedResources(IResource[] resources) throws SVNException {
-		List shared = new ArrayList();
-		for (int i = 0; i < resources.length; i++) {
-			IResource resource = resources[i];
-			ISVNLocalResource svnResource = SVNWorkspaceRoot.getSVNResourceFor(resource);
-			if (svnResource.isManaged()) { 
-			  	shared.add(resource);
-			}
-		}
-		return (IResource[]) shared.toArray(new IResource[shared.size()]);
-	}
-	
 	/**
-	 * Prompts the user for a release comment.
-	 * @return the comment, or null to cancel
-	 */
-	protected String promptForComment(RepositoryManager manager, IResource[] resourcesToCommit) {
-		return manager.promptForComment(getShell(), resourcesToCommit);
+	 * get the modified and unadded resources in resources parameter
+	 */	
+	private IResource[] getModifiedResources(IResource[] resources, IProgressMonitor iProgressMonitor) throws SVNException {
+	    IWorkspaceRoot workspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
+	    final List modified = new ArrayList();
+		final SVNException[] exception = new SVNException[] { null };		
+	    for (int i = 0; i < resources.length; i++) {
+			 IResource resource = resources[i];
+			 ISVNLocalResource svnResource = SVNWorkspaceRoot.getSVNResourceFor(resource);
+			 
+			 // if only one resource selected, get url.  Commit dialog displays this.
+			 if (resources.length == 1) {
+				   SVNUrl svnUrl = svnResource.getStatus().getUrl();
+				   if (svnUrl == null) url = getParentUrl(svnResource);
+				   else url = svnResource.getStatus().getUrl().toString();
+			 }
+			 
+			 // get adds, deletes, updates and property updates.
+			 GetStatusCommand command = new GetStatusCommand(svnResource);
+			 command.run(iProgressMonitor);
+			 LocalResourceStatus[] statuses = command.getStatuses();
+			 for (int j = 0; j < statuses.length; j++) {
+			     if (statuses[j].isTextModified() || statuses[j].isAdded() || statuses[j].isDeleted() || statuses[j].getPropStatus().equals(SVNStatusKind.MODIFIED)) {
+			         IResource currentResource = null;
+			         currentResource = GetStatusCommand.getResource(statuses[j]);
+			         if (currentResource != null)
+			             modified.add(currentResource);
+			     }
+			 }
+		}
+	    // get unadded resources and add them to the list.
+	    IResource[] unaddedResources = getUnaddedResources(resources, iProgressMonitor);
+	    for (int i = 0; i < unaddedResources.length; i++)
+	        modified.add(unaddedResources[i]);
+	    return (IResource[]) modified.toArray(new IResource[modified.size()]);
 	}
-	
-    /**
-     * Prompt to add all or some of the provided resources to version control.
-     * The value null is returned if the dialog is cancelled.
-     */
-	private IResource[] promptForResourcesToBeAdded(RepositoryManager manager, IResource[] unadded) {
-		return manager.promptForResourcesToBeAdded(getShell(), unadded);
+
+	/**
+	 * for an unadded resource, get url from parent.
+	 */	
+	private String getParentUrl(ISVNLocalResource svnResource) throws SVNException {
+        ISVNLocalFolder parent = svnResource.getParent();
+        while (parent != null) {
+            SVNUrl url = parent.getStatus().getUrl();
+            if (url != null) return url.toString();
+            parent = parent.getParent();
+        }
+        return null;
+    }
+
+	/**
+	 * prompt commit of selected resources.
+	 */		
+	protected boolean confirmCommit(IResource[] modifiedResources) {
+	   CommitDialog dialog = new CommitDialog(getShell(), modifiedResources, url, unaddedResources);
+	   boolean commit = (dialog.open() == CommitDialog.OK);
+	   commitComment = dialog.getComment();
+	   resourcesToCommit = dialog.getSelectedResources();
+	   return commit;
 	}
+
 	/**
 	 * @see org.tigris.subversion.subclipse.ui.actions.SVNAction#getErrorTitle()
 	 */
