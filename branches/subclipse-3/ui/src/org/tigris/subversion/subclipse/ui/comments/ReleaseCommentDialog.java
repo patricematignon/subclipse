@@ -42,9 +42,8 @@ public class ReleaseCommentDialog extends Dialog {
 		int shellStyle = getShellStyle();
 		setShellStyle(shellStyle | SWT.RESIZE);
 		commitCommentArea = new CommitCommentArea(this, null);
-		// Get a project from which the commit template can be obtained
-		if (resourcesToCommit.length > 0) 
-		  commitCommentArea.setProject(resourcesToCommit[0].getProject());
+		
+		
 	}
 	
 	/*

@@ -14,8 +14,8 @@ package org.tigris.subversion.subclipse.core.resources;
 import java.util.Date;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.variants.CachedResourceVariant;
 import org.tigris.subversion.subclipse.core.ISVNRemoteFolder;
 import org.tigris.subversion.subclipse.core.ISVNRemoteResource;
 import org.tigris.subversion.subclipse.core.ISVNRepositoryLocation;
@@ -36,7 +36,7 @@ import org.tigris.subversion.svnclientadapter.SVNUrl;
  * locally.
  */
 public abstract class RemoteResource
-	extends PlatformObject
+	extends CachedResourceVariant
 	implements ISVNRemoteResource {
 
 	protected RemoteFolder parent;

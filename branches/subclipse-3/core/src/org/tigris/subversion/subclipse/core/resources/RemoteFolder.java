@@ -12,7 +12,6 @@
 package org.tigris.subversion.subclipse.core.resources;
 
 
-import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -20,9 +19,7 @@ import java.util.List;
 
 import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.sync.IRemoteResource;
 import org.tigris.subversion.javahl.Revision.Kind;
 import org.tigris.subversion.subclipse.core.ISVNFolder;
 import org.tigris.subversion.subclipse.core.ISVNRemoteFolder;
@@ -33,7 +30,6 @@ import org.tigris.subversion.subclipse.core.Policy;
 import org.tigris.subversion.subclipse.core.SVNException;
 import org.tigris.subversion.subclipse.core.SVNProviderPlugin;
 import org.tigris.subversion.subclipse.core.SVNStatus;
-import org.tigris.subversion.subclipse.core.history.ILogEntry;
 import org.tigris.subversion.subclipse.core.util.Util;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 import org.tigris.subversion.svnclientadapter.ISVNDirEntry;
@@ -194,7 +190,7 @@ public class RemoteFolder extends RemoteResource implements ISVNRemoteFolder, IS
 		boolean includeFiles = (((flags & FILE_MEMBERS) != 0) || ((flags & (FILE_MEMBERS | FOLDER_MEMBERS)) == 0));
 		boolean includeFolders = (((flags & FOLDER_MEMBERS) != 0) || ((flags & (FILE_MEMBERS | FOLDER_MEMBERS)) == 0));
 		boolean includeManaged = (((flags & MANAGED_MEMBERS) != 0) || ((flags & (MANAGED_MEMBERS | UNMANAGED_MEMBERS | IGNORED_MEMBERS)) == 0));
-		boolean includeUnmanaged = (((flags & UNMANAGED_MEMBERS) != 0) || ((flags & (MANAGED_MEMBERS | UNMANAGED_MEMBERS | IGNORED_MEMBERS)) == 0));
+	
 		for (int i = 0; i < resources.length; i++) {
 			ISVNResource svnResource = resources[i];
 			if ((includeFiles && ( ! svnResource.isFolder())) 
@@ -225,16 +221,11 @@ public class RemoteFolder extends RemoteResource implements ISVNRemoteFolder, IS
 	/*
 	 * @see IRemoteResource#members(IProgressMonitor)
 	 */
-	public IRemoteResource[] members(IProgressMonitor progress) throws TeamException {
+	public ISVNRemoteResource[] members(IProgressMonitor progress) throws TeamException {
 		return getMembers(progress);
 	}
 
-	/*
-	 * @see IRemoteResource#getContents(IProgressMonitor)
-	 */
-	public InputStream getContents(IProgressMonitor progress) throws TeamException {
-		return null;
-	}
+	
     
     /**
      * creates a new remote folder 
@@ -257,25 +248,48 @@ public class RemoteFolder extends RemoteResource implements ISVNRemoteFolder, IS
         }
     }    
 
-    public String getCreatorDisplayName(){
-        return this.getAuthor();
-    }
+    
     public String getContentIdentifier(){
         return this.getRevision().toString();
     }
-    public String getComment() throws SVNException{
-        ILogEntry[] entries = getLogEntries(new NullProgressMonitor());
-        if(entries == null || entries.length ==0) {
-            return "None";
-        }else {
-            return entries[0].getComment();
-        }
+   
+
+    public IStorage getBufferedStorage(IProgressMonitor monitor)
+    {
+    	return null;
     }
 
-    public IStorage getBufferedStorage(IProgressMonitor monitor) throws TeamException
-    {
-        return null;
-    }
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.variants.CachedResourceVariant#fetchContents(org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	protected void fetchContents(IProgressMonitor monitor){
+	
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.variants.CachedResourceVariant#getCachePath()
+	 */
+	protected String getCachePath() {
+		return this.getUrl().toString();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.variants.CachedResourceVariant#getCacheId()
+	 */
+	protected String getCacheId() {
+		return SVNProviderPlugin.ID;
+	}
+
+	
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.variants.IResourceVariant#asBytes()
+	 */
+	public byte[] asBytes() {
+
+		return getCachePath().getBytes();
+	}
 
     
 }

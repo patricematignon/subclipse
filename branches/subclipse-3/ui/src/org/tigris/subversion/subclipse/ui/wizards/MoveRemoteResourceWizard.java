@@ -12,7 +12,6 @@ package org.tigris.subversion.subclipse.ui.wizards;
 
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.Properties;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.Dialog;
@@ -34,7 +33,7 @@ public class MoveRemoteResourceWizard extends Wizard {
     private CommentCommitWizardPage commitCommentPage; 
     private ISVNRemoteResource selection;
     private Dialog parentDialog;
-	private Properties properties = null;
+	
    
 	public MoveRemoteResourceWizard(ISVNRemoteResource selection) {
 		setWindowTitle(Policy.bind("moveRemoteFolderWizard.title")); //$NON-NLS-1$
@@ -68,7 +67,7 @@ public class MoveRemoteResourceWizard extends Wizard {
 	public boolean performFinish() {
         try {
             SVNUIPlugin.runWithProgress(getContainer().getShell(), false /*cancelable*/, new IRunnableWithProgress() {
-                public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+                public void run(IProgressMonitor monitor) throws InvocationTargetException {
                     try {
                         SVNProviderPlugin.getPlugin().getRepositoryResourcesManager().
                             moveRemoteResource(

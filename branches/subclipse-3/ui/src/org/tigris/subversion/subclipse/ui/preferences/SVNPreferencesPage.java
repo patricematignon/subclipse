@@ -162,18 +162,6 @@ public class SVNPreferencesPage extends PreferencePage implements IWorkbenchPref
 		return label;
 	}
 	/**
-	 * Creates an new text widget and sets the default
-	 * layout data.
-	 *
-	 * @param group  the composite in which to create the checkbox
-	 * @return the new text widget
-	 */ 
-	private Text createTextField(Composite group) {
-		Text text = new Text(group, SWT.BORDER);
-		text.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		return text;
-	}
-	/**
 	 * Initializes states of the controls from the preference store.
 	 */
 	private void initializeValues() {

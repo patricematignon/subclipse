@@ -12,7 +12,11 @@
 package org.tigris.subversion.subclipse.core.resources;
 
 import java.io.File;
+import java.io.InputStream;
 import java.net.MalformedURLException;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -25,20 +29,19 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.sync.IRemoteSyncElement;
+import org.tigris.subversion.subclipse.core.ISVNFolder;
 import org.tigris.subversion.subclipse.core.ISVNLocalFile;
 import org.tigris.subversion.subclipse.core.ISVNLocalFolder;
 import org.tigris.subversion.subclipse.core.ISVNLocalResource;
 import org.tigris.subversion.subclipse.core.ISVNRemoteFolder;
 import org.tigris.subversion.subclipse.core.ISVNRemoteResource;
 import org.tigris.subversion.subclipse.core.ISVNRepositoryLocation;
+import org.tigris.subversion.subclipse.core.ISVNResource;
 import org.tigris.subversion.subclipse.core.Policy;
 import org.tigris.subversion.subclipse.core.SVNException;
 import org.tigris.subversion.subclipse.core.SVNProviderPlugin;
 import org.tigris.subversion.subclipse.core.SVNStatus;
-import org.tigris.subversion.subclipse.core.SVNTeamProvider;
 import org.tigris.subversion.subclipse.core.client.OperationManager;
-import org.tigris.subversion.subclipse.core.sync.SVNRemoteSyncElement;
 import org.tigris.subversion.subclipse.core.util.Util;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 import org.tigris.subversion.svnclientadapter.ISVNDirEntry;
@@ -47,6 +50,10 @@ import org.tigris.subversion.svnclientadapter.SVNClientException;
 import org.tigris.subversion.svnclientadapter.SVNNodeKind;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
 import org.tigris.subversion.svnclientadapter.SVNUrl;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.w3c.dom.Text;
 
 
 /**
@@ -126,9 +133,53 @@ public class SVNWorkspaceRoot {
         resource.delete();
     }
 
+	/**
+	 * get a project for the remote folder. The name is either the name of the 
+	 * remote folder or the name in .project if this file exists.
+	 * Project is not created. There is no check to see if the project already exists
+	 * @param folder
+	 * @param monitor
+	 * @return
+	 */
+	public static IProject getProject(ISVNRemoteFolder folder,IProgressMonitor monitor) {
+		String name = folder.getName();
+						
+		// Check for a better name for the project
+		try {
+			ISVNResource[] children = folder.members(monitor, ISVNFolder.FILE_MEMBERS);
+			for (int k = 0; k < children.length; k++) {
+				ISVNResource resource = children[k];
+				if(".project".equals(resource.getName())){
+					RemoteFile dotProject = (RemoteFile)folder.getRepository().getRemoteFile(new SVNUrl(Util.appendPath(folder.getUrl().get(), ".project")));
+																
+					InputStream is = dotProject.getStorage(monitor).getContents();
+					DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+					org.w3c.dom.Document doc = db.parse(is);
+					is.close();
+					NodeList nl = doc.getDocumentElement().getChildNodes();
+					for (int j = 0; j < nl.getLength(); ++j) {
+						Node child = nl.item(j);
+						if (child instanceof Element && "name".equals(child.getNodeName())) {
+							Node grandChild = child.getFirstChild();
+							if (grandChild instanceof Text) name = ((Text)grandChild).getData(); 	
+						}
+					}									
+				}
+			}
+
+		}	
+		catch (Exception e) {
+		  // no .project exists ... that's ok
+		  // or an error occured while parsing .project (not valid ?)
+		}
+		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(name);
+		return project;		
+	}
+
     /**
-	 * Checkout the remote resources into the local workspace. Each resource will 
-	 * be checked out into the corresponding project. 
+	 * Checkout the remote resources into the local workspace as projects. 
+	 * Each resource will be checked out into the corresponding project.
+	 * You can use getProject to get a project for a given remote Folder 
 	 * 
 	 * Resources existing in the local file system at the target project location but now 
 	 * known to the workbench will be overwritten.
@@ -240,7 +291,7 @@ public class SVNWorkspaceRoot {
 		boolean alreadyExists = SVNProviderPlugin.getPlugin().getRepositories().isKnownRepository(location.getLocation());
 		
         // Set the folder sync info of the project to point to the remote module
-		final ISVNLocalFolder folder = (ISVNLocalFolder)SVNWorkspaceRoot.getSVNResourceFor(project);
+		SVNWorkspaceRoot.getSVNResourceFor(project);
 			
 		try {
 			// Get the import properties
@@ -256,7 +307,7 @@ public class SVNWorkspaceRoot {
 				final TeamException[] exception = new TeamException[] {null};
 				final String dirName = remoteDirName;
 				ResourcesPlugin.getWorkspace().run(new IWorkspaceRunnable() {
-					public void run(IProgressMonitor monitor) throws CoreException {
+					public void run(IProgressMonitor monitor){
 						try {
                             String message = Policy.bind("SVNProvider.initialImport"); //$NON-NLS-1$
                             
@@ -268,9 +319,9 @@ public class SVNWorkspaceRoot {
                                 // checkout it so that we have .svn
                                 svnClient.checkout(url,project.getLocation().toFile(),SVNRevision.HEAD,false);
                             } catch (SVNClientException e) {
-                                throw new SVNException("Error while creating module");  
+                                throw new SVNException("Error while creating module:"+e.getMessage(),e);  
                             } catch (MalformedURLException e) {
-                                throw new SVNException("Error while creating module");
+                                throw new SVNException("Error while creating module: "+e.getMessage(),e);
                             }
                                                        
 							//Register it with Team.  If it already is, no harm done.
@@ -315,7 +366,7 @@ public class SVNWorkspaceRoot {
             throw new SVNException(new SVNStatus(SVNStatus.ERROR, Policy.bind("SVNProvider.infoMismatch", project.getName())));//$NON-NLS-1$
         
 		// Ensure that the provided location is managed
-		ISVNRepositoryLocation location = SVNProviderPlugin.getPlugin().getRepositories().getRepository(status.getUrl().toString());
+		SVNProviderPlugin.getPlugin().getRepositories().getRepository(status.getUrl().toString());
 		
 		// Register the project with Team
 		RepositoryProvider.map(project, SVNProviderPlugin.getTypeId());
@@ -332,7 +383,7 @@ public class SVNWorkspaceRoot {
 				IProject project = projects[i];
 				// Register the project with Team
 				RepositoryProvider.map(project, SVNProviderPlugin.getTypeId());
-				SVNTeamProvider provider = (SVNTeamProvider)RepositoryProvider.getProvider(project, SVNProviderPlugin.getTypeId());
+				RepositoryProvider.getProvider(project, SVNProviderPlugin.getTypeId());
 			}
 		} finally {
 			monitor.done();
@@ -385,18 +436,7 @@ public class SVNWorkspaceRoot {
         return managed.getLatestRemoteResource();        
     }
     
-    /**
-     * get the remotesync for the given resource.
-     * A remotesync element is (managed,base,remote)  
-     */
-	public static IRemoteSyncElement getRemoteSync(IResource resource, IProgressMonitor progress) throws TeamException {
-        ISVNLocalResource managed = SVNWorkspaceRoot.getSVNResourceFor(resource);
-//        ISVNRemoteResource remote = managed.getRemoteResource();
-//        ISVNRemoteResource base = managed.getLatestRemoteResource();
-        ISVNRemoteResource remote = managed.getLatestRemoteResource();
-        ISVNRemoteResource base = managed.getRemoteResource();
-		return new SVNRemoteSyncElement(true /*three way*/, resource, base, remote);
-	}
+   
 
 	/**
      * get the repository for this project 

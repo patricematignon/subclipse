@@ -55,9 +55,9 @@ public class SVNLightweightDecorator
 	// Images cached for better performance
 	private static ImageDescriptor dirty;
 	private static ImageDescriptor checkedIn;
-	private static ImageDescriptor noRemoteDir;
+	
 	private static ImageDescriptor added;
-	private static ImageDescriptor merged;
+	
 	private static ImageDescriptor newResource;
 
 	/*
@@ -81,9 +81,9 @@ public class SVNLightweightDecorator
 		dirty = new CachedImageDescriptor(TeamImages.getImageDescriptor(ISharedImages.IMG_DIRTY_OVR));
 		checkedIn = new CachedImageDescriptor(TeamImages.getImageDescriptor(ISharedImages.IMG_CHECKEDIN_OVR));
 		added = new CachedImageDescriptor(TeamImages.getImageDescriptor(ISharedImages.IMG_CHECKEDIN_OVR));
-		merged = new CachedImageDescriptor(SVNUIPlugin.getPlugin().getImageDescriptor(ISVNUIConstants.IMG_MERGED));
+		
 		newResource = new CachedImageDescriptor(SVNUIPlugin.getPlugin().getImageDescriptor(ISVNUIConstants.IMG_QUESTIONABLE));
-		noRemoteDir = new CachedImageDescriptor(SVNUIPlugin.getPlugin().getImageDescriptor(ISVNUIConstants.IMG_NO_REMOTEDIR));
+		
 	}
 
 	public SVNLightweightDecorator() {
@@ -96,7 +96,8 @@ public class SVNLightweightDecorator
      */
 	public static boolean isDirty(final ISVNLocalResource svnResource) {
 		try {
-			return !svnResource.isIgnored() && svnResource.isModified();
+			return !svnResource.isIgnored() && 
+				(svnResource.isModified() || svnResource.getStatus().getPropStatus() == ISVNStatus.Kind.MODIFIED);
 		} catch (SVNException e) {
 			//if we get an error report it to the log but assume dirty
 			SVNUIPlugin.log(e.getStatus());
@@ -316,7 +317,7 @@ public class SVNLightweightDecorator
 		// Simplest is that is has remote.
 		if (showHasRemote) {
             try {
-                ISVNStatus status = svnResource.getStatus();
+                
                 if (svnResource.hasRemote())
                     return checkedIn;
             } catch (SVNException e) {
@@ -324,19 +325,6 @@ public class SVNLightweightDecorator
             }
             
            
-//			if (resource.getType() != IResource.FILE) {
-//				// check if the folder is local diectory with no remote
-//				ISVNFolder svnFolder = SVNWorkspaceRoot.getSVNFolderFor((IContainer)resource);
-//				try {
-//					if (svnFolder.getFolderSyncInfo().getRepository().equals(FolderSyncInfo.VIRTUAL_DIRECTORY)) {
-//						return noRemoteDir;
-//					}
-//				} catch (SVNException e) {
-//					// log the exception and show the shared overlay
-//					SVNUIPlugin.log(e);
-//				}
-//			}
-//			return checkedIn;
 		}
 
 		//nothing matched

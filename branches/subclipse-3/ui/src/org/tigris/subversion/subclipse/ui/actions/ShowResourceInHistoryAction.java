@@ -31,7 +31,7 @@ public class ShowResourceInHistoryAction extends WorkspaceAction {
 	 */
 	public void execute(IAction action) throws InterruptedException, InvocationTargetException {
 		run(new IRunnableWithProgress() {
-			public void run(IProgressMonitor monitor) throws InvocationTargetException {
+			public void run(IProgressMonitor monitor) {
 				IResource[] resources = getSelectedResources();
 				if (resources.length != 1) return;
 				HistoryView view = (HistoryView)showView(HistoryView.VIEW_ID);

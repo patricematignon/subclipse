@@ -149,7 +149,7 @@ public class RemoteFileEditorInput implements IWorkbenchAdapter, IStorageEditorI
 	 * @return an IStorage object.
 	 * @exception CoreException if this method fails
 	 */
-	public IStorage getStorage() throws CoreException {
+	public IStorage getStorage() {
 		if (storage == null) {
 			storage = new RemoteFileStorage(file);
 		}

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site-build
+      feature-location="features"
+      plugin-location="plugins"
+      autobuild="false"
+      scrub-output="false"
+      use-console="true">
+   <feature id="feature.win32" version="0.9.3"/>
+   <feature id="featurelinux" version="0.9.3"/>
+   <feature id="featureosx" version="0.9.3"/>
+</site-build>

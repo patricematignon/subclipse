@@ -517,7 +517,8 @@ public class PendingOperationsView extends ViewPart implements IResourceStateCha
      */
     public void showPending(IContainer container) throws SVNException {
         parent = container;
-        setTitle(Policy.bind("PendingOperationsView.titleWithArgument", container.getName())); //$NON-NLS-1$
+        setPartName(Policy.bind("PendingOperationsView.titleWithArgument", container.getName())); //$NON-NLS-1$
+        setContentDescription(Policy.bind("PendingOperationsView.titleWithArgument", container.getName())); //$NON-NLS-1$
         tableViewer.setInput(getStatus());
     }
 
@@ -529,7 +530,7 @@ public class PendingOperationsView extends ViewPart implements IResourceStateCha
         ISVNLocalResource svnResource = SVNWorkspaceRoot.getSVNResourceFor(parent);
         ISVNClientAdapter svnClient = svnResource.getRepository().getSVNClient();
         try { 
-            statuses = svnClient.getStatus(parent.getLocation().toFile(),true);
+            statuses = svnClient.getStatus(parent.getLocation().toFile(),true,true);
         } catch (SVNClientException e) {
             throw SVNException.wrapException(e);
         }

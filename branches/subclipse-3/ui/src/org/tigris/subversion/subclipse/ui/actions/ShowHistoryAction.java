@@ -19,8 +19,6 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.team.core.TeamException;
 import org.tigris.subversion.subclipse.core.ISVNRemoteFile;
 import org.tigris.subversion.subclipse.ui.Policy;
 import org.tigris.subversion.subclipse.ui.history.HistoryView;
@@ -36,7 +34,7 @@ public class ShowHistoryAction extends SVNAction {
 		ArrayList resources = null;
 		if (!selection.isEmpty()) {
 			resources = new ArrayList();
-			Iterator elements = ((IStructuredSelection) selection).iterator();
+			Iterator elements = selection.iterator();
 			while (elements.hasNext()) {
 				Object next = elements.next();
 				if (next instanceof ISVNRemoteFile) {
@@ -65,7 +63,7 @@ public class ShowHistoryAction extends SVNAction {
 	 */
 	public void execute(IAction action) throws InterruptedException, InvocationTargetException {
 		run(new IRunnableWithProgress() {
-			public void run(IProgressMonitor monitor) throws InvocationTargetException {
+			public void run(IProgressMonitor monitor) {
 				ISVNRemoteFile[] files = getSelectedRemoteFiles();
 				HistoryView view = (HistoryView)showView(HistoryView.VIEW_ID);
 				if (view != null) {
@@ -77,7 +75,7 @@ public class ShowHistoryAction extends SVNAction {
 	/*
 	 * @see TeamAction#isEnabled()
 	 */
-	protected boolean isEnabled() throws TeamException {
+	protected boolean isEnabled() {
 		ISVNRemoteFile[] resources = getSelectedRemoteFiles();
 		return resources.length == 1;
 	}

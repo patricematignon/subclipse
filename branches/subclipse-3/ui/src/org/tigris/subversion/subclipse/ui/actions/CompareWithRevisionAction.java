@@ -61,7 +61,7 @@ public class CompareWithRevisionAction extends WorkspaceAction {
 		
 		// Get the selected file
 		run(new IRunnableWithProgress() {
-			public void run(IProgressMonitor monitor) throws InvocationTargetException {
+			public void run(IProgressMonitor monitor) {
 				file[0] = getSelectedRemoteFile();
 			}
 		}, false /* cancelable */, PROGRESS_BUSYCURSOR);
@@ -89,7 +89,7 @@ public class CompareWithRevisionAction extends WorkspaceAction {
 		
 		// Show the compare viewer
 		run(new IRunnableWithProgress() {
-			public void run(IProgressMonitor monitor) throws InvocationTargetException {
+			public void run(IProgressMonitor monitor) {
 				CompareUI.openCompareEditorOnPage(
 				  new SVNCompareRevisionsInput((IFile)getSelectedResources()[0], entries[0]),
 				  getTargetPage());

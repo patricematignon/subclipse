@@ -10,134 +10,124 @@
  *     Cédric Chabanois (cchabanois@ifrance.com) - modified for Subversion 
  *******************************************************************************/
 package org.tigris.subversion.subclipse.core.resources;
-
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
 
-import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.sync.IRemoteResource;
 import org.tigris.subversion.subclipse.core.ISVNRemoteFile;
+import org.tigris.subversion.subclipse.core.ISVNRemoteResource;
 import org.tigris.subversion.subclipse.core.ISVNRepositoryLocation;
 import org.tigris.subversion.subclipse.core.Policy;
 import org.tigris.subversion.subclipse.core.SVNException;
-import org.tigris.subversion.subclipse.core.history.ILogEntry;
+import org.tigris.subversion.subclipse.core.SVNProviderPlugin;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
 import org.tigris.subversion.svnclientadapter.SVNUrl;
-
 /**
  * This class provides the implementation of ISVNRemoteFile and IManagedFile for
  * use by the repository and sync view.
  */
-public class RemoteFile extends RemoteResource implements ISVNRemoteFile  {
-
-    // buffer for file contents received from the server
-    private byte[] contents;
-
-
-    public RemoteFile(RemoteFolder parent, 
-                      ISVNRepositoryLocation repository,
-                      SVNUrl url,
-                      SVNRevision revision,
-                      boolean hasProps,
-                      SVNRevision.Number lastChangedRevision,
-                      Date date,
-                      String author) throws SVNException
-	{
-		super(parent,repository,url,revision,hasProps,lastChangedRevision,date,author);
+public class RemoteFile extends RemoteResource implements ISVNRemoteFile {
+	
+	
+	public RemoteFile(RemoteFolder parent, ISVNRepositoryLocation repository,
+			SVNUrl url, SVNRevision revision, boolean hasProps,
+			SVNRevision.Number lastChangedRevision, Date date, String author)
+			throws SVNException {
+		super(parent, repository, url, revision, hasProps, lastChangedRevision,
+				date, author);
 	}
-
-    public RemoteFile(ISVNRepositoryLocation repository, SVNUrl url, SVNRevision revision) {
-        super(repository, url, revision);
-    }
-
+	public RemoteFile(ISVNRepositoryLocation repository, SVNUrl url,
+			SVNRevision revision) {
+		super(repository, url, revision);
+	}
 	/**
 	 * @see ISVNRemoteFile#getContents()
 	 */
-	public InputStream getContents(IProgressMonitor monitor) throws SVNException {
-        // we cache the contents as getContents can be called several times
-        // on the same RemoteFile
-		if (monitor == null)
+	public void fetchContents(IProgressMonitor monitor) throws TeamException {
+		// we cache the contents as getContents can be called several times
+		// on the same RemoteFile
+		if (monitor == null) {
 			monitor = new NullProgressMonitor();
-        monitor.beginTask(Policy.bind("RemoteFile.getContents"), 100);//$NON-NLS-1$
-        try
-        {
-            if (contents == null)
-            {
-                ISVNClientAdapter svnClient = repository.getSVNClient();
-                InputStream inputStream;
-                try {
-                    inputStream = svnClient.getContent(url, getLastChangedRevision());
-                    contents = new byte[inputStream.available()];
-                    inputStream.read(contents);
-                } catch (IOException e) {
-		        } catch (SVNClientException e) {
-                    throw SVNException.wrapException(e);
-		        }
-                monitor.done();
-            }
-            return new ByteArrayInputStream(contents);
-        } finally {
-            monitor.done();
-        }
+		}
+		monitor.beginTask(Policy.bind("RemoteFile.getContents"), 100);//$NON-NLS-1$
+		try {
+			
+				ISVNClientAdapter svnClient = repository.getSVNClient();
+				InputStream inputStream;
+				try {
+					inputStream = svnClient.getContent(url,
+							getLastChangedRevision());
+					super.setContents(inputStream, monitor);
+				} catch (SVNClientException e) {
+					throw new TeamException(
+							"Failed in remoteFile.getContents()", e);
+				}
+				monitor.done();
+			
+		} finally {
+			monitor.done();
+		}
 	}
-
 	/*
 	 * @see IRemoteResource#members(IProgressMonitor)
 	 */
-	public IRemoteResource[] members(IProgressMonitor progress) throws TeamException {
-		return new IRemoteResource[0];
+	public ISVNRemoteResource[] members(IProgressMonitor progress){
+		return new ISVNRemoteResource[0];
 	}
-
 	/*
 	 * @see IRemoteResource#isContainer()
 	 */
 	public boolean isContainer() {
 		return false;
 	}
-
 	/*
 	 * @see ISVNResource#isFolder()
 	 */
 	public boolean isFolder() {
 		return false;
 	}
-
-
 	public boolean equals(Object target) {
 		if (this == target)
 			return true;
 		if (!(target instanceof RemoteFile))
 			return false;
 		RemoteFile remote = (RemoteFile) target;
-		return super.equals(target) && remote.getLastChangedRevision() == getLastChangedRevision();
+		return super.equals(target)
+				&& remote.getLastChangedRevision() == getLastChangedRevision();
 	}
-
-    public String getCreatorDisplayName(){
-        return this.getAuthor();
-    }
-    public String getContentIdentifier(){
+	
+	
+	public String getContentIdentifier() {
 		return this.getRevision().toString();
-    }
-    public String getComment() throws SVNException{
-		ILogEntry[] entries = getLogEntries(new NullProgressMonitor());
-        if(entries == null || entries.length ==0) {
-            return "None";
-        }else {
-            return entries[0].getComment();
-        }
-    }
-
-    public IStorage getBufferedStorage(IProgressMonitor monitor) throws TeamException
-    {
-        this.getContents(monitor);
-		return (IStorage)this;
-    }
-
+	}
+	
+	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.team.core.variants.CachedResourceVariant#getCachePath()
+	 */
+	protected String getCachePath() {
+		return this.getUrl().toString();
+	}
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.team.core.variants.CachedResourceVariant#getCacheId()
+	 */
+	protected String getCacheId() {
+		return SVNProviderPlugin.ID;
+	}
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.team.core.variants.IResourceVariant#asBytes()
+	 */
+	public byte[] asBytes() {
+		return getCachePath().getBytes();
+	}
 }

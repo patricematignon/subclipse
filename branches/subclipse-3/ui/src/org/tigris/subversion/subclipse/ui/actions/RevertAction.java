@@ -28,7 +28,7 @@ public class RevertAction extends WorkspaceAction {
 	
 	protected void execute(final IAction action) throws InvocationTargetException, InterruptedException {
 		run(new WorkspaceModifyOperation() {
-			public void execute(IProgressMonitor monitor) throws InterruptedException, InvocationTargetException {
+			public void execute(IProgressMonitor monitor) throws InvocationTargetException {
 				IResource[] resources = getSelectedResources();
 				
 				try {

@@ -21,7 +21,6 @@ import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontMetrics;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.layout.GridData;
@@ -125,7 +124,7 @@ public abstract class DialogArea {
 		data.heightHint = Dialog.convertVerticalDLUsToPixels(fontMetrics, IDialogConstants.BUTTON_HEIGHT);
 		int widthHint = Dialog.convertHorizontalDLUsToPixels(fontMetrics, IDialogConstants.BUTTON_WIDTH);
 		data.widthHint = Math.max(widthHint, button.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
-		button.setLayoutData(data);;
+		button.setLayoutData(data);
 		return button;
 	}
 
@@ -159,7 +158,7 @@ public abstract class DialogArea {
 	 */
 	protected Composite createComposite(Composite parent, int numColumns) {
 		Composite composite = new Composite(parent, SWT.NULL);
-		Font font = parent.getFont();
+		
 		composite.setFont(parent.getFont());
 		
 		// GridLayout
@@ -184,7 +183,7 @@ public abstract class DialogArea {
 	 */
 	protected Composite createGrabbingComposite(Composite parent, int numColumns) {
 		Composite composite = new Composite(parent, SWT.NULL);
-		Font font = parent.getFont();
+		
 		composite.setFont(parent.getFont());
 		
 		// GridLayout

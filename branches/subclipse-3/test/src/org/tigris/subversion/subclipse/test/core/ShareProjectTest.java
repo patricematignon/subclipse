@@ -28,6 +28,7 @@ public class ShareProjectTest extends SubclipseTest {
 	}
 	
 	public void testShare() throws Exception {
+		
 		TestProject testProject = new TestProject("testProject");
 		// we share the project
 		shareProject(testProject.getProject());

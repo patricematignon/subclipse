@@ -68,7 +68,7 @@ public class CommentsManager {
     /**
      * load the comment history 
      */
-    public void loadCommentHistory() throws TeamException {
+    public void loadCommentHistory() {
         IPath pluginStateLocation = SVNUIPlugin.getPlugin().getStateLocation().append(COMMENT_HIST_FILE);
         File file = pluginStateLocation.toFile();
         if (!file.exists()) return;
@@ -119,16 +119,6 @@ public class CommentsManager {
          } catch (IOException e) {
                  throw new TeamException(new Status(Status.ERROR, SVNUIPlugin.ID, TeamException.UNABLE, Policy.bind("RepositoryManager.save",histFile.getAbsolutePath()), e)); //$NON-NLS-1$
          }
-    }
-
-    /**
-     * Method getCurrentComment. Used in promptForComment
-     * @return String
-     */
-    private String getCurrentComment() {
-        if (previousComments.length == 0)
-            return ""; //$NON-NLS-1$
-        return (String)previousComments[0];
     }
 
 }

@@ -26,7 +26,6 @@ import org.eclipse.core.resources.ISavedState;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.team.core.RepositoryProvider;
 import org.tigris.subversion.subclipse.core.ISVNLocalResource;
 import org.tigris.subversion.subclipse.core.SVNProviderPlugin;
@@ -41,7 +40,7 @@ import org.tigris.subversion.subclipse.core.resources.SVNWorkspaceRoot;
  */
 public class FileModificationManager implements IResourceChangeListener, ISaveParticipant {
 	
-	private static final QualifiedName UPDATE_TIMESTAMP = new QualifiedName(SVNProviderPlugin.ID, "update-timestamp"); //$NON-NLS-1$
+	
 	
 	private Set modifiedResources = new HashSet();
 
@@ -61,7 +60,7 @@ public class FileModificationManager implements IResourceChangeListener, ISavePa
 	public void resourceChanged(IResourceChangeEvent event) {
 		try {
 			event.getDelta().accept(new IResourceDeltaVisitor() {
-				public boolean visit(IResourceDelta delta) throws CoreException {
+				public boolean visit(IResourceDelta delta) {
 					IResource resource = delta.getResource();
 					
 					if (resource.getType()==IResource.PROJECT) {
@@ -80,12 +79,12 @@ public class FileModificationManager implements IResourceChangeListener, ISavePa
 					if (resource.getType()==IResource.FILE && delta.getKind() == IResourceDelta.CHANGED && resource.exists()) {
 						int flags = delta.getFlags();
 						if((flags & INTERESTING_CHANGES) != 0) {
-                            ISVNLocalResource svnResource = (ISVNLocalResource)SVNWorkspaceRoot.getSVNResourceFor(resource);
+                            ISVNLocalResource svnResource = SVNWorkspaceRoot.getSVNResourceFor(resource);
                             svnResource.refreshStatus();
                             modifiedResources.add(resource);
 						}
 					} else if (delta.getKind() == IResourceDelta.ADDED) {
-                        ISVNLocalResource svnResource = (ISVNLocalResource)SVNWorkspaceRoot.getSVNResourceFor(resource);
+                        ISVNLocalResource svnResource = SVNWorkspaceRoot.getSVNResourceFor(resource);
                         svnResource.refreshStatus();
                         modifiedResources.add(resource);                        
 					} else if (delta.getKind() == IResourceDelta.REMOVED) {
@@ -131,7 +130,7 @@ public class FileModificationManager implements IResourceChangeListener, ISavePa
 	/**
 	 * @see org.eclipse.core.resources.ISaveParticipant#prepareToSave(org.eclipse.core.resources.ISaveContext)
 	 */
-	public void prepareToSave(ISaveContext context) throws CoreException {
+	public void prepareToSave(ISaveContext context) {
 	}
 	/**
 	 * @see org.eclipse.core.resources.ISaveParticipant#rollback(org.eclipse.core.resources.ISaveContext)
@@ -141,7 +140,7 @@ public class FileModificationManager implements IResourceChangeListener, ISavePa
 	/**
 	 * @see org.eclipse.core.resources.ISaveParticipant#saving(org.eclipse.core.resources.ISaveContext)
 	 */
-	public void saving(ISaveContext context) throws CoreException {
+	public void saving(ISaveContext context) {
 	}
 
 

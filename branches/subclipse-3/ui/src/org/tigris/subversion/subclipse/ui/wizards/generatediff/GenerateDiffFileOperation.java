@@ -60,7 +60,7 @@ public class GenerateDiffFileOperation implements IRunnableWithProgress {
 	/**
 	 * @see IRunnableWithProgress#run(IProgressMonitor)
 	 */
-	public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+	public void run(IProgressMonitor monitor) throws InvocationTargetException {
 		try {
 			monitor.beginTask("", 500); //$NON-NLS-1$
 			monitor.setTaskName(

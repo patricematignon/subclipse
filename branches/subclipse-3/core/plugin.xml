@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
 <plugin
    id="org.tigris.subversion.subclipse.core"
    name="%pluginName"
-   version="0.9.0"
+   version="0.9.3"
    provider-name="%providerName"
    class="org.tigris.subversion.subclipse.core.SVNProviderPlugin">
 
@@ -21,7 +22,6 @@
       <import plugin="org.eclipse.core.resources"/>
       <import plugin="org.eclipse.ui"/>
       <import plugin="org.eclipse.team.core"/>
-      <import plugin="org.apache.xerces"/>
       <import plugin="org.eclipse.core.runtime"/>
       <import plugin="org.eclipse.osgi"/>
    </requires>
@@ -56,14 +56,6 @@
       </attribute>
       <persistent
             value="true">
-      </persistent>
+      </persistent> 
    </extension>
-   <extension
-         point="org.eclipse.core.runtime.urlHandlers">
-      <handler
-            class="org.tigris.subversion.subclipse.core.util.SvnURLHandler"
-            protocol="svn">
-      </handler>
-   </extension>
-
 </plugin>

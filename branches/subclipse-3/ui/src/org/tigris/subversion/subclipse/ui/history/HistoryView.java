@@ -55,6 +55,7 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.variants.IResourceVariant;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
@@ -122,7 +123,7 @@ public class HistoryView extends ViewPart {
                     IStructuredSelection ss = (IStructuredSelection)selection;
                     currentSelection = (LogEntry)ss.getFirstElement();
                     new ProgressMonitorDialog(getViewSite().getShell()).run(false, true, new WorkspaceModifyOperation() {
-                        protected void execute(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+                        protected void execute(IProgressMonitor monitor) throws InvocationTargetException {
                             try {               
                                 action.run(monitor);
                             } catch (CoreException e) {
@@ -179,7 +180,7 @@ public class HistoryView extends ViewPart {
 				monitor.beginTask(null, 100);
 				try {
 					if(confirmOverwrite()) {
-						InputStream in = remoteFile.getContents(new SubProgressMonitor(monitor, 50));
+						InputStream in = ((IResourceVariant)remoteFile).getStorage(new SubProgressMonitor(monitor,50)).getContents();
 						file.setContents(in, false, true, new SubProgressMonitor(monitor, 50));				
 					}
 				} catch (TeamException e) {
@@ -292,7 +293,7 @@ public class HistoryView extends ViewPart {
 				final Object[][] result = new Object[1][];
 				try {
 					new ProgressMonitorDialog(getViewer().getTable().getShell()).run(true, true, new IRunnableWithProgress() {
-						public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+						public void run(IProgressMonitor monitor) throws InvocationTargetException {
 							try {
 								entries = remoteFile.getLogEntries(monitor);
 								result[0] = entries;
@@ -439,7 +440,8 @@ public class HistoryView extends ViewPart {
 					ISVNRemoteFile remoteFile = (ISVNRemoteFile)SVNWorkspaceRoot.getRemoteResourceFor(file);
 					historyTableProvider.setFile(remoteFile);
 					tableViewer.setInput(remoteFile);
-					setTitle(Policy.bind("HistoryView.titleWithArgument", remoteFile.getName())); //$NON-NLS-1$
+					setPartName(Policy.bind("HistoryView.titleWithArgument", remoteFile.getName())); //$NON-NLS-1$
+					setContentDescription(Policy.bind("HistoryView.titleWithArgument", remoteFile.getName())); //$NON-NLS-1$
 				} catch (TeamException e) {
 					SVNUIPlugin.openError(getViewSite().getShell(), null, null, e);
 				}				
@@ -448,26 +450,26 @@ public class HistoryView extends ViewPart {
 		}
 		this.file = null;
 		tableViewer.setInput(null);
-		setTitle(Policy.bind("HistoryView.title")); //$NON-NLS-1$
+		setPartName(Policy.bind("HistoryView.title")); //$NON-NLS-1$
+		setContentDescription(Policy.bind("HistoryView.title")); //$NON-NLS-1$
+		
 	}
 	
 	/**
 	 * Shows the history for the given ISVNRemoteFile in the view.
 	 */
 	public void showHistory(ISVNRemoteFile remoteFile, String currentRevision) {
-		try {
-			if (remoteFile == null) {
-				tableViewer.setInput(null);
-				setTitle(Policy.bind("HistoryView.title")); //$NON-NLS-1$
-				return;
-			}
-			this.file = null;
-			historyTableProvider.setFile(remoteFile);
-			tableViewer.setInput(remoteFile);
-			setTitle(Policy.bind("HistoryView.titleWithArgument", remoteFile.getName())); //$NON-NLS-1$
-		} catch (SVNException e) {
-			SVNUIPlugin.openError(getViewSite().getShell(), null, null, e);
+		if (remoteFile == null) {
+			tableViewer.setInput(null);
+			setPartName(Policy.bind("HistoryView.title")); //$NON-NLS-1$
+			setContentDescription(Policy.bind("HistoryView.title")); //$NON-NLS-1$
+			return;
 		}
+		this.file = null;
+		historyTableProvider.setFile(remoteFile);
+		tableViewer.setInput(remoteFile);
+		setPartName(Policy.bind("HistoryView.titleWithArgument", remoteFile.getName()));
+		setContentDescription(Policy.bind("HistoryView.titleWithArgument", remoteFile.getName()));
 	}
 	
     

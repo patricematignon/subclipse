@@ -44,7 +44,7 @@ public class AddAction extends WorkspaceAction {
             return;
         }
 		run(new WorkspaceModifyOperation() {
-			public void execute(IProgressMonitor monitor) throws InterruptedException, InvocationTargetException {
+			public void execute(IProgressMonitor monitor) throws InvocationTargetException {
 				try {
                     // associate the resources with their respective RepositoryProvider					
 					Hashtable table = getProviderMapping();

@@ -27,7 +27,7 @@ public class IgnoreAction extends WorkspaceAction {
 	
 	protected void execute(final IAction action) throws InvocationTargetException, InterruptedException {
 		run(new WorkspaceModifyOperation() {
-			public void execute(IProgressMonitor monitor) throws InterruptedException, InvocationTargetException {
+			public void execute(IProgressMonitor monitor) throws InvocationTargetException {
 				IResource[] resources = getSelectedResources();
 				IgnoreResourcesDialog dialog = new IgnoreResourcesDialog(getShell(), resources);
 				if (dialog.open() != IgnoreResourcesDialog.OK) return;

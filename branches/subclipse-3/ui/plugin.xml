@@ -1,13 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
 <plugin
    id="org.tigris.subversion.subclipse.ui"
    name="%pluginName"
-   version="0.9.0"
+   version="0.9.3"
    provider-name="%providerName"
    class="org.tigris.subversion.subclipse.ui.SVNUIPlugin">
 
    <runtime>
       <library name="SVNPluginUI.jar">
+         <export name="*"/>
+      </library>
+      <library name="lib/xercesImpl.jar">
+         <export name="*"/>
+      </library>
+      <library name="lib/xmlParserAPIs.jar">
          <export name="*"/>
       </library>
    </runtime>
@@ -23,8 +30,6 @@
       <import plugin="org.eclipse.team.core"/>
       <import plugin="org.eclipse.team.ui"/>
       <import plugin="org.eclipse.compare"/>
-      <import plugin="org.eclipse.platform" version="3.0.0" match="compatible"/>
-      <import plugin="org.apache.xerces"/>
       <import plugin="org.tigris.subversion.subclipse.core"/>
       <import plugin="org.eclipse.osgi"/>
    </requires>
@@ -64,6 +69,12 @@
             class="org.tigris.subversion.subclipse.ui.pending.PendingOperationsView"
             id="org.tigris.subversion.subclipse.ui.pending.PendingOperationsView">
       </view>
+      <view
+            name="%SvnPropertiesView.name"
+            category="org.tigris.subversion.subclipse"
+            class="org.tigris.subversion.subclipse.ui.svnproperties.SvnPropertiesView"
+            id="org.tigris.subversion.subclipse.ui.svnproperties.SvnPropertiesView">
+      </view>      
    </extension>
 <!-- **************** SVN Perspective ******************* -->
    <extension
@@ -190,6 +201,28 @@
                id="org.tigris.subversion.subclipse.ui.compareLogEntries">
          </action>
       </objectContribution>
+<!-- contribution for ISVNProperty -->
+      <objectContribution
+            objectClass="org.tigris.subversion.svnclientadapter.ISVNProperty"
+            id="org.tigris.subversion.subclipse.ui.SVNPropertyContributions">
+         <action
+               label="%ModifySVNPropertyAction.label"
+               helpContextId="org.tigris.subversion.subclipse.ui.modify_svnProperty_action_context"
+               tooltip="%ModifySVNPropertyAction.tooltip"
+               class="org.tigris.subversion.subclipse.ui.actions.SVNPropertyModifyAction"
+               enablesFor="1"
+               id="org.tigris.subversion.subclipse.ui.modifySVNProperty">
+         </action>
+         <action
+               label="%DeleteSVNPropertyAction.label"
+               helpContextId="org.tigris.subversion.subclipse.ui.delete_svnProperty_action_context"
+               tooltip="%DeleteSVNPropertyAction.tooltip"
+               icon="icons/full/ctool16/delete.gif"
+               class="org.tigris.subversion.subclipse.ui.actions.SVNPropertyDeleteAction"
+               id="org.tigris.subversion.subclipse.ui.deleteSVNProperty">
+         </action>
+
+      </objectContribution>
 <!-- contribution for IProject -->
       <objectContribution
             objectClass="org.eclipse.core.resources.IProject"
@@ -233,15 +266,6 @@
                menubarPath="team.main/group1"
                id="org.tigris.subversion.subclipse.ui.update">
          </action>
-<!--action
-               label="%Synchronize.label"
-               tooltip="%Synchronize.tooltip"
-               class="org.tigris.subversion.subclipse.ui.actions.SyncAction"
-               menubarPath="team.main/group1"
-               helpContextId="org.tigris.subversion.subclipse.ui.team_synchronize_action_context"
-               id="org.tigris.subversion.subclipse.ui.sync">
-<<<<<<< .working
-         </action-->
          <action
                label="%AddAction.label"
                helpContextId="org.tigris.subversion.subclipse.ui.team_add_action_context"
@@ -290,6 +314,22 @@
                menubarPath="team.main/group3"
                id="org.tigris.subversion.subclipse.ui.AddKeywords">
          </action>
+         <action
+               label="%SetSvnProperty.label"
+               tooltip="%SetSvnProperty.tooltip"
+               class="org.tigris.subversion.subclipse.ui.actions.SetSvnPropertyAction"
+               menubarPath="team.main/group3"
+               helpContextId="org.tigris.subversion.subclipse.ui.team_set_svnpropery_action_context"
+               id="org.tigris.subversion.subclipse.ui.SetSvnProperty">
+         </action>
+         <action
+               label="%ShowSvnPropertiesAction.label"
+               tooltip="%ShowSvnPropertiesAction.tooltip"
+               class="org.tigris.subversion.subclipse.ui.actions.ShowSvnPropertiesAction"
+               menubarPath="team.main/group4"
+               helpContextId="org.tigris.subversion.subclipse.team_show_svn_properties_action_context"
+               id="org.tigris.subversion.subclipse.ui.showSvnProperties">
+         </action>            
       </objectContribution>
 <!-- contribution for IFile -->
       <objectContribution
@@ -341,7 +381,6 @@
          point="org.eclipse.ui.decorators">
       <decorator
             lightweight="true"
-            quadrant="BOTTOM_RIGHT"
             objectClass="org.eclipse.core.resources.IResource"
             adaptable="true"
             label="%DecoratorStandard.name"
@@ -443,6 +482,21 @@
             enabled="true"
             pattern="*.working">
       </ignore>
+   </extension>
+   <extension
+         point="org.eclipse.team.ui.synchronizeParticipants">
+      <participant
+            name="SVNWorkspaceSynchronizeParticipant"
+            icon="icons/full/cview16/compare_view.gif"
+            class="org.tigris.subversion.subclipse.ui.subcsriber.SVNWorkspaceSynchronizeParticipant"
+            id="org.tigris.subversion.subclipse.workspace-sync-participant">
+      </participant>
+      <participant
+            name="SVN Compare"
+            icon="icons/full/cview16/compare_view.gif"
+            class="org.tigris.subversion.subclipse.ui.subscriber.SVNCompareParticipant"
+            id="org.tigris.subversion.subclipse.ui.subscriber.compare-participant">
+      </participant>
    </extension>
 
 </plugin>

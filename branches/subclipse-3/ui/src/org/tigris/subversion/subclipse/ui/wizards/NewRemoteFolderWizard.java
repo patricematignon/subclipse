@@ -12,7 +12,6 @@ package org.tigris.subversion.subclipse.ui.wizards;
 
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.Properties;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.Dialog;
@@ -33,7 +32,7 @@ public class NewRemoteFolderWizard extends Wizard {
     private CommentCommitWizardPage commitCommentPage; 
     private ISVNRemoteFolder selection;
     private Dialog parentDialog;
-	private Properties properties = null;
+	
    
 	public NewRemoteFolderWizard(ISVNRemoteFolder selection) {
 		setWindowTitle(Policy.bind("NewRemoteFolderWizard.title")); //$NON-NLS-1$
@@ -67,7 +66,7 @@ public class NewRemoteFolderWizard extends Wizard {
 	public boolean performFinish() {
         try {
             SVNUIPlugin.runWithProgress(getContainer().getShell(), false /*cancelable*/, new IRunnableWithProgress() {
-                public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+                public void run(IProgressMonitor monitor) throws InvocationTargetException {
                     try {
                         ISVNRemoteFolder parentFolder = mainPage.getParentFolder();
                         parentFolder.createRemoteFolder(mainPage.getFolderName(),commitCommentPage.getComment(),monitor);

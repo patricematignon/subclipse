@@ -40,7 +40,6 @@ public class SVNPropertyPage extends PropertyPage {
     private Label addedValue;
     private Label revisionValue;
     private Label copiedValue;
-    private Label pathLabel;
     private Label urlCopiedFromValue;
     private Label pathValue;
 

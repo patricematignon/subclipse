@@ -55,7 +55,7 @@ public class SVNTeamProvider extends RepositoryProvider {
 	/**
 	 * @see IProjectNature#deconfigure()
 	 */
-	public void deconfigure() throws CoreException {
+	public void deconfigure() {
 
 	}
 	
@@ -274,7 +274,7 @@ public class SVNTeamProvider extends RepositoryProvider {
         return workspaceRoot;
     }
 
-    public void configureProject() throws CoreException {
+    public void configureProject() {
         SVNProviderPlugin.broadcastProjectConfigured(getProject());
     }
     /*

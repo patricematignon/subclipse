@@ -10,7 +10,7 @@
  *     Cédric Chabanois (cchabanois@ifrance.com) - modified for Subversion 
  *******************************************************************************/
 package org.tigris.subversion.subclipse.core;
- 
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -22,14 +22,14 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
-import org.eclipse.core.runtime.Preferences;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.subscribers.Subscriber;
 import org.osgi.framework.BundleContext;
 import org.tigris.subversion.subclipse.core.client.IConsoleListener;
 import org.tigris.subversion.subclipse.core.repo.SVNRepositories;
@@ -38,54 +38,48 @@ import org.tigris.subversion.subclipse.core.resourcesListeners.FileModificationM
 import org.tigris.subversion.subclipse.core.resourcesListeners.SyncFileChangeListener;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 import org.tigris.subversion.svnclientadapter.SVNClientAdapterFactory;
+import org.tigris.subversion.svnclientadapter.SVNClientException;
 
 /**
- * The plugin itself 
+ * The plugin itself
  */
 public class SVNProviderPlugin extends Plugin {
-	
+
 	// svn plugin id
 	public static final String ID = "org.tigris.subversion.subclipse.core"; //$NON-NLS-1$
 
-    // all projects shared with subversion will have this nature
+	// all projects shared with subversion will have this nature
 	private static final String NATURE_ID = ID + ".svnnature"; //$NON-NLS-1$
-	
-    // the plugin instance. @see getPlugin()
+
+	// the plugin instance. @see getPlugin()
 	private static volatile SVNProviderPlugin instance;
-    
-    // the console listener
+
+	// the console listener
 	private IConsoleListener consoleListener;
-		
+
 	// SVN specific resource delta listeners
 	private FileModificationManager fileModificationManager;
-    private SyncFileChangeListener metaFileSyncListener;
+	private SyncFileChangeListener metaFileSyncListener;
 
-    // the list of all repositories currently handled by this provider
-    private SVNRepositories repositories;
+	// the list of all repositories currently handled by this provider
+	private SVNRepositories repositories;
 
-    private RepositoryResourcesManager repositoryResourcesManager = new RepositoryResourcesManager(); 
+	private RepositoryResourcesManager repositoryResourcesManager = new RepositoryResourcesManager();
 
-    private int svnClientInterface = SVNClientAdapterFactory.JAVAHL_CLIENT;  
-	
-	/**
-	 * Constructor for SVNProviderPlugin. Called by the platform in the course of plug-in
-     * activation
-	 * @param descriptor
-	 */
-	public SVNProviderPlugin(IPluginDescriptor descriptor) {
-		super(descriptor);
-		instance = this;
-	}
+	private SVNAdapterFactories adapterFactories;
+
+    private int svnClientInterface;  
 	
 	/**
 	 * This constructor required by the bundle loader (calls newInstance())
-	 *
+	 *  
 	 */
-	public SVNProviderPlugin(){
+	public SVNProviderPlugin() {
 		super();
 		instance = this;
 	}
 	
+
 	/**
 	 * Convenience method for logging CVSExceptiuons to the plugin log
 	 */
@@ -104,54 +98,65 @@ public class SVNProviderPlugin extends Plugin {
 	 * @return the plugin instance
 	 */
 	public static SVNProviderPlugin getPlugin() {
-		
+
 		return instance;
 	}
-	
-	public void start(BundleContext ctxt)throws Exception{
-		this.bundle = ctxt.getBundle();
-		startup();
-		
-		
-		
-	}
-	/**
-	 * @see Plugin#startup()
-	 */
-	public void startup() throws CoreException {
-		super.startup();
-        
-        // this will use org/chabanois/svn/eclipse/core/messages.properties if it has not
-        // been localized
+
+	public void start(BundleContext ctxt) throws Exception {
+		super.start(ctxt);
+
+		// by default, we set the svn client interface to the best available
+		// (JNI if available or command line interface)
+		try {
+			svnClientInterface = SVNClientAdapterFactory.getBestSVNClientType();
+		} catch (SVNClientException e) {
+			throw new CoreException(new Status(Status.ERROR, ID, IStatus.OK, e
+					.getMessage(), e));
+		}
+
+		// this will use
+		// org/tigris/subversion/subclipse/core/messages.properties if it has
+		// not
+		// been localized
 		Policy.localize("org.tigris.subversion.subclipse.core.messages"); //$NON-NLS-1$
 
         // load the state which includes the known repositories
         repositories = new SVNRepositories();
         repositories.startup();
 		
+		// register all the adapter factories
+		adapterFactories = new SVNAdapterFactories();
+		adapterFactories.startup();
+		
 		// Initialize SVN change listeners. Note tha the report type is important.
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
-		
-        // this listener will listen to modifications to files
+
+		// this listener will listen to modifications to files
 		fileModificationManager = new FileModificationManager();
 
-        // this listener will listen to modification to metafiles (files in .svn subdir)
+		// this listener will listen to modification to metafiles (files in .svn
+		// subdir)
 		metaFileSyncListener = new SyncFileChangeListener();
-		
-		workspace.addResourceChangeListener(metaFileSyncListener, IResourceChangeEvent.PRE_AUTO_BUILD);
-		workspace.addResourceChangeListener(fileModificationManager, IResourceChangeEvent.POST_CHANGE);
+
+		workspace.addResourceChangeListener(metaFileSyncListener,
+				IResourceChangeEvent.PRE_BUILD);
+		workspace.addResourceChangeListener(fileModificationManager,
+				IResourceChangeEvent.POST_CHANGE);
+
 		fileModificationManager.registerSaveParticipant();
-		
+
 	}
-	
+
 	/**
-	 * @see Plugin#shutdown()
+	 * @see Plugin#stop(BundleContext ctxt)
 	 */
-	public void shutdown() throws CoreException {
-		super.shutdown();
-		
+	public void stop(BundleContext ctxt) throws Exception {
+		super.stop(ctxt);
+
 		// save the state which includes the known repositories
         repositories.shutdown();
+		
+		adapterFactories.shutdown();
 		
         // save the plugin preferences
         savePluginPreferences();
@@ -160,236 +165,270 @@ public class SVNProviderPlugin extends Plugin {
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		workspace.removeResourceChangeListener(metaFileSyncListener);
 		workspace.removeResourceChangeListener(fileModificationManager);
-		
-		// remove all of this plugin's save participants. This is easier than having
-		// each class that added itself as a participant to have to listen to shutdown.
+
+		// remove all of this plugin's save participants. This is easier than
+		// having
+		// each class that added itself as a participant to have to listen to
+		// shutdown.
 		workspace.removeSaveParticipant(this);
 	}
-		
+
 	/**
 	 * @see org.eclipse.core.runtime.Plugin#initializeDefaultPluginPreferences()
 	 */
-	protected void initializeDefaultPluginPreferences(){
-		Preferences store = getPluginPreferences();
-        // for now we don't have any preferences for this plugin
+	protected void initializeDefaultPluginPreferences() {
+
 	}
-	
+
 	private static List listeners = new ArrayList();
-	
+
 	/*
 	 * @see ITeamManager#addResourceStateChangeListener(IResourceStateChangeListener)
 	 */
-	public static void addResourceStateChangeListener(IResourceStateChangeListener listener) {
+	public static void addResourceStateChangeListener(
+			IResourceStateChangeListener listener) {
 		listeners.add(listener);
 	}
 
 	/*
 	 * @see ITeamManager#removeResourceStateChangeListener(IResourceStateChangeListener)
 	 */
-	public static void removeResourceStateChangeListener(IResourceStateChangeListener listener) {
+	public static void removeResourceStateChangeListener(
+			IResourceStateChangeListener listener) {
 		listeners.remove(listener);
 	}
-	
-    /**
-     * This method is called by SyncFileChangeListener when metafiles have changed 
-     */
+
+	/**
+	 * This method is called by SyncFileChangeListener when metafiles have
+	 * changed
+	 */
 	public static void broadcastSyncInfoChanges(final IResource[] resources) {
-		for(Iterator it=listeners.iterator(); it.hasNext();) {
-			final IResourceStateChangeListener listener = (IResourceStateChangeListener)it.next();
+		for (Iterator it = listeners.iterator(); it.hasNext();) {
+			final IResourceStateChangeListener listener = (IResourceStateChangeListener) it
+					.next();
 			ISafeRunnable code = new ISafeRunnable() {
 				public void run() throws Exception {
 					listener.resourceSyncInfoChanged(resources);
 				}
 				public void handleException(Throwable e) {
-					// don't log the exception....it is already being logged in Platform#run
+					// don't log the exception....it is already being logged in
+					// Platform#run
 				}
 			};
 			Platform.run(code);
 		}
 	}
-	
-//	public static void broadcastDecoratorEnablementChanged(final boolean enabled) {
-//		for(Iterator it=decoratorEnablementListeners.iterator(); it.hasNext();) {
-//			final ICVSDecoratorEnablementListener listener = (ICVSDecoratorEnablementListener)it.next();
-//			ISafeRunnable code = new ISafeRunnable() {
-//				public void run() throws Exception {
-//					listener.decoratorEnablementChanged(enabled);
-//				}
-//				public void handleException(Throwable e) {
-//					// don't log the exception....it is already being logged in Platform#run
-//				}
-//			};
-//			Platform.run(code);
-//		}
-//	}
-//	
+
+	//	public static void broadcastDecoratorEnablementChanged(final boolean
+	// enabled) {
+	//		for(Iterator it=decoratorEnablementListeners.iterator(); it.hasNext();) {
+	//			final ICVSDecoratorEnablementListener listener =
+	// (ICVSDecoratorEnablementListener)it.next();
+	//			ISafeRunnable code = new ISafeRunnable() {
+	//				public void run() throws Exception {
+	//					listener.decoratorEnablementChanged(enabled);
+	//				}
+	//				public void handleException(Throwable e) {
+	//					// don't log the exception....it is already being logged in Platform#run
+	//				}
+	//			};
+	//			Platform.run(code);
+	//		}
+	//	}
+	//	
 	/**
-     * This method is called by FileModificationManager when some resources have changed
+	 * This method is called by FileModificationManager when some resources have
+	 * changed
 	 */
-    public static void broadcastModificationStateChanges(final IResource[] resources) {
-		for(Iterator it=listeners.iterator(); it.hasNext();) {
-			final IResourceStateChangeListener listener = (IResourceStateChangeListener)it.next();
+	public static void broadcastModificationStateChanges(
+			final IResource[] resources) {
+		for (Iterator it = listeners.iterator(); it.hasNext();) {
+			final IResourceStateChangeListener listener = (IResourceStateChangeListener) it
+					.next();
 			ISafeRunnable code = new ISafeRunnable() {
 				public void run() throws Exception {
 					listener.resourceModified(resources);
 				}
 				public void handleException(Throwable e) {
-					// don't log the exception....it is already being logged in Platform#run
+					// don't log the exception....it is already being logged in
+					// Platform#run
 				}
 			};
 			Platform.run(code);
 		}
 	}
-    
-    /**
-     * This method is called by SVNTeamProvider.configureProject which is 
-     * invoked when a project is mapped
-     */
+
+	/**
+	 * This method is called by SVNTeamProvider.configureProject which is
+	 * invoked when a project is mapped
+	 */
 	protected static void broadcastProjectConfigured(final IProject project) {
-		for(Iterator it=listeners.iterator(); it.hasNext();) {
-			final IResourceStateChangeListener listener = (IResourceStateChangeListener)it.next();
+		for (Iterator it = listeners.iterator(); it.hasNext();) {
+			final IResourceStateChangeListener listener = (IResourceStateChangeListener) it
+					.next();
 			ISafeRunnable code = new ISafeRunnable() {
 				public void run() throws Exception {
 					listener.projectConfigured(project);
 				}
 				public void handleException(Throwable e) {
-					// don't log the exception....it is already being logged in Platform#run
+					// don't log the exception....it is already being logged in
+					// Platform#run
 				}
 			};
 			Platform.run(code);
 		}
 	}
-    
-    /**
-     * This method is called by SVNTeamProvider.deconfigured    
-     * which is invoked after a provider has been unmaped
-     */    
+
+	/**
+	 * This method is called by SVNTeamProvider.deconfigured which is invoked
+	 * after a provider has been unmaped
+	 */
 	protected static void broadcastProjectDeconfigured(final IProject project) {
-		for(Iterator it=listeners.iterator(); it.hasNext();) {
-			final IResourceStateChangeListener listener = (IResourceStateChangeListener)it.next();
+		for (Iterator it = listeners.iterator(); it.hasNext();) {
+			final IResourceStateChangeListener listener = (IResourceStateChangeListener) it
+					.next();
 			ISafeRunnable code = new ISafeRunnable() {
 				public void run() throws Exception {
 					listener.projectDeconfigured(project);
 				}
 				public void handleException(Throwable e) {
-					// don't log the exception....it is already being logged in Platform#run
+					// don't log the exception....it is already being logged in
+					// Platform#run
 				}
 			};
 			Platform.run(code);
 		}
 	}
 
-
 	/**
-	 * Register to receive notification of enablement of sync info decoration requirements. This
-	 * can be useful for providing lazy initialization of caches that are only required for decorating
-	 * resource with CVS information.
+	 * Register to receive notification of enablement of sync info decoration
+	 * requirements. This can be useful for providing lazy initialization of
+	 * caches that are only required for decorating resource with CVS
+	 * information.
 	 */
-/*	public void addDecoratorEnablementListener(ISVNDecoratorEnablementListener listener) {
-		decoratorEnablementListeners.add(listener);
-	}
-*/	
-
-	/**
-	 * De-register the decorator enablement listener. 
+	/*
+	 * public void
+	 * addDecoratorEnablementListener(ISVNDecoratorEnablementListener listener) {
+	 * decoratorEnablementListeners.add(listener); }
 	 */
-/*	public void removeDecoratorEnablementListener(ICVSDecoratorEnablementListener listener) {
-		decoratorEnablementListeners.remove(listener);
-	}
-*/	
-
-    /**
-     * get the repository corresponding to the location
-     * location is an url
-     */
-    public ISVNRepositoryLocation getRepository(String location) throws SVNException {
-        return repositories.getRepository(location);
-    }
-
-    /**
-     * get all the known repositories 
-     */
-    public SVNRepositories getRepositories() {
-        return repositories;
-    }
 
 	/**
- 	* Set the console listener for commands.
- 	* @param consoleListener the listener
- 	*/
+	 * De-register the decorator enablement listener.
+	 */
+	/*
+	 * public void
+	 * removeDecoratorEnablementListener(ICVSDecoratorEnablementListener
+	 * listener) { decoratorEnablementListeners.remove(listener); }
+	 */
+
+	/**
+	 * get the repository corresponding to the location location is an url
+	 */
+	public ISVNRepositoryLocation getRepository(String location)
+			throws SVNException {
+		return repositories.getRepository(location);
+	}
+
+	/**
+	 * get all the known repositories
+	 */
+	public SVNRepositories getRepositories() {
+		return repositories;
+	}
+
+	/**
+	 * Set the console listener for commands.
+	 * 
+	 * @param consoleListener
+	 *            the listener
+	 */
 	public void setConsoleListener(IConsoleListener consoleListener) {
 		this.consoleListener = consoleListener;
 	}
 
 	/**
- 	* Get the console listener for commands.
- 	* @return the consoleListener, or null
- 	*/
+	 * Get the console listener for commands.
+	 * 
+	 * @return the consoleListener, or null
+	 */
 	public IConsoleListener getConsoleListener() {
 		return consoleListener;
 	}
 
-    /**
-     * set the client interface to use, either SVNClientAdapterFactory.JAVAHL_CLIENT 
-     * or SVNClientAdapterFactory.SVNCOMMANDLINE_CLIENT 
-     * @param svnClientInterface
-     */
-    public void setSvnClientInterface(int svnClientInterface) {
-        this.svnClientInterface = svnClientInterface;
-    }
+	/**
+	 * set the client interface to use, either
+	 * SVNClientAdapterFactory.JAVAHL_CLIENT or
+	 * SVNClientAdapterFactory.SVNCOMMANDLINE_CLIENT
+	 * 
+	 * @param svnClientInterface
+	 */
+	public void setSvnClientInterface(int svnClientInterface) {
+		if (SVNClientAdapterFactory.isSVNClientAvailable(svnClientInterface)) {
+			this.svnClientInterface = svnClientInterface;
+		}
+	}
 
-    public int getSvnClientInterface() {
-        return svnClientInterface;
-    }
+	public int getSvnClientInterface() {
+		return svnClientInterface;
+	}
 
-    /**
-     * @return a new ISVNClientAdapter depending on the client interface
-     */
-    public ISVNClientAdapter createSVNClient() {
-        return SVNClientAdapterFactory.createSVNClient(svnClientInterface);
-    }
+	/**
+	 * @return a new ISVNClientAdapter depending on the client interface
+	 */
+	public ISVNClientAdapter createSVNClient() {
+		return SVNClientAdapterFactory.createSVNClient(svnClientInterface);
+	}
 
-    /**
-    * Answers the repository provider type id for the svn plugin
-    */
-    public static String getTypeId() {
-        return NATURE_ID;
-    }
+	/**
+	 * Answers the repository provider type id for the svn plugin
+	 */
+	public static String getTypeId() {
+		return NATURE_ID;
+	}
 
-    /**
-     * Same as IWorkspace.run but uses a ISVNRunnable 
-     */
-    public static void run(final ISVNRunnable job, IProgressMonitor monitor) throws SVNException {
-        final SVNException[] error = new SVNException[1];
-        try {
-            ResourcesPlugin.getWorkspace().run(new IWorkspaceRunnable() {
-                public void run(IProgressMonitor monitor) throws CoreException {
-                    try {
-                        monitor = Policy.monitorFor(monitor);
-                        try {
-                            job.run(monitor);
-                        } finally {
-                            monitor.done();
-                        }
-                    } catch(SVNException e) {
-                        error[0] = e; 
-                    }
-                }
-            }, monitor);
-        } catch(CoreException e) {
-            throw SVNException.wrapException(e);
-        }
-        if(error[0]!=null) {
-            throw error[0];
-        }
-    }
-
+	/**
+	 * Same as IWorkspace.run but uses a ISVNRunnable
+	 */
+	public static void run(final ISVNRunnable job, IProgressMonitor monitor)
+			throws SVNException {
+		final SVNException[] error = new SVNException[1];
+		try {
+			ResourcesPlugin.getWorkspace().run(new IWorkspaceRunnable() {
+				public void run(IProgressMonitor monitor) {
+					try {
+						monitor = Policy.monitorFor(monitor);
+						try {
+							job.run(monitor);
+						} finally {
+							monitor.done();
+						}
+					} catch (SVNException e) {
+						error[0] = e;
+					}
+				}
+			}, monitor);
+		} catch (CoreException e) {
+			throw SVNException.wrapException(e);
+		}
+		if (error[0] != null) {
+			throw error[0];
+		}
+	}
 
 	/**
 	 * @return the repository resources Manager
 	 */
 	public RepositoryResourcesManager getRepositoryResourcesManager() {
 		return repositoryResourcesManager;
+	}
+
+	/**
+	 * @return
+	 * @todo Generated comment
+	 */
+	public Subscriber getSVNWorkspaceSubscriber() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

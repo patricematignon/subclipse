@@ -44,7 +44,7 @@ public class CheckoutAsAction extends SVNAction {
     /*
      * @see TeamAction#isEnabled()
      */
-    protected boolean isEnabled() throws TeamException {
+    protected boolean isEnabled() {
         return getSelectedRemoteFolders().length == 1;
     }
 
@@ -66,30 +66,13 @@ public class CheckoutAsAction extends SVNAction {
 		final String remoteFolderName = remoteFolder.getName();
 		final boolean[] hasProjectMetaFile = new boolean[] { false };
 		run(new IRunnableWithProgress() {
-			public void run(IProgressMonitor monitor) throws InterruptedException, InvocationTargetException {
+			public void run(IProgressMonitor monitor) throws InvocationTargetException {
 				try {
 					remoteFolder.members(monitor);
 				} catch (TeamException e) {
 					throw new InvocationTargetException(e);
 				}
-//				// Check for the existance of the .project file
-//				try {
-//					remoteFolder.getFile(".project"); //$NON-NLS-1$
-//					hasProjectMetaFile[0] = true;
-//				} catch (TeamException e) {
-//					// We couldn't retrieve the meta file so assume it doesn't exist
-//					hasProjectMetaFile[0] = false;
-//				}
-//				// If the above failed, look for the old .vcm_meta file
-//				if (! hasProjectMetaFile[0]) {
-//					try {
-//						remoteFolder.getFile(".vcm_meta"); //$NON-NLS-1$
-//						hasProjectMetaFile[0] = true;
-//					} catch (TeamException e) {
-//						// We couldn't retrieve the meta file so assume it doesn't exist
-//						hasProjectMetaFile[0] = false;
-//					}
-//				}
+
 			}
 		}, true /* cancelable */, PROGRESS_DIALOG);
 		
@@ -97,29 +80,7 @@ public class CheckoutAsAction extends SVNAction {
 		IProject newProject = null;
 		IProjectDescription newDesc = null;
 		if (hasProjectMetaFile[0]) {
-			
-//			// prompt for the project name and location
-//			newProject = ResourcesPlugin.getWorkspace().getRoot().getProject(remoteFolderName);
-//			TargetLocationSelectionDialog dialog = new TargetLocationSelectionDialog(getShell(), Policy.bind("CheckoutAsAction.enterProjectTitle", remoteFolderName), newProject); //$NON-NLS-1$
-//			int result = dialog.open();
-//			if (result != Dialog.OK) return;
-//			// get the name and location from the dialog
-//			String targetLocation = dialog.getTargetLocation();
-//			String targetName = dialog.getNewProjectName();
-//			
-//			// create the project description for a custom location
-//			if (targetLocation != null) {
-//				newDesc = ResourcesPlugin.getWorkspace().newProjectDescription(newProject.getName());
-//				newDesc.setLocation(new Path(targetLocation));
-//			}
-//			
-//			// prompt if the project or location exists locally
-//			newProject = ResourcesPlugin.getWorkspace().getRoot().getProject(targetName);
-//			PromptingDialog prompt = new PromptingDialog(getShell(), new IResource[] { newProject },
-//				getOverwriteLocalAndFileSystemPrompt(
-//					newDesc == null ? new IProjectDescription[0] : new IProjectDescription[] {newDesc}), 
-//					Policy.bind("ReplaceWithAction.confirmOverwrite"));//$NON-NLS-1$
-//			if (prompt.promptForMultiple().length == 0) return;
+
 			
 		} else {
 			newProject = getNewProject(remoteFolderName);
@@ -129,7 +90,7 @@ public class CheckoutAsAction extends SVNAction {
 		final IProject project = newProject;
 		final IProjectDescription desc = newDesc;
 		run(new WorkspaceModifyOperation() {
-			public void execute(IProgressMonitor monitor) throws InterruptedException, InvocationTargetException {
+			public void execute(IProgressMonitor monitor) throws InvocationTargetException {
 				try {
 					monitor.beginTask(null, 100);
 					monitor.setTaskName(Policy.bind("CheckoutAsAction.taskname", remoteFolderName, project.getName())); //$NON-NLS-1$

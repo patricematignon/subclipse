@@ -53,7 +53,6 @@ import org.tigris.subversion.subclipse.ui.util.ContainerContentProvider;
  * entering a file name that already exists.
  */
 class PatchFileSelectionPage extends WizardPage {
-	private IStructuredSelection currentSelection;
 	private Text filenameCombo;
 	private Button browseButton;
 	
@@ -74,7 +73,7 @@ class PatchFileSelectionPage extends WizardPage {
 	
 	public PatchFileSelectionPage(String pageName, String title, ImageDescriptor image, IStructuredSelection selection) {
 		super(pageName, title, image);
-		this.currentSelection = selection;
+		
 		setPageComplete(false);
 	}
 	

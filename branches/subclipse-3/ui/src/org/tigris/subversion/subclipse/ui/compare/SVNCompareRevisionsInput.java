@@ -48,6 +48,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.variants.IResourceVariant;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.tigris.subversion.subclipse.core.ISVNRemoteFile;
@@ -90,7 +91,7 @@ public class SVNCompareRevisionsInput extends CompareEditorInput {
 			if (contents == null) contents = new byte[0];
 			final InputStream is = new ByteArrayInputStream(contents);
 			IRunnableWithProgress runnable = new IRunnableWithProgress() {
-				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+				public void run(IProgressMonitor monitor) throws InvocationTargetException  {
 					try {
 						IFile file = resource;
 						if (is != null) {
@@ -134,7 +135,7 @@ public class SVNCompareRevisionsInput extends CompareEditorInput {
 			return entry;
 		}
 		public String getName() {
-			ISVNRemoteResource edition = getRemoteResource();
+			
 			IResource resource = SVNCompareRevisionsInput.this.resource;
 			try {
 				ISVNRemoteFile currentEdition = (ISVNRemoteFile) SVNWorkspaceRoot.getRemoteResourceFor(resource);
@@ -148,7 +149,7 @@ public class SVNCompareRevisionsInput extends CompareEditorInput {
 			}
 			return super.getName();
 		}
-	};
+	}
     
 	/**
 	 * A compare node that gets its label from the right element
@@ -167,7 +168,7 @@ public class SVNCompareRevisionsInput extends CompareEditorInput {
 			return null;
 		}
 
-	};
+	}
 	/**
 	 * A content provider which knows how to get the children of the diff container
 	 */
@@ -182,7 +183,7 @@ public class SVNCompareRevisionsInput extends CompareEditorInput {
 			}
 			return null;
 		}
-	};
+	}
 	
     /**
      * creates a SVNCompareRevisionsInput  
@@ -245,7 +246,7 @@ public class SVNCompareRevisionsInput extends CompareEditorInput {
      * initialize the labels : the title, the lft label and the right one
      */
 	private void initLabels() {
-		CompareConfiguration cc = (CompareConfiguration)getCompareConfiguration();
+		CompareConfiguration cc = getCompareConfiguration();
 		String resourceName = resource.getName();	
 		setTitle(Policy.bind("SVNCompareRevisionsInput.compareResourceAndVersions", new Object[] {resourceName})); //$NON-NLS-1$
 		cc.setLeftEditable(true);
@@ -267,7 +268,7 @@ public class SVNCompareRevisionsInput extends CompareEditorInput {
 			public void run() {
 				try {
 					new ProgressMonitorDialog(shell).run(false, true, new WorkspaceModifyOperation() {
-						protected void execute(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+						protected void execute(IProgressMonitor monitor) throws InvocationTargetException {
 							IStructuredSelection selection = (IStructuredSelection)viewer.getSelection();
 							if (selection.size() != 1) return;
 							VersionCompareDiffNode node = (VersionCompareDiffNode)selection.getFirstElement();
@@ -277,7 +278,7 @@ public class SVNCompareRevisionsInput extends CompareEditorInput {
 							// actually want to change the base.
 							try {
 								monitor.beginTask(null, 100);
-								InputStream in = edition.getContents(new SubProgressMonitor(monitor, 50));
+								InputStream in = ((IResourceVariant)edition).getStorage(new SubProgressMonitor(monitor, 50)).getContents();
 								resource.setContents(in, false, true, new SubProgressMonitor(monitor, 50));
 							} catch (TeamException e) {
 								throw new InvocationTargetException(e);
@@ -304,7 +305,7 @@ public class SVNCompareRevisionsInput extends CompareEditorInput {
 			public void run() {
 				try {
 					new ProgressMonitorDialog(shell).run(false, true, new WorkspaceModifyOperation() {
-						protected void execute(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+						protected void execute(IProgressMonitor monitor) throws InvocationTargetException {
 							IStructuredSelection selection = (IStructuredSelection)viewer.getSelection();
 							if (selection.size() != 1) return;
 							VersionCompareDiffNode node = (VersionCompareDiffNode)selection.getFirstElement();
@@ -340,7 +341,7 @@ public class SVNCompareRevisionsInput extends CompareEditorInput {
     /**
      * Runs the compare operation and returns the compare result.
      */
-	protected Object prepareInput(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+	protected Object prepareInput(IProgressMonitor monitor){
 		initLabels();
 		DiffNode diffRoot = new DiffNode(Differencer.NO_CHANGE);
 		for (int i = 0; i < logEntries.length; i++) {		

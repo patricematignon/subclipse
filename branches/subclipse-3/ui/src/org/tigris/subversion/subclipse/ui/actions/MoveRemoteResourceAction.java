@@ -10,11 +10,8 @@
  *******************************************************************************/
 package org.tigris.subversion.subclipse.ui.actions;
 
-import java.lang.reflect.InvocationTargetException;
-
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.wizard.WizardDialog;
-import org.eclipse.team.core.TeamException;
 import org.tigris.subversion.subclipse.core.ISVNRemoteResource;
 import org.tigris.subversion.subclipse.ui.wizards.MoveRemoteResourceWizard;
 
@@ -26,7 +23,7 @@ public class MoveRemoteResourceAction extends SVNAction {
 	/* (non-Javadoc)
 	 * @see org.tigris.subversion.subclipse.ui.actions.SVNAction#execute(org.eclipse.jface.action.IAction)
 	 */
-	protected void execute(IAction action)throws InvocationTargetException, InterruptedException {
+	protected void execute(IAction action) {
           
  
         MoveRemoteResourceWizard wizard = new MoveRemoteResourceWizard((ISVNRemoteResource)selection.getFirstElement());
@@ -40,7 +37,7 @@ public class MoveRemoteResourceAction extends SVNAction {
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ui.actions.TeamAction#isEnabled()
 	 */
-	protected boolean isEnabled() throws TeamException {
+	protected boolean isEnabled() {
 		return (selection.size() == 1) && (selection.getFirstElement() instanceof ISVNRemoteResource); 
 	}
 

@@ -20,7 +20,7 @@ import org.tigris.subversion.subclipse.ui.dialogs.AddKeywordsDialog;
 
 public class AddKeywordsAction extends WorkspaceAction {
 	
-	protected void execute(final IAction action) throws InvocationTargetException, InterruptedException {
+	protected void execute(final IAction action) throws InvocationTargetException {
         
         try {
             AddKeywordsDialog dialog = new AddKeywordsDialog(getShell(),getSelectedResources());

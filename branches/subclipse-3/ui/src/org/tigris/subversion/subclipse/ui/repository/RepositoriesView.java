@@ -17,7 +17,6 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
@@ -39,7 +38,6 @@ import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.actions.ActionFactory;
-import org.eclipse.ui.dialogs.PropertyDialogAction;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.part.DrillDownAdapter;
@@ -73,7 +71,6 @@ public class RepositoriesView extends ViewPart implements ISelectionListener {
 	
 	// Actions
 	private Action newAction;
-	private PropertyDialogAction propertiesAction;
 	private RemoveRootAction removeRootAction;
 
     // The tree viewer
@@ -87,10 +84,7 @@ public class RepositoriesView extends ViewPart implements ISelectionListener {
     private OpenRemoteFileAction openAction;
     
     private RemoteContentProvider contentProvider;
-    private IDialogSettings settings;
-
-
-	// this listener is used when a repository is added, removed or changed
+    // this listener is used when a repository is added, removed or changed
 	IRepositoryListener repositoryListener = new IRepositoryListener() {
 		public void repositoryAdded(final ISVNRepositoryLocation root) {
 			getViewer().getControl().getDisplay().syncExec(new Runnable() {

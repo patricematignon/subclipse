@@ -23,6 +23,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.variants.IResourceVariant;
 import org.tigris.subversion.subclipse.core.ISVNRemoteFile;
 import org.tigris.subversion.subclipse.ui.SVNUIPlugin;
 
@@ -43,10 +44,12 @@ public class RemoteFileStorage extends PlatformObject implements IStorage {
 		try {
 			final InputStream[] holder = new InputStream[1];
 			SVNUIPlugin.runWithProgress(null, true /*cancelable*/, new IRunnableWithProgress() {
-				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+				public void run(IProgressMonitor monitor) throws InvocationTargetException {
 					try {
-						holder[0] = file.getContents(monitor);
+						holder[0] = ((IResourceVariant)file).getStorage(monitor).getContents();
 					} catch (TeamException e) {
+						throw new InvocationTargetException(e);
+					}catch(CoreException e){
 						throw new InvocationTargetException(e);
 					}
 				}
@@ -64,11 +67,7 @@ public class RemoteFileStorage extends PlatformObject implements IStorage {
 		return new ByteArrayInputStream(new byte[0]);
 	}
 	public IPath getFullPath() {
-//		ISVNRepositoryLocation location = file.getRepository();
-//		IPath path = new Path(location.getRootDirectory());
-//		path = path.setDevice(location.getHost() + Path.DEVICE_SEPARATOR);
-//		path = path.append(file.getRepositoryRelativePath());
-//		return path;
+
         return null;
 	}
 	public String getName() {

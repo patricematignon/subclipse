@@ -16,10 +16,11 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPluginDescriptor;
+
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -74,16 +75,15 @@ public class SVNUIPlugin extends AbstractUIPlugin {
 //		}
 //	};
 	
-		
-	/**
-	 * SVNUIPlugin constructor
-	 * 
-	 * @param descriptor  the plugin descriptor
-	 */
-	public SVNUIPlugin(IPluginDescriptor descriptor) {
-		super(descriptor);
-		plugin = this;
+	
+    public static void log(CoreException e) {
+		log(e.getStatus().getSeverity(), Policy.bind("simpleInternal"), e); //$NON-NLS-1$
 	}
+    public static void log(int severity, String message, Throwable e) {
+		log(new Status(severity, ID, 0, message, e));
+	}
+    
+	
 
 	
 	public SVNUIPlugin(){
@@ -91,6 +91,7 @@ public class SVNUIPlugin extends AbstractUIPlugin {
 		plugin = this;
 	
 	}
+	
 
 	/**
 	 * Convenience method to get the currently active workbench page. Note that
@@ -192,11 +193,7 @@ public class SVNUIPlugin extends AbstractUIPlugin {
 	public synchronized RepositoryManager getRepositoryManager() {
 		if (repositoryManager == null) {
 			repositoryManager = new RepositoryManager();
-			try {
-				repositoryManager.startup();
-			} catch (TeamException e) {
-				SVNUIPlugin.log(e.getStatus());
-			}
+			repositoryManager.startup();
 		}
 		return repositoryManager;
 	}
@@ -215,7 +212,7 @@ public class SVNUIPlugin extends AbstractUIPlugin {
 	}	
 
 	public static void log(TeamException e) {
-		getPlugin().getLog().log(new Status(e.getStatus().getSeverity(), SVNUIPlugin.ID, 0, Policy.bind("simpleInternal"), e));; //$NON-NLS-1$
+		getPlugin().getLog().log(new Status(e.getStatus().getSeverity(), SVNUIPlugin.ID, 0, Policy.bind("simpleInternal"), e)); //$NON-NLS-1$
 	}
 
 	// flags to tailor error reporting
@@ -373,16 +370,7 @@ public class SVNUIPlugin extends AbstractUIPlugin {
 	}
 	
 	public void start(BundleContext ctxt)throws Exception{
-		this.bundle = ctxt.getBundle();
-		startup();
-	}
-
-
-	/**
-	 * @see Plugin#startup()
-	 */
-	public void startup() throws CoreException {
-		super.startup();
+		super.start(ctxt);
 		Policy.localize("org.tigris.subversion.subclipse.ui.messages"); //$NON-NLS-1$
         
 		SVNAdapterFactory factory = new SVNAdapterFactory();
@@ -393,13 +381,13 @@ public class SVNUIPlugin extends AbstractUIPlugin {
 //		Platform.getAdapterManager().registerAdapters(factory, RepositoryRoot.class);
 		
         // we initialize the image descriptors
-		imageDescriptors.initializeImages(getDescriptor().getInstallURL());
+		imageDescriptors.initializeImages(ctxt.getBundle().getEntry("/"));
 		
         preferences = new Preferences(getPreferenceStore());
 		preferences.initializePreferences();
 		
 //		// if the global ignores list is changed then update decorators.
-//		TeamUI.addPropertyChangeListener(teamUIListener);
+		//TeamUI.getSynchronizeManager().addSynchronizeParticipants(new ISynchronizeParticipant[]{new SVNWorkspaceSynchronizeParticipant()});
 		
 		ConsoleView.startup();
 	}
@@ -407,8 +395,8 @@ public class SVNUIPlugin extends AbstractUIPlugin {
 	/**
 	 * @see Plugin#shutdown()
 	 */
-	public void shutdown() throws CoreException {
-		super.shutdown();
+	public void stop(BundleContext ctxt) throws Exception {
+		super.stop(ctxt);
 //		TeamUI.removePropertyChangeListener(listener);
 		try {
 			if (repositoryManager != null)
@@ -427,6 +415,7 @@ public class SVNUIPlugin extends AbstractUIPlugin {
      */
     public ImageDescriptor getImageDescriptor(String id) {
         return imageDescriptors.getImageDescriptor(id);
-    }    
+    }
+	  
     
 }

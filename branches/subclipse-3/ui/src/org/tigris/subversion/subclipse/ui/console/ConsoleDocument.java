@@ -11,10 +11,6 @@
  *******************************************************************************/
 package org.tigris.subversion.subclipse.ui.console;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
 import org.eclipse.jface.text.AbstractDocument;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DefaultLineTracker;
@@ -85,21 +81,5 @@ public class ConsoleDocument extends AbstractDocument {
 		}
 	}
 	
-	/**
-	 * Return the indicies of the lines that contain command strings
-	 */
-	private int[] getCommandLines() {
-		List commandLineList = new ArrayList();
-		for (int i = 0; i < currentLine; i++) {
-			if (lineTypes[i] == COMMAND) {
-				commandLineList.add(new Integer(i));
-			}			
-		}
-		int[] commandLines = new int[commandLineList.size()];
-		int i = 0;
-		for (Iterator iter = commandLineList.iterator(); iter.hasNext(); ) {
-			commandLines[i++] = ((Integer) iter.next()).intValue();
-		}
-		return commandLines;
-	}	
+	
 }

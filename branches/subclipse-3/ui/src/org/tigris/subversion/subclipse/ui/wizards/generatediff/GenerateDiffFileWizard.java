@@ -81,7 +81,7 @@ public class GenerateDiffFileWizard extends Wizard {
 		String iconPath;
 		iconPath = "icons/full/"; //$NON-NLS-1$
 		try {
-			URL installURL = SVNUIPlugin.getPlugin().getDescriptor().getInstallURL();
+			URL installURL = SVNUIPlugin.getPlugin().getBundle().getEntry("/");
 			URL url = new URL(installURL, iconPath + "wizards/newconnect_wiz.gif");	//$NON-NLS-1$
 			ImageDescriptor desc = ImageDescriptor.createFromURL(url);
 			setDefaultPageImageDescriptor(desc);

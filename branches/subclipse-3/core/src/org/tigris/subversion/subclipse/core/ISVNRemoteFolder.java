@@ -21,7 +21,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
   * 
   * Clients are not expected to implement this interface.
   */
-public interface ISVNRemoteFolder extends ISVNRemoteResource, ISVNFolder {
+public interface ISVNRemoteFolder extends ISVNRemoteResource, ISVNFolder{
 
     void createRemoteFolder(String folderName, String message,IProgressMonitor monitor) throws SVNException;	
 	
