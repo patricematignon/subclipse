@@ -12,12 +12,12 @@ package org.tigris.subversion.subclipse.ui.actions;
  
 import org.tigris.subversion.svnclientadapter.SVNRevision;
 
-public class CompareWithBaseRevisionAction extends CompareWithRemoteAction {
+public class CompareWithHeadRevisionAction extends CompareWithRemoteAction {
 
 	/**
-	 * Creates a new compare action that will compare against the BASE revision
+	 * Creates a new compare action that will compare against the HEAD revision
 	 */
-	public CompareWithBaseRevisionAction() {
-		super(SVNRevision.BASE);
+	public CompareWithHeadRevisionAction() {
+		super(SVNRevision.HEAD);
 	}
 }

@@ -260,6 +260,12 @@ public class HistoryView extends ViewPart {
 				ISVNRemoteFile remoteFile = (ISVNRemoteFile)currentSelection.getRemoteResource();
 				try {
 					if(confirmOverwrite()) {
+						// Update does not support overwriting the WC, so it must be reverted first
+						ISVNLocalFile svnFile = SVNWorkspaceRoot.getSVNFileFor(file);
+						if (svnFile.isModified()) {
+							svnFile.revert();
+						}
+
 						SVNTeamProvider provider = (SVNTeamProvider)RepositoryProvider.getProvider(file.getProject());
                         provider.update(new IResource[] {file}, remoteFile.getLastChangedRevision(), monitor);					 
 						historyTableProvider.setFile(remoteFile);

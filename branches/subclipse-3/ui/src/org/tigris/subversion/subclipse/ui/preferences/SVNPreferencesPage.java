@@ -22,6 +22,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
@@ -40,7 +41,8 @@ public class SVNPreferencesPage extends PreferencePage implements IWorkbenchPref
 
     private Button javahlRadio;
     private Button commandLineRadio;
-    
+    private Button showCompareRevisionInDialog;
+
 	public SVNPreferencesPage() {
 		// sort the options by display text
 		setDescription(Policy.bind("SVNPreferencePage.description")); //$NON-NLS-1$
@@ -67,10 +69,42 @@ public class SVNPreferencesPage extends PreferencePage implements IWorkbenchPref
 				}
 			}
 		}
-	};		
+	};
 
+	/**
+	 * Utility method that creates a label instance
+	 * and sets the default layout data.
+	 *
+	 * @param parent  the parent for the new label
+	 * @param text  the text for the new label
+	 * @return the new label
+	 */
+	private Label createLabel(Composite parent, String text) {
+		Label label = new Label(parent, SWT.LEFT);
+		label.setText(text);
+		GridData data = new GridData();
+		data.horizontalSpan = 1;
+		data.horizontalAlignment = GridData.FILL;
+		label.setLayoutData(data);
+		return label;
+	}
 
-		
+	/**
+	 * Creates an new checkbox instance and sets the default
+	 * layout data.
+	 *
+	 * @param group  the composite in which to create the checkbox
+	 * @param label  the string to set into the checkbox
+	 * @return the new checkbox
+	 */
+	private Button createCheckBox(Composite group, String label) {
+		Button button = new Button(group, SWT.CHECK | SWT.LEFT);
+		button.setText(label);
+		GridData data = new GridData();
+		data.horizontalSpan = 2;
+		button.setLayoutData(data);
+		return button;
+	}	
 
 	/**
 	 * @see PreferencePage#createContents(Composite)
@@ -81,14 +115,18 @@ public class SVNPreferencesPage extends PreferencePage implements IWorkbenchPref
 		Composite composite = new Composite(parent, SWT.NULL);
 		composite.setLayoutData(new GridData());
 		GridLayout layout = new GridLayout();
-		layout.numColumns = 1;
+		layout.numColumns = 2;
 		composite.setLayout(layout);
+		
+		showCompareRevisionInDialog = createCheckBox(composite, Policy.bind("SVNPreferencePage.showCompareMergeInSync")); //$NON-NLS-1$
+		createLabel(composite, ""); createLabel(composite, ""); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		// create the group
 		Group group = new Group(composite, SWT.NULL);
 		group.setText(Policy.bind("SVNPreferencePage.svnClientInterface")); //$NON-NLS-1$
 		GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
 		gridData.grabExcessHorizontalSpace = true;
+		gridData.horizontalSpan = 2;
 		group.setLayoutData(gridData);
 		layout = new GridLayout();
 		group.setLayout(layout); 	
@@ -110,7 +148,9 @@ public class SVNPreferencesPage extends PreferencePage implements IWorkbenchPref
 	 */
 	private void initializeValues() {
 		IPreferenceStore store = getPreferenceStore();
-
+		
+		showCompareRevisionInDialog.setSelection(store.getBoolean(ISVNUIConstants.PREF_SHOW_COMPARE_REVISION_IN_DIALOG));
+		
         if (store.getInt(ISVNUIConstants.PREF_SVNINTERFACE) == SVNClientAdapterFactory.JAVAHL_CLIENT){
             javahlRadio.setSelection(true);
         }else{
@@ -132,6 +172,8 @@ public class SVNPreferencesPage extends PreferencePage implements IWorkbenchPref
 	public boolean performOk() {
 		IPreferenceStore store = getPreferenceStore();
 		
+		store.setValue(ISVNUIConstants.PREF_SHOW_COMPARE_REVISION_IN_DIALOG, showCompareRevisionInDialog.getSelection());
+
         if (javahlRadio.getSelection() ){
             store.setValue(ISVNUIConstants.PREF_SVNINTERFACE, SVNClientAdapterFactory.JAVAHL_CLIENT);
         }else{
@@ -148,7 +190,9 @@ public class SVNPreferencesPage extends PreferencePage implements IWorkbenchPref
 	protected void performDefaults() {
 		super.performDefaults();
 		IPreferenceStore store = getPreferenceStore();
-        
+		
+		showCompareRevisionInDialog.setSelection(store.getDefaultBoolean(ISVNUIConstants.PREF_SHOW_COMPARE_REVISION_IN_DIALOG));
+		
 		if (store.getInt(ISVNUIConstants.PREF_SVNINTERFACE) == SVNClientAdapterFactory.JAVAHL_CLIENT){
 			javahlRadio.setSelection(true);
 		}else{

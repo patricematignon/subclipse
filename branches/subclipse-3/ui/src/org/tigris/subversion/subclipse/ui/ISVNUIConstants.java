@@ -88,6 +88,7 @@ public interface ISVNUIConstants {
     public final String PREF_SHOW_ADDED_RESOURCES = "pref_show_added_resources"; //$NON-NLS-1$
     public final String PREF_SHOW_DELETED_RESOURCES = "pref_show_deleted_resources"; //$NON-NLS-1$
     public final String PREF_SHOW_MODIFIED_RESOURCES = "pref_show_modified_resources"; //$NON-NLS-1$
+    public final String PREF_SHOW_COMPARE_REVISION_IN_DIALOG = "pref_show_compare_revision_in_dialog"; //$NON-NLS-1$
     
 	// console preferences
 	public final String PREF_CONSOLE_COMMAND_COLOR = "pref_console_command_color"; //$NON-NLS-1$

@@ -275,13 +275,21 @@
                menubarPath="team.main/group3"
                id="org.tigris.subversion.subclipse.ui.showSvnProperties">
          </action>
+          <action
+               label="%CompareWithPreviousAction.label"
+               helpContextId="org.tigris.subversion.subclipse.ui.compare_with_previous_action_context"
+               class="org.tigris.subversion.subclipse.ui.actions.CompareWithPreviousRevisionAction"
+               tooltip="%CompareWithPreviousAction.tooltip"
+               menubarPath="compareWithMenu/compareWithGroup"
+               id="org.tigris.subversion.subclipse.ui.compareWithPrevious">
+         </action>
          <action
-               label="%CompareWithRemoteAction.label"
+               label="%CompareWithHeadAction.label"
                helpContextId="org.tigris.subversion.subclipse.ui.compare_with_latest_action_context"
-               class="org.tigris.subversion.subclipse.ui.actions.CompareWithRemoteAction"
+               class="org.tigris.subversion.subclipse.ui.actions.CompareWithHeadRevisionAction"
                tooltip="%CompareWithRemoteAction.tooltip"
                menubarPath="compareWithMenu/compareWithGroup"
-               id="org.tigris.subversion.subclipse.ui.compareWithRemote">
+               id="org.tigris.subversion.subclipse.ui.compareWithHead">
          </action>
          <action
                label="%CompareWithBaseAction.label"
@@ -360,6 +368,13 @@
                menubarPath="compareWithMenu/compareWithGroup"
                id="org.tigris.subversion.subclipse.ui.compareWithRevision">
          </action>
+         <action
+               helpContextId="org.tigris.subversion.subclipse.ui.replace_with_revision_action_context"
+               label="%ReplaceWithRevisionAction.label"
+               tooltip="%ReplaceWithRevisionAction.tooltip"
+               class="org.tigris.subversion.subclipse.ui.actions.ReplaceWithRevisionAction"
+               menubarPath="replaceWithMenu/replaceWithGroup"
+               id="org.tigris.subversion.subclipse.ui.replaceWithRevision"/>
       </objectContribution>
       <objectContribution
             adaptable="true"

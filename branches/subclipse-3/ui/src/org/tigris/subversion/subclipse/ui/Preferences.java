@@ -56,6 +56,8 @@ private IPreferenceStore store;
         store.setDefault(ISVNUIConstants.PREF_PROMPT_ON_SAVING_IN_SYNC, true);
         store.setDefault(ISVNUIConstants.PREF_SAVE_DIRTY_EDITORS, ISVNUIConstants.OPTION_PROMPT);
         
+        store.setDefault(ISVNUIConstants.PREF_SHOW_COMPARE_REVISION_IN_DIALOG, false);
+        
         store.setDefault(ISVNUIConstants.PREF_SVNINTERFACE, SVNClientAdapterFactory.JAVAHL_CLIENT);
         
         SVNProviderPlugin.getPlugin().setSvnClientInterface(store.getInt(ISVNUIConstants.PREF_SVNINTERFACE));

@@ -17,16 +17,21 @@ import org.eclipse.compare.CompareUI;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.ui.SaveablePartDialog;
 import org.tigris.subversion.subclipse.core.ISVNLocalResource;
 import org.tigris.subversion.subclipse.core.ISVNRemoteFile;
 import org.tigris.subversion.subclipse.core.SVNException;
 import org.tigris.subversion.subclipse.core.history.ILogEntry;
 import org.tigris.subversion.subclipse.core.resources.SVNWorkspaceRoot;
+import org.tigris.subversion.subclipse.ui.ISVNUIConstants;
 import org.tigris.subversion.subclipse.ui.Policy;
+import org.tigris.subversion.subclipse.ui.SVNUIPlugin;
 import org.tigris.subversion.subclipse.ui.compare.SVNCompareRevisionsInput;
 
 /**
@@ -89,14 +94,28 @@ public class CompareWithRevisionAction extends WorkspaceAction {
 		
 		// Show the compare viewer
 		run(new IRunnableWithProgress() {
-			public void run(IProgressMonitor monitor) {
-				CompareUI.openCompareEditorOnPage(
-				  new SVNCompareRevisionsInput((IFile)getSelectedResources()[0], entries[0]),
-				  getTargetPage());
+			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+				SVNCompareRevisionsInput input = new SVNCompareRevisionsInput((IFile)getSelectedResources()[0], entries[0]);
+				if(SVNUIPlugin.getPlugin().getPreferenceStore().getBoolean(ISVNUIConstants.PREF_SHOW_COMPARE_REVISION_IN_DIALOG)) {
+					// running with a null progress monitor is fine because we have already pre-fetched the log entries above.
+					input.run(new NullProgressMonitor());
+					SaveablePartDialog cd = createCompareDialog(getShell(), input);
+					cd.setBlockOnOpen(true);
+					cd.open();
+				} else {
+					CompareUI.openCompareEditorOnPage(input, getTargetPage());
+				}
 			}
 		}, false /* cancelable */, PROGRESS_BUSYCURSOR);
 	}
 	
+	/**
+	 * Return the compare dialog to use to show the compare input.
+	 */
+	protected SaveablePartDialog createCompareDialog(Shell shell, SVNCompareRevisionsInput input) {
+		return new SaveablePartDialog(shell, input); //$NON-NLS-1$
+	}
+
 	/**
 	 * @see org.tigris.subversion.subclipse.ui.actions.SVNAction#getErrorTitle()
 	 */

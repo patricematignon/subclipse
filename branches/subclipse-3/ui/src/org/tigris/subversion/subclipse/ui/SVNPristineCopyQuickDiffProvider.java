@@ -18,7 +18,6 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -26,7 +25,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IFileEditorInput;
@@ -36,16 +34,12 @@ import org.eclipse.ui.texteditor.IElementStateListener;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.texteditor.quickdiff.IQuickDiffReferenceProvider;
 import org.tigris.subversion.subclipse.core.ISVNLocalFile;
-import org.tigris.subversion.subclipse.core.ISVNRepositoryLocation;
+import org.tigris.subversion.subclipse.core.ISVNRemoteResource;
 import org.tigris.subversion.subclipse.core.SVNException;
-import org.tigris.subversion.subclipse.core.SVNProviderPlugin;
-import org.tigris.subversion.subclipse.core.SVNTeamProvider;
 import org.tigris.subversion.subclipse.core.resources.SVNWorkspaceRoot;
-import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
-import org.tigris.subversion.svnclientadapter.SVNClientException;
-import org.tigris.subversion.svnclientadapter.SVNRevision;
 
 /**
+
  * A QuickDiff provider that provides a reference to the pristine copy of a file
  * managed in the SVN repository. The provider notifies when the file's sync state changes
  * and the diff should be recalculated (e.g. commit, update...) or when the file
@@ -65,7 +59,9 @@ import org.tigris.subversion.svnclientadapter.SVNRevision;
  * This is required because the quickdiff support relies on IDocument change events
  * to update the quickdiff, and returning null for the reference document doesn't
  * allow the transition to later return a IDocument.]
- * 
+ *
+ * TODO add sync listener support
+ *  
  * @since 3.0
  */
 public class SVNPristineCopyQuickDiffProvider implements IQuickDiffReferenceProvider {
@@ -281,60 +277,39 @@ public class SVNPristineCopyQuickDiffProvider implements IQuickDiffReferenceProv
 //		}
 //	}
 
-  /**
-   * Creates a document and initializes it with the contents of a SVN remote
-   * resource.
-   * @param monitor the progress monitor
-   * @throws CoreException
-   */
-  private void readDocument(IProgressMonitor monitor) throws CoreException {
-      if(! isReferenceInitialized) return;
-      if(referenceDocument == null)
-          referenceDocument = new Document();
-
-      ISVNLocalFile localFile = getManagedSVNFile();
-
-      if (!localFile.getStatus().isAdded() && documentProvider instanceof IStorageDocumentProvider) {
-          IStorageDocumentProvider provider= (IStorageDocumentProvider) documentProvider;            
-          String encoding= provider.getEncoding(editor.getEditorInput());
-          if (encoding == null) {
-              encoding= provider.getDefaultEncoding();
-          }
-          if(monitor.isCanceled()) return;
-
-          InputStream stream= getPristineContent(localFile.getIResource());
-          if (stream == null || monitor.isCanceled() || ! isReferenceInitialized) {
-              return;
-          }
-          setDocumentContent(referenceDocument, stream, encoding);
-      } else {
-          if(monitor.isCanceled()) return;
-          referenceDocument.set(""); //$NON-NLS-1$
-      }
-      if(DEBUG) System.out.println("+ SVNQuickDiff: updating document " + (referenceDocument!=null ? "remote found" : "remote empty")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-  }
-
 	/**
-     * TODO this needs to be moved somewhere else
-	 * @throws SVNException
-     * @param resource
-     * @return
-     */
-    private InputStream getPristineContent(IResource resource) throws SVNException {
-        SVNTeamProvider repository = (SVNTeamProvider) RepositoryProvider.getProvider(resource.getProject(), SVNProviderPlugin.getTypeId());
-        if (repository == null) {
-            return null;
-        }
+	 * Creates a document and initializes it with the contents of a SVN remote
+	 * resource.
+	 * @param monitor the progress monitor
+	 * @throws CoreException
+	 */
+	private void readDocument(IProgressMonitor monitor) throws CoreException {
+		if(! isReferenceInitialized) return;
+		if(referenceDocument == null)
+			referenceDocument = new Document();
+		
+		ISVNLocalFile localFile = getManagedSVNFile();
 
-        ISVNRepositoryLocation repositoryLocation = repository.getSVNWorkspaceRoot().getRepository();
-
-        ISVNClientAdapter svnClient = repositoryLocation.getSVNClient();
-        try {
-            return svnClient.getContent(resource.getLocation().toFile(), SVNRevision.BASE);
-        } catch (SVNClientException e) {
-            throw SVNException.wrapException(e);
-        }
-    }
+		// TODO shouldn't have to defend against base revisions not existing for added files
+		if (!localFile.getStatus().isAdded() && documentProvider instanceof IStorageDocumentProvider) {
+			IStorageDocumentProvider provider= (IStorageDocumentProvider) documentProvider;            
+			String encoding= provider.getEncoding(editor.getEditorInput());
+			if (encoding == null) {
+				encoding= provider.getDefaultEncoding();
+			}
+			if(monitor.isCanceled()) return;
+			
+			ISVNRemoteResource remoteFile = localFile.getBaseResource();
+			if (remoteFile == null || monitor.isCanceled() || ! isReferenceInitialized) {
+				return;
+			}
+			setDocumentContent(referenceDocument, remoteFile.getStorage(monitor).getContents(), encoding);
+		} else {
+			if(monitor.isCanceled()) return;
+			referenceDocument.set(""); //$NON-NLS-1$
+		}
+		if(DEBUG) System.out.println("+ SVNQuickDiff: updating document " + (referenceDocument!=null ? "remote found" : "remote empty")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+	}
 
 	/**
 	 * Intitializes the given document with the given stream using the given encoding.

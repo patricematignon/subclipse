@@ -43,12 +43,18 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.variants.IResourceVariant;
+import org.eclipse.team.internal.ui.Utils;
+import org.eclipse.team.ui.ISaveableWorkbenchPart;
+import org.eclipse.ui.IPropertyListener;
+import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.tigris.subversion.subclipse.core.ISVNRemoteFile;
@@ -65,13 +71,13 @@ import org.tigris.subversion.subclipse.ui.history.HistoryTableProvider;
  * A compare input for comparing local resource with remote ones 
  * Used by CompareWithRevisionAction
  */
-public class SVNCompareRevisionsInput extends CompareEditorInput {
-	IFile resource;
-	ILogEntry[] logEntries;
-	TableViewer viewer;
-	Action getContentsAction;
-	Action getRevisionAction;
-	Shell shell;
+public class SVNCompareRevisionsInput extends CompareEditorInput implements ISaveableWorkbenchPart {
+	private IFile resource;
+	private ILogEntry[] logEntries;
+	private TableViewer viewer;
+	private Action getContentsAction;
+	private Action getRevisionAction;
+	private Shell shell;
 	
 	private HistoryTableProvider historyTableProvider;
 	
@@ -194,6 +200,15 @@ public class SVNCompareRevisionsInput extends CompareEditorInput {
 		this.logEntries = logEntries;
 		updateCurrentEdition();
 		initializeActions();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.compare.CompareEditorInput#createContents(org.eclipse.swt.widgets.Composite)
+	 */
+	public Control createContents(Composite parent) {
+		Control c = super.createContents(parent);
+		c.setLayoutData(new GridData(GridData.FILL_BOTH));
+		return c;
 	}
 
     /**
@@ -334,10 +349,6 @@ public class SVNCompareRevisionsInput extends CompareEditorInput {
 		};
 	}
     
-	public boolean isSaveNeeded() {
-		return false;
-	}
-    
     /**
      * Runs the compare operation and returns the compare result.
      */
@@ -378,4 +389,109 @@ public class SVNCompareRevisionsInput extends CompareEditorInput {
 		return historyTableProvider;
 	}
 
+	/**
+	 * Updates the contents of the local file with the contents of the currently selected LogEntry
+	 * TODO shouldn't it replace with the selected revision (taking the revision number with it)
+	 * @throws CoreException
+	 */
+	public void replaceLocalWithCurrentlySelectedRevision() throws CoreException {
+		IStructuredSelection selection = (IStructuredSelection)viewer.getSelection();
+		if (selection.size() != 1) return;
+		VersionCompareDiffNode node = (VersionCompareDiffNode)selection.getFirstElement();
+		ResourceRevisionNode right = (ResourceRevisionNode)node.getRight();
+		TypedBufferedContent left = (TypedBufferedContent)node.getLeft();
+		left.setContent(Utils.readBytes(right.getContents()));
+	}
+
+	/**
+	 * Gets the table viewer that will be diaplsying the log entries.
+	 * TODO this should not be public
+	 */
+	public TableViewer getViewer() {
+		return viewer;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.ISaveablePart#doSave(org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public void doSave(IProgressMonitor monitor) {
+		try {
+			saveChanges(monitor);
+		} catch (CoreException e) {
+			Utils.handle(e);
+		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.ISaveablePart#doSaveAs()
+	 */
+	public void doSaveAs() {
+		// noop
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.ISaveablePart#isDirty()
+	 */
+	public boolean isDirty() {
+		return isSaveNeeded();
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.ISaveablePart#isSaveAsAllowed()
+	 */
+	public boolean isSaveAsAllowed() {
+		return false;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.ISaveablePart#isSaveOnCloseNeeded()
+	 */
+	public boolean isSaveOnCloseNeeded() {
+		return true;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IWorkbenchPart#addPropertyListener(org.eclipse.ui.IPropertyListener)
+	 */
+	public void addPropertyListener(IPropertyListener listener) {
+		
+	}
+	
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IWorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
+	 */
+	public void createPartControl(Composite parent) {
+		createContents(parent);
+	}
+	
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IWorkbenchPart#dispose()
+	 */
+	public void dispose() {
+	}
+	
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IWorkbenchPart#getSite()
+	 */
+	public IWorkbenchPartSite getSite() {
+		return null;
+	}
+	
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IWorkbenchPart#getTitleToolTip()
+	 */
+	public String getTitleToolTip() {
+		return null;
+	}
+	
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IWorkbenchPart#removePropertyListener(org.eclipse.ui.IPropertyListener)
+	 */
+	public void removePropertyListener(IPropertyListener listener) {
+	}
 }

@@ -21,7 +21,17 @@ import org.tigris.subversion.subclipse.core.resources.SVNWorkspaceRoot;
 import org.tigris.subversion.subclipse.ui.compare.SVNLocalCompareInput;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
 
-public class CompareWithRemoteAction extends WorkspaceAction {
+public abstract class CompareWithRemoteAction extends WorkspaceAction {
+
+	private final SVNRevision revision;
+
+	/**
+	 * Creates a new CompareWithRemoteAction for the specified revision
+	 * @param revision Revision to compare against.  Only relative resisions (HEAD,BASE,PREVIOUS) shoudl be used
+	 */
+	public CompareWithRemoteAction(SVNRevision revision) {
+		this.revision = revision;
+	}
 
 	public void execute(IAction action) {
 		IResource[] resources = getSelectedResources();
@@ -34,7 +44,7 @@ public class CompareWithRemoteAction extends WorkspaceAction {
 				public void run(IProgressMonitor monitor) {
 					try {
 						CompareUI.openCompareEditorOnPage(
-								new SVNLocalCompareInput(localResource, SVNRevision.HEAD),
+								new SVNLocalCompareInput(localResource, revision),
 								getTargetPage());
 					} catch (SVNException e) {
 						handle(e, null, null);
@@ -58,7 +68,7 @@ public class CompareWithRemoteAction extends WorkspaceAction {
 	}
 	
 	/**
-	 * Enable for resources that are managed (using super) or whose parent is a CVS folder.
+	 * Enable for resources that are managed (using super) or whose parent is an SVN folder.
 	 * 
 	 * @see org.eclipse.team.internal.ccvs.ui.actions.WorkspaceAction#isEnabledForCVSResource(org.eclipse.team.internal.ccvs.core.ICVSResource)
 	 */
@@ -66,10 +76,11 @@ public class CompareWithRemoteAction extends WorkspaceAction {
 		return super.isEnabledForSVNResource(cvsResource) || cvsResource.getParent().isManaged();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.internal.ccvs.ui.actions.WorkspaceAction#isEnabledForNonExistantResources()
+	/**
+	 * Added resources don't have any details to compare against
+	 * TODO if the addition is because of a copy this should be allowed (requires some way to get the remote resource from the original location)
 	 */
-	protected boolean isEnabledForNonExistantResources() {
-		return true;
+	protected boolean isEnabledForAddedResources() {
+		return false;
 	}
 }

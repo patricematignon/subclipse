@@ -188,7 +188,7 @@ public class SVNLocalCompareInput extends CompareEditorInput implements ISaveabl
 	 * @see org.eclipse.ui.ISaveablePart#isSaveAsAllowed()
 	 */
 	public boolean isSaveAsAllowed() {
-		return true;
+		return false;
 	}
 	
 	/* (non-Javadoc)
