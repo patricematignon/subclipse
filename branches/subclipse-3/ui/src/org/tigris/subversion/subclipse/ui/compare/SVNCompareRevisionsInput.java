@@ -331,7 +331,7 @@ public class SVNCompareRevisionsInput extends CompareEditorInput implements ISav
 							try {
 								SVNTeamProvider provider = (SVNTeamProvider)RepositoryProvider.getProvider(resource.getProject());
                                 provider.update(new IResource[] {resource},edition.getLastChangedRevision(),monitor);
-								getHistoryTableProvider().setFile(edition);
+								getHistoryTableProvider().setRemoteResource(edition);
 							} catch (TeamException e) {
 								throw new InvocationTargetException(e);
 							}
@@ -369,7 +369,7 @@ public class SVNCompareRevisionsInput extends CompareEditorInput implements ISav
      */
     private void updateCurrentEdition() {
 		try {
-			getHistoryTableProvider().setFile((ISVNRemoteFile) SVNWorkspaceRoot.getBaseResourceFor(resource));
+			getHistoryTableProvider().setRemoteResource((ISVNRemoteFile) SVNWorkspaceRoot.getBaseResourceFor(resource));
 		} catch (TeamException e) {
 			handle(e);
 		}
