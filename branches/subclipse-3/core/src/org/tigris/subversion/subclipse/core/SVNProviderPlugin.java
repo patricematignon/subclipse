@@ -27,6 +27,7 @@ import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.team.core.TeamException;
 import org.osgi.framework.BundleContext;
 import org.tigris.subversion.subclipse.core.client.IConsoleListener;
@@ -87,8 +88,14 @@ public class SVNProviderPlugin extends Plugin {
 	}
 	
 
+    /**
+     * Log the given exception along with the provided message and severity indicator
+     */
+    public static void log(int severity, String message, Throwable e) {
+        log(new Status(severity, ID, 0, message, e));
+    }
 	/**
-	 * Convenience method for logging CVSExceptiuons to the plugin log
+	 * Convenience method for logging SVNExceptions to the plugin log
 	 */
 	public static void log(TeamException e) {
 		// For now, we'll log the status. However we should do more
