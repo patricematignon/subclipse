@@ -92,7 +92,7 @@ public class RevertAction extends WorkspaceAction {
 			 }
 			 
 			 // get adds, deletes, updates and property updates.
-			 GetStatusCommand command = new GetStatusCommand(svnResource);
+			 GetStatusCommand command = new GetStatusCommand(svnResource, true, false);
 			 command.run(iProgressMonitor);
 			 LocalResourceStatus[] statuses = command.getStatuses();
 			 for (int j = 0; j < statuses.length; j++) {
