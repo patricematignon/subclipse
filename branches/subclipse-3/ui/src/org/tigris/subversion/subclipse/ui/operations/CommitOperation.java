@@ -58,7 +58,7 @@ public class CommitOperation extends SVNOperation {
 				SVNTeamProvider provider = (SVNTeamProvider)iterator.next();
 				List list = (List)table.get(provider);
 				IResource[] providerResources = (IResource[])list.toArray(new IResource[list.size()]);
-				provider.checkin(providerResources, commitComment, IResource.DEPTH_INFINITE, null);
+				provider.checkin(providerResources, commitComment, IResource.DEPTH_ZERO, null);
 			}			
 			for (int i = 0; i < selectedResources.length; i++) {
 				IResource projectHandle = selectedResources[i].getProject();
