@@ -11,10 +11,14 @@ package org.tigris.subversion.subclipse.core.status;
 
 import org.eclipse.core.internal.resources.IManager;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.tigris.subversion.subclipse.core.SVNException;
 import org.tigris.subversion.subclipse.core.resources.LocalResourceStatus;
+import org.tigris.subversion.svnclientadapter.SVNNodeKind;
 import org.tigris.subversion.svnclientadapter.SVNStatusUnversioned;
 
 /**
@@ -102,6 +106,16 @@ public class StatusCacheManager implements IManager{
         return status;
     }
 
+    /**
+     * The cache manager handles itself the status retrieving. However this method can
+     * be used to update the statuses of some resources  
+     * 
+     * @param statuses
+     */
+    public void setStatuses(LocalResourceStatus[] statuses) {
+        statusUpdateStrategy.updateCache(statuses);
+    }
+    
     /**
      * refresh the status for the given resource
      * @param resource

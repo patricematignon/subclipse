@@ -14,6 +14,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.Date;
@@ -43,6 +44,7 @@ public class LocalResourceStatus {
     protected long revision;
     protected int nodeKind;
     protected String urlCopiedFrom;
+    protected String path; // absolute path
 
     public LocalResourceStatus() {
         
@@ -84,6 +86,7 @@ public class LocalResourceStatus {
         } else {
         	this.urlCopiedFrom = status.getUrlCopiedFrom().toString();
         }
+        this.path = status.getFile().getAbsolutePath();
     }
     
 	public SVNUrl getUrl() {
@@ -150,6 +153,13 @@ public class LocalResourceStatus {
         }
 	}
     
+    /**
+     * @return Returns the file.
+     */
+    public File getFile() {
+        return new File(path);
+    }
+    
     public byte[] getBytes() {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
 		DataOutputStream dos = new DataOutputStream(out);
@@ -194,6 +204,9 @@ public class LocalResourceStatus {
     		} else {
     			dos.writeUTF(urlCopiedFrom);
     		}
+            
+            // file
+            dos.writeUTF(path);
         } catch (IOException e) {
             return null;
         }        
@@ -238,6 +251,20 @@ public class LocalResourceStatus {
 
             // revision
             revision = dis.readLong();
+            
+            // nodeKind
+            nodeKind = dis.readInt();
+            
+            // urlCopiedFrom
+            String urlCopiedFromString = dis.readUTF();
+            if (urlCopiedFromString.equals("")) {
+                urlCopiedFrom = null;
+            } else {
+                urlCopiedFrom = urlString;
+            }
+            
+            // path
+            path = dis.readUTF();
         } catch (IOException e){
         	throw new SVNException("cannot create LocalResourceStatus from bytes",e);
         }   

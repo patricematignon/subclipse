@@ -53,11 +53,23 @@ public abstract class StatusUpdateStrategy {
      * @param statuses
      */
     protected void updateCache(ISVNStatus[] statuses) {
+        LocalResourceStatus[] localResourceStatuses = new LocalResourceStatus[statuses.length];
+        for (int i = 0; i < statuses.length;i++) {
+            localResourceStatuses[i] = new LocalResourceStatus(statuses[i]);
+        }
+        updateCache(localResourceStatuses);
+    }
+    
+    /**
+     * update the cache using the given statuses
+     * @param statuses
+     */
+    protected void updateCache(LocalResourceStatus[] statuses) {
         IWorkspace workspace = ResourcesPlugin.getWorkspace();
         IWorkspaceRoot workspaceRoot = workspace.getRoot();
         
         for (int i = 0; i < statuses.length;i++) {
-            ISVNStatus status = statuses[i];
+            LocalResourceStatus status = statuses[i];
 
             IPath pathEclipse = new Path(status.getFile().getAbsolutePath());
                 
@@ -73,7 +85,7 @@ public abstract class StatusUpdateStrategy {
             }
             
             if (resourceStatus != null) {
-                treeCacheRoot.addStatus(resourceStatus, new LocalResourceStatus(status));
+                treeCacheRoot.addStatus(resourceStatus, status);
             }
         }
     }
