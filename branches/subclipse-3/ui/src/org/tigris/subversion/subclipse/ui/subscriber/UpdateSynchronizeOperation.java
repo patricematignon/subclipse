@@ -20,6 +20,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.synchronize.SyncInfoSet;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.tigris.subversion.subclipse.core.SVNTeamProvider;
+import org.tigris.subversion.subclipse.ui.Policy;
 import org.tigris.subversion.subclipse.ui.operations.UpdateOperation;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
 
@@ -63,8 +64,8 @@ public class UpdateSynchronizeOperation extends SVNSynchronizeOperation {
 	 */
 	private int promptForConflicts(Shell shell, SyncInfoSet syncSet) {
 		String[] buttons = new String[] {IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL, IDialogConstants.CANCEL_LABEL};
-		String title = "Confirm Overwrite"; //$NON-NLS-1$
-		String question = "You have changes that conflict with the server. Overwrite those changes?"; //$NON-NLS-1$
+		String title = Policy.bind("SyncAction.update.conflict.title");
+		String question = Policy.bind("SyncAction.update.conflict.question");
 		final MessageDialog dialog = new MessageDialog(shell, title, null, question, MessageDialog.QUESTION, buttons, 0);
 		shell.getDisplay().syncExec(new Runnable() {
 			public void run() {
