@@ -156,7 +156,7 @@ public class SVNPropertyPage extends PropertyPage {
                 label.setText("URL Copied From");
                 urlCopiedFromValue = new Text(composite, SWT.WRAP | SWT.READ_ONLY);
                 urlCopiedFromValue.setText(status.getUrlCopiedFrom() != null ? status
-                        .getUrlCopiedFrom() : "");
+                        .getUrlCopiedFrom().toString() : "");
             }
 
             ignoredValue.setText(new Boolean(status.isIgnored()).toString());
