@@ -739,6 +739,116 @@
 			class="org.tigris.subversion.subclipse.ui.decorator.ConflictResolutionGenerator"
 			markerType="org.tigris.subversion.subclipse.ui.conflictMarker">
 		</markerResolutionGenerator>
-	</extension>   
+	</extension> 
+	
+   <extension
+         point="org.tigris.subversion.subclipse.core.svnPropertyTypes">
+      <svnPropertyTypes
+            type="String"
+            fileOrFolder="folder"
+            allowRecurse = "false"
+            name="bugtraq:label">
+         <description>
+bugtraq:label
+Label text to show for the edit box where the user enters the issue number.
+
+Example:
+Issue#:
+		</description>
+      </svnPropertyTypes>
+      <svnPropertyTypes
+            type="String"
+            fileOrFolder="folder"
+            allowRecurse = "false"
+            name="bugtraq:message">
+         <description>
+bugtraq:message
+String which is added to a log message when an issue number is entered.
+The string must contain &quot;%BUGID%&quot; which gets replaced with the issue number.
+
+Example:
+Issue#: %BUGID%
+		</description>
+      </svnPropertyTypes> 
+      <svnPropertyTypes
+            type="Boolean"
+            fileOrFolder="folder"
+            allowRecurse = "false"
+            name="bugtraq:number">
+         <description>
+bugtraq:number
+Set to &quot;true&quot; if your issue tracking system has issues which can only be numbers.
+		</description>
+      </svnPropertyTypes> 
+      <svnPropertyTypes
+            type="URL"
+            fileOrFolder="folder"
+            allowRecurse = "false"
+            name="bugtraq:url">
+         <description>
+bugtraq:url
+URL pointing to the issue tracker. It must contain &quot;%BUGID%&quot; which
+gets replaced with the issue number.
+
+Example:
+http://www.yourcompany.com/showissue?issue=%BUGID%
+		</description>
+      </svnPropertyTypes> 
+      <svnPropertyTypes
+            type="Boolean"
+            fileOrFolder="folder"
+            allowRecurse = "false"
+            name="bugtraq:warnifnoissue">
+         <description>
+bugtraq:warnifnoissue
+Set to &quot;true&quot; if a warning shall be shown when no issue is entered in the commit dialog.
+		</description>
+      </svnPropertyTypes> 
+      <svnPropertyTypes
+            type="Boolean"
+            fileOrFolder="folder"
+            allowRecurse = "false"
+            name="bugtraq:append">
+         <description>
+bugtraq:append
+Set to &quot;false&quot; if you want the issue number to be inserted at the top of the
+log message. The default is &quot;true&quot; which means the issue number
+is appended to the log message. 
+		</description>
+      </svnPropertyTypes>                      
+      <svnPropertyTypes
+            type="String"
+            fileOrFolder="folder"
+            allowRecurse = "false"
+            name="tsvn:logtemplate">
+         <description>
+tsvn:logtemplate
+String which is inserted in the log message box in the commit dialog.
+Use this as a log message template for users to fill in.
+		</description>
+      </svnPropertyTypes>                      
+      <svnPropertyTypes
+            type="Number"
+            fileOrFolder="folder"
+            allowRecurse = "false"
+            name="tsvn:logwidthmarker">
+         <description>
+tsvn:logwidthmarker
+Set this to the max number of characters on a single line of a log message.
+A faded line is shown in the commit dialog at that position to guide the user when
+entering a log message.
+		</description>
+      </svnPropertyTypes>                      
+      <svnPropertyTypes
+            type="Number"
+            fileOrFolder="folder"
+            allowRecurse = "false"
+            name="tsvn:logminsize">
+         <description>
+tsvn:logminsize
+Minimum size in characters a log message must have before a commit is allowed.
+		</description>
+      </svnPropertyTypes>                      
+   </extension>	  
 
 </plugin>

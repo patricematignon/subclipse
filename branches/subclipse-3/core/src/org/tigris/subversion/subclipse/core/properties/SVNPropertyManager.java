@@ -1,5 +1,7 @@
 package org.tigris.subversion.subclipse.core.properties;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -14,14 +16,10 @@ import org.tigris.subversion.subclipse.core.SVNProviderPlugin;
  */
 public class SVNPropertyManager {
 
-    public static final String DEFAULT_GROUP = "other";
     private static SVNPropertyManager instance;
-    private Map propertyGroups = new HashMap();
-    
-    // Group used if no group is specified on the extension, or that group does not exist
-    // TODO look at provising an isDefault attribute for groups (can't see this being useful)
-    private SVNPropertyGroupDefinition defaultGroup = new SVNPropertyGroupDefinition("Other", "Unclassified properties");
-    
+    private SVNPropertyDefinition[] definitions;   
+    private SVNPropertyDefinition[] fileDefinitions;
+    private SVNPropertyDefinition[] folderDefinitions;
 
     public static SVNPropertyManager getInstance() {
         if (instance == null) {
@@ -31,78 +29,61 @@ public class SVNPropertyManager {
     }
     
     private SVNPropertyManager() {
-        registerDefaultGroup();
-        loadGroupsFromExtensions();
-        
         loadPropertiesFromExtensions();
-        loadUserDefinedProperties();
     }
 
-    private void registerDefaultGroup() {
-        propertyGroups.put(DEFAULT_GROUP, defaultGroup);
-    }
-    
-    private void loadGroupsFromExtensions() {
-        IExtensionPoint extension = Platform.getExtensionRegistry().getExtensionPoint(SVNProviderPlugin.ID, SVNProviderPlugin.SVN_PROPERTY_GROUPS_EXTENSION);
-        IExtension[] extensions =  extension.getExtensions();
-        
-        for (int i = 0; i < extensions.length; i++) {
-            IConfigurationElement[] configElements = extensions[i].getConfigurationElements();
-            for (int j = 0; j < configElements.length; j++) {
-                String groupId = configElements[j].getAttribute("id"); //$NON-NLS-1$
-                String groupName = configElements[j].getAttribute("name"); //$NON-NLS-1$
-                String description = "";
-                IConfigurationElement[] descriptionElements = configElements[j].getChildren("description");
-                if (descriptionElements.length == 1) {
-                    description = descriptionElements[0].getValue();
-                }
-                
-                // TODO check if the group is already registered
-                propertyGroups.put(groupId, new SVNPropertyGroupDefinition(groupName, description));
-            }
-        }
-    }
     private void loadPropertiesFromExtensions() {
+        ArrayList propertyTypes = new ArrayList();
         IExtensionPoint extension = Platform.getExtensionRegistry().getExtensionPoint(SVNProviderPlugin.ID, SVNProviderPlugin.SVN_PROPERTY_TYPES_EXTENSION);
         IExtension[] extensions =  extension.getExtensions();
         
         for (int i = 0; i < extensions.length; i++) {
             IConfigurationElement[] configElements = extensions[i].getConfigurationElements();
             for (int j = 0; j < configElements.length; j++) {
-                
-                String groupId = configElements[j].getAttribute("groupId"); //$NON-NLS-1$
-                if (groupId == null) {
-                    groupId = DEFAULT_GROUP;
-                }
-                
                 String name = configElements[j].getAttribute("name"); //$NON-NLS-1$
                 String type = configElements[j].getAttribute("type"); //$NON-NLS-1$
+                String fileOrFolder = configElements[j].getAttribute("fileOrFolder"); //$NON-NLS-1$
+                String allowRecurse = configElements[j].getAttribute("allowRecurse"); //$NON-NLS-1$
                 String description = "";
                 
                 IConfigurationElement[] descriptionElements = configElements[j].getChildren("description");
                 if (descriptionElements.length == 1) {
                     description = descriptionElements[0].getValue();
                 }
-                
-                SVNPropertyGroupDefinition propertyGroup = (SVNPropertyGroupDefinition) propertyGroups.get(groupId);
-                SVNPropertyDefinition property = new SVNPropertyDefinition(name, description);
-                if (propertyGroup != null) {
-                    propertyGroup.addProperty(property);
-                } else {
-                    // TODO warn about missing group
-                    defaultGroup.addProperty(property);
-                }
-                
-                
+                int showFor;
+                if (fileOrFolder.equals("file")) showFor = SVNPropertyDefinition.FILE;
+                else if (fileOrFolder.equals("folder")) showFor = SVNPropertyDefinition.FOLDER;
+                else showFor = SVNPropertyDefinition.BOTH;
+                boolean recurse = true;
+                if ((allowRecurse != null) && (allowRecurse.equalsIgnoreCase("false"))) recurse = false;
+                SVNPropertyDefinition property = new SVNPropertyDefinition(name, description, showFor, recurse, type);
+                propertyTypes.add(property);                
             }
         }
+	    definitions = new SVNPropertyDefinition[propertyTypes.size()];
+	    propertyTypes.toArray(definitions);
+	    Arrays.sort(definitions);
+	    ArrayList fileProperties = new ArrayList();
+	    ArrayList folderProperties = new ArrayList();
+	    for (int i = 0; i < definitions.length; i++) {
+	        if (definitions[i].showForFile()) fileProperties.add(definitions[i]);
+	        if (definitions[i].showForFolder()) folderProperties.add(definitions[i]);
+	    }
+	    fileDefinitions = new SVNPropertyDefinition[fileProperties.size()];
+	    fileProperties.toArray(fileDefinitions);
+	    folderDefinitions = new SVNPropertyDefinition[folderProperties.size()];
+	    folderProperties.toArray(folderDefinitions);
+    }
+
+    public SVNPropertyDefinition[] getPropertyTypes() {
+        return definitions;
     }
     
-    private void loadUserDefinedProperties() {
-        // TODO implement this
+    public SVNPropertyDefinition[] getFilePropertyTypes() {
+        return fileDefinitions;
     }
     
-    public SVNPropertyGroupDefinition[] getGroups() {
-        return (SVNPropertyGroupDefinition[]) propertyGroups.values().toArray(new SVNPropertyGroupDefinition[propertyGroups.size()]);
+    public SVNPropertyDefinition[] getFolderPropertyTypes() {
+        return folderDefinitions;
     }
 }

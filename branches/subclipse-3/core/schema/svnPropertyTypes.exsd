@@ -51,13 +51,13 @@
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="groupId" type="string">
+         <attribute name="allowRecurse" type="boolean" use="default" value="true">
             <annotation>
                <documentation>
-                  Logical group this property belongs to. e.g: Bugzilla, SVN, etc.  If the group is omitted it will be put in the &apos;Other&apos; group
+                  Allow recursive setting of property.
                </documentation>
             </annotation>
-         </attribute>
+         </attribute>         
          <attribute name="type" use="default" value="String">
             <annotation>
                <documentation>
@@ -77,6 +77,23 @@
                </restriction>
             </simpleType>
          </attribute>
+         <attribute name="fileOrFolder" use="default" value="both">
+            <annotation>
+               <documentation>
+                  Show property for files, folders or both.
+               </documentation>
+            </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="file">
+                  </enumeration>
+                  <enumeration value="folder">
+                  </enumeration>
+                  <enumeration value="both">
+                  </enumeration>
+               </restriction>
+            </simpleType>
+         </attribute>        
       </complexType>
    </element>
 
