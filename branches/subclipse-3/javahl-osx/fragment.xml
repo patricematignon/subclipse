@@ -3,10 +3,10 @@
 <fragment
    id="org.tigris.subversion.javahl.osx"
    name="OsX Fragment"
-   version="0.9.11"
+   version="0.9.12"
    provider-name="tigris.org"
    plugin-id="org.tigris.subversion.subclipse.core"
-   plugin-version="0.9.11"
+   plugin-version="0.9.12"
    match="perfect">
 
    <runtime>
