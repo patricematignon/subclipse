@@ -30,8 +30,6 @@ import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.ui.TeamUI;
-import org.eclipse.team.ui.synchronize.ISynchronizeParticipant;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
@@ -43,7 +41,6 @@ import org.tigris.subversion.subclipse.core.SVNStatus;
 import org.tigris.subversion.subclipse.ui.console.ConsoleView;
 import org.tigris.subversion.subclipse.ui.repository.RepositoryManager;
 import org.tigris.subversion.subclipse.ui.repository.model.SVNAdapterFactory;
-import org.tigris.subversion.subclipse.ui.subscriber.SVNWorkspaceSynchronizeParticipant;
 /**
  * UI Plugin for Subversion provider-specific workbench functionality.
  */
@@ -86,21 +83,17 @@ public class SVNUIPlugin extends AbstractUIPlugin {
 		log(new Status(severity, ID, 0, message, e));
 	}
     
-	/**
-	 * SVNUIPlugin constructor
-	 * 
-	 * @param descriptor  the plugin descriptor
-	 */
-	public SVNUIPlugin(IPluginDescriptor descriptor) {
-		super(descriptor);
-		plugin = this;
-	}
+	
 
 	
 	public SVNUIPlugin(){
 		super();
 		plugin = this;
 	
+	}
+	public SVNUIPlugin(IPluginDescriptor descriptor) {
+		super(descriptor);
+		plugin = this;
 	}
 
 	/**
@@ -380,16 +373,7 @@ public class SVNUIPlugin extends AbstractUIPlugin {
 	}
 	
 	public void start(BundleContext ctxt)throws Exception{
-		this.bundle = ctxt.getBundle();
-		startup();
-	}
-
-
-	/**
-	 * @see Plugin#startup()
-	 */
-	public void startup() throws CoreException {
-		super.startup();
+		super.start(ctxt);
 		Policy.localize("org.tigris.subversion.subclipse.ui.messages"); //$NON-NLS-1$
         
 		SVNAdapterFactory factory = new SVNAdapterFactory();
@@ -400,7 +384,7 @@ public class SVNUIPlugin extends AbstractUIPlugin {
 //		Platform.getAdapterManager().registerAdapters(factory, RepositoryRoot.class);
 		
         // we initialize the image descriptors
-		imageDescriptors.initializeImages(getDescriptor().getInstallURL());
+		imageDescriptors.initializeImages(ctxt.getBundle().getEntry("/"));
 		
         preferences = new Preferences(getPreferenceStore());
 		preferences.initializePreferences();
@@ -414,8 +398,8 @@ public class SVNUIPlugin extends AbstractUIPlugin {
 	/**
 	 * @see Plugin#shutdown()
 	 */
-	public void shutdown() throws CoreException {
-		super.shutdown();
+	public void stop(BundleContext ctxt) throws Exception {
+		super.stop(ctxt);
 //		TeamUI.removePropertyChangeListener(listener);
 		try {
 			if (repositoryManager != null)
@@ -435,16 +419,6 @@ public class SVNUIPlugin extends AbstractUIPlugin {
     public ImageDescriptor getImageDescriptor(String id) {
         return imageDescriptors.getImageDescriptor(id);
     }
-	/**
-	 * @return Returns the cvsWorkspaceSynchronizeViewPage.
-	 */
-	public SVNWorkspaceSynchronizeParticipant getSVNWorkspaceSynchronizeParticipant() {
-		ISynchronizeParticipant[] instances = TeamUI.getSynchronizeManager().find(SVNWorkspaceSynchronizeParticipant.ID);
-		if(instances.length == 1) {
-			return (SVNWorkspaceSynchronizeParticipant)instances[0];
-		} else {
-			return null;
-		}
-	}    
+	  
     
 }

@@ -13,12 +13,8 @@ package org.tigris.subversion.subclipse.ui.actions;
  
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.wizard.IWizard;
-import org.eclipse.jface.wizard.WizardDialog;
 import org.tigris.subversion.subclipse.core.ISVNLocalResource;
 import org.tigris.subversion.subclipse.core.SVNException;
-import org.tigris.subversion.subclipse.ui.SVNUIPlugin;
-import org.tigris.subversion.subclipse.ui.subscriber.SVNWorkspaceSynchronizeParticipant;
 
 /**
  * Action for catchup/release in popup menus.
@@ -26,15 +22,7 @@ import org.tigris.subversion.subclipse.ui.subscriber.SVNWorkspaceSynchronizePart
 public class SyncAction extends WorkspaceAction {
 	
 	public void execute(IAction action) {
-		IResource[] resources = getResourcesToSync();
-		if (resources == null || resources.length == 0) return;
 		
-		SVNWorkspaceSynchronizeParticipant participant = SVNUIPlugin.getPlugin().getSVNWorkspaceSynchronizeParticipant();
-		if(participant != null) {
-			IWizard wizard = participant.createSynchronizeWizard();
-			WizardDialog dialog = new WizardDialog(getShell(), wizard);
-			dialog.open();
-		}
 	}
 	
 	protected IResource[] getResourcesToSync() {

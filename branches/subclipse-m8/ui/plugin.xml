@@ -26,7 +26,6 @@
       <import plugin="org.eclipse.team.ui"/>
       <import plugin="org.eclipse.compare"/>
       <import plugin="org.eclipse.platform" version="3.0.0" match="compatible"/>
-      <import plugin="org.apache.xerces"/>
       <import plugin="org.tigris.subversion.subclipse.core"/>
       <import plugin="org.eclipse.osgi"/>
    </requires>

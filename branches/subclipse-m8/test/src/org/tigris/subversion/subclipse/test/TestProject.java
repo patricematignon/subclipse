@@ -26,11 +26,11 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IPluginDescriptor;
-import org.eclipse.core.runtime.IPluginRegistry;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Plugin;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
@@ -43,7 +43,10 @@ import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.search.IJavaSearchConstants;
 import org.eclipse.jdt.core.search.ITypeNameRequestor;
 import org.eclipse.jdt.core.search.SearchEngine;
+import org.eclipse.jdt.core.search.SearchPattern;
 import org.eclipse.jdt.launching.JavaRuntime;
+import org.tigris.subversion.subclipse.core.SVNProviderPlugin;
+import org.tigris.subversion.subclipse.ui.SVNUIPlugin;
   
   public class TestProject {
   	private IProject project;
@@ -74,7 +77,7 @@ import org.eclipse.jdt.launching.JavaRuntime;
   		return javaProject;
   	}
   
-  	public void addJar(String plugin, String jar) throws MalformedURLException, IOException, JavaModelException {
+  	public void addJar(Plugin plugin, String jar) throws MalformedURLException, IOException, JavaModelException {
   		Path result = findFileInPlugin(plugin, jar);
   		IClasspathEntry[] oldEntries = javaProject.getRawClasspath();
   		IClasspathEntry[] newEntries = new IClasspathEntry[oldEntries.length + 1];
@@ -164,11 +167,15 @@ import org.eclipse.jdt.launching.JavaRuntime;
   		javaProject.setRawClasspath(newEntries, null);
   	}
   
-  	private Path findFileInPlugin(String plugin, String file) throws MalformedURLException, IOException {
-  		IPluginRegistry registry = Platform.getPluginRegistry();
-  		IPluginDescriptor descriptor = registry.getPluginDescriptor(plugin);
-  		URL pluginURL = descriptor.getInstallURL();
-  		URL jarURL = new URL(pluginURL, file);
+  	private Path findFileInPlugin(Plugin plugin, String file) throws MalformedURLException, IOException {
+  		IExtensionRegistry registry = Platform.getExtensionRegistry();
+  		URL base = null;
+  		if(plugin instanceof SVNUIPlugin){
+  			base = SVNUIPlugin.getPlugin().getBundle().getEntry("/");
+  		}else if(plugin instanceof SVNProviderPlugin){
+  			base = SVNProviderPlugin.getPlugin().getBundle().getEntry("/");
+  		}
+  		URL jarURL = new URL(base, file);
   		URL localJarURL = Platform.asLocalURL(jarURL);
   		return new Path(localJarURL.getPath());
   	}
@@ -179,8 +186,8 @@ import org.eclipse.jdt.launching.JavaRuntime;
   				ResourcesPlugin.getWorkspace(),
   				null,
   				null,
-  				IJavaSearchConstants.EXACT_MATCH,
-  				IJavaSearchConstants.CASE_SENSITIVE,
+  				SearchPattern.R_EXACT_MATCH| SearchPattern.R_CASE_SENSITIVE,
+  				true,
   				IJavaSearchConstants.CLASS,
   				SearchEngine.createJavaSearchScope(new IJavaElement[0]),
   				new ITypeNameRequestor() {
