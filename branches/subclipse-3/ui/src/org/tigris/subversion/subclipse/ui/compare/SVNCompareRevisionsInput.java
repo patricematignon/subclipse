@@ -138,7 +138,7 @@ public class SVNCompareRevisionsInput extends CompareEditorInput {
 			
 			IResource resource = SVNCompareRevisionsInput.this.resource;
 			try {
-				ISVNRemoteFile currentEdition = (ISVNRemoteFile) SVNWorkspaceRoot.getRemoteResourceFor(resource);
+				ISVNRemoteFile currentEdition = (ISVNRemoteFile) SVNWorkspaceRoot.getBaseResourceFor(resource);
 				if (currentEdition != null && currentEdition.getLastChangedRevision().equals(entry.getRevision())) {
 					Policy.bind("currentRevision", entry.getRevision().toString()); //$NON-NLS-1$
 				} else {
@@ -358,7 +358,7 @@ public class SVNCompareRevisionsInput extends CompareEditorInput {
      */
     private void updateCurrentEdition() {
 		try {
-			getHistoryTableProvider().setFile((ISVNRemoteFile) SVNWorkspaceRoot.getRemoteResourceFor(resource));
+			getHistoryTableProvider().setFile((ISVNRemoteFile) SVNWorkspaceRoot.getBaseResourceFor(resource));
 		} catch (TeamException e) {
 			handle(e);
 		}

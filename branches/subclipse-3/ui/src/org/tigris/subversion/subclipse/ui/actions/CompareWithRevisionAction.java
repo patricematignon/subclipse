@@ -43,7 +43,7 @@ public class CompareWithRevisionAction extends WorkspaceAction {
 		if (!(resources[0] instanceof IFile)) return null;
 		IFile file = (IFile)resources[0];
 		try {
-			return (ISVNRemoteFile)SVNWorkspaceRoot.getRemoteResourceFor(file);
+			return (ISVNRemoteFile)SVNWorkspaceRoot.getBaseResourceFor(file);
 		} catch (TeamException e) {
 			handle(e, null, null);
 			return null;

@@ -580,7 +580,7 @@ public class HistoryView extends ViewPart {
 			RepositoryProvider teamProvider = RepositoryProvider.getProvider(file.getProject(), SVNProviderPlugin.getTypeId());
 			if (teamProvider != null) {
 				try {
-					ISVNRemoteFile remoteFile = (ISVNRemoteFile)SVNWorkspaceRoot.getRemoteResourceFor(file);
+					ISVNRemoteFile remoteFile = (ISVNRemoteFile)SVNWorkspaceRoot.getBaseResourceFor(file);
 					if (remoteFile != null) {
 						historyTableProvider.setFile(remoteFile);
 						tableViewer.setInput(remoteFile);
