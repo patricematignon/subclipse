@@ -11,14 +11,14 @@
  *******************************************************************************/
 package org.tigris.subversion.subclipse.ui.console;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+import java.io.*;
+import java.text.*;
 
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.swt.widgets.Display;
-import org.tigris.subversion.subclipse.core.client.IConsoleListener;
-import org.tigris.subversion.subclipse.ui.Policy;
-import org.tigris.subversion.svnclientadapter.SVNNodeKind;
+import org.eclipse.core.runtime.*;
+import org.eclipse.swt.widgets.*;
+import org.tigris.subversion.subclipse.core.client.*;
+import org.tigris.subversion.subclipse.ui.*;
+import org.tigris.subversion.svnclientadapter.*;
 
 /**
  * The console listener
@@ -117,7 +117,7 @@ class ConsoleListener implements IConsoleListener {
     }
 
 
-	public void onNotify(String path, SVNNodeKind kind) {
+	public void onNotify(File path, SVNNodeKind kind) {
 	}
 
 	public void setCommand(int command) {
