@@ -41,11 +41,12 @@ import org.tigris.subversion.subclipse.core.ISVNLocalResource;
 import org.tigris.subversion.subclipse.core.SVNException;
 import org.tigris.subversion.subclipse.core.SVNProviderPlugin;
 import org.tigris.subversion.subclipse.core.SVNTeamProvider;
+import org.tigris.subversion.subclipse.core.resources.LocalResourceStatus;
 import org.tigris.subversion.subclipse.core.resources.SVNWorkspaceRoot;
 import org.tigris.subversion.subclipse.ui.ISVNUIConstants;
 import org.tigris.subversion.subclipse.ui.SVNUIPlugin;
-import org.tigris.subversion.svnclientadapter.ISVNStatus;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
+import org.tigris.subversion.svnclientadapter.SVNStatusKind;
 
 /**
  * The decorator for svn resources 
@@ -160,7 +161,7 @@ public class SVNLightweightDecorator
 	public static boolean isDirty(final ISVNLocalResource svnResource) {
 		try {
 			return !svnResource.isIgnored() && 
-				(svnResource.isModified() || svnResource.getStatus().getPropStatus() == ISVNStatus.Kind.MODIFIED);
+				(svnResource.isModified() || svnResource.getStatus().getPropStatus() == SVNStatusKind.MODIFIED);
 		} catch (SVNException e) {
 			//if we get an error report it to the log but assume dirty
 			SVNUIPlugin.log(e.getStatus());
@@ -273,7 +274,7 @@ public class SVNLightweightDecorator
 
 			ISVNLocalResource svnResource =
 				SVNWorkspaceRoot.getSVNResourceFor(resource);
-			ISVNStatus status = svnResource.getStatus();
+			LocalResourceStatus status = svnResource.getStatus();
 			if (status.getUrl() != null) {
 				bindings.put(
 					SVNDecoratorConfiguration.RESOURCE_URL,
@@ -284,8 +285,8 @@ public class SVNLightweightDecorator
 				bindings.put(
 					SVNDecoratorConfiguration.ADDED_FLAG, addedFlag);
 			} else {
-				if ((status.getTextStatus() != ISVNStatus.Kind.UNVERSIONED) &&
-					(status.getTextStatus() != ISVNStatus.Kind.ADDED) &&
+				if ((status.getTextStatus() != SVNStatusKind.UNVERSIONED) &&
+					(status.getTextStatus() != SVNStatusKind.ADDED) &&
 				    (status.getRevision() != null) &&
                     (status.getRevision().getNumber() != SVNRevision.SVN_INVALID_REVNUM)) {
 					
@@ -351,16 +352,16 @@ public class SVNLightweightDecorator
         // show added icon
 		if (showAdded) {
 			try {
-                ISVNStatus status = svnResource.getStatus();
+                LocalResourceStatus status = svnResource.getStatus();
                 
 				// The changes did not intersect 
-           		if (status.isMerged()) {
+           		if (status.isTextMerged()) {
            			return merged;
            		}
-                if (status.getTextStatus() == ISVNStatus.Kind.ADDED) {
+                if (status.isAdded()) {
 					return added;
                 }
-                if (status.getTextStatus() == ISVNStatus.Kind.CONFLICTED) {
+                if (status.isTextConflicted()) {
                 	return conflicted;
                 }
 			} catch (SVNException e) {

@@ -26,6 +26,7 @@ import org.eclipse.ui.help.WorkbenchHelp;
 import org.tigris.subversion.subclipse.core.ISVNLocalFolder;
 import org.tigris.subversion.subclipse.core.ISVNRepositoryLocation;
 import org.tigris.subversion.subclipse.core.repo.SVNRepositoryLocation;
+import org.tigris.subversion.subclipse.core.resources.LocalResourceStatus;
 import org.tigris.subversion.subclipse.core.resources.SVNWorkspaceRoot;
 import org.tigris.subversion.subclipse.ui.IHelpContextIds;
 import org.tigris.subversion.subclipse.ui.Policy;
@@ -41,7 +42,7 @@ import org.tigris.subversion.svnclientadapter.ISVNStatus;
  */
 public class ConfigurationWizardAutoconnectPage extends SVNWizardPage {
 	private boolean validate = true;
-	private ISVNStatus status;               // the status of the project directory
+	private LocalResourceStatus status;  // the status of the project directory
 	ISVNRepositoryLocation location;     // the repository location of the project directory
 
 	public ConfigurationWizardAutoconnectPage(String pageName, String title, ImageDescriptor titleImage) {
@@ -92,7 +93,7 @@ public class ConfigurationWizardAutoconnectPage extends SVNWizardPage {
 		check.setSelection(true);		
 	}
 	
-	public ISVNStatus getFolderStatus() {
+	public LocalResourceStatus getFolderStatus() {
 		return status;
 	}
     
@@ -121,7 +122,7 @@ public class ConfigurationWizardAutoconnectPage extends SVNWizardPage {
 	/**
      * gets the status of the directory corresponding to the project 
 	 */
-	public ISVNStatus getSharingStatus() {
+	public LocalResourceStatus getSharingStatus() {
 		return status;
 	}
 	/**

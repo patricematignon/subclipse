@@ -61,6 +61,7 @@ import org.tigris.subversion.subclipse.core.IResourceStateChangeListener;
 import org.tigris.subversion.subclipse.core.ISVNLocalResource;
 import org.tigris.subversion.subclipse.core.SVNException;
 import org.tigris.subversion.subclipse.core.SVNProviderPlugin;
+import org.tigris.subversion.subclipse.core.resources.LocalResourceStatus;
 import org.tigris.subversion.subclipse.core.resources.SVNWorkspaceRoot;
 import org.tigris.subversion.subclipse.ui.ISVNUIConstants;
 import org.tigris.subversion.subclipse.ui.Policy;
@@ -177,7 +178,7 @@ public class PendingOperationsView extends ViewPart implements IResourceStateCha
                 return null;
             ISVNLocalResource svnResource = SVNWorkspaceRoot.getSVNResourceFor((IResource)element); 
             
-            ISVNStatus status = null; 
+            LocalResourceStatus status = null; 
             try {
                 status = svnResource.getStatus();
             } catch (SVNException e) {
@@ -196,10 +197,10 @@ public class PendingOperationsView extends ViewPart implements IResourceStateCha
             if ((svnResource.isFolder()) && (status.isDeleted()))
                 return imgDeleteFolder;
             else   
-            if ((!svnResource.isFolder()) && (status.isModified()))
+            if ((!svnResource.isFolder()) && (status.isTextModified()))
                 return imgModifiedFile;
             else
-            if ((svnResource.isFolder()) && (status.isModified()))
+            if ((svnResource.isFolder()) && (status.isTextModified()))
                 return imgModifiedFolder;
             else
                 return null;
@@ -212,7 +213,7 @@ public class PendingOperationsView extends ViewPart implements IResourceStateCha
 			if (element == null)
 				return ""; //$NON-NLS-1$
             ISVNLocalResource svnResource = SVNWorkspaceRoot.getSVNResourceFor((IResource)element); 
-            ISVNStatus status = null; 
+            LocalResourceStatus status = null; 
             try {
                 status = svnResource.getStatus();
             } catch (SVNException e) {
@@ -236,7 +237,7 @@ public class PendingOperationsView extends ViewPart implements IResourceStateCha
                     if (status.isDeleted())
                         result = Policy.bind("PendingOperationsView.hasBeenDeleted",svnResource.getName());
                     else
-                    if (status.isModified())
+                    if (status.isTextModified())
                         result = Policy.bind("PendingOperationsView.hasBeenModified",svnResource.getName());
                     break;
 				case 2 : // resource

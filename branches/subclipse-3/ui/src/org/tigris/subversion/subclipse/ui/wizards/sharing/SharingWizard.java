@@ -33,6 +33,7 @@ import org.tigris.subversion.subclipse.core.ISVNLocalFolder;
 import org.tigris.subversion.subclipse.core.ISVNRemoteFolder;
 import org.tigris.subversion.subclipse.core.ISVNRepositoryLocation;
 import org.tigris.subversion.subclipse.core.SVNProviderPlugin;
+import org.tigris.subversion.subclipse.core.resources.LocalResourceStatus;
 import org.tigris.subversion.subclipse.core.resources.SVNWorkspaceRoot;
 import org.tigris.subversion.subclipse.core.util.Util;
 import org.tigris.subversion.subclipse.ui.ISVNUIConstants;
@@ -167,7 +168,7 @@ public class SharingWizard extends Wizard implements IConfigurationWizard {
 						if (autoconnectPage != null && doesSVNDirectoryExist()) {
 							// Autoconnect to the repository using svn/ directories
 							
-							ISVNStatus info = autoconnectPage.getFolderStatus();
+							LocalResourceStatus info = autoconnectPage.getFolderStatus();
 							if (info == null) {
 								// Error!
 								return;
@@ -373,7 +374,7 @@ public class SharingWizard extends Wizard implements IConfigurationWizard {
         boolean isSVNFolder = false;
 		try {
 		  ISVNLocalFolder folder = (ISVNLocalFolder)SVNWorkspaceRoot.getSVNResourceFor(project);
-		  ISVNStatus info = folder.getStatus();
+		  LocalResourceStatus info = folder.getStatus();
 		  isSVNFolder = info.hasRemote();
           
 		} catch (final TeamException e) {

@@ -56,6 +56,7 @@ import org.tigris.subversion.subclipse.core.IResourceStateChangeListener;
 import org.tigris.subversion.subclipse.core.ISVNLocalResource;
 import org.tigris.subversion.subclipse.core.SVNException;
 import org.tigris.subversion.subclipse.core.SVNProviderPlugin;
+import org.tigris.subversion.subclipse.core.resources.LocalResourceStatus;
 import org.tigris.subversion.subclipse.ui.ISVNUIConstants;
 import org.tigris.subversion.subclipse.ui.Policy;
 import org.tigris.subversion.subclipse.ui.SVNUIPlugin;
@@ -64,6 +65,7 @@ import org.tigris.subversion.subclipse.ui.actions.SVNPropertyModifyAction;
 import org.tigris.subversion.subclipse.ui.dialogs.AddKeywordsDialog;
 import org.tigris.subversion.svnclientadapter.ISVNProperty;
 import org.tigris.subversion.svnclientadapter.ISVNStatus;
+import org.tigris.subversion.svnclientadapter.SVNStatusKind;
 
 /**
  * 
@@ -512,18 +514,18 @@ public class SvnPropertiesView extends ViewPart {
 			return;
 		}
 		try {
-			ISVNStatus status = resource.getStatus();
+			LocalResourceStatus status = resource.getStatus();
 			if (!status.isManaged()) {
 				statusLabel.setText(Policy.bind("SvnPropertiesView.resourceNotManaged")); //$NON-NLS-1$
 			} else 
-			if (status.getPropStatus().equals(ISVNStatus.Kind.MODIFIED))
+			if (status.getPropStatus().equals(SVNStatusKind.MODIFIED))
 			{
 				statusLabel.setText(Policy.bind("SvnPropertiesView.somePropertiesModified")); //$NON-NLS-1$
 			} else
-			if (status.getPropStatus().equals(ISVNStatus.Kind.NORMAL)) {
+			if (status.getPropStatus().equals(SVNStatusKind.NORMAL)) {
 				statusLabel.setText(Policy.bind("SvnPropertiesView.noPropertiesModified")); //$NON-NLS-1$
 			} else
-			if (status.getPropStatus().equals(ISVNStatus.Kind.CONFLICTED))
+			if (status.getPropStatus().equals(SVNStatusKind.CONFLICTED))
 			{
 				statusLabel.setText(Policy.bind("SvnPropertiesView.conflictOnProperties")); //$NON-NLS-1$
 			}

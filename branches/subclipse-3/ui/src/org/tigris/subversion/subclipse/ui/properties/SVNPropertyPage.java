@@ -148,7 +148,7 @@ public class SVNPropertyPage extends PropertyPage {
             ISVNLocalResource svnResource = SVNWorkspaceRoot.getSVNResourceFor(resource);
             if (svnResource == null) return;
 
-            ISVNStatus status = svnResource.getStatus();
+            LocalResourceStatus status = svnResource.getStatus();
 
             if (status.getUrlCopiedFrom() != null) {
 
@@ -171,14 +171,14 @@ public class SVNPropertyPage extends PropertyPage {
                     .getLastCommitAuthor() : "");
             textStatusValue.setText(status.getTextStatus() != null ? status.getTextStatus()
                     .toString() : "");
-            mergedValue.setText(new Boolean(status.isMerged()).toString());
+            mergedValue.setText(new Boolean(status.isTextMerged()).toString());
             deletedValue.setText(new Boolean(status.isDeleted()).toString());
-            modifiedValue.setText(new Boolean(status.isModified()).toString());
+            modifiedValue.setText(new Boolean(status.isTextModified()).toString());
             addedValue.setText(new Boolean(status.isAdded()).toString());
             revisionValue.setText(status.getRevision() != null ? status.getRevision().toString()
                     : "");
             copiedValue.setText(new Boolean(status.isCopied()).toString());
-            pathValue.setText(status.getPath() != null ? status.getPath() : "");
+//            pathValue.setText(status.getPath() != null ? status.getPath() : "");
 
         } catch (Exception e) {
             SVNUIPlugin.log(new Status(Status.ERROR, SVNUIPlugin.ID, TeamException.UNABLE,
