@@ -446,5 +446,20 @@
             pattern="*.working">
       </ignore>
    </extension>
+   <extension
+         point="org.eclipse.team.ui.synchronizeParticipants">
+      <participant
+            name="SVNWorkspaceSynchronizeParticipant"
+            icon="icons/full/cview16/compare_view.gif"
+            class="org.tigris.subversion.subclipse.ui.subcsriber.SVNWorkspaceSynchronizeParticipant"
+            id="org.tigris.subversion.subclipse.workspace-sync-participant">
+      </participant>
+      <participant
+            name="SVN Compare"
+            icon="icons/full/cview16/compare_view.gif"
+            class="org.tigris.subversion.subclipse.ui.subscriber.SVNCompareParticipant"
+            id="org.tigris.subversion.subclipse.ui.subscriber.compare-participant">
+      </participant>
+   </extension>
 
 </plugin>

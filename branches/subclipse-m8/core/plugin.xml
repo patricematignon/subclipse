@@ -72,5 +72,13 @@
             protocol="svn">
       </handler>
    </extension>
+   <extension
+         point="org.eclipse.team.core.subscriber">
+      <subscriber
+            name="SVNWorkspaceSubscriber"
+            class="org.tigris.subversion.subclipse.core.SVNWorkspaceSubscriber"
+            id="org.tigris.subversion.subclipse.core.svnworkspace-subscriber">
+      </subscriber>
+   </extension>
 
 </plugin>

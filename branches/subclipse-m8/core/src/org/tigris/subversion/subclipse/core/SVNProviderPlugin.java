@@ -28,7 +28,9 @@ import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.subscribers.Subscriber;
 import org.osgi.framework.BundleContext;
 import org.tigris.subversion.subclipse.core.client.IConsoleListener;
 import org.tigris.subversion.subclipse.core.repo.SVNRepositories;
@@ -37,6 +39,7 @@ import org.tigris.subversion.subclipse.core.resourcesListeners.FileModificationM
 import org.tigris.subversion.subclipse.core.resourcesListeners.SyncFileChangeListener;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 import org.tigris.subversion.svnclientadapter.SVNClientAdapterFactory;
+import org.tigris.subversion.svnclientadapter.SVNClientException;
 
 /**
  * The plugin itself 
@@ -61,10 +64,10 @@ public class SVNProviderPlugin extends Plugin {
 
     // the list of all repositories currently handled by this provider
     private SVNRepositories repositories;
-
+    
     private RepositoryResourcesManager repositoryResourcesManager = new RepositoryResourcesManager(); 
 
-    private int svnClientInterface = SVNClientAdapterFactory.JAVAHL_CLIENT;  
+    private int svnClientInterface;  
 	
 	/**
 	 * Constructor for SVNProviderPlugin. Called by the platform in the course of plug-in
@@ -120,7 +123,14 @@ public class SVNProviderPlugin extends Plugin {
 	public void startup() throws CoreException {
 		super.startup();
         
-        // this will use org/chabanois/svn/eclipse/core/messages.properties if it has not
+        // by default, we set the svn client interface to the best available (JNI if available or command line interface)
+        try {
+			svnClientInterface = SVNClientAdapterFactory.getBestSVNClientType();
+        } catch (SVNClientException e) {
+        	throw new CoreException(new Status(Status.ERROR, ID, IStatus.OK, e.getMessage(), e));		
+        }
+        
+        // this will use org/tigris/subversion/subclipse/core/messages.properties if it has not
         // been localized
 		Policy.localize("org.tigris.subversion.subclipse.core.messages"); //$NON-NLS-1$
 
@@ -131,6 +141,7 @@ public class SVNProviderPlugin extends Plugin {
 		// Initialize SVN change listeners. Note tha the report type is important.
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		
+		
         // this listener will listen to modifications to files
 		fileModificationManager = new FileModificationManager();
 
@@ -139,7 +150,9 @@ public class SVNProviderPlugin extends Plugin {
 		
 		workspace.addResourceChangeListener(metaFileSyncListener, IResourceChangeEvent.PRE_AUTO_BUILD);
 		workspace.addResourceChangeListener(fileModificationManager, IResourceChangeEvent.POST_CHANGE);
+		
 		fileModificationManager.registerSaveParticipant();
+		
 		
 	}
 	
@@ -333,7 +346,9 @@ public class SVNProviderPlugin extends Plugin {
      * @param svnClientInterface
      */
     public void setSvnClientInterface(int svnClientInterface) {
-        this.svnClientInterface = svnClientInterface;
+        if (SVNClientAdapterFactory.isSVNClientAvailable(svnClientInterface)) {
+        	this.svnClientInterface = svnClientInterface;
+        }
     }
 
     public int getSvnClientInterface() {
@@ -388,6 +403,15 @@ public class SVNProviderPlugin extends Plugin {
 	 */
 	public RepositoryResourcesManager getRepositoryResourcesManager() {
 		return repositoryResourcesManager;
+	}
+
+	/**
+	 * @return
+	 * @todo Generated comment
+	 */
+	public Subscriber getSVNWorkspaceSubscriber() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

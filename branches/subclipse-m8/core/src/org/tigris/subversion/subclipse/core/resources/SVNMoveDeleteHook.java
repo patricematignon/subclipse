@@ -29,7 +29,7 @@ import org.tigris.subversion.subclipse.core.ISVNLocalFile;
 import org.tigris.subversion.subclipse.core.ISVNLocalFolder;
 import org.tigris.subversion.subclipse.core.SVNException;
 import org.tigris.subversion.subclipse.core.SVNTeamProvider;
-import org.tigris.subversion.subclipse.core.client.OperationManager;
+//import org.tigris.subversion.subclipse.core.client.OperationManager;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
 
@@ -135,7 +135,7 @@ public class SVNMoveDeleteHook implements IMoveDeleteHook {
                 tree.addToLocalHistory(source);
 
             try {
-                OperationManager.getInstance().beginOperation(svnClient);
+               // OperationManager.getInstance().beginOperation(svnClient);
 			    
                 // add destination directory to version control if necessary
                 // see bug #15
@@ -162,7 +162,7 @@ public class SVNMoveDeleteHook implements IMoveDeleteHook {
 				throw SVNException.wrapException(te); 
 			}  
             finally {
-                OperationManager.getInstance().endOperation();
+                //OperationManager.getInstance().endOperation();
             }
 
 		} catch (SVNException e) {
@@ -210,7 +210,7 @@ public class SVNMoveDeleteHook implements IMoveDeleteHook {
 			ISVNClientAdapter svnClient = resource.getRepository().getSVNClient();
 
             try {
-                OperationManager.getInstance().beginOperation(svnClient);
+                //OperationManager.getInstance().beginOperation(svnClient);
 
                 // add destination directory to version control if necessary
                 // see bug #15
@@ -223,15 +223,14 @@ public class SVNMoveDeleteHook implements IMoveDeleteHook {
                     source.getLocation().toFile(), 
                     destination.getLocation().toFile(),
                     true);
-                tree.movedFolderSubtree(source, destination);
             } catch (SVNClientException e) {
                 throw SVNException.wrapException(e); 
 			} catch (TeamException te) {
 				throw SVNException.wrapException(te); 
 			} finally {
-                OperationManager.getInstance().endOperation();
+               // OperationManager.getInstance().endOperation();
             }
-
+			tree.movedFolderSubtree(source, destination);
 		} catch (SVNException e) {
 			tree.failed(
 				new org.eclipse.core.runtime.Status(

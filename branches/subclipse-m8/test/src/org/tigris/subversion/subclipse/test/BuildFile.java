@@ -66,6 +66,7 @@ import org.apache.tools.ant.ProjectHelper;
 
 
 
+
 /**
  * This file is very similar to BuildFileTest but not abstract and without
  * test methods 
@@ -149,11 +150,12 @@ public class BuildFile {
     protected void configureProject(String filename) throws BuildException { 
         logBuffer = new StringBuffer();
         fullLogBuffer = new StringBuffer();
-        project = new Project();
+        project = new org.apache.tools.ant.Project();
         project.init();
         project.setUserProperty( "ant.file" , new File(filename).getAbsolutePath() );
         project.addBuildListener(new AntTestListener());
-        ProjectHelper.configureProject(project, new File(filename));
+        ProjectHelper helper = ProjectHelper.getProjectHelper();
+        helper.parse(project, new File(filename));
     }
     
     /**
@@ -286,9 +288,9 @@ public class BuildFile {
          *  @see BuildEvent#getPriority()
          */
         public void messageLogged(BuildEvent event) {
-            if (event.getPriority() == Project.MSG_INFO ||
-                event.getPriority() == Project.MSG_WARN ||
-                event.getPriority() == Project.MSG_ERR) {
+            if (event.getPriority() == org.apache.tools.ant.Project.MSG_INFO ||
+                event.getPriority() == org.apache.tools.ant.Project.MSG_WARN ||
+                event.getPriority() == org.apache.tools.ant.Project.MSG_ERR) {
                 logBuffer.append('\n'+event.getMessage());
             }
             fullLogBuffer.append('\n'+event.getMessage());

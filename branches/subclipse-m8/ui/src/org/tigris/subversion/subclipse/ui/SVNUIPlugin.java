@@ -30,6 +30,8 @@ import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.ui.TeamUI;
+import org.eclipse.team.ui.synchronize.ISynchronizeParticipant;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
@@ -41,6 +43,7 @@ import org.tigris.subversion.subclipse.core.SVNStatus;
 import org.tigris.subversion.subclipse.ui.console.ConsoleView;
 import org.tigris.subversion.subclipse.ui.repository.RepositoryManager;
 import org.tigris.subversion.subclipse.ui.repository.model.SVNAdapterFactory;
+import org.tigris.subversion.subclipse.ui.subscriber.SVNWorkspaceSynchronizeParticipant;
 /**
  * UI Plugin for Subversion provider-specific workbench functionality.
  */
@@ -403,7 +406,7 @@ public class SVNUIPlugin extends AbstractUIPlugin {
 		preferences.initializePreferences();
 		
 //		// if the global ignores list is changed then update decorators.
-//		TeamUI.addPropertyChangeListener(teamUIListener);
+		//TeamUI.getSynchronizeManager().addSynchronizeParticipants(new ISynchronizeParticipant[]{new SVNWorkspaceSynchronizeParticipant()});
 		
 		ConsoleView.startup();
 	}
@@ -431,6 +434,17 @@ public class SVNUIPlugin extends AbstractUIPlugin {
      */
     public ImageDescriptor getImageDescriptor(String id) {
         return imageDescriptors.getImageDescriptor(id);
-    }    
+    }
+	/**
+	 * @return Returns the cvsWorkspaceSynchronizeViewPage.
+	 */
+	public SVNWorkspaceSynchronizeParticipant getSVNWorkspaceSynchronizeParticipant() {
+		ISynchronizeParticipant[] instances = TeamUI.getSynchronizeManager().find(SVNWorkspaceSynchronizeParticipant.ID);
+		if(instances.length == 1) {
+			return (SVNWorkspaceSynchronizeParticipant)instances[0];
+		} else {
+			return null;
+		}
+	}    
     
 }

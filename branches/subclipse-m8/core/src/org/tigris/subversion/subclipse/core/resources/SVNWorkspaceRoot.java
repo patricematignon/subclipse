@@ -265,9 +265,9 @@ public class SVNWorkspaceRoot {
                                 // checkout it so that we have .svn
                                 svnClient.checkout(url,project.getLocation().toFile(),SVNRevision.HEAD,false);
                             } catch (SVNClientException e) {
-                                throw new SVNException("Error while creating module");  
+                                throw new SVNException("Error while creating module:"+e.getMessage(),e);  
                             } catch (MalformedURLException e) {
-                                throw new SVNException("Error while creating module");
+                                throw new SVNException("Error while creating module: "+e.getMessage(),e);
                             }
                                                        
 							//Register it with Team.  If it already is, no harm done.

@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry exported="true" sourcepath="/org.tigris.subversion.subclipse.test/svnClientAdapter.src.jar" kind="lib" path="svnClientAdapter.jar"/>
-	<classpathentry exported="true" sourcepath="/org.tigris.subversion.subclipse.test/javahl.src.jar" kind="lib" path="svnjavahl.jar"/>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path="classes"/>

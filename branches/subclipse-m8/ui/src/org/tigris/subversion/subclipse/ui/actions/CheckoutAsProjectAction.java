@@ -12,11 +12,15 @@
 package org.tigris.subversion.subclipse.ui.actions;
 
 import java.io.File;
+import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -24,13 +28,23 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.variants.IResourceVariant;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
+import org.tigris.subversion.subclipse.core.ISVNFolder;
+import org.tigris.subversion.subclipse.core.ISVNRemoteFile;
 import org.tigris.subversion.subclipse.core.ISVNRemoteFolder;
 import org.tigris.subversion.subclipse.core.ISVNRepositoryLocation;
+import org.tigris.subversion.subclipse.core.ISVNResource;
 import org.tigris.subversion.subclipse.core.resources.SVNWorkspaceRoot;
+import org.tigris.subversion.subclipse.core.util.Util;
 import org.tigris.subversion.subclipse.ui.Policy;
 import org.tigris.subversion.subclipse.ui.util.IPromptCondition;
 import org.tigris.subversion.subclipse.ui.util.PromptingDialog;
+import org.tigris.subversion.svnclientadapter.SVNUrl;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.w3c.dom.Text;
 
 /**
  * Add some remote resources to the workspace. Current implementation:
@@ -68,14 +82,14 @@ public class CheckoutAsProjectAction extends SVNAction {
 						
 						// Check for a better name for the project
 						//TODO: this can't be right.
-					/*	try {
+						try {
 							ISVNResource[] children = folders[i].members(monitor, ISVNFolder.FILE_MEMBERS);
 							for (int k = 0; k < children.length; k++) {
 								ISVNResource resource = children[k];
 								if(".project".equals(resource.getName())){
 									ISVNRemoteFile dotProject = folders[0].getRepository().getRemoteFile(new SVNUrl(Util.appendPath(folders[i].getUrl().get(), ".project")));
 																
-									InputStream is = dotProject.getStorage(monitor).getContents();
+									InputStream is = ((IResourceVariant)dotProject).getStorage(monitor).getContents();
 									DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 									org.w3c.dom.Document doc = db.parse(is);
 									is.close();
@@ -94,7 +108,7 @@ public class CheckoutAsProjectAction extends SVNAction {
 						catch (Exception e) {
 						  // no .project exists ... that's ok
 						}
-*/
+
 						IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(name);
 						targetFolders.put(name, folders[i]);
 						targetProjects.add(project);
