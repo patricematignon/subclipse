@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry exported="true" kind="lib" path="svnClientAdapter.jar"/>
-	<classpathentry exported="true" kind="lib" path="svnjavahl.jar"/>
-	<classpathentry kind="src" path="src/"/>
+	<classpathentry kind="lib" path="/Users/mml/subclipse-3/core/svn-javahl.jar"/>
+	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path="classes"/>
