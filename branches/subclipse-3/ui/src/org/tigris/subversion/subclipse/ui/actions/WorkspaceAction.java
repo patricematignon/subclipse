@@ -260,7 +260,7 @@ public abstract class WorkspaceAction extends SVNAction {
 		for (int i = 0; i < selectedResources.length; i++) {
 			IResource resource = selectedResources[i];
 			ISVNLocalResource svnResource = SVNWorkspaceRoot.getSVNResourceFor(resource);
-			if (svnResource.isModified()) {
+			if (svnResource.isDirty()) {
 				dirtyResources.add(resource);
 			}			
 		}
