@@ -235,17 +235,21 @@ public class SVNWorkspaceRoot {
                                 project.create(null);
                                 project.open(null);
 
-								if(deleteDotProject){
-									
-									IFile projectFile = project.getFile(".project");
-									if (projectFile != null) {
-										// delete the project file, force, no history, without progress monitor
-										projectFile.delete(true, false, null);
-									}
-								}     
+								  
 							} else {
 								destPath = project.getLocation().toFile();
 							}
+							
+							//delete the project file if the flag gets set.
+							//fix for 54
+							if(deleteDotProject){
+								
+								IFile projectFile = project.getFile(".project");
+								if (projectFile != null) {
+									// delete the project file, force, no history, without progress monitor
+									projectFile.delete(true, false, null);
+								}
+							}   
 							
                             OperationManager operationHandler = OperationManager.getInstance();
 							try {
