@@ -82,7 +82,7 @@ public class CommitOperation extends SVNOperation {
 	 */
 	private int getDepth(IResource[] resources) {
 		for (int i = 0; i < resources.length; i++) {
-			if (resources[i].getType() == IResource.FOLDER) {
+			if (resources[i].getType() != IResource.FILE) {
 				ISVNLocalResource svnResource = SVNWorkspaceRoot.getSVNResourceFor(resources[i]);
 				try {
 					if (svnResource.getStatus().isPropModified())
