@@ -25,6 +25,7 @@ import org.eclipse.team.core.variants.ThreeWayRemoteTree;
 import org.eclipse.team.core.variants.ThreeWaySubscriber;
 import org.eclipse.team.core.variants.ThreeWaySynchronizer;
 import org.tigris.subversion.subclipse.core.sync.SVNRemoteTree;
+import org.tigris.subversion.subclipse.core.sync.SVNSyncInfo;
 
 /**
  * This is an example file system subscriber that overrides
@@ -117,7 +118,7 @@ public class SVNSubscriber extends ThreeWaySubscriber {
 	 */
 	protected SyncInfo getSyncInfo(IResource local, IResourceVariant base, IResourceVariant remote) throws TeamException {
 		// Override to use a custom sync info
-		SyncInfo info = new SyncInfo(local, base, remote, this.getResourceComparator());
+		SVNSyncInfo info = new SVNSyncInfo(local, base, remote, this.getResourceComparator());
 		info.init();
 		return info;
 	}
