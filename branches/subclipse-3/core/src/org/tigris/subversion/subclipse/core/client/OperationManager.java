@@ -11,7 +11,7 @@
 package org.tigris.subversion.subclipse.core.client;
 
 import java.io.File;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -44,7 +44,7 @@ public class OperationManager implements ISVNNotifyListener {
 	// track resources that have changed in a given operation
 	private ReentrantLock lock = new ReentrantLock();
 
-	private Set changedResources = new HashSet();
+	private Set changedResources = new LinkedHashSet();
 
 	private ISVNClientAdapter svnClient = null;
 
@@ -129,16 +129,15 @@ public class OperationManager implements ISVNNotifyListener {
 				// be modified
 				resource = workspaceRoot.getContainerForLocation(pathEclipse);
 				if (resource != null) {
-					svnDir = ((IContainer) resource).getFolder(new Path(
-							SVNConstants.SVN_DIRNAME));
-					changedResources.add(svnDir);
-
 					if (resource.getProject() != resource) {
 						// if resource is a project. We can't refresh ../.svn
 						svnDir = resource.getParent().getFolder(
 								new Path(SVNConstants.SVN_DIRNAME));
 						changedResources.add(svnDir);
 					}
+                    svnDir = ((IContainer) resource).getFolder(new Path(
+                            SVNConstants.SVN_DIRNAME));
+                    changedResources.add(svnDir);
 				}
 			} else if (kind == SVNNodeKind.FILE) {
 				resource = workspaceRoot.getFileForLocation(pathEclipse);
