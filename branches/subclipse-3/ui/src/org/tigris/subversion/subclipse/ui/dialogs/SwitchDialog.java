@@ -28,17 +28,17 @@ import org.tigris.subversion.subclipse.core.SVNException;
 import org.tigris.subversion.subclipse.core.resources.SVNWorkspaceRoot;
 import org.tigris.subversion.subclipse.ui.IHelpContextIds;
 import org.tigris.subversion.subclipse.ui.Policy;
+import org.tigris.subversion.subclipse.ui.util.UrlCombo;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
 import org.tigris.subversion.svnclientadapter.SVNUrl;
 
 public class SwitchDialog extends Dialog {
     
-    private static final int URL_WIDTH_HINT = 450;
     private static final int REVISION_WIDTH_HINT = 40;
  
     private IResource resource;
     
-    private Text urlText;
+    private UrlCombo urlCombo;
     private Text revisionText;
     private Button headButton;
     private Button revisionButton;
@@ -68,16 +68,13 @@ public class SwitchDialog extends Dialog {
 		Label urlLabel = new Label(composite, SWT.NONE);
 		urlLabel.setText(Policy.bind("SwitchDialog.url"));
 		
-		urlText = new Text(composite, SWT.BORDER);
-		data = new GridData();
-		data.widthHint = URL_WIDTH_HINT;
-		urlText.setLayoutData(data);
+		urlCombo = new UrlCombo(composite, resource.getProject().getName());
 		ISVNLocalResource svnResource = SVNWorkspaceRoot.getSVNResourceFor(resource);
 		try {
             SVNUrl svnUrl = svnResource.getStatus().getUrl();
-            if (svnUrl != null) urlText.setText(svnResource.getStatus().getUrl().toString());
+            if (svnUrl != null) urlCombo.setText(svnResource.getStatus().getUrl().toString());
         } catch (SVNException e1) {}
-        urlText.addModifyListener(new ModifyListener() {
+        urlCombo.getCombo().addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent e) {
                 setOkButtonStatus();
             }         
@@ -89,7 +86,7 @@ public class SwitchDialog extends Dialog {
             public void widgetSelected(SelectionEvent e) {
                 ChooseUrlDialog dialog = new ChooseUrlDialog(getShell(), resource);
                 if ((dialog.open() == ChooseUrlDialog.OK) && (dialog.getUrl() != null)) {
-                    urlText.setText(dialog.getUrl());
+                    urlCombo.setText(dialog.getUrl());
                     setOkButtonStatus();
                 }
             }
@@ -150,8 +147,9 @@ public class SwitchDialog extends Dialog {
 	}
 	
     protected void okPressed() {
+        urlCombo.saveUrl();
         try {
-            url = new SVNUrl(urlText.getText().trim());
+            url = new SVNUrl(urlCombo.getText());
             if (headButton.getSelection()) revision = SVNRevision.HEAD;
             else {
                 try {
@@ -175,7 +173,7 @@ public class SwitchDialog extends Dialog {
     }
     
     private void setOkButtonStatus() {
-        okButton.setEnabled((urlText.getText().trim().length() > 0) && (headButton.getSelection() || (revisionText.getText().trim().length() > 0)));
+        okButton.setEnabled((urlCombo.getText().length() > 0) && (headButton.getSelection() || (revisionText.getText().trim().length() > 0)));
     }
     
     public SVNRevision getRevision() {

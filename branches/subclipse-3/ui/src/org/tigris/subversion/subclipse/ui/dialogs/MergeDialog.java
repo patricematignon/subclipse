@@ -28,6 +28,7 @@ import org.tigris.subversion.subclipse.core.SVNException;
 import org.tigris.subversion.subclipse.core.resources.SVNWorkspaceRoot;
 import org.tigris.subversion.subclipse.ui.IHelpContextIds;
 import org.tigris.subversion.subclipse.ui.Policy;
+import org.tigris.subversion.subclipse.ui.util.UrlCombo;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
 import org.tigris.subversion.svnclientadapter.SVNUrl;
 
@@ -36,14 +37,14 @@ public class MergeDialog extends Dialog {
     private static final int URL_WIDTH_HINT = 450;
     private static final int REVISION_WIDTH_HINT = 40;
     
-    private Text fromUrlText;
+    private UrlCombo fromUrlCombo;
     private Button fromBrowseButton;
     private Text fromRevisionText;
     private Button fromHeadButton;
     private Button fromRevisionButton;
 
     private Button useFromUrlButton;
-    private Text toUrlText;
+    private UrlCombo toUrlCombo;
     private Button toBrowseButton;
     private Text toRevisionText;
     private Button toHeadButton;
@@ -94,11 +95,8 @@ public class MergeDialog extends Dialog {
 		fromLayout.numColumns = 2;
 		fromGroup.setLayout(fromLayout);
 		
-		fromUrlText = new Text(fromGroup, SWT.BORDER);
-		data = new GridData();
-		data.widthHint = URL_WIDTH_HINT;
-		fromUrlText.setLayoutData(data);
-		fromUrlText.setText(urlText.getText());
+		fromUrlCombo = new UrlCombo(fromGroup, resource.getProject().getName());
+		fromUrlCombo.setText(urlText.getText());
 		
 		fromBrowseButton = new Button(fromGroup, SWT.PUSH);
 		fromBrowseButton.setText(Policy.bind("SwitchDialog.browse"));
@@ -162,12 +160,9 @@ public class MergeDialog extends Dialog {
 		Label useFromLabel = new Label(useFromComposite, SWT.NONE);
 		useFromLabel.setText(Policy.bind("MergeDialog.useFrom"));
 		
-		toUrlText = new Text(toGroup, SWT.BORDER);
-		data = new GridData();
-		data.widthHint = URL_WIDTH_HINT;
-		toUrlText.setLayoutData(data);
-		toUrlText.setText(urlText.getText());
-		toUrlText.setEnabled(false);
+		toUrlCombo = new UrlCombo(toGroup, resource.getProject().getName());
+		toUrlCombo.setText(urlText.getText());
+		toUrlCombo.getCombo().setVisible(false);
 		
 		toBrowseButton = new Button(toGroup, SWT.PUSH);
 		toBrowseButton.setText(Policy.bind("SwitchDialog.browse"));
@@ -217,9 +212,9 @@ public class MergeDialog extends Dialog {
                 ChooseUrlDialog dialog = new ChooseUrlDialog(getShell(), resource);
                 if ((dialog.open() == ChooseUrlDialog.OK) && (dialog.getUrl() != null)) {
                     if (e.getSource() == fromBrowseButton) {
-                        fromUrlText.setText(dialog.getUrl());
-                        if (useFromUrlButton.getSelection()) toUrlText.setText(dialog.getUrl());
-                    } else toUrlText.setText(dialog.getUrl());
+                        fromUrlCombo.setText(dialog.getUrl());
+                        if (useFromUrlButton.getSelection()) toUrlCombo.setText(dialog.getUrl());
+                    } else toUrlCombo.setText(dialog.getUrl());
                     setOkButtonStatus();
                 }               
             }
@@ -230,17 +225,23 @@ public class MergeDialog extends Dialog {
 		
 		useFromUrlButton.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
-                if (useFromUrlButton.getSelection()) toUrlText.setText(fromUrlText.getText());
+                if (useFromUrlButton.getSelection()) toUrlCombo.setText(fromUrlCombo.getText());
                 toBrowseButton.setEnabled(!useFromUrlButton.getSelection());
-                toUrlText.setEnabled(!useFromUrlButton.getSelection());
+                toUrlCombo.getCombo().setVisible(!useFromUrlButton.getSelection());
                 setOkButtonStatus();
             }		    
 		});
 		
-		fromUrlText.addModifyListener(new ModifyListener() {
+		fromUrlCombo.getCombo().addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent e) {
-                if (useFromUrlButton.getSelection()) toUrlText.setText(fromUrlText.getText());
+                if (useFromUrlButton.getSelection()) toUrlCombo.setText(fromUrlCombo.getText());
             }		    
+		});
+		
+		fromUrlCombo.getCombo().addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e) {
+                if (useFromUrlButton.getSelection()) toUrlCombo.setText(fromUrlCombo.getText());
+            }
 		});
 		
 		ModifyListener modifyListener = new ModifyListener() {
@@ -249,20 +250,22 @@ public class MergeDialog extends Dialog {
             }		    
 		};
 		
-		fromUrlText.addModifyListener(modifyListener);
+		fromUrlCombo.getCombo().addModifyListener(modifyListener);
 		fromRevisionText.addModifyListener(modifyListener);
-		toUrlText.addModifyListener(modifyListener);
+		toUrlCombo.getCombo().addModifyListener(modifyListener);
 		toRevisionText.addModifyListener(modifyListener);
 		
-		fromUrlText.setFocus();
+		fromUrlCombo.getCombo().setFocus();
 		WorkbenchHelp.setHelp(composite, IHelpContextIds.MERGE_DIALOG);
 
 		return composite;
 	}
 	
     protected void okPressed() {
+        fromUrlCombo.saveUrl();
+        if (!toUrlCombo.getText().equals(fromUrlCombo.getText())) toUrlCombo.saveUrl();
         try {
-            fromUrl = new SVNUrl(fromUrlText.getText().trim());
+            fromUrl = new SVNUrl(fromUrlCombo.getText());
             if (fromHeadButton.getSelection()) fromRevision = SVNRevision.HEAD;
             else {
                 try {
@@ -272,7 +275,8 @@ public class MergeDialog extends Dialog {
                   return;   
                 }
             }
-            toUrl = new SVNUrl(toUrlText.getText().trim());
+            if (useFromUrlButton.getSelection()) toUrl = new SVNUrl(fromUrlCombo.getText());
+            toUrl = new SVNUrl(toUrlCombo.getText());
             if (toHeadButton.getSelection()) toRevision = SVNRevision.HEAD;
             else {
                 try {

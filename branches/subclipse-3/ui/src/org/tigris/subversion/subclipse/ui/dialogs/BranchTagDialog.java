@@ -26,6 +26,7 @@ import org.tigris.subversion.subclipse.core.resources.SVNWorkspaceRoot;
 import org.tigris.subversion.subclipse.ui.IHelpContextIds;
 import org.tigris.subversion.subclipse.ui.Policy;
 import org.tigris.subversion.subclipse.ui.comments.CommitCommentArea;
+import org.tigris.subversion.subclipse.ui.util.UrlCombo;
 import org.tigris.subversion.svnclientadapter.SVNUrl;
 
 public class BranchTagDialog extends Dialog {
@@ -34,7 +35,7 @@ public class BranchTagDialog extends Dialog {
     
     private IResource resource;
     
-    private Text toUrlText;
+    private UrlCombo toUrlCombo;
     private Button serverButton;
     private CommitCommentArea commitCommentArea;
     
@@ -92,11 +93,8 @@ public class BranchTagDialog extends Dialog {
 		data = new GridData(GridData.FILL_BOTH);
 		urlComposite.setLayoutData(data);
 		
-		toUrlText = new Text(urlComposite, SWT.BORDER);
-		data = new GridData();
-		data.widthHint = URL_WIDTH_HINT;
-		toUrlText.setLayoutData(data);
-		toUrlText.setText(urlText.getText());
+		toUrlCombo = new UrlCombo(urlComposite, resource.getProject().getName());
+		toUrlCombo.setText(urlText.getText());
 		
 		Button browseButton = new Button(urlComposite, SWT.PUSH);
 		browseButton.setText(Policy.bind("SwitchDialog.browse"));
@@ -104,7 +102,7 @@ public class BranchTagDialog extends Dialog {
             public void widgetSelected(SelectionEvent e) {
                 ChooseUrlDialog dialog = new ChooseUrlDialog(getShell(), resource);
                 if ((dialog.open() == ChooseUrlDialog.OK) && (dialog.getUrl() != null)) {
-                    toUrlText.setText(dialog.getUrl());
+                    toUrlCombo.setText(dialog.getUrl());
                 }
             }
 		});	
@@ -134,7 +132,7 @@ public class BranchTagDialog extends Dialog {
 			}
 		});
 		
-		toUrlText.setFocus();
+		toUrlCombo.getCombo().setFocus();
 
 		// set F1 help
 		WorkbenchHelp.setHelp(composite, IHelpContextIds.BRANCH_TAG_DIALOG);
@@ -143,10 +141,11 @@ public class BranchTagDialog extends Dialog {
 	}
 	
     protected void okPressed() {
+        toUrlCombo.saveUrl();
         createOnServer = serverButton.getSelection();
         comment = commitCommentArea.getComment();
         try {
-            toUrl = new SVNUrl(toUrlText.getText().trim());
+            toUrl = new SVNUrl(toUrlCombo.getText());
         } catch (MalformedURLException e) {
             MessageDialog.openError(getShell(), Policy.bind("BranchTagDialog.title"), e.getMessage());
             return;
