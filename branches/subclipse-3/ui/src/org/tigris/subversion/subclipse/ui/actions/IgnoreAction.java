@@ -7,12 +7,13 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Cédric Chabanois (cchabanois@ifrance.com) - modified for Subversion 
+ *     Cédric Chabanois (cchabanois@ifrance.com) - modified for Subversion
  *******************************************************************************/
 package org.tigris.subversion.subclipse.ui.actions;
  
 import java.lang.reflect.InvocationTargetException;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
@@ -59,6 +60,9 @@ public class IgnoreAction extends WorkspaceAction {
 	 * @see org.tigris.subversion.subclipse.ui.actions.WorkspaceAction#isEnabledForSVNResource(org.tigris.subversion.subclipse.core.ISVNLocalResource)
 	 */
 	protected boolean isEnabledForSVNResource(ISVNLocalResource svnResource) throws SVNException {
+	    //If the resource is a IProject then the action should not be enabled.
+	    if( svnResource.getIResource() instanceof IProject)
+	        return false;
 		// If the parent is not managed there is no way to set the svn:ignore property
 		if (!svnResource.getParent().isManaged()) {
 			return false;
