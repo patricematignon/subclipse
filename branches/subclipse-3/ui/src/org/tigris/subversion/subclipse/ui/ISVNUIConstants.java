@@ -121,6 +121,7 @@ public interface ISVNUIConstants {
     // merge program preferences
     public final String PREF_MERGE_PROGRAM_LOCATION = "pref_merge_program_location";
     public final String PREF_MERGE_PROGRAM_PARAMETERS = "pref_merge_program_parameters";
+    public final String PREF_MERGE_USE_EXTERNAL = "pref_merge_use_external";
     
 	// watch/edit preferences
 	public final String PREF_CHECKOUT_READ_ONLY = "pref_checkout_read_only"; //$NON-NLS-1$

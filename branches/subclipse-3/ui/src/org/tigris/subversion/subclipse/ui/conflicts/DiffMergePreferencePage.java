@@ -54,6 +54,14 @@ public class DiffMergePreferencePage extends PreferencePage implements
 
     private Text mergeProgramParametersText;
 
+    private Button mergeProgramParametersButton;
+
+    private Button builtInMergeRadioButton;
+
+    private Button externalMergeRadioButton;
+
+    private Button browseMergeProgramButton;
+
     class StringPair {
         String s1;
 
@@ -63,14 +71,58 @@ public class DiffMergePreferencePage extends PreferencePage implements
     /**
      * creates a label
      */
-    private Label createLabel(Composite parent, String text, int span) {
+    private Label createLabel(Composite parent, String text, int span,
+            int horizontalIndent) {
         Label label = new Label(parent, SWT.LEFT);
         label.setText(text);
         GridData data = new GridData();
         data.horizontalSpan = span;
         data.horizontalAlignment = GridData.FILL;
+        data.horizontalIndent = horizontalIndent;
         label.setLayoutData(data);
         return label;
+    }
+
+    /**
+     * creates a label which the user can copy to clipboard (in fact it is a
+     * Text)
+     */
+    private Text createCopiableLabel(Composite parent, String text, int span,
+            int horizontalIndent) {
+        Text textControl = new Text(parent, SWT.READ_ONLY);
+        textControl.setText(text);
+        GridData data = new GridData();
+        data.horizontalAlignment = GridData.FILL;
+        data.horizontalSpan = span;
+        data.horizontalAlignment = GridData.FILL;
+        data.horizontalIndent = horizontalIndent;
+        textControl.setLayoutData(data);
+        return textControl;
+    }
+
+    /**
+     * creates a radio button
+     */
+    private Button createRadio(Composite parent, String label, int span) {
+        Button button = new Button(parent, SWT.RADIO);
+        button.setText(label);
+        GridData data = new GridData();
+        data.horizontalSpan = span;
+        button.setLayoutData(data);
+        return button;
+    }
+
+    /**
+     * creates a Text control
+     */
+    private Text createText(Composite parent, int widthHint) {
+        Text textControl = new Text(parent, SWT.SINGLE | SWT.BORDER);
+        GridData gridData = new GridData();
+        gridData.horizontalAlignment = GridData.FILL;
+        gridData.widthHint = widthHint;
+        gridData.grabExcessHorizontalSpace = true;
+        textControl.setLayoutData(gridData);
+        return textControl;
     }
 
     /*
@@ -95,22 +147,28 @@ public class DiffMergePreferencePage extends PreferencePage implements
         group.setLayoutData(gridData);
 
         layout = new GridLayout();
-        layout.numColumns = 2;
+        layout.numColumns = 3;
         group.setLayout(layout);
 
         // program used to resolve conflicted files
-        createLabel(
-                group,
-                Policy
-                        .bind("DiffMergePreferencePage.programToResolveConflictedFiles"), 2); //$NON-NLS-1$
-        mergeProgramLocationText = new Text(group, SWT.SINGLE | SWT.BORDER);
-        gridData = new GridData();
-        gridData.horizontalAlignment = GridData.FILL;
-        gridData.widthHint = 200;
-        gridData.grabExcessHorizontalSpace = true;
-        mergeProgramLocationText.setLayoutData(gridData);
+        Listener updateEnablementsListener = new Listener() {
+            public void handleEvent(Event event) {
+                updateEnablements();
+            }
+        };
+        builtInMergeRadioButton = createRadio(group, Policy
+                .bind("DiffMergePreferencePage.builtInMerge"), 3); //$NON-NLS-1$
+        builtInMergeRadioButton.addListener(SWT.Selection,
+                updateEnablementsListener);
+
+        externalMergeRadioButton = createRadio(group, Policy
+                .bind("DiffMergePreferencePage.externalMerge"), 1); //$NON-NLS-1$
+        externalMergeRadioButton.addListener(SWT.Selection,
+                updateEnablementsListener);
+
+        mergeProgramLocationText = createText(group, 200);
         mergeProgramLocationText.setEditable(false);
-        Button browseMergeProgramButton = new Button(group, SWT.NONE);
+        browseMergeProgramButton = new Button(group, SWT.NONE);
         browseMergeProgramButton.setText(Policy
                 .bind("DiffMergePreferencePage.browse")); //$NON-NLS-1$
         gridData = new GridData();
@@ -126,25 +184,28 @@ public class DiffMergePreferencePage extends PreferencePage implements
             }
         });
 
-        createLabel(group, "", 2); //$NON-NLS-1$
-
         // parameters
         createLabel(group, Policy
-                .bind("DiffMergePreferencePage.mergeProgramParameters"), 2); //$NON-NLS-1$
-        mergeProgramParametersText = createFormatEditorControl(
+                .bind("DiffMergePreferencePage.mergeProgramParameters"), 1, 20); //$NON-NLS-1$
+        Control[] formatEditorControl = createFormatEditorControl(
                 group,
                 Policy.bind("DiffMergePreferencePage.mergeProgramVariables"), getMergeBindingDescriptions()); //$NON-NLS-1$
+        mergeProgramParametersText = (Text) formatEditorControl[0];
+        mergeProgramParametersButton = (Button) formatEditorControl[1];
 
         createLabel(group, Policy
-                .bind("DiffMergePreferencePage.tortoiseMergeComment"), //$NON-NLS-1$
-                2);
+                .bind("DiffMergePreferencePage.tortoiseMergeComment1"), 3, 20); //$NON-NLS-1$
+
+        createCopiableLabel(group, Policy
+                .bind("DiffMergePreferencePage.tortoiseMergeComment2"), //$NON-NLS-1$
+                3, 20);
 
         initializeValues();
 
         return composite;
     }
 
-    protected Text createFormatEditorControl(Composite composite,
+    protected Control[] createFormatEditorControl(Composite composite,
             String buttonText, final Map supportedBindings) {
 
         Text format = new Text(composite, SWT.BORDER);
@@ -161,7 +222,7 @@ public class DiffMergePreferencePage extends PreferencePage implements
             }
         });
 
-        return format;
+        return new Control[] { format, b };
     }
 
     /**
@@ -254,6 +315,29 @@ public class DiffMergePreferencePage extends PreferencePage implements
                 .getString(ISVNUIConstants.PREF_MERGE_PROGRAM_LOCATION));
         mergeProgramParametersText.setText(store
                 .getString(ISVNUIConstants.PREF_MERGE_PROGRAM_PARAMETERS));
+
+        if (store.getBoolean(ISVNUIConstants.PREF_MERGE_USE_EXTERNAL)) {
+            builtInMergeRadioButton.setSelection(false);
+            externalMergeRadioButton.setSelection(true);
+        } else {
+            builtInMergeRadioButton.setSelection(true);
+            externalMergeRadioButton.setSelection(false);
+        }
+        updateEnablements();
+    }
+
+    private void updateEnablements() {
+        if (builtInMergeRadioButton.getSelection()) {
+            browseMergeProgramButton.setEnabled(false);
+            mergeProgramParametersText.setEnabled(false);
+            mergeProgramParametersButton.setEnabled(false);
+            mergeProgramLocationText.setEnabled(false);
+        } else {
+            browseMergeProgramButton.setEnabled(true);
+            mergeProgramParametersText.setEnabled(true);
+            mergeProgramParametersButton.setEnabled(true);
+            mergeProgramLocationText.setEnabled(true);
+        }
     }
 
     /**
@@ -277,6 +361,9 @@ public class DiffMergePreferencePage extends PreferencePage implements
 
         store.setValue(ISVNUIConstants.PREF_MERGE_PROGRAM_PARAMETERS,
                 mergeProgramParametersText.getText());
+
+        store.setValue(ISVNUIConstants.PREF_MERGE_USE_EXTERNAL,
+                externalMergeRadioButton.getSelection());
         return true;
     }
 

@@ -15,6 +15,8 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 
 import org.apache.commons.lang.StringUtils;
+import org.eclipse.compare.CompareConfiguration;
+import org.eclipse.compare.CompareUI;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -26,9 +28,11 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.tigris.subversion.subclipse.core.ISVNLocalResource;
 import org.tigris.subversion.subclipse.core.SVNException;
 import org.tigris.subversion.subclipse.core.resources.SVNWorkspaceRoot;
+import org.tigris.subversion.subclipse.core.util.File2Resource;
 import org.tigris.subversion.subclipse.ui.ISVNUIConstants;
 import org.tigris.subversion.subclipse.ui.Policy;
 import org.tigris.subversion.subclipse.ui.SVNUIPlugin;
+import org.tigris.subversion.subclipse.ui.conflicts.ConflictsCompareInput;
 import org.tigris.subversion.svnclientadapter.utils.Command;
 
 /**
@@ -36,76 +40,123 @@ import org.tigris.subversion.svnclientadapter.utils.Command;
  */
 public class EditConflictsAction extends WorkspaceAction {
 
+    /**
+     * edit the conflicts using built-in merger
+     * 
+     * @param resource
+     * @param conflictOldFile
+     * @param conflictWorkingFile
+     * @param conflictNewFile
+     * @throws InvocationTargetException
+     */
+    private void editConflictsInternal(IFile resource, IFile conflictOldFile,
+            IFile conflictWorkingFile, IFile conflictNewFile)
+            throws InvocationTargetException, InterruptedException {
+        CompareConfiguration cc = new CompareConfiguration();
+        ConflictsCompareInput fInput = new ConflictsCompareInput(cc);
+        fInput.setResources(conflictOldFile, conflictWorkingFile,
+                conflictNewFile, (IFile) resource);
+        CompareUI.openCompareEditorOnPage(fInput, getTargetPage());
+    }
+
+    /**
+     * edit the conflicts using an external merger
+     * 
+     * @param resource
+     * @param conflictOldFile
+     * @param conflictWorkingFile
+     * @param conflictNewFile
+     * @throws InvocationTargetException
+     */
+    private void editConflictsExternal(IFile resource, IFile conflictOldFile,
+            IFile conflictWorkingFile, IFile conflictNewFile)
+            throws CoreException, InvocationTargetException, InterruptedException {
+        try {
+            IPreferenceStore preferenceStore = SVNUIPlugin.getPlugin()
+                    .getPreferenceStore();
+            String mergeProgramLocation = preferenceStore
+                    .getString(ISVNUIConstants.PREF_MERGE_PROGRAM_LOCATION);
+            String mergeProgramParameters = preferenceStore
+                    .getString(ISVNUIConstants.PREF_MERGE_PROGRAM_PARAMETERS);
+
+            if (mergeProgramLocation.equals("")) {
+                throw new SVNException(Policy
+                        .bind("EditConflictsAction.noMergeProgramConfigured")); //$NON-NLS-1$
+            }
+            File mergeProgramFile = new File(mergeProgramLocation);
+            if (!mergeProgramFile.exists()) {
+                throw new SVNException(Policy
+                        .bind("EditConflictsAction.mergeProgramDoesNotExist")); //$NON-NLS-1$
+            }
+
+            Command command = new Command(mergeProgramLocation);
+            String[] parameters = StringUtils
+                    .split(mergeProgramParameters, ' ');
+            for (int i = 0; i < parameters.length; i++) {
+                parameters[i] = StringUtils.replace(parameters[i], "${theirs}",
+                        conflictNewFile.getLocation().toFile()
+                                .getAbsolutePath());
+                parameters[i] = StringUtils.replace(parameters[i], "${yours}",
+                        conflictWorkingFile.getLocation().toFile()
+                                .getAbsolutePath());
+                parameters[i] = StringUtils.replace(parameters[i], "${base}",
+                        conflictOldFile.getLocation().toFile()
+                                .getAbsolutePath());
+                parameters[i] = StringUtils.replace(parameters[i], "${merged}",
+                        resource.getLocation().toFile().getAbsolutePath());
+            }
+            command.setParameters(parameters);
+            command.exec();
+
+            command.waitFor();
+            resource.refreshLocal(IResource.DEPTH_ZERO, null);
+        } catch (IOException e) {
+            throw new InvocationTargetException(e);
+        }
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.tigris.subversion.subclipse.ui.actions.SVNAction#execute(org.eclipse.jface.action.IAction)
+     */
     protected void execute(final IAction action)
             throws InvocationTargetException, InterruptedException {
 
         run(new WorkspaceModifyOperation() {
             public void execute(IProgressMonitor monitor)
-                    throws InvocationTargetException {
+                    throws CoreException, InvocationTargetException, InterruptedException {
+
+                IFile resource = (IFile) getSelectedResources()[0];
+                ISVNLocalResource svnResource = SVNWorkspaceRoot
+                        .getSVNResourceFor(resource);
                 try {
+                    IFile conflictNewFile = (IFile) File2Resource
+                            .getResource(svnResource.getStatus()
+                                    .getFileConflictNew());
+                    IFile conflictOldFile = (IFile) File2Resource
+                            .getResource(svnResource.getStatus()
+                                    .getFileConflictOld());
+                    IFile conflictWorkingFile = (IFile) File2Resource
+                            .getResource(svnResource.getStatus()
+                                    .getFileConflictWorking());
+
                     IPreferenceStore preferenceStore = SVNUIPlugin.getPlugin()
                             .getPreferenceStore();
-                    String mergeProgramLocation = preferenceStore
-                            .getString(ISVNUIConstants.PREF_MERGE_PROGRAM_LOCATION);
-                    String mergeProgramParameters = preferenceStore
-                            .getString(ISVNUIConstants.PREF_MERGE_PROGRAM_PARAMETERS);
-
-                    if (mergeProgramLocation.equals("")) {
-                        throw new SVNException(
-                                Policy
-                                        .bind("EditConflictsAction.noMergeProgramConfigured")); //$NON-NLS-1$
-                    }
-                    File mergeProgramFile = new File(mergeProgramLocation);
-                    if (!mergeProgramFile.exists()) {
-                        throw new SVNException(
-                                Policy
-                                        .bind("EditConflictsAction.mergeProgramDoesNotExist")); //$NON-NLS-1$
+                    if (preferenceStore
+                            .getBoolean(ISVNUIConstants.PREF_MERGE_USE_EXTERNAL)) {
+                        editConflictsExternal(resource, conflictOldFile,
+                                conflictWorkingFile, conflictNewFile);
+                    } else {
+                        editConflictsInternal(resource, conflictOldFile,
+                                conflictWorkingFile, conflictNewFile);
                     }
 
-                    IResource resource = getSelectedResources()[0];
-                    ISVNLocalResource svnResource = SVNWorkspaceRoot
-                            .getSVNResourceFor(resource);
-                    File conflictNewFile = svnResource.getStatus()
-                            .getFileConflictNew();
-                    File conflictOldFile = svnResource.getStatus()
-                            .getFileConflictOld();
-                    File conflictWorkingFile = svnResource.getStatus()
-                            .getFileConflictWorking();
-
-                    Command command = new Command(mergeProgramLocation);
-                    String[] parameters = StringUtils.split(
-                            mergeProgramParameters, ' ');
-                    for (int i = 0; i < parameters.length; i++) {
-                        parameters[i] = StringUtils.replace(parameters[i],
-                                "${theirs}", conflictNewFile.getAbsolutePath());
-                        parameters[i] = StringUtils.replace(parameters[i],
-                                "${yours}", conflictWorkingFile
-                                        .getAbsolutePath());
-                        parameters[i] = StringUtils.replace(parameters[i],
-                                "${base}", conflictOldFile.getAbsolutePath());
-                        parameters[i] = StringUtils.replace(parameters[i],
-                                "${merged}", svnResource.getFile()
-                                        .getAbsolutePath());
-                    }
-                    command.setParameters(parameters);
-                    command.exec();
-
-                    command.waitFor();
-                    resource.refreshLocal(IResource.DEPTH_ZERO, null);
-
-                    // fix the action enablement
-                    if (action != null)
-                        action.setEnabled(isEnabled());
-                } catch (TeamException e) {
-                    throw new InvocationTargetException(e);
-                } catch (CoreException e) {
-                    throw new InvocationTargetException(e);
-                } catch (IOException e) {
-                    throw new InvocationTargetException(e);
-                } catch (InterruptedException e) {
+                } catch (SVNException e) {
                     throw new InvocationTargetException(e);
                 }
             }
+
         }, false /* cancelable */, PROGRESS_BUSYCURSOR);
     }
 
@@ -137,5 +188,5 @@ public class EditConflictsAction extends WorkspaceAction {
     protected boolean isEnabledForMultipleResources() {
         return false;
     }
-    
+
 }

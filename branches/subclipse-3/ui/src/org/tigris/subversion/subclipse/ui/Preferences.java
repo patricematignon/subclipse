@@ -65,6 +65,7 @@ private IPreferenceStore store;
         store.setDefault(ISVNUIConstants.PREF_SVNINTERFACE, JhlClientAdapterFactory.JAVAHL_CLIENT);
         store.setDefault(ISVNUIConstants.PREF_SVNCONFIGDIR, "");
 
+        store.setDefault(ISVNUIConstants.PREF_MERGE_USE_EXTERNAL, false);
         store.setDefault(ISVNUIConstants.PREF_MERGE_PROGRAM_LOCATION,"");
         store.setDefault(ISVNUIConstants.PREF_MERGE_PROGRAM_PARAMETERS,"");
         
