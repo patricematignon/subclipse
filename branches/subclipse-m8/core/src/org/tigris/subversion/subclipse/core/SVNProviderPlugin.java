@@ -22,7 +22,6 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
@@ -77,10 +76,7 @@ public class SVNProviderPlugin extends Plugin {
 		super();
 		instance = this;
 	}
-	public SVNProviderPlugin(IPluginDescriptor descriptor) {
-		super(descriptor);
-		instance = this;
-	}
+	
 
 	/**
 	 * Convenience method for logging CVSExceptiuons to the plugin log

@@ -16,7 +16,7 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPluginDescriptor;
+
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
@@ -91,10 +91,7 @@ public class SVNUIPlugin extends AbstractUIPlugin {
 		plugin = this;
 	
 	}
-	public SVNUIPlugin(IPluginDescriptor descriptor) {
-		super(descriptor);
-		plugin = this;
-	}
+	
 
 	/**
 	 * Convenience method to get the currently active workbench page. Note that
