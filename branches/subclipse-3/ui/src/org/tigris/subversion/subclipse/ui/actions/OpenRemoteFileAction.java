@@ -54,12 +54,12 @@ public class OpenRemoteFileAction extends SVNAction {
 					}
 					try {
 						try {
-							page.openEditor(new RemoteFileEditorInput(files[i]), id);
+							page.openEditor(new RemoteFileEditorInput(files[i],monitor), id);
 						} catch (PartInitException e) {
 							if (id.equals("org.eclipse.ui.DefaultTextEditor")) { //$NON-NLS-1$
 								throw e;
 							} else {
-								page.openEditor(new RemoteFileEditorInput(files[i]), "org.eclipse.ui.DefaultTextEditor"); //$NON-NLS-1$
+								page.openEditor(new RemoteFileEditorInput(files[i],monitor), "org.eclipse.ui.DefaultTextEditor"); //$NON-NLS-1$
 							}
 						}
 					} catch (PartInitException e) {

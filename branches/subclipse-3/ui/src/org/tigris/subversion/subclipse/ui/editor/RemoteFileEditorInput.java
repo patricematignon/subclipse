@@ -13,12 +13,18 @@ package org.tigris.subversion.subclipse.ui.editor;
 
  
 import org.eclipse.core.resources.IStorage;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.variants.IResourceVariant;
 import org.eclipse.ui.IPersistableElement;
 import org.eclipse.ui.IStorageEditorInput;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.tigris.subversion.subclipse.core.ISVNRemoteFile;
 import org.tigris.subversion.subclipse.ui.Policy;
+import org.tigris.subversion.subclipse.ui.SVNUIPlugin;
 import org.tigris.subversion.svnclientadapter.SVNUrl;
 
 /**
@@ -26,14 +32,31 @@ import org.tigris.subversion.svnclientadapter.SVNUrl;
  */
 public class RemoteFileEditorInput implements IWorkbenchAdapter, IStorageEditorInput {
 	private ISVNRemoteFile file;
-	private IStorage storage;
+	protected IStorage storage;
 
 	/**
 	 * Creates FileEditionEditorInput on the given file.
 	 */
-	public RemoteFileEditorInput(ISVNRemoteFile file) {
+	public RemoteFileEditorInput(ISVNRemoteFile file, IProgressMonitor monitor) {
 		this.file = file;
+		try {
+			initializeStorage(file, monitor);
+		} catch (TeamException e) {
+			// Log and continue
+			SVNUIPlugin.log(e);
+		}		
 	}
+	
+	/**
+	 * Initialize the strogae of this instance from the given file.
+	 * @param file the file being displayed
+	 * @param monitor a progress monitor
+	 */
+	protected void initializeStorage(ISVNRemoteFile file, IProgressMonitor monitor) throws TeamException {
+		// Cache the contents of the file for use in the editor
+		storage = ((IResourceVariant)file).getStorage(monitor);
+	}	
+	
 	/**
 	 * Returns whether the editor input exists.  
 	 * <p>
@@ -148,9 +171,9 @@ public class RemoteFileEditorInput implements IWorkbenchAdapter, IStorageEditorI
 	 * @return an IStorage object.
 	 * @exception CoreException if this method fails
 	 */
-	public IStorage getStorage() {
+	public IStorage getStorage() throws CoreException {
 		if (storage == null) {
-			storage = new RemoteFileStorage(file);
+			initializeStorage(file, new NullProgressMonitor());
 		}
 		return storage;
 	}
