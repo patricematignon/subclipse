@@ -13,6 +13,9 @@
       <library name="javahl.jar">
          <export name="*"/>
       </library>
+      <library name="SVNPluginCore.jar">
+         <export name="*"/>
+      </library>
    </runtime>
    <requires>
       <import plugin="org.eclipse.core.resources"/>
@@ -31,8 +34,8 @@
             id="org.tigris.subversion.subclipse.core.svnnature">
       </repository>
    </extension>
-<!--           typeClass="org.tigris.subversion.subclipse.core.SVNTeamProviderType" -->
 <!-- *************** Markers **************** -->
+<!--           typeClass="org.tigris.subversion.subclipse.core.SVNTeamProviderType" -->
    <extension
          id="svnmarker"
          point="org.eclipse.core.resources.markers">

@@ -18,9 +18,9 @@
       <import plugin="org.eclipse.team.core"/>
       <import plugin="org.eclipse.team.ui"/>
       <import plugin="org.eclipse.compare"/>
-      <import plugin="org.tigris.subversion.subclipse.core"/>
       <import plugin="org.eclipse.platform" version="3.0.0" match="compatible"/>
       <import plugin="org.apache.xerces"/>
+      <import plugin="org.tigris.subversion.subclipse.core"/>
    </requires>
 
 
@@ -403,19 +403,19 @@
                value="org.eclipse.team.core.repository=org.tigris.subversion.subclipse.core.svnnature">
          </filter>
       </page>
-  </extension>
-  <extension
-      point="org.eclipse.help.toc">
+   </extension>
+   <extension
+         point="org.eclipse.help.toc">
       <toc
-          file="toc.xml"
-          primary="true">
+            file="toc.xml"
+            primary="true">
       </toc>
       <toc
-          file="tocgettingstarted.xml">
+            file="tocgettingstarted.xml">
       </toc>
       <toc
-          file="tocreference.xml">
-      </toc>      
-  </extension>   
+            file="tocreference.xml">
+      </toc>
+   </extension>
 
 </plugin>
