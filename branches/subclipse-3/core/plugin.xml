@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?eclipse version="3.0"?>
 <plugin
    id="org.tigris.subversion.subclipse.core"
    name="%pluginName"
-   version="0.8.6"
+   version="0.9.0"
    provider-name="%providerName"
    class="org.tigris.subversion.subclipse.core.SVNProviderPlugin">
 
