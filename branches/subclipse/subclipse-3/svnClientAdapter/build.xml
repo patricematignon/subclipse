@@ -27,7 +27,7 @@
   <!-- ================================================================= -->
   <target name="compile" description="compile all sources files">
     <mkdir dir="${build.classes.dir}" />
-    <javac srcdir="${src.main.dir}"
+    <javac srcdir="${src.main.dir}" excludes="**/*Test.java"
            destdir="${build.classes.dir}"
            debug="${debug}"
            includes="**"
