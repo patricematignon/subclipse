@@ -7,9 +7,6 @@
    class="org.tigris.subversion.subclipse.core.SVNProviderPlugin">
 
    <runtime>
-      <library name="SVNPluginCore.jar">
-         <export name="*"/>
-      </library>
       <library name="svnClientAdapter.jar">
          <export name="*"/>
       </library>
@@ -21,8 +18,7 @@
       <import plugin="org.eclipse.core.resources"/>
       <import plugin="org.eclipse.ui"/>
       <import plugin="org.eclipse.team.core"/>
-
-      <import plugin="org.apache.xerces"/>      
+      <import plugin="org.apache.xerces"/>
       <import plugin="org.eclipse.platform" version="3.0.0" match="compatible"/>
    </requires>
 
@@ -35,8 +31,8 @@
             id="org.tigris.subversion.subclipse.core.svnnature">
       </repository>
    </extension>
-<!-- *************** Markers **************** -->
 <!--           typeClass="org.tigris.subversion.subclipse.core.SVNTeamProviderType" -->
+<!-- *************** Markers **************** -->
    <extension
          id="svnmarker"
          point="org.eclipse.core.resources.markers">
