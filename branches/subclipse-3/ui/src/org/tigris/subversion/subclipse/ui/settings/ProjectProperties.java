@@ -14,7 +14,7 @@ import org.tigris.subversion.svnclientadapter.ISVNProperty;
 public class ProjectProperties {
     protected String label = "Issue Number:";
     protected String message;
-    protected boolean number = false;;
+    protected boolean number = false;
     protected String url;
     protected boolean warnIfNoIssue = false;
     protected boolean append = true;

@@ -162,6 +162,7 @@ public class HistoryView extends ViewPart implements IResourceStateChangeListene
 
 	public HistoryView() {
 	    SVNProviderPlugin.addResourceStateChangeListener(this);
+	    this.projectProperties = new ProjectProperties();
 	}
 
 	private IPartListener partListener = new IPartListener() {
@@ -844,6 +845,7 @@ public class HistoryView extends ViewPart implements IResourceStateChangeListene
 		tableHistoryViewer.setInput(remoteResource);
 		setContentDescription(Policy.bind("HistoryView.titleWithArgument", remoteResource.getName()));
 		setTitleToolTip(""); //$NON-NLS-1$
+		projectProperties = ProjectProperties.getProjectProperties(remoteResource);
 	}
 	
     
