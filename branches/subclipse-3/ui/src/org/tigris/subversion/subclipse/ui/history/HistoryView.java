@@ -76,6 +76,7 @@ import org.eclipse.ui.part.ResourceTransfer;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.tigris.subversion.subclipse.core.ISVNLocalFile;
+import org.tigris.subversion.subclipse.core.ISVNLocalResource;
 import org.tigris.subversion.subclipse.core.ISVNRemoteFile;
 import org.tigris.subversion.subclipse.core.ISVNRemoteResource;
 import org.tigris.subversion.subclipse.core.SVNException;
@@ -632,16 +633,18 @@ public class HistoryView extends ViewPart {
 		if(!refetch && this.resource != null && resource.equals(this.resource)) {
 			return;
 		} 
-		this.resource = resource;
+		
 		RepositoryProvider teamProvider = RepositoryProvider.getProvider(resource.getProject(), SVNProviderPlugin.getTypeId());
 		if (teamProvider != null) {
 			try {
-				ISVNRemoteResource remoteResource = (ISVNRemoteResource)SVNWorkspaceRoot.getBaseResourceFor(resource);
-				if (remoteResource != null) {
-					historyTableProvider.setRemoteResource(remoteResource);
-					tableViewer.setInput(remoteResource);
-					setContentDescription(Policy.bind("HistoryView.titleWithArgument", remoteResource.getName())); //$NON-NLS-1$
-					setTitleToolTip(remoteResource.getRepositoryRelativePath());
+				ISVNLocalResource localResource = SVNWorkspaceRoot.getSVNResourceFor(resource);
+				if (localResource != null && !localResource.getStatus().isAdded()) {
+					ISVNRemoteResource baseResource = localResource.getBaseResource();
+					historyTableProvider.setRemoteResource(baseResource);
+					tableViewer.setInput(baseResource);
+					setContentDescription(Policy.bind("HistoryView.titleWithArgument", baseResource.getName())); //$NON-NLS-1$
+					setTitleToolTip(baseResource.getRepositoryRelativePath());
+					this.resource = resource;
 				}
 			} catch (TeamException e) {
 				SVNUIPlugin.openError(getViewSite().getShell(), null, null, e);
