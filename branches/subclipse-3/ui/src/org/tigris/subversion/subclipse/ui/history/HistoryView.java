@@ -11,7 +11,6 @@
  *******************************************************************************/
 package org.tigris.subversion.subclipse.ui.history;
 
- 
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 
@@ -35,6 +34,7 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.ITextOperationTarget;
 import org.eclipse.jface.text.TextViewer;
@@ -49,10 +49,17 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.Transfer;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseMoveListener;
+import org.eclipse.swt.graphics.Cursor;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
@@ -96,6 +103,8 @@ import org.tigris.subversion.subclipse.ui.actions.OpenRemoteFileAction;
 import org.tigris.subversion.subclipse.ui.console.TextViewerAction;
 import org.tigris.subversion.subclipse.ui.editor.RemoteFileEditorInput;
 import org.tigris.subversion.subclipse.ui.operations.ReplaceOperation;
+import org.tigris.subversion.subclipse.ui.settings.ProjectProperties;
+import org.tigris.subversion.subclipse.ui.util.LinkList;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
 
 
@@ -108,6 +117,13 @@ import org.tigris.subversion.svnclientadapter.SVNRevision;
 public class HistoryView extends ViewPart implements IResourceStateChangeListener {
 	// the resource for which we want to see the history or null if we use showHistory(ISVNRemoteResource)
 	private IResource resource;
+	
+	private ProjectProperties projectProperties;
+	private LinkList linkList;
+	private boolean mouseDown = false; 
+	private boolean dragEvent = false;
+	private Cursor handCursor;
+	private Cursor busyCursor;
 
 	// cached for efficiency
 	private ILogEntry[] entries;
@@ -433,6 +449,8 @@ public class HistoryView extends ViewPart implements IResourceStateChangeListene
 	 * Method declared on IWorkbenchPart
 	 */
 	public void createPartControl(Composite parent) {
+	    busyCursor = new Cursor(parent.getDisplay(), SWT.CURSOR_WAIT);
+	    handCursor = new Cursor(parent.getDisplay(), SWT.CURSOR_HAND);
 		settings = SVNUIPlugin.getPlugin().getPreferenceStore();
 		this.linkingEnabled = settings.getBoolean(ISVNUIConstants.PREF_HISTORY_VIEW_EDITOR_LINKING);
 
@@ -441,6 +459,58 @@ public class HistoryView extends ViewPart implements IResourceStateChangeListene
 		tableHistoryViewer = createTableHistory(sashForm);
 		innerSashForm = new SashForm(sashForm, SWT.HORIZONTAL);
 		textViewer = createText(innerSashForm);
+		textViewer.getTextWidget().addMouseListener(new MouseAdapter() {
+			public void mouseDown(MouseEvent e) {
+				if (e.button != 1) {
+					return;
+				}
+				mouseDown = true;
+			}
+			public void mouseUp(MouseEvent e) {
+				mouseDown = false;
+				StyledText text = (StyledText)e.widget;
+				int offset = text.getCaretOffset();
+				if (dragEvent) {
+					// don't activate a link during a drag/mouse up operation
+					dragEvent = false;
+					if (linkList != null && linkList.isLinkAt(offset)) {
+						text.setCursor(handCursor);
+					}
+				} else {
+					if (linkList != null && linkList.isLinkAt(offset)) {	
+						text.setCursor(busyCursor);
+						openLink(linkList.getLinkAt(offset));
+						text.setCursor(null);
+					}
+				}
+			}			
+		});
+		
+		textViewer.getTextWidget().addMouseMoveListener(new MouseMoveListener() {
+            public void mouseMove(MouseEvent e) {
+    			// Do not change cursor on drag events
+    			if (mouseDown) {
+    				if (!dragEvent) {
+    					StyledText text = (StyledText)e.widget;
+    					text.setCursor(null);
+    				}
+    				dragEvent = true;
+    				return;
+    			}
+    			StyledText text = (StyledText)e.widget;
+    			int offset = -1;
+    			try {
+    				offset = text.getOffsetAtLocation(new Point(e.x, e.y));
+    			} catch (IllegalArgumentException ex) {}
+    			if (offset == -1)
+    				text.setCursor(null);
+    			else if (linkList != null && linkList.isLinkAt(offset)) 
+    				text.setCursor(handCursor);
+    			else 
+    				text.setCursor(null);                
+            }		    
+		});
+		
         tableChangePathViewer = createTableChangePath(innerSashForm);
 		sashForm.setWeights(new int[] { 70, 30 });
 
@@ -453,12 +523,18 @@ public class HistoryView extends ViewPart implements IResourceStateChangeListene
 		getSite().getPage().addPartListener(partListener);  
 		getSite().getPage().addPartListener(partListener2); 
 	}
+	
+	private void openLink(String href) {
+	    Program.launch(href);
+    }
 
-	public void dispose() {
+    public void dispose() {
 	    shutdown = true;
 		getSite().getPage().removePartListener(partListener);
 		getSite().getPage().removePartListener(partListener2);
 		SVNProviderPlugin.removeResourceStateChangeListener(this);
+		if (busyCursor != null) busyCursor.dispose();
+		if (handCursor != null) handCursor.dispose();
 	}   
 
     
@@ -547,8 +623,17 @@ public class HistoryView extends ViewPart implements IResourceStateChangeListene
 				}
 				LogEntry entry = (LogEntry)ss.getFirstElement();
 				textViewer.setDocument(new Document(entry.getComment()));
-                changePathsTableProvider.setLogEntry(entry);
-                
+				StyledText text = textViewer.getTextWidget();
+				if (projectProperties == null) linkList = ProjectProperties.getUrls(entry.getComment());
+				else linkList = projectProperties.getLinkList(entry.getComment());
+				if (linkList != null) {
+					int[][] linkRanges = linkList.getLinkRanges();
+					String[] urls = linkList.getUrls();
+					for (int i = 0; i < linkRanges.length; i++) {
+						  text.setStyleRange(new StyleRange(linkRanges[i][0], linkRanges[i][1], JFaceColors.getHyperlinkText(Display.getCurrent()), null));				       
+					}
+				}
+                changePathsTableProvider.setLogEntry(entry);               
 			}
 		});
 		
@@ -711,6 +796,7 @@ public class HistoryView extends ViewPart implements IResourceStateChangeListene
 		tableHistoryViewer.setInput(remoteResource);
 		setContentDescription(Policy.bind("HistoryView.titleWithArgument", remoteResource.getName())); //$NON-NLS-1$
 		setTitleToolTip(remoteResource.getRepositoryRelativePath());
+		projectProperties = ProjectProperties.getProjectProperties(remoteResource);
 	}
 
 	/**
@@ -735,6 +821,7 @@ public class HistoryView extends ViewPart implements IResourceStateChangeListene
 					setContentDescription(Policy.bind("HistoryView.titleWithArgument", baseResource.getName())); //$NON-NLS-1$
 					setTitleToolTip(baseResource.getRepositoryRelativePath());
 					this.resource = resource;
+					projectProperties = ProjectProperties.getProjectProperties(resource);
 				}
 			} catch (TeamException e) {
 				SVNUIPlugin.openError(getViewSite().getShell(), null, null, e);
@@ -798,6 +885,10 @@ public class HistoryView extends ViewPart implements IResourceStateChangeListene
         // show a Busy Cursor during refresh
 		BusyIndicator.showWhile(tableHistoryViewer.getTable().getDisplay(), new Runnable() {
 			public void run() {
+			    if (resource != null)
+                    try {
+                        projectProperties = ProjectProperties.getProjectProperties(resource);
+                    } catch (SVNException e) {}
 				tableHistoryViewer.refresh();
 			}
 		});

@@ -1,19 +1,25 @@
 package org.tigris.subversion.subclipse.ui.settings;
 
+import java.util.ArrayList;
+
 import org.eclipse.core.resources.IResource;
 import org.tigris.subversion.subclipse.core.ISVNLocalResource;
+import org.tigris.subversion.subclipse.core.ISVNRemoteResource;
 import org.tigris.subversion.subclipse.core.SVNException;
 import org.tigris.subversion.subclipse.core.resources.SVNWorkspaceRoot;
 import org.tigris.subversion.subclipse.ui.Policy;
+import org.tigris.subversion.subclipse.ui.util.LinkList;
 import org.tigris.subversion.svnclientadapter.ISVNProperty;
 
 public class ProjectProperties {
-    protected String label;
+    protected String label = "Issue Number:";
     protected String message;
-    protected boolean number;
+    protected boolean number = false;;
     protected String url;
-    protected boolean warnIfNoIssue;
-    protected boolean append;
+    protected boolean warnIfNoIssue = false;
+    protected boolean append = true;
+    
+    private static final String URL = "://"; //$NON-NLS-1$
 
     public ProjectProperties() {
         super();
@@ -57,11 +63,97 @@ public class ProjectProperties {
     }
     
     public String getResolvedMessage(String issue) {
+        if (message == null) return null;
         return message.replaceAll("%BUGID%", issue);
     }
     
     public String getResolvedUrl(String issue) {
+        if (url == null) return null;
         return url.replaceAll("%BUGID%", issue);
+    }
+    
+    // Retrieve hyperlink ranges and url's from commit message.
+    public LinkList getLinkList(String commitMessage) {
+        ArrayList links = new ArrayList();
+        ArrayList urls = new ArrayList();
+        if (message != null) {
+	        int index = message.indexOf("%BUGID%");
+	        if (index != -1) {
+		        String tag = message.substring(0, index);
+		        index = commitMessage.indexOf(tag);
+		        if (index != -1) {
+			        index = index + tag.length();
+			        int start = index;
+			        StringBuffer issue = new StringBuffer();
+			        while (index < commitMessage.length()) {
+			            if (commitMessage.substring(index, index + 1).equals(",")) {
+			                int range[] = {start, issue.length()};
+			                String url = getResolvedUrl(issue.toString());
+			                if ((url != null) && (url.trim().length() > 0)) {
+			                    links.add(range);
+			                    urls.add(url);
+			                }
+			                start = index + 1;
+			                issue = new StringBuffer();
+			            } else {
+			                if (commitMessage.substring(index, index + 1).equals(" ") || commitMessage.substring(index, index + 1).equals("\n")) break;
+			            	issue.append(commitMessage.substring(index, index + 1));
+			            }
+			            index++;
+			        }  
+			        int range[] = {start, issue.length()};
+			        String url = getResolvedUrl(issue.toString());
+			        if ((url != null) && (url.trim().length() > 0)) { 
+			            links.add(range);
+			            urls.add(url);
+			        }
+		        }
+	        }
+        }
+        LinkList urlLinks = getUrls(commitMessage);
+        int[][] urlRanges = urlLinks.getLinkRanges();
+        String[] urlUrls = urlLinks.getUrls();
+        for (int i = 0; i < urlRanges.length; i++) {
+            links.add(urlRanges[i]);
+            urls.add(urlUrls[i]);
+        }
+        int[][] linkRanges = new int[links.size()][2];
+        links.toArray(linkRanges);
+        String[] urlArray = new String[urls.size()];
+        urls.toArray(urlArray);
+        LinkList linkList = new LinkList(linkRanges, urlArray);
+        return linkList;
+    }
+    
+    public static LinkList getUrls(String s) {
+    	int max = s.length();
+    	int i = s.indexOf(URL);
+    	ArrayList linkRanges = new ArrayList();
+    	ArrayList links = new ArrayList();
+    	while (i != -1) {
+    	    while (i != -1) {
+    	        if (Character.isWhitespace(s.charAt(i)) || s.substring(i, i + 1).equals("\n")) {
+    	            i++;
+    	            break;
+    	        }
+    	        i--;
+    	    }
+    		int start = i;
+    		// look for the first whitespace character
+    		boolean found = false;
+    		i += URL.length();
+    		while (!found && i < max) {
+    			found = (Character.isWhitespace(s.charAt(i)) || s.substring(i, i + 1).equals("\n"));
+    			i++;
+    		}
+    		if (i!=max) i--;
+    		linkRanges.add(new int[] {start, i - start});
+    		links.add(s.substring(start, i));
+    		i = s.indexOf(URL, i);
+    	}
+    	return new LinkList(
+    			(int[][])linkRanges.toArray(new int[linkRanges.size()][2]),
+    			(String[])links.toArray(new String[links.size()]));
     }
     
     // Return error message if there are any problems with the issue that was entered.
@@ -94,25 +186,19 @@ public class ProjectProperties {
     public static ProjectProperties getProjectProperties(IResource resource) throws SVNException {
         ISVNLocalResource svnResource = SVNWorkspaceRoot.getSVNResourceFor(resource);
         ISVNProperty property = svnResource.getSvnProperty("bugtraq:message"); //$NON-NLS-1$
-        if (property != null) {
-            String value = property.getValue();
+        ISVNProperty labelProperty = svnResource.getSvnProperty("bugtraq:label"); //$NON-NLS-1$
+        if ((property != null) && (property.getValue() != null) && (property.getValue().trim().length() > 0)) {
             ProjectProperties projectProperties = new ProjectProperties();
-            if (value == null) projectProperties.setMessage("Reference: %BUGID%"); //$NON-NLS-1$
-            else projectProperties.setMessage(value);
-            property = svnResource.getSvnProperty("bugtraq:label"); //$NON-NLS-1$
-            if ((property == null) || (property.getValue() == null)) projectProperties.setLabel("Reference:"); //$NON-NLS-1$
-            else projectProperties.setLabel(property.getValue());
+            projectProperties.setMessage(property.getValue());
+            if ((labelProperty != null) && (labelProperty.getValue() != null) && (labelProperty.getValue().trim().length() != 0)) projectProperties.setLabel(labelProperty.getValue());
             property = svnResource.getSvnProperty("bugtraq:url"); //$NON-NLS-1$
-            if ((property != null) && (property.getValue() != null)) projectProperties.setUrl(property.getValue()); 
+            if (property != null) projectProperties.setUrl(property.getValue()); 
             property = svnResource.getSvnProperty("bugtraq:number"); //$NON-NLS-1$
-            if ((property == null) || (property.getValue() == null)) projectProperties.setNumber(false);
-            else projectProperties.setNumber(property.getValue().equalsIgnoreCase("true")); //$NON-NLS-1$  
+            if ((property != null) && (property.getValue() != null)) projectProperties.setNumber(property.getValue().equalsIgnoreCase("true")); //$NON-NLS-1$  
             property = svnResource.getSvnProperty("bugtraq:warnifnoissue"); //$NON-NLS-1$
-            if ((property == null) || (property.getValue() == null)) projectProperties.setWarnIfNoIssue(false);
-            else projectProperties.setWarnIfNoIssue(property.getValue().equalsIgnoreCase("true")); //$NON-NLS-1$   
+            if ((property != null) && (property.getValue() != null)) projectProperties.setWarnIfNoIssue(property.getValue().equalsIgnoreCase("true")); //$NON-NLS-1$   
             property = svnResource.getSvnProperty("bugtraq:append"); //$NON-NLS-1$
-            if ((property == null) || (property.getValue() == null)) projectProperties.setAppend(true);
-            else projectProperties.setAppend(property.getValue().equalsIgnoreCase("true")); //$NON-NLS-1$                                   
+            if ((property != null) && (property.getValue() != null)) projectProperties.setAppend(property.getValue().equalsIgnoreCase("true")); //$NON-NLS-1$                                   
             return projectProperties;           
         }
         IResource checkResource = resource;
@@ -123,6 +209,10 @@ public class ProjectProperties {
             property = svnResource.getSvnProperty("bugtraq:message"); //$NON-NLS-1$
             if (property != null) return getProjectProperties(checkResource);
         }
+        return null;
+    }
+    
+    public static ProjectProperties getProjectProperties(ISVNRemoteResource remoteResource) {
         return null;
     }
 }
