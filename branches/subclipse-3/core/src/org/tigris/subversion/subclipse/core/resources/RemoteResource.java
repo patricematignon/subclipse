@@ -195,6 +195,7 @@ public abstract class RemoteResource
      * @see org.eclipse.team.core.variants.IResourceVariant#getContentIdentifier()
      */
     public String getContentIdentifier() {
+        if (getLastChangedRevision() == null) return "";
 		return getLastChangedRevision().getNumber()+"";
 	}
 	

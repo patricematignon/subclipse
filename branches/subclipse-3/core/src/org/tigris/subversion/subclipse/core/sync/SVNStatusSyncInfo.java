@@ -44,9 +44,9 @@ public class SVNStatusSyncInfo extends SyncInfo {
         IResource local = getLocal();
         
         if (!local.exists()) {
+            if (isDeletion(repositoryKind)) return SyncInfo.IN_SYNC;
             if (isDeletion(localKind)) {
                 if (isChange(repositoryKind)) return SyncInfo.CONFLICTING | SyncInfo.DELETION;
-                if (isDeletion(repositoryKind)) return SyncInfo.IN_SYNC;
                 return SyncInfo.OUTGOING | SyncInfo.DELETION;
             } else return SyncInfo.INCOMING | SyncInfo.ADDITION;
         }

@@ -361,6 +361,12 @@ public class SVNWorkspaceSubscriber extends Subscriber implements IResourceState
 		SubscriberChangeEvent delta = new SubscriberChangeEvent(this, ISubscriberChangeEvent.ROOT_REMOVED, project);
 		fireTeamResourceChange(new SubscriberChangeEvent[] {delta});
 	}
+	
+	public void updateRemote(IResource[] resources) throws TeamException {
+	    for (int i = 0; i < resources.length; i++) {
+	        remoteSyncStateStore.flushBytes(resources[i], IResource.DEPTH_INFINITE);
+	    }
+	}
 }
 
 class StatusInfo {
