@@ -91,7 +91,7 @@ public class GenerateDiffFileOperation implements IRunnableWithProgress {
 			}
 
 			boolean emptyDiff = false;
-			
+			 
 			if(toClipboard) {				
 				ByteArrayOutputStream baos = (ByteArrayOutputStream)os;
 				if(baos.size() == 0) {
