@@ -134,10 +134,9 @@ public class CommitAction extends WorkspaceAction {
 						} catch (SVNException e) {
 							exception[0] = e;
 						}
-						// file is unshared so record it
+						// file/folder is unshared so record it
 						unadded.add(resource);
-						// no need to go into children because add is deep
-						return false;
+						return resource.getType() == IResource.FOLDER;
 					}
 				}, IResource.DEPTH_INFINITE, false /* include phantoms */);
 			    } catch (CoreException e) {
