@@ -58,8 +58,9 @@ public abstract class SubclipseTest extends TestCase {
 	 * @see junit.framework.TestCase#setUp()
 	 */
 	protected void setUp() throws Exception {
-		url = "file://" + System.getProperty("java.io.tmpdir") + "/trepo";
+		url = "file:///" + System.getProperty("java.io.tmpdir")  + "/trepo";
 		testRepoArchive = System.getProperty("svn.repo.arch");
+		
 		remoteHttpUrl = System.getProperty("remote.http.url");//in case we're
 		// testing auth or
 		// something.
@@ -76,7 +77,7 @@ public abstract class SubclipseTest extends TestCase {
 					+ archFile.getAbsolutePath());
 		if (!url.startsWith("file://"))
 			throw new RuntimeException("svn.url must be a file:// url.");
-		extractArchive(archFile);
+		extractArchive(archFile,new File(System.getProperty("java.io.tmpdir")));
 		SVNProviderPlugin plugin = SVNProviderPlugin.getPlugin();
 		// do we use javahl or command line ?
 		if (mode == null || mode.equalsIgnoreCase("javahl")) {
@@ -112,16 +113,19 @@ public abstract class SubclipseTest extends TestCase {
 	 * @param archFile
 	 * @todo Generated comment
 	 */
-	private void extractArchive(File archFile) throws IOException {
+	private void extractArchive(File archFile, File destination) throws IOException {
 		ZipFile zf = new ZipFile(archFile);
 		Enumeration entries = zf.getEntries();
-		String tmp = System.getProperty("java.io.tmpdir");
 		while (entries.hasMoreElements()) {
 			ZipEntry entry = (ZipEntry) entries.nextElement();
+			File destFile = new File(destination, entry.getName());
+			File destParent = destFile.getParentFile();
+			destParent.mkdirs();
+			
 			if (!entry.isDirectory()) {
 				int len;
 				OutputStream out = new BufferedOutputStream(new FileOutputStream(
-						new File(tmp, entry.getName())));
+						destFile));
 				InputStream in = zf.getInputStream(entry);
 				byte[] buffer = new byte[1024];
 				while ((len = in.read(buffer)) >= 0)
@@ -129,10 +133,9 @@ public abstract class SubclipseTest extends TestCase {
 				in.close();
 				out.close();
 			} else {
-				File newdir = new File(tmp, entry.getName());
-				if (!newdir.exists() && !newdir.mkdirs()) {
+				if (!destFile.exists() && !destFile.mkdirs()) {
 					throw new RuntimeException("Failed to create: "
-							+ System.getProperty("java.io.tmpdir") + " :"
+							+ destination.getAbsolutePath() + " :"
 							+ entry.getName());
 				}
 			}
