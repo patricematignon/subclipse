@@ -24,6 +24,11 @@ public interface ISVNListener {
      */
     public void repositoryAdded(ISVNRepositoryLocation root);
     
+    /**
+     * called when a repository location has been modified (label, username, password)
+     * @param root
+     */
+    public void repositoryModified(ISVNRepositoryLocation root);
     
     /**
      * called when a repository is removed from the list of repositories 

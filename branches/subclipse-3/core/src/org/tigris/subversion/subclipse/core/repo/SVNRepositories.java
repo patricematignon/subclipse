@@ -43,8 +43,9 @@ public class SVNRepositories
     private Map repositories = new HashMap();
     private static final String REPOSITORIES_STATE_FILE = ".svnProviderState"; //$NON-NLS-1$
     
-    // version numbers for the state file (a positive number indicates version 1)
+    // version numbers for the state file 
     private static final int REPOSITORIES_STATE_FILE_VERSION_1 = 1;
+    private static final int REPOSITORIES_STATE_FILE_VERSION_2 = 2;
 
     /*
      * Add the repository location to the cached locations
@@ -64,14 +65,15 @@ public class SVNRepositories
     }
 
     /**
-     * Add the repository to the receiver's list of known repositories. Doing this will enable
-     * password caching accross platform invokations.
+     * Add the repository to the receiver's list of known repositories or update it. 
+     * Doing this will enable password caching accross platform invokations.
      */
-    public void addRepository(ISVNRepositoryLocation repository) throws SVNException {
+    public void addOrUpdateRepository(ISVNRepositoryLocation repository) throws SVNException {
         // Check the cache for an equivalent instance and if there is one, just update the cache
         SVNRepositoryLocation existingLocation = (SVNRepositoryLocation)repositories.get(repository.getLocation());
         if (existingLocation != null) {
-            ((SVNRepositoryLocation)repository).updateCache();
+            SVNProviderPlugin.getPlugin().getRepositoryResourcesManager().repositoryModified(repository);
+            ((SVNRepositoryLocation)repository).updateCache();            
         } else {
             // Cache the password and register the repository location
             addToRepositoriesCache(repository);
@@ -232,9 +234,17 @@ public class SVNRepositories
             count = dis.readInt();
             for(int i = 0; i < count;i++){
                 ISVNRepositoryLocation root = getRepository(dis.readUTF());
-
             }
-            
+        } else
+        if (count == REPOSITORIES_STATE_FILE_VERSION_2) {
+            count = dis.readInt();
+            for(int i = 0; i < count;i++){
+                ISVNRepositoryLocation root = getRepository(dis.readUTF());
+                String label = dis.readUTF();
+                if (!label.equals("")) {
+                	root.setLabel(label);
+                }
+            }            
         } else {
             Util.logError(Policy.bind("SVNProviderPlugin.unknownStateFileVersion", new Integer(count).toString()), null); //$NON-NLS-1$
         }
@@ -247,7 +257,7 @@ public class SVNRepositories
      */
     private void writeState(DataOutputStream dos) throws IOException {
         // Write the repositories
-        dos.writeInt(REPOSITORIES_STATE_FILE_VERSION_1);
+        dos.writeInt(REPOSITORIES_STATE_FILE_VERSION_2);
         // Write out the repos
         Collection repos = repositories.values();
         dos.writeInt(repos.size());
@@ -255,6 +265,11 @@ public class SVNRepositories
         while (it.hasNext()) {
             SVNRepositoryLocation root = (SVNRepositoryLocation)it.next();
             dos.writeUTF(root.getLocation());
+            if (root.getLabel() == null) {
+            	dos.writeUTF("");
+            } else {
+            	dos.writeUTF(root.getLabel());
+            }
         }
 		dos.flush();
 		dos.close();

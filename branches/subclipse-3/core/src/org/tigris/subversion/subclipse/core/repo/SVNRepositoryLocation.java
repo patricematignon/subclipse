@@ -44,18 +44,14 @@ import org.tigris.subversion.svnclientadapter.SVNUrl;
 
 /**
  * This class manages a SVN repository location.
- * 
- * It manages its user info using the plugged in IUserAuthenticator
- * (unless a username and password are provided as part of the creation
- * string, in which case, no authenticator is used).
- * 
- * Instances must be disposed of when no longer needed in order to 
- * notify the authenticator so cached properties can be cleared
- * 
+ * <br>
+ * After modifying a SVNRepositoryLocation (label, username, password),
+ * add it to repositories using {@link SVNRepositories#addOrUpdateRepository(ISVNRepositoryLocation)}
  */
 public class SVNRepositoryLocation
 	implements ISVNRepositoryLocation, IUserInfo, IAdaptable {
 
+	private String label = null; // friendly name of the location
 	private String user;
 	private String password;
 	private SVNUrl url;
@@ -63,8 +59,8 @@ public class SVNRepositoryLocation
 	// the folder corresponding to this repository location
 
 	// fields needed for caching the password
-	public static final String INFO_PASSWORD = "org.eclipse.team.cvs.core.password"; //$NON-NLS-1$ 
-	public static final String INFO_USERNAME = "org.eclipse.team.cvs.core.username"; //$NON-NLS-1$ 
+	public static final String INFO_PASSWORD = "org.tigris.subversion.subclipse.core.password"; //$NON-NLS-1$ 
+	public static final String INFO_USERNAME = "org.tigris.subversion.subclipse.core.username"; //$NON-NLS-1$ 
 	public static final String AUTH_SCHEME = ""; //$NON-NLS-1$ 
 	public static final URL FAKE_URL;
 
@@ -208,228 +204,258 @@ public class SVNRepositoryLocation
 		return getRemoteFile(url);
 	}
 
-/*
- * @see ISVNRepositoryLocation#getUsername()
- * @see IUserInfo#getUsername()
- */
-public String getUsername() {
-	if (user == null) {
-		retrieveUsernamePassword();
-	}
-	return user == null ? "" : user; //$NON-NLS-1$
-}
+    /*
+     * @see ISVNRepositoryLocation#getUsername()
+     * @see IUserInfo#getUsername()
+     */
+    public String getUsername() {
+    	if (user == null) {
+    		retrieveUsername();
+    	}
+    	return user == null ? "" : user; //$NON-NLS-1$
+    }
 
-/**
- * get the svn client corresponding to the repository
- */
-public ISVNClientAdapter getSVNClient() {
-	//		if (svnClient != null)
-	//			return svnClient;
-	ISVNClientAdapter svnClient =
-		SVNProviderPlugin.getPlugin().createSVNClient();
+    /**
+     * get the svn client corresponding to the repository
+     */
+    public ISVNClientAdapter getSVNClient() {
+    	ISVNClientAdapter svnClient =
+    		SVNProviderPlugin.getPlugin().createSVNClient();
+    
+    	svnClient.addNotifyListener(NotificationListener.getInstance());
+    
+    	svnClient.setUsername(getUsername());
+        String password = getPassword();
+    	if (password != null)
+    		svnClient.setPassword(password);
+    	return svnClient;
+    }
 
-	svnClient.addNotifyListener(NotificationListener.getInstance());
+    /*
+     * Implementation of inherited toString()
+     */
+    public String toString() {
+    	if (getLabel() != null) {
+    		return getLabel();
+        } else
+        {
+        	return getLocation();
+        }
+    }
+    
+    public boolean equals(Object o) {
+    	if (!(o instanceof SVNRepositoryLocation))
+    		return false;
+    	return getLocation().equals(((SVNRepositoryLocation) o).getLocation());
+    }
+    
+    public int hashCode() {
+    	return getLocation().hashCode();
+    }
+    
+    /**
+     * Retrieves the cached username from the keyring. 
+     */
+    private void retrieveUsername() {
+    	Map map =
+    		Platform.getAuthorizationInfo(FAKE_URL, getLocation(), AUTH_SCHEME);
+    	if (map != null) {
+    		String username = (String) map.get(INFO_USERNAME);
+    		if (username != null)
+    			setUsername(username);
+    	}
+    }
+    
+    /**
+     * Retrieves the cached password
+     * @return
+     */
+    private String retrievePassword() {
+        Map map =
+            Platform.getAuthorizationInfo(FAKE_URL, getLocation(), AUTH_SCHEME);
+        if (map != null) {
+            String password = (String) map.get(INFO_PASSWORD);
+            if (password != null) {
+                return password;
+            }        
+        }
+        return null;
+    }
+    
+    /**
+     * get the password
+     * @return
+     */
+    private String getPassword() {
+    	if (password != null) {
+    		return password;
+        } else {
+        	return retrievePassword();
+        }
+    }
+    
+    
+    /*
+     * @see IUserInfo#setPassword(String)
+     */
+    public void setPassword(String password) {
+    	this.password = password;
+    }
+    
+    /*
+     * @see IUserInfo#setUsername(String)
+     */
+    public void setUsername(String user) {
+    	this.user = user;
+    }
 
-	svnClient.setUsername(getUsername());
-	if (password != null)
-		svnClient.setPassword(password);
-	return svnClient;
-}
+    /**
+     * add user and password to the keyring 
+     */
+    public void updateCache() throws SVNException {
+    	// put the password into the Platform map
+    	Map map =
+    		Platform.getAuthorizationInfo(FAKE_URL, getLocation(), AUTH_SCHEME);
+    	if (map == null) {
+    		map = new java.util.HashMap(10);
+    	}
+    	if (user != null)
+    		map.put(INFO_USERNAME, user);
+    	if (password != null)
+    		map.put(INFO_PASSWORD, password);
+    	try {
+    		Platform.addAuthorizationInfo(
+    			FAKE_URL,
+    			getLocation(),
+    			AUTH_SCHEME,
+    			map);
+    	} catch (CoreException e) {
+    		// We should probably wrap the CoreException here!
+    		SVNProviderPlugin.log(e.getStatus());
+    		throw new SVNException(IStatus.ERROR, IStatus.ERROR, Policy.bind("SVNRepositoryLocation.errorCaching", getLocation()), e); //$NON-NLS-1$ 
+    	}
+        // If the cache was updated, null the password field
+        // so we will obtain the password from the cache when needed
+    	password = null;
+    	// Ensure that the receiver is known by the SVN provider
+    	SVNProviderPlugin.getPlugin().getRepository(getLocation());
+    }
 
-/*
- * Implementation of inherited toString()
- */
-public String toString() {
-	return getLocation();
-}
+    /*
+     * Validate that the receiver contains valid information for
+     * making a connection. If the receiver contains valid
+     * information, the method returns. Otherwise, an exception
+     * indicating the problem is throw.
+     */
+    public void validateConnection(IProgressMonitor monitor) throws SVNException {
+    	ISVNClientAdapter svnClient = getSVNClient();
+    	try {
+    		// we try to get the list of directories and files using the connection
+    		svnClient.getList(getUrl(), SVNRevision.HEAD, false);
+    	} catch (SVNClientException e) {
+    		// If the validation failed, dispose of any cached info
+    		dispose();
+    		throw SVNException.wrapException(e);
+    	}
+    }
 
-public boolean equals(Object o) {
-	if (!(o instanceof SVNRepositoryLocation))
-		return false;
-	return getLocation().equals(((SVNRepositoryLocation) o).getLocation());
-}
+    /*
+     *  this should be made more robust --mml 11/27/03
+     * @see org.tigris.subversion.subclipse.core.ISVNRepositoryLocation#pathExists()
+     */
+    public boolean pathExists(){
+    	ISVNClientAdapter svnClient = getSVNClient();
+    	try{
+    		svnClient.getList(getUrl(), SVNRevision.HEAD, false);
+    	}catch(SVNClientException e){
+    		return false;
+    	}
+    	return true;
+    }
 
-public int hashCode() {
-	return getLocation().hashCode();
-}
+    /*
+     * Create a repository location instance from the given properties.
+     * The supported properties are:
+     *   user The username for the connection (optional)
+     *   password The password used for the connection (optional)
+     *   url The url where the repository resides
+     */
+    public static SVNRepositoryLocation fromProperties(Properties configuration)
+    	throws SVNException {
+    	// We build a string to allow validation of the components that are provided to us
+    
+    	String user = configuration.getProperty("user"); //$NON-NLS-1$ 
+    	if ((user == null) || (user.length() == 0))
+    		user = null;
+    	String password = configuration.getProperty("password"); //$NON-NLS-1$ 
+    	if (user == null)
+    		password = null;
+    	String url = configuration.getProperty("url"); //$NON-NLS-1$ 
+    	if (url == null)
+    		throw new SVNException(new Status(IStatus.ERROR, SVNProviderPlugin.ID, TeamException.UNABLE, Policy.bind("SVNRepositoryLocation.hostRequired"), null)); //$NON-NLS-1$ 
+    
+    	SVNUrl urlURL = null;
+    	try {
+    		urlURL = new SVNUrl(url);
+    	} catch (MalformedURLException e) {
+    		throw new SVNException(e.getMessage());
+    	}
+    
+    	return new SVNRepositoryLocation(user, password, urlURL);
+    }
 
-/*
- * Retrieves the cached user & password from the keyring. 
- */
-private void retrieveUsernamePassword() {
-	Map map =
-		Platform.getAuthorizationInfo(FAKE_URL, getLocation(), AUTH_SCHEME);
-	if (map != null) {
-		String username = (String) map.get(INFO_USERNAME);
-		if (username != null)
-			setUsername(username);
-		String password = (String) map.get(INFO_PASSWORD);
-		if (password != null) {
-			setPassword(password);
-		}
-	}
-}
+    /*
+     * Parse a location string and return a SVNRepositoryLocation.
+     * 
+     * On failure, the status of the exception will be a MultiStatus
+     * that includes the original parsing error and a general status
+     * displaying the passed location and proper form. This form is
+     * better for logging, etc.
+     */
+    public static SVNRepositoryLocation fromString(String location)
+    	throws SVNException {
+    	try {
+    		return fromString(location, false);
+    	} catch (SVNException e) {
+    		// Parsing failed. Include a status that
+    		// shows the passed location and the proper form
+    		MultiStatus error = new MultiStatus(SVNProviderPlugin.ID, SVNStatus.ERROR, Policy.bind("SVNRepositoryLocation.invalidFormat", new Object[] { location }), null); //$NON-NLS-1$ 
+    		error.merge(new SVNStatus(SVNStatus.ERROR, Policy.bind("SVNRepositoryLocation.locationForm"))); //$NON-NLS-1$ 
+    		error.merge(e.getStatus());
+    		throw new SVNException(error);
+    	}
+    }
 
-/*
- * @see IUserInfo#setPassword(String)
- */
-public void setPassword(String password) {
-	this.password = password;
-}
-
-/*
- * @see IUserInfo#setUsername(String)
- */
-public void setUsername(String user) {
-	this.user = user;
-}
-
-/**
- * add user and password to the keyring 
- */
-public void updateCache() throws SVNException {
-	// put the password into the Platform map
-	Map map =
-		Platform.getAuthorizationInfo(FAKE_URL, getLocation(), AUTH_SCHEME);
-	if (map == null) {
-		map = new java.util.HashMap(10);
-	}
-	if (user != null)
-		map.put(INFO_USERNAME, user);
-	if (password != null)
-		map.put(INFO_PASSWORD, password);
-	try {
-		Platform.addAuthorizationInfo(
-			FAKE_URL,
-			getLocation(),
-			AUTH_SCHEME,
-			map);
-	} catch (CoreException e) {
-		// We should probably wrap the CoreException here!
-		SVNProviderPlugin.log(e.getStatus());
-		throw new SVNException(IStatus.ERROR, IStatus.ERROR, Policy.bind("SVNRepositoryLocation.errorCaching", getLocation()), e); //$NON-NLS-1$ 
-	}
-
-	password = null;
-	// Ensure that the receiver is known by the SVN provider
-	SVNProviderPlugin.getPlugin().getRepository(getLocation());
-}
-
-/*
- * Validate that the receiver contains valid information for
- * making a connection. If the receiver contains valid
- * information, the method returns. Otherwise, an exception
- * indicating the problem is throw.
- */
-public void validateConnection(IProgressMonitor monitor) throws SVNException {
-	ISVNClientAdapter svnClient = getSVNClient();
-	try {
-		// we try to get the list of directories and files using the connection
-		svnClient.getList(getUrl(), SVNRevision.HEAD, false);
-	} catch (SVNClientException e) {
-		// If the validation failed, dispose of any cached info
-		dispose();
-		throw SVNException.wrapException(e);
-	}
-}
-
-/*
- *  this should be made more robust --mml 11/27/03
- * @see org.tigris.subversion.subclipse.core.ISVNRepositoryLocation#pathExists()
- */
-public boolean pathExists(){
-	ISVNClientAdapter svnClient = getSVNClient();
-	try{
-		svnClient.getList(getUrl(), SVNRevision.HEAD, false);
-	}catch(SVNClientException e){
-		return false;
-	}
-	return true;
-}
-
-/*
- * Create a repository location instance from the given properties.
- * The supported properties are:
- *   user The username for the connection (optional)
- *   password The password used for the connection (optional)
- *   url The url where the repository resides
- */
-public static SVNRepositoryLocation fromProperties(Properties configuration)
-	throws SVNException {
-	// We build a string to allow validation of the components that are provided to us
-
-	String user = configuration.getProperty("user"); //$NON-NLS-1$ 
-	if ((user == null) || (user.length() == 0))
-		user = null;
-	String password = configuration.getProperty("password"); //$NON-NLS-1$ 
-	if (user == null)
-		password = null;
-	String url = configuration.getProperty("url"); //$NON-NLS-1$ 
-	if (url == null)
-		throw new SVNException(new Status(IStatus.ERROR, SVNProviderPlugin.ID, TeamException.UNABLE, Policy.bind("SVNRepositoryLocation.hostRequired"), null)); //$NON-NLS-1$ 
-
-	SVNUrl urlURL = null;
-	try {
-		urlURL = new SVNUrl(url);
-	} catch (MalformedURLException e) {
-		throw new SVNException(e.getMessage());
-	}
-
-	return new SVNRepositoryLocation(user, password, urlURL);
-}
-
-/*
- * Parse a location string and return a SVNRepositoryLocation.
- * 
- * On failure, the status of the exception will be a MultiStatus
- * that includes the original parsing error and a general status
- * displaying the passed location and proper form. This form is
- * better for logging, etc.
- */
-public static SVNRepositoryLocation fromString(String location)
-	throws SVNException {
-	try {
-		return fromString(location, false);
-	} catch (SVNException e) {
-		// Parsing failed. Include a status that
-		// shows the passed location and the proper form
-		MultiStatus error = new MultiStatus(SVNProviderPlugin.ID, SVNStatus.ERROR, Policy.bind("SVNRepositoryLocation.invalidFormat", new Object[] { location }), null); //$NON-NLS-1$ 
-		error.merge(new SVNStatus(SVNStatus.ERROR, Policy.bind("SVNRepositoryLocation.locationForm"))); //$NON-NLS-1$ 
-		error.merge(e.getStatus());
-		throw new SVNException(error);
-	}
-}
-
-/*
- * Parse a location string and return a SVNRepositoryLocation.
- * 
- * The location is an url
- */
-public static SVNRepositoryLocation fromString(
-	String location,
-	boolean validateOnly)
-	throws SVNException {
-
-	String partId = null;
-	try {
-		String user = null;
-		String password = null;
-		SVNUrl url = new SVNUrl(location);
-
-		if (validateOnly)
-			throw new SVNException(new SVNStatus(SVNStatus.OK, Policy.bind("ok"))); //$NON-NLS-1$ 
-
-		return new SVNRepositoryLocation(user, password, url);
-	} catch (MalformedURLException e) {
-		throw new SVNException(Policy.bind(partId));
-	} catch (IndexOutOfBoundsException e) {
-		// We'll get here if anything funny happened while extracting substrings
-		throw new SVNException(Policy.bind(partId));
-	} catch (NumberFormatException e) {
-		// We'll get here if we couldn't parse a number
-		throw new SVNException(Policy.bind(partId));
-	}
-}
+    /*
+     * Parse a location string and return a SVNRepositoryLocation.
+     * 
+     * The location is an url
+     */
+    public static SVNRepositoryLocation fromString(
+    	String location,
+    	boolean validateOnly)
+    	throws SVNException {
+    
+    	String partId = null;
+    	try {
+    		String user = null;
+    		String password = null;
+    		SVNUrl url = new SVNUrl(location);
+    
+    		if (validateOnly)
+    			throw new SVNException(new SVNStatus(SVNStatus.OK, Policy.bind("ok"))); //$NON-NLS-1$ 
+    
+    		return new SVNRepositoryLocation(user, password, url);
+    	} catch (MalformedURLException e) {
+    		throw new SVNException(Policy.bind(partId));
+    	} catch (IndexOutOfBoundsException e) {
+    		// We'll get here if anything funny happened while extracting substrings
+    		throw new SVNException(Policy.bind(partId));
+    	} catch (NumberFormatException e) {
+    		// We'll get here if we couldn't parse a number
+    		throw new SVNException(Policy.bind(partId));
+    	}
+    }
 
 //	public static IUserAuthenticator getAuthenticator() {
 //		if (authenticator == null) {
@@ -470,13 +496,27 @@ public static SVNRepositoryLocation fromString(
 //		}
 //	}
 
-public Object getAdapter(Class adapter) {
-	if (adapter == ISVNRemoteFolder.class)
-		return rootFolder;
-	else
-		return Platform.getAdapterManager().getAdapter(this, adapter);
-}
+	public Object getAdapter(Class adapter) {
+		if (adapter == ISVNRemoteFolder.class)
+			return rootFolder;
+		else
+			return Platform.getAdapterManager().getAdapter(this, adapter);
+	}
 
+	
 
+	/**
+	 * @return Returns the label.
+	 */
+	public String getLabel() {
+		return label;
+	}
+	
+	/**
+	 * @param label The label to set.
+	 */
+	public void setLabel(String label) {
+		this.label = label;
+	}
 
 }

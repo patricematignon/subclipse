@@ -73,6 +73,17 @@ public class RepositoryResourcesManager {
             listener.repositoryAdded(repository);
         }    
     }
+
+    /**
+     * signals all listener that we have removed a repository 
+     */
+    public void repositoryModified(ISVNRepositoryLocation repository) {
+        Iterator it = repositoryListeners.iterator();
+        while (it.hasNext()) {
+            ISVNListener listener = (ISVNListener)it.next();
+            listener.repositoryModified(repository);
+        }    
+    }    
     
     /**
      * signals all listener that a remote resource has been created 

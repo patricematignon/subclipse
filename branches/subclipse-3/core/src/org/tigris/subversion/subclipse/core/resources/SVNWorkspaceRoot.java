@@ -41,6 +41,7 @@ import org.tigris.subversion.subclipse.core.Policy;
 import org.tigris.subversion.subclipse.core.SVNException;
 import org.tigris.subversion.subclipse.core.SVNProviderPlugin;
 import org.tigris.subversion.subclipse.core.SVNStatus;
+import org.tigris.subversion.subclipse.core.SVNTeamProvider;
 import org.tigris.subversion.subclipse.core.client.OperationManager;
 import org.tigris.subversion.subclipse.core.util.Util;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
@@ -59,8 +60,15 @@ import org.w3c.dom.Text;
 /**
  * This class provides static methods for checking out projects from a repository
  * into the local workspace and for converting IResources into SVNResources
- *
- *  Instances of this class represent a local workspace root (i.e. a project).
+ * <p>
+ * Instances of this class represent a local workspace root (i.e. a project).
+ * <br>
+ * Here is how you can get a SVNWorkspaceRoot from an IProject : <br>
+ * <code>
+ * SVNTeamProvider teamProvider = (SVNTeamProvider)RepositoryProvider.getProvider(myIProject, SVNProviderPlugin.getTypeId()); <br>
+ * SVNWorkspaceRoot svnProject = teamProvider.getSVNWorkspaceRoot();
+ * </code> 
+ * </p>
  */
 public class SVNWorkspaceRoot {
 
@@ -345,7 +353,7 @@ public class SVNWorkspaceRoot {
 		}
 		// Add the repository if it didn't exist already
 		if ( ! alreadyExists)
-			SVNProviderPlugin.getPlugin().getRepositories().addRepository(location);
+			SVNProviderPlugin.getPlugin().getRepositories().addOrUpdateRepository(location);
 	}
 	
 	/**

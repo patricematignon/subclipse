@@ -27,17 +27,6 @@ import org.tigris.subversion.svnclientadapter.SVNUrl;
  * @see IConnectionMethod
  */
 public interface ISVNRepositoryLocation  extends IAdaptable {
-
-	
-	/**
-	 * port value which indicates to a connection method to use the default port
-	 */
-	public static int USE_DEFAULT_PORT = 0;
-	
-	/**
-	 * Return the connection method for making the connection
-	 */
-//	public IConnectionMethod getMethod();
 	
 	/**
 	 * Returns the host where the repository is located
@@ -89,6 +78,16 @@ public interface ISVNRepositoryLocation  extends IAdaptable {
 	 */
 	public String getUsername();
 	
+    public void setUsername(String username);
+    
+    public void setPassword(String password);
+    
+    /**
+     * add user and password to the keyring 
+     */
+    public void updateCache() throws SVNException;
+    
+    
 	public ISVNClientAdapter getSVNClient();	
 	
     public ISVNRemoteFolder getRootFolder();
@@ -105,6 +104,13 @@ public interface ISVNRepositoryLocation  extends IAdaptable {
 	 */
 //	public void flushUserInfo() throws CVSException;
 	
+    /**
+     * returns the label (friendly name for the repository location) or null if no label
+     */
+    public String getLabel();
+    
+    public void setLabel(String label);
+    
 	/**
 	 * Validate that the receiver can be used to connect to a repository.
 	 * An exception is thrown if connection fails
@@ -118,6 +124,7 @@ public interface ISVNRepositoryLocation  extends IAdaptable {
 		 * Verify that said location contains said path.
 		 *
 		 */
-		public boolean pathExists();	
+		public boolean pathExists();
+        
 }
 
