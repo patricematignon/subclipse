@@ -12,10 +12,14 @@
 package org.tigris.subversion.subclipse.ui.repository.model;
 
  
+import java.util.Arrays;
+
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.model.IWorkbenchAdapter;
+import org.tigris.subversion.subclipse.core.ISVNRepositoryLocation;
+import org.tigris.subversion.subclipse.core.repo.RepositoryComparator;
 import org.tigris.subversion.subclipse.ui.SVNUIPlugin;
 
 /**
@@ -30,8 +34,11 @@ public class AllRootsElement extends SVNModelElement  implements IAdaptable  {
 		return null;
 	}
 	public Object[] internalGetChildren(Object o, IProgressMonitor monitor) {
-        return SVNUIPlugin.getPlugin().getRepositoryManager().getKnownRepositoryLocations(); 
-	}
+        ISVNRepositoryLocation[] locations =
+            SVNUIPlugin.getPlugin().getRepositoryManager().getKnownRepositoryLocations();
+        Arrays.sort(locations, new RepositoryComparator());
+        return locations; 	
+    }
 	public String getLabel(Object o) {
 		return null;
 	}
