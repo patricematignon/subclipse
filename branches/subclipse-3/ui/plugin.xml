@@ -416,5 +416,33 @@
             file="tocreference.xml">
       </toc>
    </extension>
+   <extension
+         id="svnIgnored"
+         point="org.eclipse.team.core.ignore">
+      <ignore
+            enabled="true"
+            pattern=".svn">
+      </ignore>
+      <ignore
+            enabled="true"
+            pattern="svn-commit*.tmp">
+      </ignore>
+      <ignore
+            enabled="true"
+            pattern="ui.ignore3">
+      </ignore>
+      <ignore
+            enabled="true"
+            pattern="*.merge-right*">
+      </ignore>
+      <ignore
+            enabled="true"
+            pattern="*.merge-left*">
+      </ignore>
+      <ignore
+            enabled="true"
+            pattern="*.working">
+      </ignore>
+   </extension>
 
 </plugin>
