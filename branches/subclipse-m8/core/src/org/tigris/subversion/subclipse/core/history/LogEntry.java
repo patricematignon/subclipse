@@ -19,7 +19,7 @@ import org.tigris.subversion.subclipse.core.ISVNRemoteResource;
 import org.tigris.subversion.subclipse.core.SVNException;
 import org.tigris.subversion.subclipse.core.resources.RemoteFile;
 import org.tigris.subversion.subclipse.core.resources.RemoteFolder;
-import org.tigris.subversion.subclipse.core.resources.RemoteResource;
+import org.tigris.subversion.subclipse.core.resources.SVNRemoteResource;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
 
 /**
@@ -28,14 +28,14 @@ import org.tigris.subversion.svnclientadapter.SVNRevision;
  */
 public class LogEntry extends PlatformObject implements ILogEntry {
 
-	private RemoteResource resource; // the corresponding remote resource
+	private SVNRemoteResource resource; // the corresponding remote resource
 	private String author;
 	private Date date;
 	private String comment;
     private SVNRevision.Number revision;
 
-	public LogEntry(RemoteResource resource, SVNRevision.Number revision, String author, Date date, String comment) {
-        if (resource.isFolder()) {
+	public LogEntry(SVNRemoteResource resource, SVNRevision.Number revision, String author, Date date, String comment) {
+        if (resource.isContainer()) {
             try {
                 this.resource = new RemoteFolder(null,resource.getRepository(), resource.getUrl(), revision, resource.getHasProps(),
                     revision, date, author);

@@ -47,7 +47,7 @@ public class PasteRemoteResourceAction extends SVNAction {
             
             ISVNRemoteResource selectedResource = getSelectedRemoteResources()[0];
             final ISVNRemoteFolder destination = 
-                (selectedResource.isFolder()?
+                (selectedResource.isContainer()?
                     (ISVNRemoteFolder)selectedResource:selectedResource.getParent());
             
             run(new IRunnableWithProgress() {

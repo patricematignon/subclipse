@@ -16,7 +16,6 @@ import java.util.Date;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.sync.IRemoteResource;
 import org.tigris.subversion.subclipse.core.history.LogEntry;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
 import org.tigris.subversion.svnclientadapter.SVNUrl;
@@ -28,7 +27,7 @@ import org.tigris.subversion.svnclientadapter.SVNUrl;
  * 
  * Clients are not expected to implement this interface.
  */
-public interface ISVNRemoteResource extends IRemoteResource, ISVNResource {
+public interface ISVNRemoteResource extends ISVNResource {
 	
 	/**
 	 * Does the remote resource represented by this handle exist on the server. This
@@ -92,5 +91,14 @@ public interface ISVNRemoteResource extends IRemoteResource, ISVNResource {
     public ISVNRemoteFolder getParent();
     
     public ISVNRepositoryLocation getRepository();
+    
+    /**
+     * Is this resource a folder
+     * @return
+     * @todo Generated comment
+     */
+    public boolean isContainer();
+    
+   
 
 }

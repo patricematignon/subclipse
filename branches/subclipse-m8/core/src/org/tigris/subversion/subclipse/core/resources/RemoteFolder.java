@@ -22,7 +22,6 @@ import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.sync.IRemoteResource;
 import org.tigris.subversion.javahl.Revision.Kind;
 import org.tigris.subversion.subclipse.core.ISVNFolder;
 import org.tigris.subversion.subclipse.core.ISVNRemoteFolder;
@@ -46,9 +45,11 @@ import org.tigris.subversion.svnclientadapter.SVNUrl;
  * This class provides the implementation of ISVNRemoteFolder
  * 
  */
-public class RemoteFolder extends RemoteResource implements ISVNRemoteFolder, ISVNFolder {
+public class RemoteFolder extends SVNRemoteResource implements ISVNRemoteFolder, ISVNFolder {
 
     private ISVNRemoteResource[] children;
+    
+    
 	
 	/**
 	 * Constructor for RemoteFolder.
@@ -197,8 +198,8 @@ public class RemoteFolder extends RemoteResource implements ISVNRemoteFolder, IS
 		boolean includeUnmanaged = (((flags & UNMANAGED_MEMBERS) != 0) || ((flags & (MANAGED_MEMBERS | UNMANAGED_MEMBERS | IGNORED_MEMBERS)) == 0));
 		for (int i = 0; i < resources.length; i++) {
 			ISVNResource svnResource = resources[i];
-			if ((includeFiles && ( ! svnResource.isFolder())) 
-					|| (includeFolders && (svnResource.isFolder()))) {
+			if ((includeFiles && ( ! svnResource.isContainer())) 
+					|| (includeFolders && (svnResource.isContainer()))) {
 				if (includeManaged) {
 					result.add(svnResource);
 				}
@@ -208,13 +209,7 @@ public class RemoteFolder extends RemoteResource implements ISVNRemoteFolder, IS
 		return (ISVNResource[]) result.toArray(new ISVNResource[result.size()]);
 	}
 	
-	/**
-	 * @see ISVNResource#isFolder()
-	 */
-	public boolean isFolder() {
-		return true;
-	}
-
+	
 	/*
 	 * @see IRemoteResource#isContainer()
 	 */
@@ -225,7 +220,7 @@ public class RemoteFolder extends RemoteResource implements ISVNRemoteFolder, IS
 	/*
 	 * @see IRemoteResource#members(IProgressMonitor)
 	 */
-	public IRemoteResource[] members(IProgressMonitor progress) throws TeamException {
+	public ISVNRemoteResource[] members(IProgressMonitor progress) throws TeamException {
 		return getMembers(progress);
 	}
 
@@ -276,6 +271,13 @@ public class RemoteFolder extends RemoteResource implements ISVNRemoteFolder, IS
     {
         return null;
     }
+
+	/* (non-Javadoc)
+	 * @see org.tigris.subversion.subclipse.core.ISVNRemoteFolder#members()
+	 */
+	public ISVNRemoteResource[] members() {
+		return children;
+	}
 
     
 }

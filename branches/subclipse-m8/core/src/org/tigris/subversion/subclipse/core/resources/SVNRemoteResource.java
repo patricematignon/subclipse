@@ -35,7 +35,7 @@ import org.tigris.subversion.svnclientadapter.SVNUrl;
  * resources that reside in a SVN repository but have not necessarily been loaded
  * locally.
  */
-public abstract class RemoteResource
+public abstract class SVNRemoteResource
 	extends PlatformObject
 	implements ISVNRemoteResource {
 
@@ -52,7 +52,7 @@ public abstract class RemoteResource
 	/**
 	 * Constructor for RemoteResource.
 	 */
-	public RemoteResource(
+	public SVNRemoteResource(
 		RemoteFolder parent,
 		ISVNRepositoryLocation repository,
 		SVNUrl url,
@@ -81,7 +81,7 @@ public abstract class RemoteResource
     /**
      * this constructor is used for the folder corresponding to repository location
      */
-    public RemoteResource(ISVNRepositoryLocation repository, SVNUrl url, SVNRevision revision) {
+    public SVNRemoteResource(ISVNRepositoryLocation repository, SVNUrl url, SVNRevision revision) {
         this.parent = null;
         this.repository = repository;
         this.url = url;
@@ -126,9 +126,9 @@ public abstract class RemoteResource
 	public boolean equals(Object target) {
 		if (this == target)
 			return true;
-		if (!(target instanceof RemoteResource))
+		if (!(target instanceof SVNRemoteResource))
 			return false;
-		RemoteResource remote = (RemoteResource) target;
+		SVNRemoteResource remote = (SVNRemoteResource) target;
 		return remote.isContainer() == isContainer() && remote.getUrl().equals(getUrl());
 	}
 

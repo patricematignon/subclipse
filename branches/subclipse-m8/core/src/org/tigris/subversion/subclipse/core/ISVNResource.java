@@ -44,7 +44,7 @@ public interface ISVNResource {
 	 * @return <code>true</code> if this is a folder handle and <code>false</code> if
 	 * it is a file handle.
 	 */
-	public boolean isFolder();
+	public boolean isContainer();
 
     /**
      * @return the repository location

@@ -20,8 +20,8 @@ import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.sync.IRemoteResource;
 import org.tigris.subversion.subclipse.core.ISVNRemoteFile;
+import org.tigris.subversion.subclipse.core.ISVNRemoteResource;
 import org.tigris.subversion.subclipse.core.ISVNRepositoryLocation;
 import org.tigris.subversion.subclipse.core.Policy;
 import org.tigris.subversion.subclipse.core.SVNException;
@@ -35,7 +35,7 @@ import org.tigris.subversion.svnclientadapter.SVNUrl;
  * This class provides the implementation of ISVNRemoteFile and IManagedFile for
  * use by the repository and sync view.
  */
-public class RemoteFile extends RemoteResource implements ISVNRemoteFile  {
+public class RemoteFile extends SVNRemoteResource implements ISVNRemoteFile  {
 
     // buffer for file contents received from the server
     private byte[] contents;
@@ -57,6 +57,8 @@ public class RemoteFile extends RemoteResource implements ISVNRemoteFile  {
         super(repository, url, revision);
     }
 
+    
+    
 	/**
 	 * @see ISVNRemoteFile#getContents()
 	 */
@@ -91,8 +93,8 @@ public class RemoteFile extends RemoteResource implements ISVNRemoteFile  {
 	/*
 	 * @see IRemoteResource#members(IProgressMonitor)
 	 */
-	public IRemoteResource[] members(IProgressMonitor progress) throws TeamException {
-		return new IRemoteResource[0];
+	public ISVNRemoteResource[] members(IProgressMonitor progress) throws TeamException {
+		return new ISVNRemoteResource[0];
 	}
 
 	/*
@@ -101,14 +103,6 @@ public class RemoteFile extends RemoteResource implements ISVNRemoteFile  {
 	public boolean isContainer() {
 		return false;
 	}
-
-	/*
-	 * @see ISVNResource#isFolder()
-	 */
-	public boolean isFolder() {
-		return false;
-	}
-
 
 	public boolean equals(Object target) {
 		if (this == target)
@@ -139,5 +133,13 @@ public class RemoteFile extends RemoteResource implements ISVNRemoteFile  {
         this.getContents(monitor);
 		return (IStorage)this;
     }
+
+	/* (non-Javadoc)
+	 * @see org.tigris.subversion.subclipse.core.ISVNRemoteFile#getContents()
+	 */
+	public InputStream getContents() throws IOException {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }

@@ -11,6 +11,10 @@
  *******************************************************************************/
 package org.tigris.subversion.subclipse.core;
 
+import java.io.InputStream;
+
+import org.eclipse.core.runtime.IProgressMonitor;
+
  
 
  /**
@@ -20,7 +24,9 @@ package org.tigris.subversion.subclipse.core;
   * 
   */
 public interface ISVNRemoteFile extends ISVNRemoteResource, ISVNFile {
-
+	
+	InputStream getContents(IProgressMonitor monitor)throws SVNException;
+	
 	
 }
 

@@ -25,7 +25,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.sync.IRemoteSyncElement;
 import org.tigris.subversion.subclipse.core.ISVNLocalFile;
 import org.tigris.subversion.subclipse.core.ISVNLocalFolder;
 import org.tigris.subversion.subclipse.core.ISVNLocalResource;
@@ -38,7 +37,6 @@ import org.tigris.subversion.subclipse.core.SVNProviderPlugin;
 import org.tigris.subversion.subclipse.core.SVNStatus;
 import org.tigris.subversion.subclipse.core.SVNTeamProvider;
 import org.tigris.subversion.subclipse.core.client.OperationManager;
-import org.tigris.subversion.subclipse.core.sync.SVNRemoteSyncElement;
 import org.tigris.subversion.subclipse.core.util.Util;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 import org.tigris.subversion.svnclientadapter.ISVNDirEntry;
@@ -385,18 +383,6 @@ public class SVNWorkspaceRoot {
         return managed.getLatestRemoteResource();        
     }
     
-    /**
-     * get the remotesync for the given resource.
-     * A remotesync element is (managed,base,remote)  
-     */
-	public static IRemoteSyncElement getRemoteSync(IResource resource, IProgressMonitor progress) throws TeamException {
-        ISVNLocalResource managed = SVNWorkspaceRoot.getSVNResourceFor(resource);
-//        ISVNRemoteResource remote = managed.getRemoteResource();
-//        ISVNRemoteResource base = managed.getLatestRemoteResource();
-        ISVNRemoteResource remote = managed.getLatestRemoteResource();
-        ISVNRemoteResource base = managed.getRemoteResource();
-		return new SVNRemoteSyncElement(true /*three way*/, resource, base, remote);
-	}
 
 	/**
      * get the repository for this project 

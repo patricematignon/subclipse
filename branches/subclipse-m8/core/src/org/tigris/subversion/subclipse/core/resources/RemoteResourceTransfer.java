@@ -52,7 +52,7 @@ public class RemoteResourceTransfer extends ByteArrayTransfer {
     			DataOutputStream writeOut = new DataOutputStream(out);
                 
    				// write 1 if remote resource is folder, 0 otherwise
-                byte isFolder = (remoteResource.isFolder()?(byte)1:(byte)0);
+                byte isFolder = (remoteResource.isContainer()?(byte)1:(byte)0);
                 writeOut.write(isFolder);
                     
                 // we write the url of the remote resource

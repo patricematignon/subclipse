@@ -74,7 +74,7 @@ public class LocalFile extends LocalResource implements ISVNLocalFile {
 	/*
 	 * @see ISVNResource#isFolder()
 	 */
-	public boolean isFolder() {
+	public boolean isContainer() {
 		return false;
 	}
 	

@@ -192,22 +192,22 @@ public class PendingOperationsView extends ViewPart implements IResourceStateCha
                 return null;
             }
             
-            if ((!svnResource.isFolder()) && (status.isAdded()))
+            if ((!svnResource.isContainer()) && (status.isAdded()))
                 return imgAddFile;
             else
-            if ((svnResource.isFolder()) && (status.isAdded()))
+            if ((svnResource.isContainer()) && (status.isAdded()))
                 return imgAddFolder;
             else
-            if ((!svnResource.isFolder()) && (status.isDeleted()))
+            if ((!svnResource.isContainer()) && (status.isDeleted()))
                 return imgDeleteFile;
             else
-            if ((svnResource.isFolder()) && (status.isDeleted()))
+            if ((svnResource.isContainer()) && (status.isDeleted()))
                 return imgDeleteFolder;
             else   
-            if ((!svnResource.isFolder()) && (status.isModified()))
+            if ((!svnResource.isContainer()) && (status.isModified()))
                 return imgModifiedFile;
             else
-            if ((svnResource.isFolder()) && (status.isModified()))
+            if ((svnResource.isContainer()) && (status.isModified()))
                 return imgModifiedFolder;
             else
                 return null;
@@ -549,7 +549,7 @@ public class PendingOperationsView extends ViewPart implements IResourceStateCha
                 ISVNLocalResource svnResource = SVNWorkspaceRoot.getSVNResourceFor((IResource)first);
                 try {
                     // don't open file for directory or deleted files                 
-                    if ((!svnResource.getStatus().isDeleted()) && (!svnResource.isFolder())) {                
+                    if ((!svnResource.getStatus().isDeleted()) && (!svnResource.isContainer())) {                
                         IWorkbench workbench = SVNUIPlugin.getPlugin().getWorkbench();
                         IWorkbenchPage page = workbench.getActiveWorkbenchWindow().getActivePage();
                         page.openEditor(new FileEditorInput((IFile)svnResource.getIResource()), IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID);

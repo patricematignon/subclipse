@@ -235,15 +235,6 @@
                menubarPath="team.main/group1"
                id="org.tigris.subversion.subclipse.ui.update">
          </action>
-<!--action
-               label="%Synchronize.label"
-               tooltip="%Synchronize.tooltip"
-               class="org.tigris.subversion.subclipse.ui.actions.SyncAction"
-               menubarPath="team.main/group1"
-               helpContextId="org.tigris.subversion.subclipse.ui.team_synchronize_action_context"
-               id="org.tigris.subversion.subclipse.ui.sync">
-<<<<<<< .working
-         </action-->
          <action
                label="%AddAction.label"
                helpContextId="org.tigris.subversion.subclipse.ui.team_add_action_context"
@@ -252,14 +243,7 @@
                menubarPath="team.main/group1"
                id="org.tigris.subversion.subclipse.ui.add">
          </action>
-         <action
-               label="%CompareWithRemoteAction.label"
-               helpContextId="org.tigris.subversion.subclipse.ui.compare_with_latest_action_context"
-               tooltip="%CompareWithRemoteAction.tooltip"
-               class="org.tigris.subversion.subclipse.ui.actions.CompareWithRemoteAction"
-               menubarPath="compareWithMenu/compareWithGroup"
-               id="org.tigris.subversion.subclipse.ui.compareWithRemote">
-         </action>
+         
          <action
                label="%IgnoreAction.label"
                helpContextId="org.tigris.subversion.subclipse.ui.team_ignore_action_context"
@@ -309,14 +293,6 @@
                class="org.tigris.subversion.subclipse.ui.actions.ShowResourceInHistoryAction"
                menubarPath="team.main/group2"
                id="org.tigris.subversion.subclipse.ui.ShowResourceInHistoryAction">
-         </action>
-         <action
-               label="%CompareWithRevisionAction.label"
-               helpContextId="org.tigris.subversion.subclipse.ui.compare_with_revision_action_context"
-               tooltip="%CompareWithRevisionAction.tooltip"
-               class="org.tigris.subversion.subclipse.ui.actions.CompareWithRevisionAction"
-               menubarPath="compareWithMenu/compareWithGroup"
-               id="org.tigris.subversion.subclipse.ui.compareWithRevision">
          </action>
       </objectContribution>
 <!-- contribution for IContainer -->
