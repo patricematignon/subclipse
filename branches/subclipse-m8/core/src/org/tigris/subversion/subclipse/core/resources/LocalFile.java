@@ -46,7 +46,7 @@ public class LocalFile extends LocalResource implements ISVNLocalFile {
 			return null;
 		ISVNStatus status = getStatus();
         SVNUrl url = status.getUrl();
-		return new RemoteFile(
+		return new SVNRemoteFile(
 			null, // parent : we don't know it 
 			getRepository(),
             url,

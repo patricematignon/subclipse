@@ -33,7 +33,7 @@ import org.tigris.subversion.subclipse.core.SVNException;
 import org.tigris.subversion.subclipse.core.SVNProviderPlugin;
 import org.tigris.subversion.subclipse.core.SVNStatus;
 import org.tigris.subversion.subclipse.core.client.NotificationListener;
-import org.tigris.subversion.subclipse.core.resources.RemoteFile;
+import org.tigris.subversion.subclipse.core.resources.SVNRemoteFile;
 import org.tigris.subversion.subclipse.core.resources.RemoteFolder;
 import org.tigris.subversion.subclipse.core.util.Util;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
@@ -180,7 +180,7 @@ public class SVNRepositoryLocation
 		if (dirEntry == null)
 			return null; // no remote file
 		else {
-			return new RemoteFile(null, // we don't know its parent
+			return new SVNRemoteFile(null, // we don't know its parent
 			this,
 				url,
 				SVNRevision.HEAD,

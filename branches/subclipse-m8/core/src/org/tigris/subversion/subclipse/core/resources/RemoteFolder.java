@@ -158,7 +158,7 @@ public class RemoteFolder extends SVNRemoteResource implements ISVNRemoteFolder,
 				ISVNDirEntry entry = list[i];
 				if (entry.getNodeKind() == SVNNodeKind.FILE)
 				{
-					result.add(new RemoteFile(this, getRepository(),
+					result.add(new SVNRemoteFile(this, getRepository(),
                         new SVNUrl(Util.appendPath(url.toString(),entry.getPath())),
                         getRevision(),
                         entry.getHasProps(),

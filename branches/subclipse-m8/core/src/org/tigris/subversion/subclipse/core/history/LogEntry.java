@@ -17,7 +17,7 @@ import java.util.Date;
 import org.eclipse.core.runtime.PlatformObject;
 import org.tigris.subversion.subclipse.core.ISVNRemoteResource;
 import org.tigris.subversion.subclipse.core.SVNException;
-import org.tigris.subversion.subclipse.core.resources.RemoteFile;
+import org.tigris.subversion.subclipse.core.resources.SVNRemoteFile;
 import org.tigris.subversion.subclipse.core.resources.RemoteFolder;
 import org.tigris.subversion.subclipse.core.resources.SVNRemoteResource;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
@@ -46,7 +46,7 @@ public class LogEntry extends PlatformObject implements ILogEntry {
         else
         {
             try {
-                this.resource = new RemoteFile(null,resource.getRepository(), resource.getUrl(), revision, resource.getHasProps(),
+                this.resource = new SVNRemoteFile(null,resource.getRepository(), resource.getUrl(), revision, resource.getHasProps(),
                     revision, date, author);  
             } catch (SVNException e) {
                 // we can safely ignore this exception because we use SVNRevision.Number

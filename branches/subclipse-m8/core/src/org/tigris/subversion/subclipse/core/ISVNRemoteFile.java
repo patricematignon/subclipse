@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.tigris.subversion.subclipse.core;
 
+import org.eclipse.core.resources.IStorage;
 import org.eclipse.team.core.variants.IResourceVariant;
 
  
@@ -21,7 +22,7 @@ import org.eclipse.team.core.variants.IResourceVariant;
   * of the remote file.
   * 
   */
-public interface ISVNRemoteFile extends ISVNRemoteResource, ISVNFile, IResourceVariant {
+public interface ISVNRemoteFile extends ISVNRemoteResource, ISVNFile, IStorage, IResourceVariant {
 	
 	
 	

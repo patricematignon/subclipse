@@ -18,13 +18,16 @@ import java.io.InputStream;
 import java.util.Date;
 
 import org.eclipse.core.resources.IStorage;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.team.core.TeamException;
 import org.tigris.subversion.subclipse.core.ISVNRemoteFile;
 import org.tigris.subversion.subclipse.core.ISVNRemoteResource;
 import org.tigris.subversion.subclipse.core.ISVNRepositoryLocation;
 import org.tigris.subversion.subclipse.core.SVNException;
+import org.tigris.subversion.subclipse.core.SVNProviderPlugin;
 import org.tigris.subversion.subclipse.core.history.ILogEntry;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
@@ -35,14 +38,14 @@ import org.tigris.subversion.svnclientadapter.SVNUrl;
  * This class provides the implementation of ISVNRemoteFile and IManagedFile for
  * use by the repository and sync view.
  */
-public class RemoteFile extends SVNRemoteResource implements ISVNRemoteFile  {
+public class SVNRemoteFile extends SVNRemoteResource implements ISVNRemoteFile {
 
     // buffer for file contents received from the server
     private byte[] contents;
 	private static final int BUFSIZE = 0;
 
 
-    public RemoteFile(RemoteFolder parent, 
+    public SVNRemoteFile(RemoteFolder parent, 
                       ISVNRepositoryLocation repository,
                       SVNUrl url,
                       SVNRevision revision,
@@ -54,7 +57,7 @@ public class RemoteFile extends SVNRemoteResource implements ISVNRemoteFile  {
 		super(parent,repository,url,revision,hasProps,lastChangedRevision,date,author);
 	}
 
-    public RemoteFile(ISVNRepositoryLocation repository, SVNUrl url, SVNRevision revision) {
+    public SVNRemoteFile(ISVNRepositoryLocation repository, SVNUrl url, SVNRevision revision) {
         super(repository, url, revision);
     }
 
@@ -63,7 +66,7 @@ public class RemoteFile extends SVNRemoteResource implements ISVNRemoteFile  {
 	/**
 	 * @see ISVNRemoteFile#getContents()
 	 */
-	public InputStream getContents() throws IOException{
+	public InputStream getContents(){
         // we cache the contents as getContents can be called several times
         // on the same RemoteFile
 		
@@ -76,8 +79,9 @@ public class RemoteFile extends SVNRemoteResource implements ISVNRemoteFile  {
                     contents = new byte[inputStream.available()];
                     inputStream.read(contents);
 		        } catch (SVNClientException e) {
-                    e.printStackTrace();
-                    //TODO: don't leave this like this.
+                    SVNProviderPlugin.log(SVNException.wrapException(e));
+		        }catch(IOException e){
+		        	SVNProviderPlugin.log(SVNException.wrapException(e));
 		        }
             }
             return new ByteArrayInputStream(contents);
@@ -100,9 +104,9 @@ public class RemoteFile extends SVNRemoteResource implements ISVNRemoteFile  {
 	public boolean equals(Object target) {
 		if (this == target)
 			return true;
-		if (!(target instanceof RemoteFile))
+		if (!(target instanceof SVNRemoteFile))
 			return false;
-		RemoteFile remote = (RemoteFile) target;
+		SVNRemoteFile remote = (SVNRemoteFile) target;
 		return super.equals(target) && remote.getLastChangedRevision() == getLastChangedRevision();
 	}
 
@@ -129,13 +133,8 @@ public class RemoteFile extends SVNRemoteResource implements ISVNRemoteFile  {
 	 * @see org.eclipse.team.core.variants.IResourceVariant#getStorage(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public IStorage getStorage(IProgressMonitor monitor) throws TeamException {
-		try{
 			this.getContents();
-		}catch(IOException e){
-			throw new TeamException(e.getMessage());
-			//TODO:this probably shouldn't do this. 
-			//also put in the monitor manipulation.
-		}
+		
 		return (IStorage)this;
 	}
 
@@ -164,6 +163,21 @@ public class RemoteFile extends SVNRemoteResource implements ISVNRemoteFile  {
 			try{if(bos!=null)bos.close();}catch(Exception e){}
 		}
 		return contents;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.resources.IStorage#getFullPath()
+	 */
+	public IPath getFullPath() {
+		return new Path(this.getRepositoryRelativePath());
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.resources.IStorage#isReadOnly()
+	 */
+	public boolean isReadOnly() {
+	
+		return false;
 	}
 
 }

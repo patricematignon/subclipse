@@ -119,7 +119,7 @@ public class RemoteResourceTransfer extends ByteArrayTransfer {
                 if (isFolder == 1)
                     remoteResource = new RemoteFolder(repositoryLocation,urlResource, revision);
                 else
-                    remoteResource = new RemoteFile(repositoryLocation,urlResource, revision);
+                    remoteResource = new SVNRemoteFile(repositoryLocation,urlResource, revision);
     				
                 ISVNRemoteResource[] temp = new ISVNRemoteResource[remoteResources.length + 1];
     			System.arraycopy(remoteResources, 0, temp, 0, remoteResources.length);
