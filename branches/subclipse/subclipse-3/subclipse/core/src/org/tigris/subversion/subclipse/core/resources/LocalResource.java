@@ -296,11 +296,11 @@ abstract class LocalResource implements ISVNResource, Comparable {
     /**
      * Restore pristine working copy file (undo all local edits) 
      */
-    public void revert() throws SVNException {
+    public void revert(boolean recurse) throws SVNException {
         try {
             ISVNClientAdapter svnClient = getRepository().getSVNClient();
             OperationManager.getInstance().beginOperation(svnClient);
-            svnClient.revert(getFile(), false);
+            svnClient.revert(getFile(), recurse);
         } catch (SVNClientException e) {
             throw SVNException.wrapException(e); 
         } finally {

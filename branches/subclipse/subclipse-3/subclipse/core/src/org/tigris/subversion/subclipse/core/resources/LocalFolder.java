@@ -256,6 +256,10 @@ public class LocalFolder extends LocalResource implements ISVNLocalFolder {
                 provider.addIgnored(LocalFolder.this, pattern);
             }
         }, null);
+    }
+
+    public void revert() throws SVNException {
+        super.revert(true);
     }    
     
     

@@ -158,6 +158,10 @@ public class LocalFile extends LocalResource implements ISVNLocalFile {
     }        
 }
 
+    public void revert() throws SVNException {
+       super.revert(false);
+    }
+
 }
 
 
