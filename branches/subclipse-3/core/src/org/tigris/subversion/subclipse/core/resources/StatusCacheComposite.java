@@ -92,7 +92,9 @@ public class StatusCacheComposite {
      * @param status
      */
     synchronized private void addStatus(IPath path, LocalResourceStatus status) {
-    	if (path.segmentCount() == 1) {
+    	if (path.segmentCount() == 0) {
+    		return;
+    	} else if (path.segmentCount() == 1) {
     		addStatus(path.lastSegment(), status);
         } else {
         	StatusCacheComposite child = getChild(path.segment(0));
