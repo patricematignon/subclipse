@@ -14,6 +14,8 @@ package org.tigris.subversion.subclipse.ui.history;
  
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -889,7 +891,8 @@ public class HistoryView extends ViewPart implements IResourceStateChangeListene
 					getSite().getShell().getDisplay().asyncExec(new Runnable() {
 						public void run() {
 							if(entries != null && tableHistoryViewer != null && ! tableHistoryViewer.getTable().isDisposed()) {
-								tableHistoryViewer.add(entries);
+                                // once we got the entries, we refresh the table 
+                                tableHistoryViewer.refresh();
 								selectRevision(revisionId);
 							}
 						}
