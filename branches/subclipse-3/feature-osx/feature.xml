@@ -146,8 +146,8 @@ This Agreement is governed by the laws of the State of New York and the intellec
    </license>
 
    <url>
-      <update label="LoonSoft" url="http://www.loonsoft.com/updates"/>
-      <discovery label="LoonSoft" url="http://www.loonsoft.com/updates"/>
+      <update label="Tigris.org" url="http://subclipse.tigris.org/update"/>
+      <discovery label="Tigris.org" url="http://subclipse.tigris.org/update"/>
    </url>
 
    <requires>

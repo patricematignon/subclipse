@@ -24,7 +24,7 @@ Linked against Subversion 1.05
 * Installation
 
 
-Add the LoonSoft update site http://www.loonsoft.com/updates to
+Add the update site (http://subclipse.tigris.org/update) to
 your update site configuration (Help->Software Updates->Find and
 install) and check for updates. Select Subclipse, and let it install.
 Restarting Eclipse is recommended.

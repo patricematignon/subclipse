@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
 
-   <description url="http://www.loonsoft.com/updates">
-      LoonSoft Eclipse Plugins Update Site
+   <description url="http://subclipse.tigris.org/update">
+      Tigris.org Eclipse Plugins Update Site
    </description>
    <feature url="features/org.tigris.subversion.subclipse.win32_0.9.11.jar" id="org.tigris.subversion.subclipse.win32" version="0.9.11" os="win32" ws="win32" arch="x86">
       <category name="Subclipse"/>
