@@ -48,6 +48,7 @@ public class SVNProviderPlugin extends Plugin {
 	// svn plugin id
 	public static final String ID = "org.tigris.subversion.subclipse.core"; //$NON-NLS-1$
 
+	public static final String PROVIDER_ID="org.tigris.subversion.subclipse.core.svnnature"; //$NON-NLS-1$
 	// all projects shared with subversion will have this nature
 	private static final String NATURE_ID = ID + ".svnnature"; //$NON-NLS-1$
 

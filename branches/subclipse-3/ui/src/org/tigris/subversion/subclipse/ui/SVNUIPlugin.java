@@ -50,7 +50,7 @@ public class SVNUIPlugin extends AbstractUIPlugin {
 	 */
 	public static final String ID = "org.tigris.subversion.subclipse.ui"; //$NON-NLS-1$
 	public static final String DECORATOR_ID = "org.tigris.subversion.subclipse.ui.decorator"; //$NON-NLS-1$
-
+	public static final String PROVIDER_ID="org.tigris.subversion.subclipse.core.svnnature"; //$NON-NLS-1$
 
 	/**
 	 * The singleton plug-in instance

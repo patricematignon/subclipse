@@ -14,6 +14,7 @@ package org.tigris.subversion.subclipse.core;
 
 
 
+
 /**
  * The SVN analog of file system files and directories. These are handles to
  * state maintained by a SVN client. That is, the SVN resource does not 
