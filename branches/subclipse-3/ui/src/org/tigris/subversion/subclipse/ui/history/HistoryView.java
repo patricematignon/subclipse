@@ -128,7 +128,7 @@ public class HistoryView extends ViewPart implements IResourceStateChangeListene
 	private SashForm sashForm;
 	private SashForm innerSashForm;
 
-	private LogEntry currentSelection; 
+	private ILogEntry currentSelection; 
 	private boolean linkingEnabled;
 
 	private IPreferenceStore settings;
@@ -199,7 +199,7 @@ public class HistoryView extends ViewPart implements IResourceStateChangeListene
                     ISelection selection = tableHistoryViewer.getSelection();
                     if (!(selection instanceof IStructuredSelection)) return;
                     IStructuredSelection ss = (IStructuredSelection)selection;
-                    currentSelection = (LogEntry)ss.getFirstElement();
+                    currentSelection = (ILogEntry)ss.getFirstElement();
                     new ProgressMonitorDialog(getViewSite().getShell()).run(false, true, new WorkspaceModifyOperation() {
                         protected void execute(IProgressMonitor monitor) throws InvocationTargetException {
                             try {               
@@ -222,7 +222,7 @@ public class HistoryView extends ViewPart implements IResourceStateChangeListene
                 if (!(selection instanceof IStructuredSelection)) return false;
                 IStructuredSelection ss = (IStructuredSelection)selection;
                 if(ss.size() != 1) return false;
-                currentSelection = (LogEntry)ss.getFirstElement();
+                currentSelection = (ILogEntry)ss.getFirstElement();
                 return true;
             }
         };
@@ -292,10 +292,12 @@ public class HistoryView extends ViewPart implements IResourceStateChangeListene
 					ISVNRemoteFile remoteFile = (ISVNRemoteFile)currentSelection.getRemoteResource();
 					monitor.beginTask(null, 100);
 					try {
-						if(confirmOverwrite()) {
-							InputStream in = ((IResourceVariant)remoteFile).getStorage(new SubProgressMonitor(monitor,50)).getContents();
-							file.setContents(in, false, true, new SubProgressMonitor(monitor, 50));				
-						}
+                        if (remoteFile != null) {
+    						if(confirmOverwrite()) {
+    							InputStream in = ((IResourceVariant)remoteFile).getStorage(new SubProgressMonitor(monitor,50)).getContents();
+    							file.setContents(in, false, true, new SubProgressMonitor(monitor, 50));				
+    						}
+                        }
 					} catch (TeamException e) {
 						throw new CoreException(e.getStatus());
 					} finally {
@@ -316,18 +318,20 @@ public class HistoryView extends ViewPart implements IResourceStateChangeListene
 					IFile file = (IFile)resource;
 					ISVNRemoteFile remoteFile = (ISVNRemoteFile)currentSelection.getRemoteResource();
 					try {
-						if(confirmOverwrite()) {
-							// Update does not support overwriting the WC, so it must be reverted first
-							ISVNLocalFile svnFile = SVNWorkspaceRoot.getSVNFileFor(file);
-							if (svnFile.isModified()) {
-								svnFile.revert();
-							}
-	
-							SVNTeamProvider provider = (SVNTeamProvider)RepositoryProvider.getProvider(file.getProject());
-	                        provider.update(new IResource[] {file}, remoteFile.getLastChangedRevision(), monitor);					 
-							historyTableProvider.setRemoteResource(remoteFile);
-							tableHistoryViewer.refresh();
-						}
+                        if (remoteFile != null) {
+    						if(confirmOverwrite()) {
+    							// Update does not support overwriting the WC, so it must be reverted first
+    							ISVNLocalFile svnFile = SVNWorkspaceRoot.getSVNFileFor(file);
+    							if (svnFile.isModified()) {
+    								svnFile.revert();
+    							}
+    	
+    							SVNTeamProvider provider = (SVNTeamProvider)RepositoryProvider.getProvider(file.getProject());
+    	                        provider.update(new IResource[] {file}, remoteFile.getLastChangedRevision(), monitor);					 
+    							historyTableProvider.setRemoteResource(remoteFile);
+    							tableHistoryViewer.refresh();
+    						}
+                        }
 					} catch (TeamException e) {
 						throw new CoreException(e.getStatus());
 					}
@@ -500,17 +504,18 @@ public class HistoryView extends ViewPart implements IResourceStateChangeListene
 				ISelection selection = event.getSelection();
 				if (selection == null || !(selection instanceof IStructuredSelection)) {
 					textViewer.setDocument(new Document("")); //$NON-NLS-1$
+                    changePathsTableProvider.setLogEntry(null);
 					return;
 				}
 				IStructuredSelection ss = (IStructuredSelection)selection;
 				if (ss.size() != 1) {
 					textViewer.setDocument(new Document("")); //$NON-NLS-1$
+                    changePathsTableProvider.setLogEntry(null);
 					return;
 				}
 				LogEntry entry = (LogEntry)ss.getFirstElement();
 				textViewer.setDocument(new Document(entry.getComment()));
                 changePathsTableProvider.setLogEntry(entry);
-                tableChangePathViewer.setInput(entry);
                 
 			}
 		});

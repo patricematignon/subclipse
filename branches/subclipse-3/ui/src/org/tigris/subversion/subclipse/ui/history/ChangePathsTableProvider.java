@@ -27,6 +27,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
+import org.tigris.subversion.subclipse.core.ISVNRemoteResource;
 import org.tigris.subversion.subclipse.core.history.ILogEntry;
 import org.tigris.subversion.subclipse.core.history.LogEntryChangePath;
 import org.tigris.subversion.subclipse.ui.Policy;
@@ -89,11 +90,22 @@ public class ChangePathsTableProvider {
             LogEntryChangePath changePath = (LogEntryChangePath)element;
             if (changePath == null)
                 return null;
+            
             SVNUrl url = changePath.getUrl();
-            if (url == null)
+            if (url == null) {
                 return null;
-            SVNUrl currentUrl = currentLogEntry.getRemoteResource().getUrl();
-
+            }
+            
+            ISVNRemoteResource remoteResource = currentLogEntry.getRemoteResource();
+            if (remoteResource == null) {
+                return null;
+            }
+            
+            SVNUrl currentUrl = remoteResource.getUrl();
+            if (currentUrl == null) {
+                return null;
+            }
+            
             if (currentUrl.equals(url)) {
                 if (currentPathFont == null) {
                     Font defaultFont = JFaceResources.getDefaultFont();
