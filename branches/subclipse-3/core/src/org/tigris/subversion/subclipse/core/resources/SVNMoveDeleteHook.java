@@ -36,6 +36,9 @@ public class SVNMoveDeleteHook extends DefaultMoveDeleteHook {
     public boolean deleteFile(IResourceTree tree, IFile file, int updateFlags,
             IProgressMonitor monitor) {
 
+        if (SVNWorkspaceRoot.isLinkedResource(file))
+            return super.deleteFile(tree, file, updateFlags, monitor);
+
         ISVNLocalFile resource = new LocalFile(file);
         try {
             if (!resource.isManaged()) {
@@ -62,6 +65,9 @@ public class SVNMoveDeleteHook extends DefaultMoveDeleteHook {
 
     public boolean deleteFolder(IResourceTree tree, IFolder folder,
             int updateFlags, IProgressMonitor monitor) {
+
+        if (SVNWorkspaceRoot.isLinkedResource(folder))
+            return super.deleteFolder(tree, folder, updateFlags, monitor);
 
         ISVNLocalFolder resource = new LocalFolder(folder);
         try {
@@ -96,6 +102,9 @@ public class SVNMoveDeleteHook extends DefaultMoveDeleteHook {
      */
     public boolean moveFile(IResourceTree tree, IFile source,
             IFile destination, int updateFlags, IProgressMonitor monitor) {
+
+        if (SVNWorkspaceRoot.isLinkedResource(source))
+            return super.moveFile(tree, source, destination, updateFlags, monitor);
 
         try {
             ISVNLocalFile resource = new LocalFile(source);
@@ -194,6 +203,10 @@ public class SVNMoveDeleteHook extends DefaultMoveDeleteHook {
 
     public boolean moveFolder(IResourceTree tree, IFolder source,
             IFolder destination, int updateFlags, IProgressMonitor monitor) {
+
+        if (SVNWorkspaceRoot.isLinkedResource(source))
+            return super.moveFolder(tree, source, destination, updateFlags, monitor);
+
         try {
             ISVNLocalFolder resource = new LocalFolder(source);
             if (!resource.isManaged())

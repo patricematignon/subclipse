@@ -180,4 +180,10 @@ public class SVNTeamProvider extends RepositoryProvider {
 		return RESOURCE_RULE_FACTORY;
 	}
 
+    /* (non-Javadoc)
+     * @see org.eclipse.team.core.RepositoryProvider#canHandleLinkedResources()
+     */
+    public boolean canHandleLinkedResources() {
+        return true;
+    }
 }
