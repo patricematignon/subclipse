@@ -95,22 +95,20 @@ public class SwitchDialog extends Dialog {
 		Group revisionGroup = new Group(composite, SWT.NULL);
 		revisionGroup.setText(Policy.bind("SwitchDialog.revision"));
 		GridLayout revisionLayout = new GridLayout();
-		revisionLayout.numColumns = 3;
+		revisionLayout.numColumns = 2;
 		revisionGroup.setLayout(revisionLayout);
 		data = new GridData(GridData.FILL_BOTH);
 		data.horizontalSpan = 3;
 		revisionGroup.setLayoutData(data);
 		
 		headButton = new Button(revisionGroup, SWT.RADIO);
-		Label headLabel = new Label(revisionGroup, SWT.NONE);
-		headLabel.setText(Policy.bind("SwitchDialog.head"));
+		headButton.setText(Policy.bind("SwitchDialog.head"));
 		data = new GridData();
 		data.horizontalSpan = 2;
-		headLabel.setLayoutData(data);
+		headButton.setLayoutData(data);
 		
 		revisionButton = new Button(revisionGroup, SWT.RADIO);
-		Label revisionLabel = new Label(revisionGroup, SWT.NONE);
-		revisionLabel.setText(Policy.bind("SwitchDialog.revision"));
+		revisionButton.setText(Policy.bind("SwitchDialog.revision"));
 		
 		headButton.setSelection(true);
 		

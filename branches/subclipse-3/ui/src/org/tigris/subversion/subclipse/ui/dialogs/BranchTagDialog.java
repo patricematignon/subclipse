@@ -117,9 +117,11 @@ public class BranchTagDialog extends Dialog {
 		serverComposite.setLayoutData(data);	
 		
 		serverButton = new Button(serverComposite, SWT.CHECK);
-		serverButton.setSelection(true);
-		Label serverLabel = new Label(serverComposite, SWT.NONE);
-		serverLabel.setText(Policy.bind("BranchTagDialog.server")); //$NON-NLS-1$  
+		serverButton.setSelection(true); 
+		serverButton.setText(Policy.bind("BranchTagDialog.server"));
+		data = new GridData();
+		data.horizontalSpan = 2;
+		serverButton.setLayoutData(data);
 		
 		Label label = createWrappingLabel(composite);
 		label.setText(Policy.bind("BranchTagDialog.note")); //$NON-NLS-1$  

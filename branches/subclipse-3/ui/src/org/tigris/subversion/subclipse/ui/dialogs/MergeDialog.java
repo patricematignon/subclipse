@@ -103,21 +103,19 @@ public class MergeDialog extends Dialog {
 		
 		Composite fromRevisionComposite = new Composite(fromGroup, SWT.NULL);
 		GridLayout fromRevisionLayout = new GridLayout();
-		fromRevisionLayout.numColumns = 3;
+		fromRevisionLayout.numColumns = 2;
 		fromRevisionComposite.setLayout(fromRevisionLayout);
 		data = new GridData(GridData.FILL_BOTH);
 		fromRevisionComposite.setLayoutData(data);
 		
 		fromHeadButton = new Button(fromRevisionComposite, SWT.RADIO);
-		Label fromHeadLabel = new Label(fromRevisionComposite, SWT.NONE);
-		fromHeadLabel.setText(Policy.bind("SwitchDialog.head"));
+		fromHeadButton.setText(Policy.bind("SwitchDialog.head"));
 		data = new GridData();
 		data.horizontalSpan = 2;
-		fromHeadLabel.setLayoutData(data);
+		fromHeadButton.setLayoutData(data);
 		
 		fromRevisionButton = new Button(fromRevisionComposite, SWT.RADIO);
-		Label fromRevisionLabel = new Label(fromRevisionComposite, SWT.NONE);
-		fromRevisionLabel.setText(Policy.bind("SwitchDialog.revision"));
+		fromRevisionButton.setText(Policy.bind("SwitchDialog.revision"));
 		
 		fromRevisionButton.setSelection(true);
 		
@@ -148,7 +146,6 @@ public class MergeDialog extends Dialog {
 		
 		Composite useFromComposite = new Composite(toGroup, SWT.NULL);
 		GridLayout useFromLayout = new GridLayout();
-		useFromLayout.numColumns = 2;
 		useFromComposite.setLayout(useFromLayout);
 		data = new GridData(GridData.FILL_BOTH);
 		data.horizontalSpan = 2;
@@ -157,8 +154,7 @@ public class MergeDialog extends Dialog {
 		useFromUrlButton = new Button(useFromComposite, SWT.CHECK);
 		useFromUrlButton.setSelection(true);
 		
-		Label useFromLabel = new Label(useFromComposite, SWT.NONE);
-		useFromLabel.setText(Policy.bind("MergeDialog.useFrom"));
+		useFromUrlButton.setText(Policy.bind("MergeDialog.useFrom"));
 		
 		toUrlCombo = new UrlCombo(toGroup, resource.getProject().getName());
 		toUrlCombo.setText(urlText.getText());
@@ -170,21 +166,19 @@ public class MergeDialog extends Dialog {
 		
 		Composite toRevisionComposite = new Composite(toGroup, SWT.NULL);
 		GridLayout toRevisionLayout = new GridLayout();
-		toRevisionLayout.numColumns = 3;
+		toRevisionLayout.numColumns = 2;
 		toRevisionComposite.setLayout(toRevisionLayout);
 		data = new GridData(GridData.FILL_BOTH);
 		toRevisionComposite.setLayoutData(data);
 		
 		toHeadButton = new Button(toRevisionComposite, SWT.RADIO);
-		Label toHeadLabel = new Label(toRevisionComposite, SWT.NONE);
-		toHeadLabel.setText(Policy.bind("SwitchDialog.head"));
+		toHeadButton.setText(Policy.bind("SwitchDialog.head"));
 		data = new GridData();
 		data.horizontalSpan = 2;
-		toHeadLabel.setLayoutData(data);
+		toHeadButton.setLayoutData(data);
 		
 		toRevisionButton = new Button(toRevisionComposite, SWT.RADIO);
-		Label toRevisionLabel = new Label(toRevisionComposite, SWT.NONE);
-		toRevisionLabel.setText(Policy.bind("SwitchDialog.revision"));
+		toRevisionButton.setText(Policy.bind("SwitchDialog.revision"));
 		
 		toRevisionButton.setSelection(true);
 		
