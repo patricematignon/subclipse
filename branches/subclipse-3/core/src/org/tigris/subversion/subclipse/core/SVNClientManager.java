@@ -41,12 +41,16 @@ public class SVNClientManager implements IManager {
         } catch (SVNClientException e) {
             // if an exception is thrown, javahl is not available or 
             // already registered ...
+            System.out.println("Javahl interface not available");
+            SVNProviderPlugin.log(SVNException.wrapException(e));
         }
         try {
             CmdLineClientAdapterFactory.setup();
         } catch (SVNClientException e) {
             // if an exception is thrown, command line interface is not available or 
             // already registered ...
+            System.out.println("Command line interface not available");
+            SVNProviderPlugin.log(SVNException.wrapException(e));
         }
         
         
