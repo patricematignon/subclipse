@@ -4,8 +4,6 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.IAction;
-import org.tigris.subversion.subclipse.core.ISVNLocalResource;
-import org.tigris.subversion.subclipse.core.resources.SVNWorkspaceRoot;
 import org.tigris.subversion.subclipse.ui.Policy;
 import org.tigris.subversion.subclipse.ui.dialogs.SwitchDialog;
 import org.tigris.subversion.subclipse.ui.operations.SwitchOperation;
@@ -20,7 +18,6 @@ public class SwitchAction extends WorkspaceAction {
     protected void execute(IAction action) throws InvocationTargetException, InterruptedException {
         IResource[] resources = getSelectedResources(); 
         for (int i = 0; i < resources.length; i++) {
-            ISVNLocalResource svnResource = SVNWorkspaceRoot.getSVNResourceFor(resources[i]);
             SwitchDialog dialog = new SwitchDialog(getShell(), resources[i]);
             if (dialog.open() == SwitchDialog.CANCEL) break;
             SVNUrl svnUrl = dialog.getUrl();
