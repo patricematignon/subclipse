@@ -42,7 +42,7 @@
             typeClass="org.tigris.subversion.subclipse.core.SVNTeamProviderType"
             class="org.tigris.subversion.subclipse.core.SVNTeamProvider"
             id="org.tigris.subversion.subclipse.core.svnnature"
-            metaFilePaths=".svn/entries">
+            metaFilePaths=".svn/entries,.project">
       </repository>
    </extension>
    <extension

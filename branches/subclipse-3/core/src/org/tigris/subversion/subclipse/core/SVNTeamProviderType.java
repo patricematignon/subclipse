@@ -9,9 +9,11 @@
  *     IBM Corporation - initial API and implementation
  *     Cédric Chabanois (cchabanois@ifrance.com) - modified for Subversion 
  *     Panagiotis Korros (panagiotis.korros@gmail.com) - ported autoshare code
+ *     Magnus Naeslund	(mag@kite.se) - Added autoadd code
  *******************************************************************************/
 package org.tigris.subversion.subclipse.core;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -32,6 +34,7 @@ import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.RepositoryProviderType;
 import org.eclipse.team.core.TeamException;
 import org.tigris.subversion.subclipse.core.resources.SVNWorkspaceRoot;
+import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 
 
 /**
@@ -160,18 +163,97 @@ public class SVNTeamProviderType extends RepositoryProviderType {
         return new SVNProjectSetCapability();
     }
 
-    /* (non-Javadoc)
+	public static class AutoAddJob extends Job {
+		final static int MAX_RETRIES = 10;
+		int reschedCount = 0;
+		final IProject project;
+		
+		protected AutoAddJob(IProject project){
+			super("Auto-adding newly created project to subversion: " + project.getName()); //$NON-NLS-1$
+			this.project = project;
+		}
+		
+        /* (non-Javadoc)
+         * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
+         */
+        protected IStatus run(IProgressMonitor monitor) {
+			monitor.beginTask(null, IProgressMonitor.UNKNOWN);
+			try{
+				SVNProviderPlugin plugin = SVNProviderPlugin.getPlugin();
+				
+				if (plugin == null || plugin.getSimpleDialogsHelper() == null){
+					if (++reschedCount > MAX_RETRIES){
+						String errorString = "Subclipse core and/or ui didn't come up in " + MAX_RETRIES + " retries, failing.";  //$NON-NLS-1$
+						System.err.println(errorString); // Let it be visible to the user
+						throw new SVNException(errorString);
+					}
+					schedule(1000);
+					return Status.OK_STATUS;
+				}
+				
+				if (!plugin.getSimpleDialogsHelper().promptYesNo(
+						"Auto-add "+project.getName()+" to source control", //$NON-NLS-1$
+						  "The new project \""+ project.getName() +"\" was created in a subversion " + //$NON-NLS-1$
+						  "controlled directory.\n\n" + //$NON-NLS-1$
+						  "Would you like to automatically add it to source control?", true)) { //$NON-NLS-1$
+
+					return Status.OK_STATUS;
+				}
+						
+				SVNClientManager svnClientManager = plugin.getSVNClientManager();
+				ISVNClientAdapter client = svnClientManager.createSVNClient();
+
+				File file = project.getLocation().toFile();
+				client.addDirectory(file, false);
+
+				RepositoryProvider.map(project, SVNProviderPlugin.getTypeId());
+				SVNTeamProvider provider = (SVNTeamProvider) RepositoryProvider
+						.getProvider(project, SVNProviderPlugin.getTypeId());
+
+				plugin.getStatusCacheManager().refreshStatus(project,
+						IResource.DEPTH_INFINITE);
+				
+			}catch(Exception e){
+                SVNProviderPlugin.log(IStatus.ERROR, "Could not auto-add project " + project.getName(), e); //$NON-NLS-1$
+				return Status.CANCEL_STATUS;
+			}finally{
+				monitor.done();
+			}
+			return Status.OK_STATUS;
+        }
+		
+    }	
+
+	/**
+     * Create and schedule an auto-add job
+     */
+	
+	private static synchronized void createAutoAddJob(IProject project) {
+		Job j = new AutoAddJob(project);
+        j.setSystem(true);
+        j.setPriority(Job.SHORT);
+        j.setRule(ResourcesPlugin.getWorkspace().getRoot());
+		j.schedule();
+	}
+
+	/* (non-Javadoc)
      * @see org.eclipse.team.core.RepositoryProviderType#metaFilesDetected(org.eclipse.core.resources.IProject, org.eclipse.core.resources.IContainer[])
      */
     public void metaFilesDetected(IProject project, IContainer[] containers) {
+		boolean isProject = false;
+		
         for (int i = 0; i < containers.length; i++) {
             IContainer container = containers[i];
             IContainer svnDir = null;
+			
+			if (!isProject && container.getType() == IContainer.PROJECT)
+				isProject = true;
+			
             if (container.getName().equals(".svn")) { //$NON-NLS-1$
                 svnDir = container;
             } else {
                 IResource resource = container.findMember(".svn"); //$NON-NLS-1$
-                if (resource.getType() != IResource.FILE) {
+                if (resource != null && resource.getType() != IResource.FILE) {
                     svnDir = (IContainer)resource;
                 }
             }
@@ -182,7 +264,30 @@ public class SVNTeamProviderType extends RepositoryProviderType {
                 SVNProviderPlugin.log(IStatus.ERROR, "Could not flag meta-files as team-private for " + svnDir.getFullPath(), e); //$NON-NLS-1$
             }
         }
-        getAutoShareJob().share(project);
-    }
+		
+		if (!isProject)
+			return; // Nothing more to do, all remaining operations are on projects
 
+		// Somehow sometimes it doesn't work using project.findMember(".svn") here, this  
+		// could be due to timing issue with workspace addition, so use trusty File instead.
+		
+		File svnDir = project.getLocation().append(".svn").toFile(); //$NON-NLS-1$
+		
+		if (svnDir != null && svnDir.exists() && svnDir.isDirectory()) {
+			// It's a project and has toplevel .svn directory, lets share it!
+			getAutoShareJob().share(project);
+		} else {
+			// It's a project and doesn't have .svn dir, let's see if we can add it!
+			File parentSvnDir = project.getLocation().append("../.svn").toFile(); //$NON-NLS-1$
+			
+			if (parentSvnDir != null && parentSvnDir.exists()
+					&& parentSvnDir.isDirectory()) {
+
+				createAutoAddJob(project);
+			}
+		}
+		
+    }
+	
+	
 }

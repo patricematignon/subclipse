@@ -36,6 +36,7 @@ import org.tigris.subversion.subclipse.core.resources.RepositoryResourcesManager
 import org.tigris.subversion.subclipse.core.resourcesListeners.FileModificationManager;
 import org.tigris.subversion.subclipse.core.resourcesListeners.SyncFileChangeListener;
 import org.tigris.subversion.subclipse.core.status.StatusCacheManager;
+import org.tigris.subversion.subclipse.core.util.ISimpleDialogsHelper;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 import org.tigris.subversion.svnclientadapter.ISVNPromptUserPassword;
 
@@ -77,6 +78,8 @@ public class SVNProviderPlugin extends Plugin {
     private SVNAdapterFactories adapterFactories;
     
     private ISVNPromptUserPassword svnPromptUserPassword;
+	
+	private ISimpleDialogsHelper simpleDialogsHelper;
     
 	/**
 	 * This constructor required by the bundle loader (calls newInstance())
@@ -430,4 +433,13 @@ public class SVNProviderPlugin extends Plugin {
             ISVNPromptUserPassword svnPromptUserPassword) {
         this.svnPromptUserPassword = svnPromptUserPassword;
     }
+	
+	public ISimpleDialogsHelper getSimpleDialogsHelper() {
+		return simpleDialogsHelper;
+	}
+	
+	public void setSimpleDialogsHelper(ISimpleDialogsHelper simpleDialogsHelper) {
+		this.simpleDialogsHelper = simpleDialogsHelper;
+	}
+	
 }
