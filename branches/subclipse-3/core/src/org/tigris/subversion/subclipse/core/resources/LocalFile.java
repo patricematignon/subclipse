@@ -81,6 +81,11 @@ public class LocalFile extends LocalResource implements ISVNLocalFile {
 		return status.getTextStatus() == SVNStatusKind.MODIFIED;
 	}
 
+    public boolean isDirty() throws SVNException {
+        LocalResourceStatus status = getStatus();
+        return status.isDirty();
+    }
+    
     /*
      * @see ISVNResource#accept(ISVNResourceVisitor)
      */

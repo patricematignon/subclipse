@@ -107,6 +107,8 @@ public interface ISVNLocalResource extends ISVNResource, IAdaptable {
 	 */
 	public boolean isModified() throws SVNException;
 
+    public boolean isDirty() throws SVNException;
+    
 	public void accept(ISVNResourceVisitor visitor) throws SVNException;
 
 	/**
