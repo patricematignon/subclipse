@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.sync.IRemoteResource;
@@ -252,5 +253,22 @@ public class RemoteFolder extends RemoteResource implements ISVNRemoteFolder, IS
             progress.done();
         }
     }    
+
+    public String getCreatorDisplayName(){
+		return "not implemented";
+    }
+
+    public String getContentIdentifier(){
+        return "not implemented";
+    }
+
+    public String getComment(){
+        return "not implemented";
+    }
+
+    public IStorage getBufferedStorage(IProgressMonitor monitor) throws TeamException
+    {
+		return null;
+    }
     
 }

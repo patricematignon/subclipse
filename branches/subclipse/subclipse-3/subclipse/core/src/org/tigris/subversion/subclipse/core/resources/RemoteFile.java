@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
 
+import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.sync.IRemoteResource;
@@ -113,4 +114,20 @@ public class RemoteFile extends RemoteResource implements ISVNRemoteFile  {
 		RemoteFile remote = (RemoteFile) target;
 		return super.equals(target) && remote.getLastChangedRevision() == getLastChangedRevision();
 	}
+
+    public String getCreatorDisplayName(){
+        return "not implemented.";
+    }
+    public String getContentIdentifier(){
+		return "not implemented";
+    }
+    public String getComment(){
+		return "not implemented";
+    }
+
+    public IStorage getBufferedStorage(IProgressMonitor monitor) throws TeamException
+    {
+		return null;
+    }
+
 }

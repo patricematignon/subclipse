@@ -108,8 +108,6 @@ public class SVNWorkspaceRoot {
             }
         } catch (CoreException e) {
             throw SVNException.wrapException(e);
-        } catch (TeamException e) {
-            throw SVNException.wrapException(e);
         } finally {
             monitor.done();
         }
