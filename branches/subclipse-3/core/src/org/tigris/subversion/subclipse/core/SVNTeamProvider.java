@@ -23,10 +23,13 @@ import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.variants.IResourceVariant;
 import org.tigris.subversion.subclipse.core.commands.AddResourcesCommand;
 import org.tigris.subversion.subclipse.core.commands.CheckinResourcesCommand;
+import org.tigris.subversion.subclipse.core.commands.SwitchToUrlCommand;
 import org.tigris.subversion.subclipse.core.resources.RemoteFile;
 import org.tigris.subversion.subclipse.core.resources.RemoteFolder;
 import org.tigris.subversion.subclipse.core.resources.SVNMoveDeleteHook;
 import org.tigris.subversion.subclipse.core.resources.SVNWorkspaceRoot;
+import org.tigris.subversion.svnclientadapter.SVNRevision;
+import org.tigris.subversion.svnclientadapter.SVNUrl;
 
 /**
  * This class is responsible for configuring a project for repository management
@@ -101,6 +104,15 @@ public class SVNTeamProvider extends RepositoryProvider {
 		CheckinResourcesCommand command = new CheckinResourcesCommand(getSVNWorkspaceRoot(), resources, depth, comment);
         command.run(progress);
 	}
+	
+	/**
+	 * Switch URL for selected resource
+	 * 
+	 */
+	public void switchToUrl(IResource resource, final SVNUrl svnUrl, final SVNRevision svnRevision, IProgressMonitor progress) throws TeamException {
+		SwitchToUrlCommand command = new SwitchToUrlCommand(getSVNWorkspaceRoot(), resource, svnUrl, svnRevision);
+        command.run(progress);
+	}	
 
     public SVNWorkspaceRoot getSVNWorkspaceRoot() {
         return workspaceRoot;
