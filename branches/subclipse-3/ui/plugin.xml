@@ -50,7 +50,7 @@
             id="org.tigris.subversion.subclipse.ui.repository.RepositoriesView">
       </view>
       <view
-            name="%HistoryView.name"
+            name="%historyview.name"
             icon="icons/full/cview16/history_view.gif"
             category="org.tigris.subversion.subclipse"
             class="org.tigris.subversion.subclipse.ui.history.HistoryView"
@@ -214,9 +214,9 @@
                id="org.tigris.subversion.subclipse.ui.modifySVNProperty">
          </action>
          <action
-               label="%DeleteSVNPropertyAction.label"
+               label="%deletesvnpropertyaction.label"
                helpContextId="org.tigris.subversion.subclipse.ui.delete_svnProperty_action_context"
-               tooltip="%DeleteSVNPropertyAction.tooltip"
+               tooltip="%deletesvnpropertyaction.tooltip"
                icon="icons/full/ctool16/delete.gif"
                class="org.tigris.subversion.subclipse.ui.actions.SVNPropertyDeleteAction"
                id="org.tigris.subversion.subclipse.ui.deleteSVNProperty">
@@ -305,7 +305,7 @@
                id="org.tigris.subversion.subclipse.ui.revert">
          </action>
          <action
-               label="%GenerateDiff.label"
+               label="%generatediff.label"
                helpContextId="org.tigris.subversion.subclipse.ui.team_create_patch_action_context"
                tooltip="%GenerateDiff.tooltip"
                class="org.tigris.subversion.subclipse.ui.actions.GenerateDiffFileAction"
