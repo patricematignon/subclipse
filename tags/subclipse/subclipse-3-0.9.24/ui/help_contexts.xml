@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?NLS TYPE="org.eclipse.help.contexts"?>
+
+<!--
+  The topics are labelled so that the user can choose the "process" help (Tasks, Getting Started),
+  or see the "Reference" sections. Also, the links are given in context, so that e.g. menu items
+  are shown with menu ("Team -> Foo", not "Foo"), and SVN prefixes are always included
+  ("SVN Resource History View", not "History View").
+
+  The space should be adequate, since the pop-up can be as large as required. This is in contrast to the
+  TOC files, where context is given already.
+-->
+
+<contexts>
+	<context id="resource_history_view_context">
+		<description>This view shows you the different versions of the selected
+file or folder as they are found in the Subversion repository.</description>
+		<topic href="html/dailywork/diffing.html"
+			label="Tasks: Comparing, QuickDiff and Restoring" />
+		<topic href="html/reference/history-view.html"
+			label="Reference: SVN Resource History View" />
+	</context>
+
+	<context id="release_comment_dialog_context">
+		<description>This dialog box is used for entering the "commit message" or
+"log message", the text associated with the revision number
+that you are comitting. This is the text that will also be
+shown in SVN History view for the changed resource(s).</description>
+		<topic href="html/dailywork/workcycle.html" label="Tasks: Edit, Update, Commit" />
+		<topic href="html/reference/history-view.html" label="Reference: SVN Resource History View" />
+		<topic href="html/reference/svn-repository.html" label="Reference: SVN Repository Exploring Perspective" />
+	</context>
+
+	<context id="sharing_autoconnect_page_context">
+		<description>Subclipse has detected that this project is already a part of a Subversion
+"working copy". Perhaps you already checked the project out a different Subversion client, such as the command line client 'svn'.
+Once you finish this dialog, you can use the Subversion features that are part of Subclipse.</description>
+		<topic href="html/reference/share.html" label="Reference: Team -> Share" />
+		<topic href="html/faq/subversion-mapping.html" label="Subclipse for Subversion Users" />
+		<topic href="html/faq/glossary.html" label="Subversion Glossary" />
+	</context>
+
+	<context id="sharing_select_repository_page_context">
+		<description>In this dialog you should choose the relevant repository location
+for the project you wish to share, or choose a new one.</description>
+		<topic href="html/gettingstarted/connecting.html" label="Getting Started: Connecting to a Subversion Repository" />
+		<topic href="html/faq/subversion-mapping.html" label="Subclipse for Subversion Users" />
+		<topic href="html/faq/glossary.html" label="Subversion Glossary" />
+		<topic href="html/reference/share.html" label="Reference: Team -> Share" />
+	</context>
+
+	<context id="console_view_context">
+		<description>The Subclipse console view lists the command line equivalents of the actions
+you perform using the command line client. You can turn the console off in the Preference page
+(found in Window -> Preferences -> Team -> SVN -> Console -> Show SVN output in the Console view)</description>
+		<topic href="html/reference/svn-console.html" label="Reference: SVN Console View"/>
+		<topic href="html/reference/preferences.html" label="Reference: SVN Preferences Pages"/>
+	</context>
+
+	<context id="console_view_context">
+		<description>The Subclipse console view lists the command line equivalents of the actions
+you perform using the command line client. You can turn the console off in the Preference page
+(found in Window -> Preferences -> Team -> SVN -> Console -> Show SVN output in the Console view),
+and controol whether or not the SVN console tab is brought to the front on every SVN event.</description>
+		<topic href="html/reference/svn-console.html" label="Reference: SVN Console View"/>
+		<topic href="html/reference/preferences.html" label="Reference: SVN Preferences Pages"/>
+	</context>
+
+	<context id="console_preference_page_context">
+		<description>These controls determine whether or not the Subversion Console output is
+generated, as well as how.</description>
+		<topic href="html/reference/svn-console.html" label="Reference: SVN Console View"/>
+		<topic href="html/reference/preferences.html" label="Reference: SVN Preferences Pages"/>
+	</context>
+
+	<!-- 
+		Here's a typical example of the text you need.
+		
+		<context id="">
+		<description></description>
+		<topic href="html/dailywork/.html" label=""/>
+		<topic href="html/reference/.html" label=""/>
+		</context>
+		
+		Remaining ID's to take care of
+		
+		"switch_dialog_context"
+		"merge_dialog_context"
+		"revert_dialog_context"
+		"sharing_new_repository_page_context"
+		"sharing_module_page_context"
+		"sharing_finish_page_context"
+		"patch_selection_page_context"
+		"patch_options_page_context"
+		"repositories_view_context"
+		"compare_revision_view_context"
+		"add_to_svnignore_dialog_context"
+		"add_keywords_dialog_context"
+		"get_file_revision_action_context"
+		"get_file_contents_action_context"
+		"new_repository_location_action_context"
+		"remove_root_action_context"
+		"disconnect_action_context"
+		"svn_preference_page_context"
+		"svn_resource_properties_page_context"
+		"decorators_preference_page_context"
+		"diff_merge_preferences_page_context"
+
+		Seemingly dead contexts ID:
+
+		"add_to_version_control_dialog_context" - The dialog in question is never used
+
+	-->
+
+</contexts>
