@@ -55,8 +55,11 @@ public class ConsolePreferencesPage extends FieldEditorPreferencePage implements
             Policy.bind("ConsolePreferencePage.showOnMessage"), composite); //$NON-NLS-1$
         addField(showOnMessage);
 
-        showOnError = new BooleanFieldEditor(ISVNUIConstants.PREF_CONSOLE_SHOW_ON_MESSAGE, Policy.bind("ConsolePreferencePage.showOnError"), composite); //$NON-NLS-1$ 
-		WorkbenchHelp.setHelp(composite, IHelpContextIds.CONSOLE_PREFERENCE_PAGE);
+        showOnError = new BooleanFieldEditor(ISVNUIConstants.PREF_CONSOLE_SHOW_ON_ERROR,
+                Policy.bind("ConsolePreferencePage.showOnError"), composite); //$NON-NLS-1$
+        addField(showOnError);
+
+        WorkbenchHelp.setHelp(composite, IHelpContextIds.CONSOLE_PREFERENCE_PAGE);
 	}
 
 	/**

@@ -56,10 +56,10 @@ public class SVNOutputConsole extends MessageConsole implements IConsoleListener
 	private MessageConsoleStream messageStream;
 	private MessageConsoleStream errorStream;
 	
-	// preferences for showing the SVN console when SVN output is provided 
-	private boolean showOnError;
+	// preferences for showing the SVN console when SVN output is provided
+    private boolean showOnError;
 	private boolean showOnMessage;
-	
+
 	private ConsoleDocument document;
 	
 	// format for timings printed to console
@@ -103,7 +103,7 @@ public class SVNOutputConsole extends MessageConsole implements IConsoleListener
 		super("SVN", SVNUIPlugin.getPlugin().getImageDescriptor(ISVNUIConstants.IMG_SVN_CONSOLE)); //$NON-NLS-1$
 		// setup console showing preferences
 		showOnMessage = SVNUIPlugin.getPlugin().getPreferenceStore().getBoolean(ISVNUIConstants.PREF_CONSOLE_SHOW_ON_MESSAGE);
-		showOnError = SVNUIPlugin.getPlugin().getPreferenceStore().getBoolean(ISVNUIConstants.PREF_CONSOLE_SHOW_ON_ERROR);	
+        showOnError = SVNUIPlugin.getPlugin().getPreferenceStore().getBoolean(ISVNUIConstants.PREF_CONSOLE_SHOW_ON_ERROR);  
 		document = new ConsoleDocument();
 		SVNProviderPlugin.getPlugin().setConsoleListener(SVNOutputConsole.this);
 		SVNUIPlugin.getPlugin().getPreferenceStore().addPropertyChangeListener(SVNOutputConsole.this);
@@ -193,7 +193,15 @@ public class SVNOutputConsole extends MessageConsole implements IConsoleListener
 			}
 		} 
 	}
-	
+
+    private void bringConsoleToFront() {
+        IConsoleManager manager = ConsolePlugin.getDefault().getConsoleManager();
+        if(! visible) {
+            manager.addConsoles(new IConsole[] {this});
+        }
+        manager.showConsoleView(this);
+    }
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.console.MessageConsole#dispose()
 	 */
@@ -317,9 +325,8 @@ public class SVNOutputConsole extends MessageConsole implements IConsoleListener
         appendLine(ConsoleDocument.MESSAGE, "  " + message); //$NON-NLS-1$
     }
     public void logError(String message) {
-        // Force open the SVN Console
         if (showOnError) {
-        	showConsole(true);
+        	bringConsoleToFront();
         }
         appendLine(ConsoleDocument.ERROR, "  " + message); //$NON-NLS-1$
     }

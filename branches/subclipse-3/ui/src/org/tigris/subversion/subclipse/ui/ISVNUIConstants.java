@@ -60,7 +60,7 @@ public interface ISVNUIConstants {
     public final String IMG_FOLDERMODIFIED_PENDING = "pending16/foldermodified_pending.gif"; //$NON-NLS-1$
 
     // views
-    public final String IMG_SVN_CONSOLE = "icons/full/cview16/console_view.gif";
+    public final String IMG_SVN_CONSOLE = "cview16/console_view.gif";
 	
 	// preferences
 	public final String PREF_SHOW_COMMENTS = "pref_show_comments"; //$NON-NLS-1$
@@ -91,8 +91,8 @@ public interface ISVNUIConstants {
 	public final String PREF_CONSOLE_MESSAGE_COLOR = "pref_console_message_color"; //$NON-NLS-1$
 	public final String PREF_CONSOLE_ERROR_COLOR = "pref_console_error_color"; //$NON-NLS-1$
 	public final String PREF_CONSOLE_FONT = "pref_console_font"; //$NON-NLS-1$
-    public final String PREF_CONSOLE_SHOW_ON_ERROR = "pref_console_show_on_error";
-    public final String PREF_CONSOLE_SHOW_ON_MESSAGE = "pref_console_show_on_message";
+    public final String PREF_CONSOLE_SHOW_ON_ERROR = "pref_console_show_on_error"; //$NON-NLS-1$
+    public final String PREF_CONSOLE_SHOW_ON_MESSAGE = "pref_console_show_on_message"; //$NON-NLS-1$
 		
 	// decorator preferences
 	public final String PREF_FILETEXT_DECORATION = "pref_filetext_decoration"; //$NON-NLS-1$
