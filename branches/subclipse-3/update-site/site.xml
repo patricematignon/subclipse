@@ -4,13 +4,13 @@
    <description url="http://subclipse.tigris.org/update">
       Tigris.org Eclipse Plugins Update Site
    </description>
-   <feature url="features/org.tigris.subversion.subclipse.win32_0.9.14.jar" id="org.tigris.subversion.subclipse.win32" version="0.9.14" os="win32" ws="win32" arch="x86">
+   <feature url="features/org.tigris.subversion.subclipse.win32_0.9.15.jar" id="org.tigris.subversion.subclipse.win32" version="0.9.15" os="win32" ws="win32" arch="x86">
       <category name="Subclipse"/>
    </feature>
-   <feature url="features/org.tigris.subversion.subclipse.osx_0.9.14.jar" id="org.tigris.subversion.subclipse.osx" version="0.9.14" os="macosx" ws="carbon" arch="ppc">
+   <feature url="features/org.tigris.subversion.subclipse.osx_0.9.15.jar" id="org.tigris.subversion.subclipse.osx" version="0.9.15" os="macosx" ws="carbon" arch="ppc">
       <category name="Subclipse"/>
    </feature>
-   <feature url="features/org.tigris.subversion.subclipse.linux_0.9.14.jar" id="org.tigris.subversion.subclipse.linux" version="0.9.14" os="linux" ws="gtk" arch="x86">
+   <feature url="features/org.tigris.subversion.subclipse.linux_0.9.15.jar" id="org.tigris.subversion.subclipse.linux" version="0.9.15" os="linux" ws="gtk" arch="x86">
       <category name="Subclipse"/>
    </feature>
    <category-def name="Subclipse" label="Subclipse Plugin">
