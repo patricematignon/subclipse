@@ -6,14 +6,30 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 <link rel="stylesheet" href="../book.css" charset="ISO-8859-1" type="text/css">		
-<title>Team -> Add To Version Control</title>
+<title>Team > Add To Version Control</title>
 </head>
 
 <body>
 
-<h1>Team -> Add To Version Control</h1>
+<h1>Team > Add To Version Control</h1>
 
-<p>Text for Team -> Add To Version Control is missing</p>
+<p>When you share a project for the first time, or when you add or import new
+resources to a project, you need to tell Subversion to keep it under version control.
+To do this, use this command.</p>
+
+<h2>Using this command</h2>
+<p>First, find and select the resource(s) that you want to add. These will typically be decorated by a little question mark (TODO: image)
+in the Navigator view.
+You should only select resources currently not under Subversion's control, or this command will not be available.
+Then, select "Add To Version Control" from the Team menu. The decoration will change to a tidy blue plus (TODO: show it).
+<p>Note: If the resources parent folder is not under version control either, it will be added as well (all the way up to the
+project root, as needed).
+<p>Now your resource is scheduled for addition to the repository, and committing it will make it accessible to the other Team members.
+<h2>If something goes wrong...</h2>
+If you add something you didn't want to add anyway, don't panic. You can always undo (revert) your changes, by
+selecting <a href="revert.html">Revert</a> in the Team menu. This is often prefferred over deleting the resource, since
+if is only the 'added'-state that you revert, not the creation of the file itself. In other words, the file isn't deleted.
+<p>TODO: Review if this should be moved to the tasks, since it does not contain any visible user interface. </p>
 
 </body>
 </html>

@@ -26,6 +26,7 @@ public interface IHelpContextIds {
 	public static final String ADD_TO_SVNIGNORE = PREFIX + "add_to_svnignore_dialog_context"; //$NON-NLS-1$
 	public static final String SWITCH_DIALOG = PREFIX + "switch_dialog_context"; //$NON-NLS-1$
 	public static final String MERGE_DIALOG = PREFIX + "merge_dialog_context"; //$NON-NLS-1$
+	public static final String BRANCH_TAG_DIALOG = PREFIX + "branch_tag_dialog_context"; //$NON-NLS-1$
 	public static final String REVERT_DIALOG = PREFIX + "revert_dialog_context"; //$NON-NLS-1$
 		
 	// Wizard Pages
@@ -48,6 +49,9 @@ public interface IHelpContextIds {
 	public static final String REPOSITORIES_VIEW = PREFIX + "repositories_view_context"; //$NON-NLS-1$
 	public static final String RESOURCE_HISTORY_VIEW = PREFIX + "resource_history_view_context"; //$NON-NLS-1$
 	public static final String COMPARE_REVISIONS_VIEW = PREFIX + "compare_revision_view_context"; //$NON-NLS-1$
+	public static final String ANNOTATIONS_VIEW = PREFIX + "annotations_view_context"; //$NON-NLS-1$
+	public static final String PROPERTIES_VIEW = PREFIX + "properties_view_context"; //$NON-NLS-1$
+	public static final String PENDING_OPERATIONS_VIEW = PREFIX + "pending_operations_view_context"; //$NON-NLS-1$
 
 	// Actions
 	public static final String GET_FILE_REVISION_ACTION = PREFIX + "get_file_revision_action_context"; //$NON-NLS-1$

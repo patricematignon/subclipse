@@ -51,12 +51,14 @@ import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.actions.ActionFactory;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.part.ViewPart;
 import org.tigris.subversion.subclipse.core.IResourceStateChangeListener;
 import org.tigris.subversion.subclipse.core.ISVNLocalResource;
 import org.tigris.subversion.subclipse.core.SVNException;
 import org.tigris.subversion.subclipse.core.SVNProviderPlugin;
 import org.tigris.subversion.subclipse.core.resources.LocalResourceStatus;
+import org.tigris.subversion.subclipse.ui.IHelpContextIds;
 import org.tigris.subversion.subclipse.ui.ISVNUIConstants;
 import org.tigris.subversion.subclipse.ui.Policy;
 import org.tigris.subversion.subclipse.ui.SVNUIPlugin;
@@ -394,7 +396,7 @@ public class SvnPropertiesView extends ViewPart {
 		tbm.update(false);
         
 		// set F1 help
-//		WorkbenchHelp.setHelp(tableViewer.getControl(), IHelpContextIds.CVS_EDITORS_VIEW);
+		WorkbenchHelp.setHelp(tableViewer.getControl(), IHelpContextIds.PROPERTIES_VIEW);
 
 		tableViewer.addDoubleClickListener(new IDoubleClickListener() {
 			public void doubleClick(DoubleClickEvent e) {

@@ -143,6 +143,7 @@ public class SwitchDialog extends Dialog {
 		headButton.addSelectionListener(listener);
 		revisionButton.addSelectionListener(listener);
 
+		// Add F1 help
 		WorkbenchHelp.setHelp(composite, IHelpContextIds.SWITCH_DIALOG);
 		
 		return composite;

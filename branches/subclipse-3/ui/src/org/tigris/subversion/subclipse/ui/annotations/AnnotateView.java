@@ -43,12 +43,14 @@ import org.eclipse.ui.IReusableEditor;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.registry.EditorDescriptor;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.tigris.subversion.subclipse.core.ISVNRemoteFile;
+import org.tigris.subversion.subclipse.ui.IHelpContextIds;
 import org.tigris.subversion.subclipse.ui.Policy;
 import org.tigris.subversion.subclipse.ui.SVNUIPlugin;
 import org.tigris.subversion.subclipse.ui.history.HistoryView;
@@ -148,7 +150,7 @@ public class AnnotateView extends ViewPart implements ISelectionChangedListener 
 		viewer.addSelectionChangedListener(this);
 		viewer.getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
 
-//		WorkbenchHelp.setHelp(viewer.getControl(), IHelpContextIds.ANNOTATE_VIEW);
+		WorkbenchHelp.setHelp(viewer.getControl(), IHelpContextIds.ANNOTATIONS_VIEW);
 
 		top.layout();
 		

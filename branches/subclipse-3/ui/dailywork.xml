@@ -11,4 +11,5 @@
 	<topic label="Using the Synchronize View" href="html/dailywork/synchronize.html" /> 
 	<topic label="Comparing, QuickDiff and Restoring" href="html/dailywork/diffing.html" /> 
 	<topic label="Creating and Applying Patches" href="html/dailywork/patches.html" /> 
+	<topic label="Maintaining branches" href="html/dailywork/branches.html" /> 
 </toc>
