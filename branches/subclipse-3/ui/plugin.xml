@@ -501,5 +501,12 @@
             name="Synchronize SVN Provider"
             id="org.tigris.subversion.subclipse.synchronizeWizard"/>
    </extension>
+   <extension
+         point="org.eclipse.ui.workbench.texteditor.quickDiffReferenceProvider">
+      <referenceprovider
+            label="Pristine SVN Copy"
+            class="org.tigris.subversion.subclipse.ui.SVNPristineCopyQuickDiffProvider"
+            id="org.tigris.subversion.subclipse.quickdiff.providers.SVNReferenceProvider"/>
+   </extension>
 
 </plugin>
