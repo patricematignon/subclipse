@@ -235,8 +235,14 @@ public class CommitAction extends WorkspaceAction {
 
 	/**
 	 * prompt commit of selected resources.
+	 * @throws SVNException
 	 */		
-	protected boolean confirmCommit(IResource[] modifiedResources) {
+	protected boolean confirmCommit(IResource[] modifiedResources) throws SVNException {
+	   if (onTagPath(modifiedResources)) {
+	       // Warning - working copy appears to be on a tag path.
+	       if (!MessageDialog.openQuestion(getShell(), Policy.bind("CommitDialog.title"), Policy.bind("CommitDialog.tag"))) //$NON-NLS-1$
+	           return false;	       
+	   }
 	   CommitDialog dialog = new CommitDialog(getShell(), modifiedResources, url, unaddedResources);
 	   boolean commit = (dialog.open() == CommitDialog.OK);
 	   url = null;
@@ -245,7 +251,23 @@ public class CommitAction extends WorkspaceAction {
 	   return commit;
 	}
 
-	/**
+	private boolean onTagPath(IResource[] modifiedResources) throws SVNException {
+	    // Multiple resources selected.
+	    if (url == null) {
+			 IResource resource = modifiedResources[0];
+			 ISVNLocalResource svnResource = SVNWorkspaceRoot.getSVNResourceFor(resource);	        
+             SVNUrl svnUrl = svnResource.getStatus().getUrl();
+             String firstUrl;
+             if ((svnUrl == null) || (resource.getType() == IResource.FILE)) firstUrl = getParentUrl(svnResource);
+             else firstUrl = svnResource.getStatus().getUrl().toString();
+             if (firstUrl.indexOf("/tags/") != -1) return true; //$NON-NLS-1$
+	    }
+	    // One resource selected.
+        else if (url.indexOf("/tags/") != -1) return true; //$NON-NLS-1$
+        return false;
+    }
+
+    /**
 	 * @see org.tigris.subversion.subclipse.ui.actions.SVNAction#getErrorTitle()
 	 */
 	protected String getErrorTitle() {
