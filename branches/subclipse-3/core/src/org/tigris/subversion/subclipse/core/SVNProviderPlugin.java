@@ -69,10 +69,10 @@ public class SVNProviderPlugin extends Plugin {
     
 	private RepositoryResourcesManager repositoryResourcesManager = new RepositoryResourcesManager();
 
-	private SVNAdapterFactories adapterFactories;
-
-    private int svnClientInterface;  
-	
+    private SVNClientManager svnClientManager; 
+    
+    private SVNAdapterFactories adapterFactories;
+    
 	/**
 	 * This constructor required by the bundle loader (calls newInstance())
 	 *  
@@ -108,28 +108,23 @@ public class SVNProviderPlugin extends Plugin {
 	public void start(BundleContext ctxt) throws Exception {
 		super.start(ctxt);
 
-		// by default, we set the svn client interface to the best available
-		// (JNI if available or command line interface)
-		try {
-			svnClientInterface = SVNClientAdapterFactory.getBestSVNClientType();
-		} catch (SVNClientException e) {
-			throw new CoreException(new Status(Status.ERROR, ID, IStatus.OK, e
-					.getMessage(), e));
-		}
-
-		// this will use
+        // this will use
 		// org/tigris/subversion/subclipse/core/messages.properties if it has
 		// not
 		// been localized
 		Policy.localize("org.tigris.subversion.subclipse.core.messages"); //$NON-NLS-1$
 
+        
+        svnClientManager = new SVNClientManager();
+        svnClientManager.startup(null);
+        
         // load the state which includes the known repositories
         repositories = new SVNRepositories();
         repositories.startup();
 		
 		// register all the adapter factories
 		adapterFactories = new SVNAdapterFactories();
-		adapterFactories.startup();
+		adapterFactories.startup(null);
 	
         statusCacheManager = new StatusCacheManager();
         statusCacheManager.startup(null);
@@ -162,7 +157,7 @@ public class SVNProviderPlugin extends Plugin {
 		// save the state which includes the known repositories
         repositories.shutdown();
 		
-		adapterFactories.shutdown();
+		adapterFactories.shutdown(null);
         
         statusCacheManager.shutdown(null);
 		
@@ -179,6 +174,8 @@ public class SVNProviderPlugin extends Plugin {
 		// each class that added itself as a participant to have to listen to
 		// shutdown.
 		workspace.removeSaveParticipant(this);
+        
+        svnClientManager.shutdown(null);
 	}
 
 	/**
@@ -350,7 +347,14 @@ public class SVNProviderPlugin extends Plugin {
     public StatusCacheManager getStatusCacheManager() {
     	return statusCacheManager;
     }
+
+    public SVNClientManager getSVNClientManager() {
+    	return svnClientManager;
+    }
     
+    public ISVNClientAdapter createSVNClient() throws SVNException {
+    	return getSVNClientManager().createSVNClient();
+    }
 
 	/**
 	 * Set the console listener for commands.
@@ -369,30 +373,6 @@ public class SVNProviderPlugin extends Plugin {
 	 */
 	public IConsoleListener getConsoleListener() {
 		return consoleListener;
-	}
-
-	/**
-	 * set the client interface to use, either
-	 * SVNClientAdapterFactory.JAVAHL_CLIENT or
-	 * SVNClientAdapterFactory.SVNCOMMANDLINE_CLIENT
-	 * 
-	 * @param svnClientInterface
-	 */
-	public void setSvnClientInterface(int svnClientInterface) {
-		if (SVNClientAdapterFactory.isSVNClientAvailable(svnClientInterface)) {
-			this.svnClientInterface = svnClientInterface;
-		}
-	}
-
-	public int getSvnClientInterface() {
-		return svnClientInterface;
-	}
-
-	/**
-	 * @return a new ISVNClientAdapter depending on the client interface
-	 */
-	public ISVNClientAdapter createSVNClient() {
-		return SVNClientAdapterFactory.createSVNClient(svnClientInterface);
 	}
 
 	/**

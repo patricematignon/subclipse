@@ -88,7 +88,7 @@ public interface ISVNRepositoryLocation  extends IAdaptable {
     public void updateCache() throws SVNException;
     
     
-	public ISVNClientAdapter getSVNClient();	
+	public ISVNClientAdapter getSVNClient() throws SVNException;	
 	
     public ISVNRemoteFolder getRootFolder();
     
@@ -122,9 +122,10 @@ public interface ISVNRepositoryLocation  extends IAdaptable {
 		
 	/**
 	 * Verify that said location contains said path.
+	 * @throws SVNException
 	 *
 	 */
-	public boolean pathExists();
+	public boolean pathExists() throws SVNException;
 
     /**
      * get the repository root url

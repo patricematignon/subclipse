@@ -32,7 +32,7 @@ import org.tigris.subversion.subclipse.core.SVNProviderPlugin;
 import org.tigris.subversion.subclipse.core.resources.SVNWorkspaceRoot;
 import org.tigris.subversion.svnclientadapter.SVNConstants;
 
-/*
+/**
  * Listens to subversion meta-file changes :
  * - .svn/entries
  * - .svn/dir-props

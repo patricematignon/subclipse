@@ -227,8 +227,9 @@ public class SVNRepositoryLocation
 
     /**
      * get the svn client corresponding to the repository
+     * @throws SVNException
      */
-    public ISVNClientAdapter getSVNClient() {
+    public ISVNClientAdapter getSVNClient() throws SVNException {
     	ISVNClientAdapter svnClient =
     		SVNProviderPlugin.getPlugin().createSVNClient();
     
@@ -373,7 +374,7 @@ public class SVNRepositoryLocation
      *  this should be made more robust --mml 11/27/03
      * @see org.tigris.subversion.subclipse.core.ISVNRepositoryLocation#pathExists()
      */
-    public boolean pathExists(){
+    public boolean pathExists() throws SVNException{
     	ISVNClientAdapter svnClient = getSVNClient();
     	try{
     		svnClient.getList(getUrl(), SVNRevision.HEAD, false);
