@@ -340,7 +340,6 @@
          point="org.eclipse.ui.decorators">
       <decorator
             lightweight="true"
-            quadrant="BOTTOM_RIGHT"
             objectClass="org.eclipse.core.resources.IResource"
             adaptable="true"
             label="%DecoratorStandard.name"
