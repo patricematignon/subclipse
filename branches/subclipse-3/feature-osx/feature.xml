@@ -6,7 +6,7 @@
       provider-name="tigris.org"
       os="macosx"
       ws="carbon"
-      nl="en_US,de,fr"
+      nl=""
       arch="ppc">
 
    <install-handler/>
