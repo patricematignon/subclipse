@@ -1,3 +1,11 @@
+* 0.9.13
+- Small optimization to decorator performance (issue 102)
+- RevertAction fixed to refresh at the correct depth (issue 101)
+
+* 0.9.12
+- new svnclientadapter doesn't get base by mucking in .svn dirs manually
+- new update-site location
+
 * 0.9.11
 - updated changelog
 - decoration massively sped up
