@@ -54,20 +54,7 @@ public class SVNPreferencesPage extends PreferencePage implements IWorkbenchPref
 	 */
 	Listener checkInterfaceListener = new Listener() {
 		public void handleEvent(Event event) {
-			if (javahlRadio.getSelection()) {
-				if (!SVNClientAdapterFactory.isSVNClientAvailable(SVNClientAdapterFactory.JAVAHL_CLIENT)) {
-					setErrorMessage(Policy.bind("SVNPreferencePage.javahlNotAvailable")); //$NON-NLS-1$
-				} else {
-					setErrorMessage(null);															
-				}
-			}
-			if (commandLineRadio.getSelection()) {
-				if (!SVNClientAdapterFactory.isSVNClientAvailable(SVNClientAdapterFactory.COMMANDLINE_CLIENT)) {
-					setErrorMessage(Policy.bind("SVNPreferencePage.commandLineNotAvailable")); //$NON-NLS-1$
-				} else {
-					setErrorMessage(null);															
-				}
-			}
+			verifyInterface();
 		}
 	};
 
@@ -139,6 +126,7 @@ public class SVNPreferencesPage extends PreferencePage implements IWorkbenchPref
 		commandLineRadio.addListener(SWT.Selection,checkInterfaceListener);
 		
 		initializeValues();
+		verifyInterface();
 		
 		return composite;
 	}
@@ -198,6 +186,8 @@ public class SVNPreferencesPage extends PreferencePage implements IWorkbenchPref
 		}else{
 			commandLineRadio.setSelection(true);
 		}
+		
+		verifyInterface();
 	}
 
 	/*
@@ -206,6 +196,28 @@ public class SVNPreferencesPage extends PreferencePage implements IWorkbenchPref
 	 */ 
 	protected IPreferenceStore doGetPreferenceStore() {
 		return SVNUIPlugin.getPlugin().getPreferenceStore();
+	}
+
+	/**
+	 * Verify the selection of the interface method
+	 */
+	private void verifyInterface() {
+		if (javahlRadio.getSelection()) {
+			if (!SVNClientAdapterFactory.isSVNClientAvailable(SVNClientAdapterFactory.JAVAHL_CLIENT)) {
+				setErrorMessage(Policy.bind("SVNPreferencePage.javahlNotAvailable")); //$NON-NLS-1$
+			} else {
+				setErrorMessage(null);															
+			}
+		}
+		if (commandLineRadio.getSelection()) {
+			if (!SVNClientAdapterFactory.isSVNClientAvailable(SVNClientAdapterFactory.COMMANDLINE_CLIENT)) {
+				setErrorMessage(Policy.bind("SVNPreferencePage.commandLineNotAvailable")); //$NON-NLS-1$
+			} else {
+				setErrorMessage(null);															
+			}
+		}
+		
+		setValid(getErrorMessage() == null);
 	}
 
 }
