@@ -23,7 +23,7 @@ import org.tigris.subversion.subclipse.core.resources.SVNWorkspaceRoot;
 import org.tigris.subversion.subclipse.ui.Policy;
 
 /**
- * Action to restore pristine working copy file 
+ * Action to mark conflicted file as resolved. 
  */
 public class ResolveAction extends WorkspaceAction {
 	
@@ -37,6 +37,7 @@ public class ResolveAction extends WorkspaceAction {
 						
                         ISVNLocalResource svnResource = SVNWorkspaceRoot.getSVNResourceFor(resources[i]);
                         svnResource.resolve();
+                        //for some reason, just refreshing the file won't cut it.
                         resources[i].getParent().refreshLocal(IResource.DEPTH_INFINITE, monitor);
 					}
 					// fix the action enablement
