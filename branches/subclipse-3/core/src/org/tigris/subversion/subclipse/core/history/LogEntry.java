@@ -84,7 +84,15 @@ public class LogEntry extends PlatformObject implements ILogEntry {
 	public ISVNRemoteResource getRemoteResource() {
 		return resource;
 	}
-	
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
+	 */
+	public Object getAdapter(Class adapter) {
+		if (adapter.isInstance(resource)) {
+			return resource;
+		}
+		return super.getAdapter(adapter);
+	}
 }
 
