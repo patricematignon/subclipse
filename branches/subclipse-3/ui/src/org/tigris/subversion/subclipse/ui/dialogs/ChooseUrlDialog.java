@@ -1,6 +1,10 @@
 package org.tigris.subversion.subclipse.ui.dialogs;
 
 import org.eclipse.core.resources.IResource;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IMenuListener;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
@@ -12,13 +16,18 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Tree;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.tigris.subversion.subclipse.core.ISVNLocalResource;
 import org.tigris.subversion.subclipse.core.ISVNRemoteResource;
 import org.tigris.subversion.subclipse.core.ISVNRepositoryLocation;
+import org.tigris.subversion.subclipse.core.SVNProviderPlugin;
 import org.tigris.subversion.subclipse.core.resources.SVNWorkspaceRoot;
+import org.tigris.subversion.subclipse.ui.ISVNUIConstants;
 import org.tigris.subversion.subclipse.ui.Policy;
+import org.tigris.subversion.subclipse.ui.SVNUIPlugin;
 import org.tigris.subversion.subclipse.ui.repository.model.AllRootsElement;
 import org.tigris.subversion.subclipse.ui.repository.model.RemoteContentProvider;
 
@@ -27,6 +36,7 @@ public class ChooseUrlDialog extends Dialog {
     private static final int LIST_WIDTH_HINT = 450;
     
     private TreeViewer treeViewer;
+    private Action refreshAction;
     
     private String url;
     private IResource resource;
@@ -34,6 +44,11 @@ public class ChooseUrlDialog extends Dialog {
     public ChooseUrlDialog(Shell parentShell, IResource resource) {
         super(parentShell);
         this.resource = resource;
+        refreshAction = new Action(Policy.bind("ChooseUrlDialog.refresh"), SVNUIPlugin.getPlugin().getImageDescriptor(ISVNUIConstants.IMG_REFRESH_ENABLED)) { //$NON-NLS-1$
+            public void run() {
+                refreshViewer(true);
+            }
+        };
     }
     
 	protected Control createDialogArea(Composite parent) {
@@ -64,9 +79,29 @@ public class ChooseUrlDialog extends Dialog {
                 okPressed();
             }
         }); 
+ 
+        // Create the popup menu
+        MenuManager menuMgr = new MenuManager();
+        Tree tree = treeViewer.getTree();
+        Menu menu = menuMgr.createContextMenu(tree);
+        menuMgr.addMenuListener(new IMenuListener() {
+            public void menuAboutToShow(IMenuManager manager) {
+                manager.add(refreshAction);
+            }
+
+        });
+        menuMgr.setRemoveAllWhenShown(true);
+        tree.setMenu(menu);
         
 		return composite;
 	}
+	
+    protected void refreshViewer(boolean refreshRepositoriesFolders) {
+        if (treeViewer == null) return;
+        if (refreshRepositoriesFolders)
+            SVNProviderPlugin.getPlugin().getRepositories().refreshRepositoriesFolders();
+        treeViewer.refresh(); 
+    }
 
     protected void okPressed() {
         ISelection selection = treeViewer.getSelection();

@@ -395,7 +395,17 @@
                menubarPath="team.main/group4"
                enablesFor="1"
                id="org.tigris.subversion.subclipse.ui.switch">
-         </action>                
+         </action>
+         <action
+               helpContextId="org.tigris.subversion.subclipse.ui.team_branchtag_action_context"
+               label="%BranchTagAction.label"
+               icon="icons/full/tortoise/copy.gif"
+               tooltip="%BranchTagAction.tooltip"
+               class="org.tigris.subversion.subclipse.ui.actions.BranchTagAction"
+               menubarPath="team.main/group4"
+               enablesFor="1"
+               id="org.tigris.subversion.subclipse.ui.branchtag">
+         </action>                                   
          <action
                helpContextId="org.tigris.subversion.subclipse.ui.team_edit_conflicts_action_context"
                label="%EditConflictsAction.label"

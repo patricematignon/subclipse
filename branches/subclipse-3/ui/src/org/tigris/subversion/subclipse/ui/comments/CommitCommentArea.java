@@ -40,6 +40,7 @@ public class CommitCommentArea extends DialogArea {
 	private static final int WIDTH_HINT = 350;
 	private static final int HEIGHT_HINT = 150;
 	
+	private String enterCommentMessage;
 	private Text text;
 	private Combo previousCommentsCombo;
 	
@@ -57,6 +58,17 @@ public class CommitCommentArea extends DialogArea {
 		super(parentDialog, settings);
 		comments = SVNUIPlugin.getPlugin().getRepositoryManager().getCommentsManager().getPreviousComments();
 	}
+	
+	/**
+	 * Constructor for CommitCommentArea.
+	 * @param parentDialog
+	 * @param settings
+	 * @param enterCommentMessage
+	 */
+	public CommitCommentArea(Dialog parentDialog, IDialogSettings settings, String enterCommentMessage) {
+		this(parentDialog, settings);
+		this.enterCommentMessage = enterCommentMessage;
+	}
 
 	/**
 	 * @see org.tigris.subversion.subclipse.ui.DialogArea#createArea(org.eclipse.swt.widgets.Composite)
@@ -67,8 +79,9 @@ public class CommitCommentArea extends DialogArea {
 						
 		Label label = new Label(composite, SWT.NULL);
 		label.setLayoutData(new GridData());
-		label.setText(Policy.bind("ReleaseCommentDialog.enterComment")); //$NON-NLS-1$
-				
+		if (enterCommentMessage == null) label.setText(Policy.bind("ReleaseCommentDialog.enterComment")); //$NON-NLS-1$
+		else label.setText(enterCommentMessage);
+		
 		text = new Text(composite, SWT.BORDER | SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 		GridData data = new GridData(GridData.FILL_BOTH);
 		data.widthHint = WIDTH_HINT;
@@ -187,4 +200,5 @@ public class CommitCommentArea extends DialogArea {
 			SVNUIPlugin.getPlugin().getRepositoryManager().getCommentsManager().addComment(comment);
 		}
 	}
+ 
 }

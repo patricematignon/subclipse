@@ -4,27 +4,24 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.IAction;
-import org.tigris.subversion.subclipse.core.ISVNLocalResource;
-import org.tigris.subversion.subclipse.core.resources.SVNWorkspaceRoot;
 import org.tigris.subversion.subclipse.ui.Policy;
-import org.tigris.subversion.subclipse.ui.dialogs.MergeDialog;
-import org.tigris.subversion.subclipse.ui.operations.MergeOperation;
-import org.tigris.subversion.svnclientadapter.SVNRevision;
+import org.tigris.subversion.subclipse.ui.dialogs.BranchTagDialog;
+import org.tigris.subversion.subclipse.ui.operations.BranchTagOperation;
 import org.tigris.subversion.svnclientadapter.SVNUrl;
 
-public class MergeAction extends WorkspaceAction {
+public class BranchTagAction extends WorkspaceAction {
 
     protected void execute(IAction action) throws InvocationTargetException, InterruptedException {
-        IResource[] resources = getSelectedResources(); 
+        IResource[] resources = getSelectedResources();
         for (int i = 0; i < resources.length; i++) {
-            MergeDialog dialog = new MergeDialog(getShell(), resources[i]);
-            if (dialog.open() == MergeDialog.CANCEL) break;
-            SVNUrl svnUrl1 = dialog.getFromUrl();
-            SVNRevision svnRevision1 = dialog.getFromRevision();
-            SVNUrl svnUrl2 = dialog.getToUrl();
-            SVNRevision svnRevision2 = dialog.getToRevision();            
-            new MergeOperation(getTargetPart(), getSelectedResources(), svnUrl1, svnRevision1, svnUrl2, svnRevision2).run();      
-        }   
+            BranchTagDialog dialog = new BranchTagDialog(getShell(), resources[i]);
+            if (dialog.open() == BranchTagDialog.CANCEL) break;
+            SVNUrl sourceUrl = dialog.getUrl();
+            SVNUrl destinationUrl = dialog.getToUrl();
+            String message = dialog.getComment();
+            boolean createOnServer = dialog.isCreateOnServer();
+            new BranchTagOperation(getTargetPart(), getSelectedResources(), sourceUrl, destinationUrl, createOnServer, message).run();
+        }          
     }
     
 	/*
@@ -32,7 +29,7 @@ public class MergeAction extends WorkspaceAction {
 	 * @see org.tigris.subversion.subclipse.ui.actions.SVNAction#getErrorTitle()
 	 */
 	protected String getErrorTitle() {
-		return Policy.bind("MergeAction.merge"); //$NON-NLS-1$
+		return Policy.bind("BranchTagAction.branch"); //$NON-NLS-1$
 	}
 
 	/*
@@ -58,5 +55,13 @@ public class MergeAction extends WorkspaceAction {
 	protected boolean isEnabledForMultipleResources() {
 		return false;
 	}	       
+    
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.tigris.subversion.subclipse.ui.actions.WorkspaceAction#isEnabledForAddedResources()
+	 */
+    protected boolean isEnabledForAddedResources() {
+        return false;
+    }
 }
