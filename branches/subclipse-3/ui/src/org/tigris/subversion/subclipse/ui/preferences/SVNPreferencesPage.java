@@ -52,6 +52,7 @@ public class SVNPreferencesPage extends PreferencePage implements IWorkbenchPref
     private Button javahlRadio;
     private Button commandLineRadio;
     private Button showCompareRevisionInDialog;
+    private Button selectUnadded;
     private Button defaultConfigLocationRadio;
     private Button useDirectoryLocationRadio;
     private Text directoryLocationText;
@@ -120,6 +121,8 @@ public class SVNPreferencesPage extends PreferencePage implements IWorkbenchPref
 		composite.setLayout(layout);
 		
 		showCompareRevisionInDialog = createCheckBox(composite, Policy.bind("SVNPreferencePage.showCompareMergeInSync")); //$NON-NLS-1$
+		
+		selectUnadded = createCheckBox(composite, Policy.bind("SVNPreferencePage.selectUnadded")); //$NON-NLS-1$
 		createLabel(composite, "", 2); //$NON-NLS-1$
 		
 		// group javahl/command line
@@ -201,6 +204,8 @@ public class SVNPreferencesPage extends PreferencePage implements IWorkbenchPref
 		
 		showCompareRevisionInDialog.setSelection(store.getBoolean(ISVNUIConstants.PREF_SHOW_COMPARE_REVISION_IN_DIALOG));
 		
+		selectUnadded.setSelection(store.getBoolean(ISVNUIConstants.PREF_SELECT_UNADDED_RESOURCES_ON_COMMIT));
+		
         javahlRadio.setSelection(store.getString(
                 ISVNUIConstants.PREF_SVNINTERFACE).equals(JhlClientAdapterFactory.JAVAHL_CLIENT));
         commandLineRadio.setSelection(store.getString(
@@ -236,6 +241,9 @@ public class SVNPreferencesPage extends PreferencePage implements IWorkbenchPref
 
         // save show compare revision in dialog pref
 		store.setValue(ISVNUIConstants.PREF_SHOW_COMPARE_REVISION_IN_DIALOG, showCompareRevisionInDialog.getSelection());
+		
+        // save select unadded resources on commit pref
+		store.setValue(ISVNUIConstants.PREF_SELECT_UNADDED_RESOURCES_ON_COMMIT, selectUnadded.getSelection());		
 
         // save svn interface pref
         if (javahlRadio.getSelection() ){

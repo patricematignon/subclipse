@@ -40,6 +40,7 @@ import org.tigris.subversion.subclipse.core.ISVNLocalResource;
 import org.tigris.subversion.subclipse.core.SVNException;
 import org.tigris.subversion.subclipse.core.resources.SVNWorkspaceRoot;
 import org.tigris.subversion.subclipse.ui.IHelpContextIds;
+import org.tigris.subversion.subclipse.ui.ISVNUIConstants;
 import org.tigris.subversion.subclipse.ui.Policy;
 import org.tigris.subversion.subclipse.ui.SVNUIPlugin;
 import org.tigris.subversion.subclipse.ui.comments.CommitCommentArea;
@@ -327,23 +328,6 @@ public class CommitDialog extends Dialog {
 		};
 		deselectButton.addSelectionListener(listener);
 
-		if (unaddedResources) {
-		    Button deselectUnaddedButton = new Button(buttonComposite, SWT.PUSH);
-		    deselectUnaddedButton.setText(Policy.bind("CommitDialog.deselectUnadded")); //$NON-NLS-1$
-		    deselectUnaddedButton.addSelectionListener(new SelectionAdapter() {
-                public void widgetSelected(SelectionEvent e) {
-                    TableItem[] items = listViewer.getTable().getItems();
-                    for (int i = 0; i < items.length; i++) {
-                       IResource resource = (IResource)items[i].getData();
-                       ISVNLocalResource svnResource = SVNWorkspaceRoot.getSVNResourceFor(resource);
-                       try {
-                        if (!svnResource.isManaged()) items[i].setChecked(false);
-	                   } catch (SVNException e1) {}
-                    }
-                    selectedResources = listViewer.getCheckedElements();
-                }
-		    });
-		}
 	}
 	
     protected Point getInitialLocation(Point initialSize) {
@@ -420,7 +404,20 @@ public class CommitDialog extends Dialog {
 	}
 	
 	private void setChecks() {
+	    boolean selectUnadded = SVNUIPlugin.getPlugin().getPreferenceStore().getBoolean(ISVNUIConstants.PREF_SELECT_UNADDED_RESOURCES_ON_COMMIT);
 	    listViewer.setAllChecked(true);
+	    if (!selectUnadded) deselectUnadded();
 		selectedResources = listViewer.getCheckedElements();
 	}
+
+    private void deselectUnadded() {
+        TableItem[] items = listViewer.getTable().getItems();
+        for (int i = 0; i < items.length; i++) {
+           IResource resource = (IResource)items[i].getData();
+           ISVNLocalResource svnResource = SVNWorkspaceRoot.getSVNResourceFor(resource);
+           try {
+            if (!svnResource.isManaged()) items[i].setChecked(false);
+           } catch (SVNException e1) {}
+        }
+    }
 }
