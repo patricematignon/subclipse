@@ -19,6 +19,8 @@ import org.eclipse.core.runtime.Status;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 import org.tigris.subversion.svnclientadapter.SVNClientAdapterFactory;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
+import org.tigris.subversion.svnclientadapter.commandline.CmdLineClientAdapterFactory;
+import org.tigris.subversion.svnclientadapter.javahl.JhlClientAdapterFactory;
 
 /**
  * Handles the creation of SVNClients
@@ -27,17 +29,32 @@ import org.tigris.subversion.svnclientadapter.SVNClientException;
  */
 public class SVNClientManager implements IManager {
     private SVNAdapterFactories adapterFactories;
-    private int svnClientInterface;  
+    private String svnClientInterface;  
     private File configDir = null;
     
     /* (non-Javadoc)
      * @see org.eclipse.core.internal.resources.IManager#startup(org.eclipse.core.runtime.IProgressMonitor)
      */
     public void startup(IProgressMonitor monitor) throws CoreException {
+        try {
+            JhlClientAdapterFactory.setup();
+        } catch (SVNClientException e) {
+            // if an exception is thrown, javahl is not available or 
+            // already registered ...
+        }
+        try {
+            CmdLineClientAdapterFactory.setup();
+        } catch (SVNClientException e) {
+            // if an exception is thrown, command line interface is not available or 
+            // already registered ...
+        }
+        
+        
+        
         // by default, we set the svn client interface to the best available
         // (JNI if available or command line interface)
         try {
-            svnClientInterface = SVNClientAdapterFactory.getBestSVNClientType();
+            String svnClientInterface = SVNClientAdapterFactory.getPreferredSVNClientType();
         } catch (SVNClientException e) {
             throw new CoreException(new Status(Status.ERROR, SVNProviderPlugin.ID, IStatus.OK, e
                     .getMessage(), e));
@@ -58,7 +75,7 @@ public class SVNClientManager implements IManager {
      * 
      * @param svnClientInterface
      */
-    public void setSvnClientInterface(int svnClientInterface) {
+    public void setSvnClientInterface(String svnClientInterface) {
         if (SVNClientAdapterFactory.isSVNClientAvailable(svnClientInterface)) {
             this.svnClientInterface = svnClientInterface;
         }
@@ -68,7 +85,7 @@ public class SVNClientManager implements IManager {
      * get the current svn client interface used
      * @return
      */
-    public int getSvnClientInterface() {
+    public String getSvnClientInterface() {
         return svnClientInterface;
     }    
     

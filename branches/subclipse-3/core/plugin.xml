@@ -11,7 +11,7 @@
       <library name="svnClientAdapter.jar">
          <export name="*"/>
       </library>
-      <library name="svn-javahl.jar">
+      <library name="svnjavahl.jar">
          <export name="*"/>
       </library>
       <library name="SVNPluginCore.jar">
