@@ -45,6 +45,9 @@ public class LocalResourceStatus {
     protected int nodeKind;
     protected String urlCopiedFrom;
     protected String path; // absolute path
+    protected String pathConflictOld;
+    protected String pathConflictWorking;
+    protected String pathConflictNew;
 
     public LocalResourceStatus() {
         
@@ -87,6 +90,24 @@ public class LocalResourceStatus {
         	this.urlCopiedFrom = status.getUrlCopiedFrom().toString();
         }
         this.path = status.getFile().getAbsolutePath();
+        
+        if (status.getConflictNew() == null) {
+            this.pathConflictNew = null;
+        } else {
+            this.pathConflictNew = status.getConflictNew().getAbsolutePath();
+        }
+        
+        if (status.getConflictOld() == null) {
+            this.pathConflictOld = null;
+        } else {
+            this.pathConflictOld = status.getConflictOld().getAbsolutePath();
+        }
+
+        if (status.getConflictWorking() == null) {
+            this.pathConflictWorking = null;
+        } else {
+            this.pathConflictWorking = status.getConflictWorking().getAbsolutePath();
+        }
     }
     
 	public SVNUrl getUrl() {
@@ -207,6 +228,28 @@ public class LocalResourceStatus {
             
             // file
             dos.writeUTF(path);
+            
+            // conflict old
+            if (pathConflictOld == null) {
+                dos.writeUTF("");
+            } else {
+                dos.writeUTF(pathConflictOld);
+            }
+            
+            // conflict new
+            if (pathConflictNew == null) {
+                dos.writeUTF("");
+            } else {
+                dos.writeUTF(pathConflictNew);
+            }
+
+            // conflict working
+            if (pathConflictWorking == null) {
+                dos.writeUTF("");
+            } else {
+                dos.writeUTF(pathConflictWorking);
+            }
+            
         } catch (IOException e) {
             return null;
         }        
@@ -265,6 +308,21 @@ public class LocalResourceStatus {
             
             // path
             path = dis.readUTF();
+            
+            // conflict old
+            pathConflictOld = dis.readUTF();
+            if (pathConflictOld.equals(""))
+                pathConflictOld = null;
+
+            // conflict new
+            pathConflictNew = dis.readUTF();
+            if (pathConflictNew.equals(""))
+                pathConflictNew = null;
+            
+            // conflict new
+            pathConflictWorking = dis.readUTF();
+            if (pathConflictWorking.equals(""))
+                pathConflictWorking = null;
         } catch (IOException e){
         	throw new SVNException("cannot create LocalResourceStatus from bytes",e);
         }   
@@ -320,6 +378,42 @@ public class LocalResourceStatus {
     
     public boolean isCopied() {
         return urlCopiedFrom != null; 
+    }
+
+    /**
+     * the original file without your changes
+     * @return
+     */
+    public File getFileConflictOld() {
+        if (pathConflictOld == null) {
+            return null;
+        } else {
+            return new File(pathConflictOld);
+        }
+    }
+    
+    /**
+     * the file as it is in the repository
+     * @return
+     */
+    public File getFileConflictNew() {
+        if (pathConflictNew == null) {
+            return null;
+        } else {
+            return new File(pathConflictNew);
+        }
+    }
+    
+    /**
+     * your own file with your changes
+     * @return
+     */
+    public File getFileConflictWorking() {
+        if (pathConflictWorking == null) {
+            return null;
+        } else {
+            return new File(pathConflictWorking);
+        }
     }
     
 }
