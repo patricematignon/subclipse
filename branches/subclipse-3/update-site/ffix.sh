@@ -13,4 +13,4 @@ for i in $jars;do
     sed "s/${rev}\"Subclipse\"/ label=\"Subclipse\"/" < feature.bak > feature.xml
     jar -uvf $i feature.xml
 done
-
+rm feature.bak
