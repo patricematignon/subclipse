@@ -19,27 +19,27 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-
+import org.eclipse.core.internal.resources.ProjectDescriptionReader;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ui.dialogs.IPromptCondition;
 import org.eclipse.team.internal.ui.dialogs.PromptingDialog;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
-import org.tigris.subversion.subclipse.core.ISVNRemoteResource;
 import org.tigris.subversion.subclipse.core.ISVNRemoteFolder;
+import org.tigris.subversion.subclipse.core.ISVNRemoteResource;
 import org.tigris.subversion.subclipse.core.ISVNRepositoryLocation;
+import org.tigris.subversion.subclipse.core.SVNException;
+import org.tigris.subversion.subclipse.core.SVNProviderPlugin;
+import org.tigris.subversion.subclipse.core.SVNStatus;
 import org.tigris.subversion.subclipse.core.resources.SVNWorkspaceRoot;
 import org.tigris.subversion.subclipse.ui.Policy;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.w3c.dom.Text;
+import org.xml.sax.InputSource;
 
 /**
  * Add some remote resources to the workspace. Current implementation:
@@ -76,24 +76,14 @@ public class CheckoutAsProjectAction extends SVNAction {
 						String name = folders[i].getName();
 						
 						// Check for a better name for the project
-						try {
-							ISVNRemoteResource dotProject = folders[i].getRepository().getRemoteFile("/" + name + "/.project");							
-							InputStream is = dotProject.getContents(monitor);
-							DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-							org.w3c.dom.Document doc = db.parse(is);
-							is.close();
-							NodeList nl = doc.getDocumentElement().getChildNodes();
-							for (int j = 0; j < nl.getLength(); ++j) {
-								Node child = nl.item(j);
-								if (child instanceof Element && "name".equals(child.getNodeName())) {
-									Node grandChild = child.getFirstChild();
-									if (grandChild instanceof Text) name = ((Text)grandChild).getData(); 	
-								}
-							}
-						}	
-						catch (Exception e) {
-						  // no .project exists ... that's ok
-                          e.printStackTrace();
+                        try {
+                            ISVNRemoteResource dotProject = folders[i].getRepository().getRemoteFile(folders[i].getRepositoryRelativePath() + "/.project"); //$NON-NLS-1$
+                            InputStream is = dotProject.getContents(monitor);
+                            IProjectDescription result = new ProjectDescriptionReader().read(new InputSource(is));
+                            name = result.getName();
+                        }   
+                        catch (SVNException e) {
+                        	SVNProviderPlugin.log(new SVNStatus(IStatus.INFO, TeamException.OK, e.getMessage()));
 						}
 
 						IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(name);
