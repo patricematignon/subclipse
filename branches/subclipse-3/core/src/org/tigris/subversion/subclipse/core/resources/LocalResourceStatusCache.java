@@ -108,7 +108,6 @@ public class LocalResourceStatusCache {
         // we get a set of resources for which we will get the status
         IResource[] resources = getResourcesSet(resource);
         File[] files = new File[resources.length];
-        ISVNStatus[] statuses = new ISVNStatus[resources.length];
         for  (int i = 0; i < resources.length;i++) {
             files[i] = resources[i].getLocation().toFile();
         }
@@ -116,11 +115,10 @@ public class LocalResourceStatusCache {
         // don't do getRepository().getSVNClient() as we can ask the status of a file
         // that is not associated with a known repository
         // we don't need login & password so this is not a problem
-           
+        ISVNStatus[] statuses = null;   
         try {
-            
-        	ISVNClientAdapter svnClientAdapterStatus = SVNProviderPlugin.getPlugin().createSVNClient();
-            statuses = svnClientAdapterStatus.getStatusRecursively(resource.getLocation().toFile(), true);
+            ISVNClientAdapter svnClientAdapterStatus = SVNProviderPlugin.getPlugin().createSVNClient();
+            statuses = svnClientAdapterStatus.getStatus(files);
         } catch (SVNClientException e1) {
             throw SVNException.wrapException(e1);
         }
@@ -129,7 +127,7 @@ public class LocalResourceStatusCache {
         for (int i = 0; i < statuses.length;i++) {
             ISVNStatus status = statuses[i];
             IPath pathEclipse = null;
-            File file = new File(status.getPath());
+            File file = status.getFile();
             try {
                 String canonicalPath = file.getCanonicalPath();
                 pathEclipse = new Path(canonicalPath);

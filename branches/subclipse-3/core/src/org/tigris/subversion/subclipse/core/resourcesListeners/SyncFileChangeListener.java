@@ -51,7 +51,8 @@ public class SyncFileChangeListener implements IResourceChangeListener {
 				
 	
 	/*
-	 * When a resource changes this method will detect if the changed resources is a meta file that has changed
+	 * When a resource changes this method will detect if 
+	 * the changed resources is a meta file that has changed
 	 * 
 	 * @see IResourceChangeListener#resourceChanged(IResourceChangeEvent)
 	 */
@@ -151,15 +152,17 @@ public class SyncFileChangeListener implements IResourceChangeListener {
 	}
 	
 	/*
-	 * It's a meta file if it's parent is a team-private .svn folder.
+	 * It's a meta file if it's parent is a team-private .svn folder and it's named "entries"
 	 */
 	protected boolean isMetaFile(IResource resource) {
-		IContainer parent = resource.getParent();		
-		return resource.getType() == IResource.FILE &&
+		IContainer parent = resource.getParent();	
+		return (resource.getType() == IResource.FILE &&
                resource.getName().equals(SVN_ENTRIES) &&     
 				   parent!=null && 
 				   parent.getName().equals(SVN_DIRNAME) &&
-				   (parent.isTeamPrivateMember() || !parent.exists());
+				   (parent.isTeamPrivateMember() || !parent.exists()));
+		
+		
 	}
 	
 	/*
