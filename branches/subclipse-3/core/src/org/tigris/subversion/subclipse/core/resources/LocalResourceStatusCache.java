@@ -97,6 +97,56 @@ public class LocalResourceStatusCache {
     }
 
     /**
+     * update the status of <code>resource</code> and all of its child resources
+     * @param resource Resource to update status of
+     * @throws SVNException
+     */
+    private static void recursiveUpdateStatusSet(IResource resource) throws SVNException {
+    	IWorkspace workspace = ResourcesPlugin.getWorkspace();
+    	IWorkspaceRoot workspaceRoot = workspace.getRoot();
+    	
+    	// don't do getRepository().getSVNClient() as we can ask the status of a file
+    	// that is not associated with a known repository
+    	// we don't need login & password so this is not a problem
+    	ISVNStatus[] statuses = null;
+    	try {
+    		ISVNClientAdapter svnClientAdapterStatus = SVNProviderPlugin.getPlugin().createSVNClient();
+    		statuses = svnClientAdapterStatus.getStatus(resource.getLocation().toFile(),true, true);
+    	} catch (SVNClientException e1) {
+    		throw SVNException.wrapException(e1);
+    	}
+    	
+    	for (int i = 0; i < statuses.length;i++) {
+    		ISVNStatus status = statuses[i];
+    		IPath pathEclipse = null;
+    		File file = status.getFile();
+    		try {
+    			String canonicalPath = file.getCanonicalPath();
+    			pathEclipse = new Path(canonicalPath);
+    		} catch (IOException e) {
+    			// should never occur ...
+    		}
+    		
+    		IResource resourceStatus = null;
+    		if (file.isDirectory()) {
+    			resourceStatus = workspaceRoot.getContainerForLocation(pathEclipse);
+    		}
+    		else
+    			if (file.isFile()) {
+    				resourceStatus = workspaceRoot.getFileForLocation(pathEclipse);
+    			}
+    			
+    		if (resourceStatus != null) {
+    			try {
+    				resourceStatus.setSessionProperty(RESOURCE_SYNC_KEY, status);
+    			} catch (CoreException e) {
+    				// can't set the property (because the resource does not exist
+    				// for example)
+    			}
+    		}
+    	}
+    }
+    /**
      * update the status of resource and near resources that also need to be updated
      * @param resource
      * @throws SVNException
@@ -171,7 +221,8 @@ public class LocalResourceStatusCache {
        
         if (status == null)
         {
-            updateStatusSet(resource);
+//            updateStatusSet(resource);
+        	recursiveUpdateStatusSet(resource);
             
             try {
                 status = (ISVNStatus) resource.getSessionProperty(RESOURCE_SYNC_KEY);
