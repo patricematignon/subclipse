@@ -58,7 +58,7 @@ public class SVNClientManager implements IManager {
         // by default, we set the svn client interface to the best available
         // (JNI if available or command line interface)
         try {
-            String svnClientInterface = SVNClientAdapterFactory.getPreferredSVNClientType();
+            svnClientInterface = SVNClientAdapterFactory.getPreferredSVNClientType();
         } catch (SVNClientException e) {
             throw new CoreException(new Status(Status.ERROR, SVNProviderPlugin.ID, IStatus.OK, e
                     .getMessage(), e));
