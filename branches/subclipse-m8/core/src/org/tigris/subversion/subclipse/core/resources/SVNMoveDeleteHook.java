@@ -1,14 +1,11 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Common Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v10.html
+ * Copyright (c) 2000, 2003 IBM Corporation and others. All rights reserved.
+ * This program and the accompanying materials are made available under the
+ * terms of the Common Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/cpl-v10.html
  * 
- * Contributors:
- *     Daniel Bradby
- *     Cédric Chabanois (cchabanois@ifrance.com) 
- *******************************************************************************/
+ * Contributors: Daniel Bradby Cédric Chabanois (cchabanois@ifrance.com)
+ ******************************************************************************/
 package org.tigris.subversion.subclipse.core.resources;
 
 import org.eclipse.core.internal.resources.ResourceStatus;
@@ -31,29 +28,25 @@ import org.tigris.subversion.subclipse.core.client.OperationManager;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
 
-public class SVNMoveDeleteHook extends DefaultMoveDeleteHook{
+public class SVNMoveDeleteHook extends DefaultMoveDeleteHook {
 
-	public boolean deleteFile(IResourceTree tree, IFile file, int updateFlags, IProgressMonitor monitor) {
+	public boolean deleteFile(IResourceTree tree, IFile file, int updateFlags,
+			IProgressMonitor monitor) {
 
-        ISVNLocalFile resource = new LocalFile(file);
-        try {
-		    if (!resource.isManaged())
-			  return false;
+		ISVNLocalFile resource = new LocalFile(file);
+		try {
+			if (!resource.isManaged())
+				return false;
 
-			
 			monitor.beginTask(null, 1000);
 			monitor.setTaskName("Working..");
-            resource.delete();
+			resource.delete();
 			tree.deletedFile(file);
 
 		} catch (SVNException e) {
-			tree.failed(
-				new org.eclipse.core.runtime.Status(
-					org.eclipse.core.runtime.Status.ERROR,
-					"SUBCLIPSE",
-					0,
-					"Error removing file",
-					e));
+			tree.failed(new org.eclipse.core.runtime.Status(
+					org.eclipse.core.runtime.Status.ERROR, "SUBCLIPSE", 0,
+					"Error removing file", e));
 			e.printStackTrace();
 			return true; // we attempted
 		} finally {
@@ -63,25 +56,22 @@ public class SVNMoveDeleteHook extends DefaultMoveDeleteHook{
 
 	}
 
-	public boolean deleteFolder(IResourceTree tree, IFolder folder, int updateFlags, IProgressMonitor monitor) {
+	public boolean deleteFolder(IResourceTree tree, IFolder folder,
+			int updateFlags, IProgressMonitor monitor) {
 
 		ISVNLocalFolder resource = new LocalFolder(folder);
 
-        try {
-		    if (!resource.isManaged())
-			    return false;
+		try {
+			if (!resource.isManaged())
+				return false;
 			monitor.beginTask(null, 1000);
 			monitor.setTaskName("Working..");
-            resource.delete();
+			resource.delete();
 			tree.deletedFolder(folder);
 		} catch (SVNException e) {
-			tree.failed(
-				new org.eclipse.core.runtime.Status(
-					org.eclipse.core.runtime.Status.ERROR,
-					"SUBCLIPSE",
-					0,
-					"Error removing folder",
-					e));
+			tree.failed(new org.eclipse.core.runtime.Status(
+					org.eclipse.core.runtime.Status.ERROR, "SUBCLIPSE", 0,
+					"Error removing folder", e));
 			e.printStackTrace();
 			return true; // we attempted
 		} finally {
@@ -90,149 +80,85 @@ public class SVNMoveDeleteHook extends DefaultMoveDeleteHook{
 		return true;
 	}
 
-	
-
-    /*
-     *  (non-Javadoc)
-     * @see org.eclipse.core.resources.team.IMoveDeleteHook#moveFile(org.eclipse.core.resources.team.IResourceTree, org.eclipse.core.resources.IFile, org.eclipse.core.resources.IFile, int, org.eclipse.core.runtime.IProgressMonitor)
-     */
-	public boolean moveFile(
-		IResourceTree tree,
-		IFile source,
-		IFile destination,
-		int updateFlags,
-		IProgressMonitor monitor) {
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.core.resources.team.IMoveDeleteHook#moveFile(org.eclipse.core.resources.team.IResourceTree,
+	 *      org.eclipse.core.resources.IFile, org.eclipse.core.resources.IFile,
+	 *      int, org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public boolean moveFile(IResourceTree tree, IFile source,
+			IFile destination, int updateFlags, IProgressMonitor monitor) {
 
 		try {
 			ISVNLocalFile resource = new LocalFile(source);
-            
-            if (!resource.isManaged())
-                return false; // pass
-            
-			ISVNClientAdapter svnClient = resource.getRepository().getSVNClient();
+
+			if (!resource.isManaged())
+				return false; // pass
+
+			ISVNClientAdapter svnClient = resource.getRepository()
+					.getSVNClient();
 			monitor.beginTask(null, 1000);
 			monitor.setTaskName("Working..");
 
-            boolean force = (updateFlags & IResource.FORCE) != 0;
-            boolean keepHistory = (updateFlags & IResource.KEEP_HISTORY) != 0;
-           
-            
-            // If the file is not in sync with the local file system and force is false,
-            // then signal that we have an error.
-            if (!force && !tree.isSynchronized(source, IResource.DEPTH_INFINITE)) {
-                String message = org.eclipse.core.internal.utils.Policy.bind("localstore.resourceIsOutOfSync", source.getFullPath().toString()); //$NON-NLS-1$
-                IStatus status = new ResourceStatus(IResourceStatus.OUT_OF_SYNC_LOCAL, source.getFullPath(), message);
-                tree.failed(status);
-                return true; // we attempted even if we failed 
-            }
-            
-            // Add the file contents to the local history if requested by the user. 
-            if (keepHistory)
-                tree.addToLocalHistory(source);
+			boolean force = (updateFlags & IResource.FORCE) != 0;
+			boolean keepHistory = (updateFlags & IResource.KEEP_HISTORY) != 0;
 
-            try {
-                OperationManager.getInstance().beginOperation(svnClient);
-			    
-                // add destination directory to version control if necessary
-                // see bug #15
-                if (!SVNWorkspaceRoot.getSVNFolderFor(destination.getParent()).isManaged()) {
-                    SVNTeamProvider provider = (SVNTeamProvider)RepositoryProvider.getProvider(destination.getProject());
-                    provider.add(new IResource[] {destination.getParent()},IResource.DEPTH_ZERO,new NullProgressMonitor());
-                }
-                
-                // force is set to true because when we rename (refactor) a
-                // java class, the file is modified before being moved
-                // A modified file cannot be moved without force 
-                svnClient.move(
-                    source.getLocation().toFile(), 
-                    destination.getLocation().toFile(),
-                    true);
-                
-                // movedFile must be done before endOperation because 
-                // destination file must not already exist in the workspace 
-                // resource tree.
-                tree.movedFile(source, destination);
-            } catch (SVNClientException e) {
-                throw SVNException.wrapException(e); 
-            } catch (TeamException te) {
-				throw SVNException.wrapException(te); 
-			}  
-            finally {
-                OperationManager.getInstance().endOperation();
-            }
+			// If the file is not in sync with the local file system and force
+			// is false,
+			// then signal that we have an error.
+			if (!force
+					&& !tree.isSynchronized(source, IResource.DEPTH_INFINITE)) {
+				String message = org.eclipse.core.internal.utils.Policy
+						.bind(
+								"localstore.resourceIsOutOfSync", source.getFullPath().toString()); //$NON-NLS-1$
+				IStatus status = new ResourceStatus(
+						IResourceStatus.OUT_OF_SYNC_LOCAL,
+						source.getFullPath(), message);
+				tree.failed(status);
+				return true; // we attempted even if we failed
+			}
 
-		} catch (SVNException e) {
-			tree.failed(
-				new org.eclipse.core.runtime.Status(
-					org.eclipse.core.runtime.Status.ERROR,
-					"SUBCLIPSE",
-					0,
-					"Error move file",
-					e));
-			e.printStackTrace();
-			return true; // we attempted 
-		} finally {
-			monitor.done();
-		}
-		return true;
-	}
+			// Add the file contents to the local history if requested by the
+			// user.
+			if (keepHistory)
+				tree.addToLocalHistory(source);
 
-	public boolean moveFolder(
-		IResourceTree tree,
-		IFolder source,
-		IFolder destination,
-		int updateFlags,
-		IProgressMonitor monitor) {
-		try {
-            ISVNLocalFolder resource = new LocalFolder(source);
-            if (!resource.isManaged())
-                return false;            
-            
-			monitor.beginTask(null, 1000);
-			monitor.setTaskName("Working..");
+			try {
+				OperationManager.getInstance().beginOperation(svnClient);
 
-            // Check to see if we are synchronized with the local file system. If we are in sync then we can
-            // short circuit this method and do a file system only move. Otherwise we have to recursively
-            // try and move all resources, doing it in a best-effort manner.
-            boolean force = (updateFlags & IResource.FORCE) != 0;
-            if (!force && !tree.isSynchronized(source, IResource.DEPTH_INFINITE)) {
-                String message = org.eclipse.core.internal.utils.Policy.bind("localstore.resourceIsOutOfSync", source.getFullPath().toString());//$NON-NLS-1$
-                IStatus status = new ResourceStatus(IResourceStatus.ERROR, source.getFullPath(), message);
-                tree.failed(status);
-                return true;
-            }
+				// add destination directory to version control if necessary
+				// see bug #15
+				if (!SVNWorkspaceRoot.getSVNFolderFor(destination.getParent())
+						.isManaged()) {
+					SVNTeamProvider provider = (SVNTeamProvider) RepositoryProvider
+							.getProvider(destination.getProject());
+					provider.add(new IResource[]{destination.getParent()},
+							IResource.DEPTH_ZERO, new NullProgressMonitor());
+				}
 
-			ISVNClientAdapter svnClient = resource.getRepository().getSVNClient();
+				// force is set to true because when we rename (refactor) a
+				// java class, the file is modified before being moved
+				// A modified file cannot be moved without force
+				svnClient.move(source.getLocation().toFile(), destination
+						.getLocation().toFile(), true);
 
-            try {
-                OperationManager.getInstance().beginOperation(svnClient);
-                
-			    svnClient.move(
-                    source.getLocation().toFile(), 
-                    destination.getLocation().toFile(),
-                    true);
-                // add destination directory to version control if necessary
-                // see bug #15
-               /* if (!SVNWorkspaceRoot.getSVNFolderFor(destination.getParent()).isManaged()) {
-                    SVNTeamProvider provider = (SVNTeamProvider)RepositoryProvider.getProvider(destination.getProject());
-                    provider.add(new IResource[] {destination.getParent()},IResource.DEPTH_ZERO,new NullProgressMonitor());
-                }*/
-            } catch (SVNClientException e) {
-                throw SVNException.wrapException(e); 
-//			} catch (TeamException te) {
-//				throw SVNException.wrapException(te); 
+				// movedFile must be done before endOperation because
+				// destination file must not already exist in the workspace
+				// resource tree.
+				tree.movedFile(source, destination);
+			} catch (SVNClientException e) {
+				throw SVNException.wrapException(e);
+			} catch (TeamException te) {
+				throw SVNException.wrapException(te);
 			} finally {
-               // OperationManager.getInstance().endOperation();
-            }
-			tree.movedFolderSubtree(source, destination);
+				OperationManager.getInstance().endOperation();
+			}
+
 		} catch (SVNException e) {
-			tree.failed(
-				new org.eclipse.core.runtime.Status(
-					org.eclipse.core.runtime.Status.ERROR,
-					"SUBCLIPSE",
-					0,
-					"Error move Folder " + source.getLocation(),
-					e));
+			tree.failed(new org.eclipse.core.runtime.Status(
+					org.eclipse.core.runtime.Status.ERROR, "SUBCLIPSE", 0,
+					"Error move file", e));
 			e.printStackTrace();
 			return true; // we attempted
 		} finally {
@@ -241,7 +167,68 @@ public class SVNMoveDeleteHook extends DefaultMoveDeleteHook{
 		return true;
 	}
 
-	
+	public boolean moveFolder(IResourceTree tree, IFolder source,
+			IFolder destination, int updateFlags, IProgressMonitor monitor) {
+		try {
+			ISVNLocalFolder resource = new LocalFolder(source);
+			if (!resource.isManaged())
+				return false;
 
-	
+			monitor.beginTask(null, 1000);
+			monitor.setTaskName("Working..");
+
+			// Check to see if we are synchronized with the local file system.
+			// If we are in sync then we can
+			// short circuit this method and do a file system only move.
+			// Otherwise we have to recursively
+			// try and move all resources, doing it in a best-effort manner.
+			boolean force = (updateFlags & IResource.FORCE) != 0;
+			if (!force
+					&& !tree.isSynchronized(source, IResource.DEPTH_INFINITE)) {
+				String message = org.eclipse.core.internal.utils.Policy
+						.bind(
+								"localstore.resourceIsOutOfSync", source.getFullPath().toString());//$NON-NLS-1$
+				IStatus status = new ResourceStatus(IResourceStatus.ERROR,
+						source.getFullPath(), message);
+				tree.failed(status);
+				return true;
+			}
+
+			ISVNClientAdapter svnClient = resource.getRepository()
+					.getSVNClient();
+
+			try {
+				OperationManager.getInstance().beginOperation(svnClient);
+				// add destination directory to version control if necessary
+				// see bug #15
+				if (!SVNWorkspaceRoot.getSVNFolderFor(destination.getParent())
+						.isManaged()) {
+					SVNTeamProvider provider = (SVNTeamProvider) RepositoryProvider
+							.getProvider(destination.getProject());
+					provider.add(new IResource[]{destination.getParent()},
+							IResource.DEPTH_ZERO, new NullProgressMonitor());
+				}
+				svnClient.move(source.getLocation().toFile(), destination
+						.getLocation().toFile(), true);
+
+			} catch (SVNClientException e) {
+				throw SVNException.wrapException(e);
+			} catch (TeamException te) {
+				throw SVNException.wrapException(te);
+			} finally {
+				OperationManager.getInstance().endOperation();
+			}
+			tree.movedFolderSubtree(source, destination);
+		} catch (SVNException e) {
+			tree.failed(new org.eclipse.core.runtime.Status(
+					org.eclipse.core.runtime.Status.ERROR, "SUBCLIPSE", 0,
+					"Error move Folder " + source.getLocation(), e));
+			e.printStackTrace();
+			return true; // we attempted
+		} finally {
+			monitor.done();
+		}
+		return true;
+	}
+
 }
