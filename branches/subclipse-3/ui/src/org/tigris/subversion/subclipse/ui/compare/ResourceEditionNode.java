@@ -22,16 +22,18 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.variants.IResourceVariant;
 import org.tigris.subversion.subclipse.core.ISVNRemoteResource;
 import org.tigris.subversion.subclipse.ui.SVNUIPlugin;
 /**
  * A class for comparing ISVNRemoteResource objects
  * 
+ * <p>
+ * <pre>
  * ResourceEditionNode left = new ResourceEditionNode(editions[0]);
  * ResourceEditionNode right = new ResourceEditionNode(editions[1]);
- * CompareUI.openCompareEditorOnPage( new SVNCompareEditorInput(left, right),
- * getTargetPage());
+ * CompareUI.openCompareEditorOnPage(new SVNCompareEditorInput(left, right), getTargetPage());
+ * </pre>
+ * </p>
  *  
  */
 public class ResourceEditionNode
@@ -109,7 +111,7 @@ public class ResourceEditionNode
 	 * @see IStreamContentAccessor#getContents()
 	 */
 	public InputStream getContents() throws CoreException {
-		if (resource == null) {
+		if (resource == null || resource.isContainer()) {
 			return null;
 		}
 		try {
@@ -118,8 +120,7 @@ public class ResourceEditionNode
 					new IRunnableWithProgress() {
 						public void run(IProgressMonitor monitor) {
 							try {
-								holder[0] = ((IResourceVariant) resource)
-										.getStorage(monitor).getContents();
+								holder[0] = resource.getStorage(monitor).getContents();
 							} catch (CoreException e1) {
 								SVNUIPlugin.log(e1);
 							}
