@@ -57,7 +57,7 @@ public class RecursiveStatusUpdateStrategy extends StatusUpdateStrategy {
         } catch (SVNClientException e1) {
             throw SVNException.wrapException(e1);
         }
-        updateCache(resource.getLocation(), statuses);
+        updateCache(statuses);
 	}
 
 }

@@ -14,6 +14,7 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.tigris.subversion.subclipse.core.SVNException;
 import org.tigris.subversion.subclipse.core.resources.LocalResourceStatus;
 import org.tigris.subversion.svnclientadapter.ISVNStatus;
@@ -48,14 +49,14 @@ public abstract class StatusUpdateStrategy {
      * update the cache using the given statuses
      * @param statuses
      */
-    protected void updateCache(IPath basePath, ISVNStatus[] statuses) {
+    protected void updateCache(ISVNStatus[] statuses) {
         IWorkspace workspace = ResourcesPlugin.getWorkspace();
         IWorkspaceRoot workspaceRoot = workspace.getRoot();
         
         for (int i = 0; i < statuses.length;i++) {
             ISVNStatus status = statuses[i];
 
-            IPath pathEclipse = basePath.append(status.getFile().getAbsolutePath());
+            IPath pathEclipse = new Path(status.getFile().getAbsolutePath());
                 
             IResource resourceStatus = null;
             
