@@ -10,64 +10,81 @@
 <body>
 <h3>FAQ</h3>
 
-<p>
-	<strong>Is there a Linux version?</strong>
-</p>
-<p>
-	A release of Subclipse has been made for Linux / Eclipse 3 
-</p>
 
+  <p><strong>What version of Eclipse does Subclipse support
+  ?</strong></p>
 
-<p>
-	<strong>What versions of Eclipse does Subclipse support ?</strong>
-</p>
-<p>
-Subclipse has been tested against Eclipse 2.1.0, 2.1.1, and 3M4 for Windows. A release has also been made to support Eclipse 3 an upwards on Linux.
-</p>
+  <p>The current version of Subclipse supports both Eclipse 2.1.x
+  and Eclipse 3.0 Line</p>
 
-<p>
-	<strong>Why is Subclipse so particular about what version of Subclipse and Berkeley DB is used?</strong>
-</p>
+  <p><strong>Why is Subclipse so particular about what version of
+  Subclipse and Berkeley DB is used?</strong></p>
 
-<p>
-	Subclipse uses a JNI interface (<a href="http://svn.collab.net/repos/svn/trunk/subversion/bindings/java/javahl/">javahl</a>) to Subversion. 
-	The binaries that come with Subclipse are linked with particular versions when compiled. 
-	If you want to use a different version of Subversion then you have two options. 
-	You can either get Subclipse to use the command line client or you'll need to change the version of the Subversion libraries (libdb40.dll, libeay32.dll, ssleay32.dll, zlib.dll) and recompile the javahl library. 
-</p>
+  <p>Subclipse uses a JNI interface ( <a href=
+  "http://svn.collab.net/repos/svn/trunk/subversion/bindings/java/javahl/">
+  javahl</a>) to Subversion. The binaries that come with Subclipse
+  are linked with particular versions when compiled. We have also
+  been developing a way to interface with the command line client
+  (Windows-&gt;Preferences-&gt;Team-&gt;SVN)</p>
 
-<p>
-	<strong>How can I get Subclipse to use my installed version of Subversion</strong>
-</p>
+  <p>Keep in mind, you'll have best results with a libsvnjavahl
+  built with your own system.</p>
 
-<p>
-	You need to select Window->Preferences->Team->SVN and select the SVN Interface type as <b>SVN Command Line</b>. 
-	This assumes that the svn client (eg svn.exe) is in the path so it can be executed and the results of any commands parsed to display to inside the Eclipse Workbench.
-</p>
+  <p><strong>So if Subclipse is tied to a Subversion version, will
+  it be updated when a new version of Subversion comes
+  out?</strong></p>
 
+  <p>Yes, we will try to update Subclipse when a new version of
+  Subversion comes out</p>
 
-<p>
-	<strong>So if the native Subclipse bindings are tied to a Subversion version, will it be updated when a new version of Subversion comes out? </strong>
-</p>
+  <p><strong>Why does Subclipse only support Windows?</strong></p>
 
-<p>
-	Yes, we will try to update subclipse when a new version of Subversion comes out 
-</p>
+  <p>Subclipse supports Windows, Linux, and OSX currently. If your
+  favorite platform is missing, build us a libsvnjavahl library for
+  it, and we'll add it.</p>
 
-<p><strong>Will the plugin work under WSAD 5? </strong></p>
+  <p><strong>Will the plugin work with WSAD?</strong></p>
 
-<p>
-	Not currently. Subclipse uses some methods that are only supported in Eclipse 2.1 such as isLinkedResource(). It does however work under WSAD 5.1 (which uses Eclipse 2.1).
-</p>
+  <p>Only WSAD 5.1 and above as this is based on Eclipse 2.1 which is a minimum requirement for Subclipse</p>
 
-<p>
-	<strong>How do I build the plugin from source?</strong>
-</p>
+  <p><strong>Do I need Subversion installed to use
+  Subclipse?</strong></p>
 
-<p>
-	TODO
-</p>
+  <p>Not if you use Windows. If you don't use Windows, you
+  <em>do</em> need Subversion and its dependencies installed.
+  Currently, the jni bits (libsvnjavahl) link dynamically to the
+  Subversion sources, so you may have problems if your installation
+  of Subversion is out of date, or compiled agains something other
+  than what we compiled against. As mentioned above, if you are
+  having problems with Subclipse, we recommend rolling your own
+  libsvnjavl. This is particularly true on OSX, if your Subversion
+  isn't built with fink.</p>
 
+  <p>To do this, just</p>
+  <pre>
+make javahl &amp;&amp; make install-javahl
+</pre>
+  <p>when you are making your Subversion build, and replace the
+  libsvnjavahl we ship.</p>
+
+  <p><strong>What access methods does Subclipse
+  support?</strong></p>
+
+  <p>Since Subclipse just calls out to Subversion, Subclipse can
+  use any access method your command-line Subversion client can
+  understand.</p>
+
+  <p><strong>How do I get Subversion to accept my self-signed
+  certificate?</strong><?p>
+  </p>
+
+  <p>There is currently no interface for this in Subclipse, but you
+  can just</p>
+  <pre>
+svn list https://your/repo
+</pre>
+  <p>and opt to accept the certificate permanently. From then on,
+  subclipse will also accept the certificate.</p>
 
 </body>
 </html>
