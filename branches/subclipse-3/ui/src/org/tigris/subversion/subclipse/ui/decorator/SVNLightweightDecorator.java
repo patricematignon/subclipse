@@ -18,11 +18,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -47,7 +49,7 @@ import org.tigris.subversion.subclipse.ui.ISVNUIConstants;
 import org.tigris.subversion.subclipse.ui.SVNUIPlugin;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
 import org.tigris.subversion.svnclientadapter.SVNStatusKind;
-
+ 
 /**
  * The decorator for svn resources 
  */
@@ -99,7 +101,7 @@ public class SVNLightweightDecorator
 	static {
 		dirty = new CachedImageDescriptor(TeamImages.getImageDescriptor(ISharedImages.IMG_DIRTY_OVR));
 		checkedIn = new CachedImageDescriptor(TeamImages.getImageDescriptor(ISharedImages.IMG_CHECKEDIN_OVR));
-		added = new CachedImageDescriptor(TeamImages.getImageDescriptor(ISharedImages.IMG_CHECKEDIN_OVR));
+		added = new CachedImageDescriptor(SVNUIPlugin.getPlugin().getImageDescriptor(ISVNUIConstants.IMG_ADDED));
 		merged = new CachedImageDescriptor(TeamImages.getImageDescriptor(ISharedImages.IMG_DIRTY_OVR));
 		newResource = new CachedImageDescriptor(SVNUIPlugin.getPlugin().getImageDescriptor(ISVNUIConstants.IMG_QUESTIONABLE));
 		
@@ -150,7 +152,7 @@ public class SVNLightweightDecorator
 		SVNProviderPlugin.addResourceStateChangeListener(this);
 //		SVNProviderPlugin.broadcastDecoratorEnablementChanged(true /* enabled */);
 	}
-
+    
     /**
      * tells if given svn resource is dirty or not 
      */

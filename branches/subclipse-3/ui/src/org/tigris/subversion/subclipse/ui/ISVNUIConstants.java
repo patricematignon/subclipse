@@ -24,6 +24,7 @@ public interface ISVNUIConstants {
 	public final String IMG_CONFLICTED = "ovr16/conflicted_ov.gif"; //$NON-NLS-1$
 	public final String IMG_EDITED = "ovr16/edited_ov.gif"; //$NON-NLS-1$
 	public final String IMG_NO_REMOTEDIR = "ovr16/no_remotedir_ov.gif"; //$NON-NLS-1$
+	public final String IMG_ADDED = "ovr16/added_ov.gif"; //$NON-NLS-1$
 	
 	// objects
 	public final String IMG_REPOSITORY = "obj16/repository_rep.gif"; //$NON-NLS-1$
