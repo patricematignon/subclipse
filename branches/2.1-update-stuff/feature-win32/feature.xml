@@ -150,21 +150,13 @@ This Agreement is governed by the laws of the State of New York and the intellec
    </license>
 
    <requires>
-      <import plugin="org.eclipse.core.runtime.compatibility"/>
-      <import plugin="org.eclipse.ui.ide"/>
-      <import plugin="org.eclipse.ui.views"/>
-      <import plugin="org.eclipse.jface.text"/>
-      <import plugin="org.eclipse.ui.workbench.texteditor"/>
-      <import plugin="org.eclipse.ui.editors"/>
       <import plugin="org.eclipse.core.resources"/>
       <import plugin="org.eclipse.ui"/>
       <import plugin="org.eclipse.team.core"/>
       <import plugin="org.apache.xerces"/>
       <import plugin="org.eclipse.core.runtime"/>
-      <import plugin="org.eclipse.osgi"/>
       <import plugin="org.eclipse.team.ui"/>
       <import plugin="org.eclipse.compare"/>
-      <import plugin="org.eclipse.platform" version="3.0.0" match="compatible"/>
    </requires>
 
    <plugin
