@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/cpl-v10.html
  * 
  * Contributors:
- *     Cédric Chabanois (cchabanois@ifrance.com) - modified for Subversion 
+ *     C?dric Chabanois (cchabanois@ifrance.com) - modified for Subversion 
  *******************************************************************************/
 package org.tigris.subversion.subclipse.ui.pending;
 
@@ -52,10 +52,12 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.part.ResourceTransfer;
 import org.eclipse.ui.part.ViewPart;
 import org.tigris.subversion.subclipse.core.IResourceStateChangeListener;
@@ -530,7 +532,8 @@ public class PendingOperationsView extends ViewPart implements IResourceStateCha
                     if ((!svnResource.getStatus().isDeleted()) && (!svnResource.isFolder())) {                
                         IWorkbench workbench = SVNUIPlugin.getPlugin().getWorkbench();
                         IWorkbenchPage page = workbench.getActiveWorkbenchWindow().getActivePage();
-                        page.openEditor((IFile)svnResource.getIResource());
+                        
+                        page.openEditor(new FileEditorInput((IFile)svnResource.getIResource()), IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID);
                     }
                 } catch (SVNException ex) {
                     SVNUIPlugin.log(ex);

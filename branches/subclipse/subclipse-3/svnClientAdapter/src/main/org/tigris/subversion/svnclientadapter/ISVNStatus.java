@@ -73,7 +73,7 @@ public interface ISVNStatus {
         public static Kind NONE = new Kind("non-svn");
         public static Kind NORMAL = new Kind("normal");
         public static Kind ADDED = new Kind("added");
-        public static Kind ABSENT = new Kind("absent");
+        
         public static Kind DELETED = new Kind("deleted");
         public static Kind REPLACED = new Kind("replaced");
         public static Kind MODIFIED = new Kind("modified");
@@ -82,6 +82,10 @@ public interface ISVNStatus {
         public static Kind IGNORED = new Kind("ignored");
         public static Kind INCOMPLETE = new Kind("incomplete");
         public static Kind UNVERSIONED = new Kind("unversioned");
+
+		public static Kind EXTERNAL = new Kind("external");
+
+		public static Kind MISSING = new Kind("missing");
         
         
         //Constructors

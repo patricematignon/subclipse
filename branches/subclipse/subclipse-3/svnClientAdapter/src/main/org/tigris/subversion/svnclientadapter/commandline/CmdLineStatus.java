@@ -158,7 +158,8 @@ class CmdLineStatus extends CmdLineInfo implements ISVNStatus {
 			case '?' :
 				return ISVNStatus.Kind.UNVERSIONED;
 			case '!' :
-				return ISVNStatus.Kind.ABSENT;
+				return ISVNStatus.Kind.MISSING;
+				//what do we use for external? is ! still correct for missing? --mml 11/2003
 			default :
 				return ISVNStatus.Kind.NONE;
 		}
