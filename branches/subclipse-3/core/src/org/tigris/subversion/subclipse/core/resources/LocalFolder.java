@@ -253,9 +253,8 @@ public class LocalFolder extends LocalResource implements ISVNLocalFolder {
      * @see ISVNLocalFolder#setIgnoredAs(String)
      */
     public void setIgnoredAs(final String pattern) throws SVNException {
-        AddIgnoredPatternCommand command = new AddIgnoredPatternCommand(this,
-                pattern);
-        command.run(null);
+        AddIgnoredPatternCommand command = new AddIgnoredPatternCommand(this, pattern);
+        command.run(new NullProgressMonitor());
     }
 
     public void revert() throws SVNException {
