@@ -31,6 +31,7 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.ITextOperationTarget;
 import org.eclipse.jface.text.TextViewer;
@@ -57,7 +58,14 @@ import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.variants.IResourceVariant;
 import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IFileEditorInput;
+import org.eclipse.ui.IPartListener;
+import org.eclipse.ui.IPartListener2;
 import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.part.ResourceTransfer;
@@ -76,6 +84,7 @@ import org.tigris.subversion.subclipse.ui.Policy;
 import org.tigris.subversion.subclipse.ui.SVNUIPlugin;
 import org.tigris.subversion.subclipse.ui.actions.OpenRemoteFileAction;
 import org.tigris.subversion.subclipse.ui.console.TextViewerAction;
+import org.tigris.subversion.subclipse.ui.editor.RemoteFileEditorInput;
 
 
 /**
@@ -98,14 +107,57 @@ public class HistoryView extends ViewPart {
 	private Action getContentsAction;
 	private Action getRevisionAction;
 	private Action refreshAction;
+	private Action linkWithEditorAction;
 
 	private SashForm sashForm;
 	private SashForm innerSashForm;
 
 	private LogEntry currentSelection; 
-	
+	private boolean linkingEnabled;
+
+	private IPreferenceStore settings;
+
 	public static final String VIEW_ID = "org.tigris.subversion.subclipse.ui.history.HistoryView"; //$NON-NLS-1$
 
+	private IPartListener partListener = new IPartListener() {
+		public void partActivated(IWorkbenchPart part) {
+			if (part instanceof IEditorPart)
+				editorActivated((IEditorPart) part);
+		}
+		public void partBroughtToTop(IWorkbenchPart part) {
+			if(part == HistoryView.this)
+				editorActivated(getViewSite().getPage().getActiveEditor());
+		}
+		public void partOpened(IWorkbenchPart part) {
+			if(part == HistoryView.this)
+				editorActivated(getViewSite().getPage().getActiveEditor());
+		}
+		public void partClosed(IWorkbenchPart part) {
+		}
+		public void partDeactivated(IWorkbenchPart part) {
+		}
+	};
+	
+	private IPartListener2 partListener2 = new IPartListener2() {
+		public void partActivated(IWorkbenchPartReference ref) {
+		}
+		public void partBroughtToTop(IWorkbenchPartReference ref) {
+		}
+		public void partClosed(IWorkbenchPartReference ref) {
+		}
+		public void partDeactivated(IWorkbenchPartReference ref) {
+		}
+		public void partOpened(IWorkbenchPartReference ref) {
+		}
+		public void partHidden(IWorkbenchPartReference ref) {
+		}
+		public void partVisible(IWorkbenchPartReference ref) {
+			if(ref.getPart(true) == HistoryView.this)
+				editorActivated(getViewSite().getPage().getActiveEditor());
+		}
+		public void partInputChanged(IWorkbenchPartReference ref) {
+		}
+	};
 
     /**
      * All Actions use this class 
@@ -164,6 +216,16 @@ public class HistoryView extends ViewPart {
 		refreshAction.setDisabledImageDescriptor(plugin.getImageDescriptor(ISVNUIConstants.IMG_REFRESH_DISABLED));
 		refreshAction.setHoverImageDescriptor(plugin.getImageDescriptor(ISVNUIConstants.IMG_REFRESH));
 		
+		//  Link with Editor (toolbar)
+		linkWithEditorAction = new Action(Policy.bind("HistoryView.linkWithLabel"), plugin.getImageDescriptor(ISVNUIConstants.IMG_LINK_WITH_EDITOR_ENABLED)) { //$NON-NLS-1$
+			public void run() {
+				setLinkingEnabled(isChecked());
+			}
+		};
+		linkWithEditorAction.setToolTipText(Policy.bind("HistoryView.linkWithLabel")); //$NON-NLS-1$
+		linkWithEditorAction.setHoverImageDescriptor(plugin.getImageDescriptor(ISVNUIConstants.IMG_LINK_WITH_EDITOR));
+		linkWithEditorAction.setChecked(isLinkingEnabled());
+
 		// Double click open action
         openAction = new OpenRemoteFileAction();
 		tableViewer.getTable().addListener(SWT.DefaultSelection, new Listener() {
@@ -225,6 +287,7 @@ public class HistoryView extends ViewPart {
 		// Create the local tool bar
 		IToolBarManager tbm = getViewSite().getActionBars().getToolBarManager();
 		tbm.add(refreshAction);
+		tbm.add(linkWithEditorAction);
 		tbm.update(false);
         
         IActionBars actionBars = getViewSite().getActionBars();
@@ -257,6 +320,9 @@ public class HistoryView extends ViewPart {
 	 * Method declared on IWorkbenchPart
 	 */
 	public void createPartControl(Composite parent) {
+		settings = SVNUIPlugin.getPlugin().getPreferenceStore();
+		this.linkingEnabled = settings.getBoolean(ISVNUIConstants.PREF_HISTORY_VIEW_EDITOR_LINKING);
+
 		sashForm = new SashForm(parent, SWT.VERTICAL);
 		sashForm.setLayoutData(new GridData(GridData.FILL_BOTH));
 		tableViewer = createTable(sashForm);
@@ -268,7 +334,16 @@ public class HistoryView extends ViewPart {
 		// set F1 help
 		WorkbenchHelp.setHelp(sashForm, IHelpContextIds.RESOURCE_HISTORY_VIEW);
 		initDragAndDrop();
+
+		// add listener for editor page activation - this is to support editor linking
+		getSite().getPage().addPartListener(partListener);  
+		getSite().getPage().addPartListener(partListener2); 
 	}
+
+	public void dispose() {
+		getSite().getPage().removePartListener(partListener);
+		getSite().getPage().removePartListener(partListener2);
+	}   
 
 	/**
 	 * Creates the group that displays lists of the available repositories
@@ -424,34 +499,104 @@ public class HistoryView extends ViewPart {
 			}
 		}
 	}
+
+	/**
+	 * An editor has been activated.  Fetch the history if it is shared with SVN and the history view
+	 * is visible in the current page.
+	 * 
+	 * @param editor the active editor
+	 * @since 3.0
+	 */
+	protected void editorActivated(IEditorPart editor) {
+		// Only fetch contents if the view is shown in the current page.
+		if (editor == null || !isLinkingEnabled() || !checkIfPageIsVisible()) {
+			return;
+		}       
+		IEditorInput input = editor.getEditorInput();
+		// Handle compare editors opened from the Synchronize View
+		// TODO uncommnet when there is sync support        
+		//        if (input instanceof SyncInfoCompareInput) {
+		//            SyncInfoCompareInput syncInput = (SyncInfoCompareInput) input;
+		//            SyncInfo info = syncInput.getSyncInfo();
+		//            if(info instanceof SVNSyncInfo && info.getLocal().getType() == IResource.FILE) {
+		//                ISVNRemoteFile remote = (ISVNRemoteFile)info.getRemote();
+		//                ISVNRemoteFile base = (ISVNRemoteFile)info.getBase();
+		//                if(remote != null) {
+		//                    showHistory(remote, false);
+		//                } else if(base != null) {
+		//                    showHistory(base, false);
+		//                }
+		//            }
+		//        // Handle editors opened on remote files
+		//        } else
+		if(input instanceof RemoteFileEditorInput) {
+			ISVNRemoteFile remote = ((RemoteFileEditorInput)input).getSVNRemoteFile();
+			if(remote != null) {
+				showHistory(remote, false);
+			}
+			// Handle regular file editors
+		} else if (input instanceof IFileEditorInput) {
+			IFileEditorInput fileInput = (IFileEditorInput) input;
+			IFile file = fileInput.getFile();
+			showHistory(file, false);           
+		}
+	}
 	
+	private boolean checkIfPageIsVisible() {
+		return getViewSite().getPage().isPartVisible(this);
+	}
+	
+	/**
+	 * Shows the history for the given ISVNRemoteFile in the view.
+	 */
+	public void showHistory(ISVNRemoteFile remoteFile, boolean refetch) {
+		if (remoteFile == null) {
+			tableViewer.setInput(null);
+			setContentDescription(Policy.bind("HistoryView.title")); //$NON-NLS-1$
+			setTitleToolTip(""); //$NON-NLS-1$
+			return;
+		}
+		ISVNRemoteFile existingFile = historyTableProvider.getISVNFile(); 
+		if(!refetch && existingFile != null && existingFile.equals(remoteFile)) return;
+		this.file = null;
+		historyTableProvider.setFile(remoteFile);
+		tableViewer.setInput(remoteFile);
+		setContentDescription(Policy.bind("HistoryView.titleWithArgument", remoteFile.getName())); //$NON-NLS-1$
+		setTitleToolTip(remoteFile.getRepositoryRelativePath());
+	}
+
 	/**
 	 * Shows the history for the given IResource in the view.
 	 * 
 	 * Only files are supported for now.
 	 */
-	public void showHistory(IResource resource) {
+	public void showHistory(IResource resource, boolean refetch) {
 		if (resource instanceof IFile) {
-			IFile file = (IFile)resource;
-			this.file = file;
+			IFile newfile = (IFile)resource;
+			if(!refetch && this.file != null && newfile.equals(this.file)) {
+				return;
+			} 
+			this.file = newfile;
 			RepositoryProvider teamProvider = RepositoryProvider.getProvider(file.getProject(), SVNProviderPlugin.getTypeId());
 			if (teamProvider != null) {
 				try {
 					ISVNRemoteFile remoteFile = (ISVNRemoteFile)SVNWorkspaceRoot.getRemoteResourceFor(file);
-					historyTableProvider.setFile(remoteFile);
-					tableViewer.setInput(remoteFile);
-					setPartName(Policy.bind("HistoryView.titleWithArgument", remoteFile.getName())); //$NON-NLS-1$
-					setContentDescription(Policy.bind("HistoryView.titleWithArgument", remoteFile.getName())); //$NON-NLS-1$
+					if (remoteFile != null) {
+						historyTableProvider.setFile(remoteFile);
+						tableViewer.setInput(remoteFile);
+						setContentDescription(Policy.bind("HistoryView.titleWithArgument", remoteFile.getName())); //$NON-NLS-1$
+						setTitleToolTip(remoteFile.getRepositoryRelativePath());
+					}
 				} catch (TeamException e) {
 					SVNUIPlugin.openError(getViewSite().getShell(), null, null, e);
 				}				
 			}
-			return;
+		} else {
+			this.file = null;
+			tableViewer.setInput(null);
+			setContentDescription(Policy.bind("HistoryView.title")); //$NON-NLS-1$
+			setTitleToolTip(""); //$NON-NLS-1$
 		}
-		this.file = null;
-		tableViewer.setInput(null);
-		setPartName(Policy.bind("HistoryView.title")); //$NON-NLS-1$
-		setContentDescription(Policy.bind("HistoryView.title")); //$NON-NLS-1$
 		
 	}
 	
@@ -461,15 +606,15 @@ public class HistoryView extends ViewPart {
 	public void showHistory(ISVNRemoteFile remoteFile, String currentRevision) {
 		if (remoteFile == null) {
 			tableViewer.setInput(null);
-			setPartName(Policy.bind("HistoryView.title")); //$NON-NLS-1$
 			setContentDescription(Policy.bind("HistoryView.title")); //$NON-NLS-1$
+			setTitleToolTip(""); //$NON-NLS-1$
 			return;
 		}
 		this.file = null;
 		historyTableProvider.setFile(remoteFile);
 		tableViewer.setInput(remoteFile);
-		setPartName(Policy.bind("HistoryView.titleWithArgument", remoteFile.getName()));
 		setContentDescription(Policy.bind("HistoryView.titleWithArgument", remoteFile.getName()));
+		setTitleToolTip(""); //$NON-NLS-1$
 	}
 	
     
@@ -513,5 +658,29 @@ public class HistoryView extends ViewPart {
 				tableViewer.refresh();
 			}
 		});
+	}
+
+	/**
+	 * Enabled linking to the active editor
+	 * @since 3.0
+	 */
+	public void setLinkingEnabled(boolean enabled) {
+		this.linkingEnabled = enabled;
+		
+		// remember the last setting in the dialog settings     
+		settings.setValue(ISVNUIConstants.PREF_HISTORY_VIEW_EDITOR_LINKING, enabled);
+		
+		// if turning linking on, update the selection to correspond to the active editor
+		if (enabled) {
+			editorActivated(getSite().getPage().getActiveEditor());
+		}
+	}
+	
+	/**
+	 * Returns if linking to the ative editor is enabled or disabled.
+	 * @return boolean indicating state of editor linking.
+	 */
+	private boolean isLinkingEnabled() {
+		return linkingEnabled;
 	}
 }

@@ -36,7 +36,7 @@ public class ShowResourceInHistoryAction extends WorkspaceAction {
 				if (resources.length != 1) return;
 				HistoryView view = (HistoryView)showView(HistoryView.VIEW_ID);
 				if (view != null) {
-					view.showHistory(resources[0]);
+					view.showHistory(resources[0], false);
 				}
 			}
 		}, false /* cancelable */, PROGRESS_BUSYCURSOR);

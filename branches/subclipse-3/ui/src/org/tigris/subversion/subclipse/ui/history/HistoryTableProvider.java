@@ -354,4 +354,8 @@ public class HistoryTableProvider {
 	public SVNRevision getCurrentRevision() {
 		return currentRevision;
 	}
+	
+	public ISVNRemoteFile getISVNFile() {
+		return this.currentFile;
+	}
 }

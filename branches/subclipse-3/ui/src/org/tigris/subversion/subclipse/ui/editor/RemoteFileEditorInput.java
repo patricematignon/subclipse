@@ -13,7 +13,6 @@ package org.tigris.subversion.subclipse.ui.editor;
 
  
 import org.eclipse.core.resources.IStorage;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IPersistableElement;
 import org.eclipse.ui.IStorageEditorInput;
@@ -171,4 +170,12 @@ public class RemoteFileEditorInput implements IWorkbenchAdapter, IStorageEditorI
         SVNUrl url = file.getUrl();
         return url.toString();
 	}
+
+    /**
+     * Returns the remote SVN file shown in this editor input.
+     * @return the remote file handle.
+     */
+    public ISVNRemoteFile getSVNRemoteFile() {
+        return file;
+    }
 }
