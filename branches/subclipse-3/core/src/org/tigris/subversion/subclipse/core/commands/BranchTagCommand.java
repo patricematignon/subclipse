@@ -20,10 +20,11 @@ public class BranchTagCommand implements ISVNCommand {
     private SVNUrl destinationUrl;
     private boolean createOnServer;
     private String message;
+    private SVNRevision revision;
     
     private SVNWorkspaceRoot root;
 
-    public BranchTagCommand(SVNWorkspaceRoot root, IResource resource, SVNUrl sourceUrl, SVNUrl destinationUrl, String message, boolean createOnServer) {
+    public BranchTagCommand(SVNWorkspaceRoot root, IResource resource, SVNUrl sourceUrl, SVNUrl destinationUrl, String message, boolean createOnServer, SVNRevision revision) {
         super();
         this.root = root;
         this.resource = resource;
@@ -31,6 +32,7 @@ public class BranchTagCommand implements ISVNCommand {
         this.destinationUrl = destinationUrl;
         this.createOnServer = createOnServer;
         this.message = message;
+        this.revision = revision;
     }
 
     public void run(IProgressMonitor monitor) throws SVNException {
@@ -39,7 +41,7 @@ public class BranchTagCommand implements ISVNCommand {
             ISVNClientAdapter svnClient = root.getRepository().getSVNClient();
             OperationManager.getInstance().beginOperation(svnClient);
             monitor.subTask(resource.getName());
-            if (createOnServer) svnClient.copy(sourceUrl, destinationUrl, message, SVNRevision.HEAD);
+            if (createOnServer) svnClient.copy(sourceUrl, destinationUrl, message, revision);
             else {
                 File file = resource.getLocation().toFile();
                 svnClient.copy(file, destinationUrl, message);
