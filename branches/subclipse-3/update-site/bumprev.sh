@@ -1,4 +1,4 @@
-files=(../core/plugin.xml ../feature-linux/feature.xml ../feature-osx/feature.xml ../feature-win32/feature.xml  ../javahl-win32/META-INF/MANIFEST.MF ../javahl-win32/fragment.xml ../ui/plugin.xml ../update-site/.sitebuild/sitebuild.xml ../update-site/site.xml)
+files=(../core/plugin.xml ../feature/feature.xml ../feature-plugin/plugin.xml  ../javahl-win32/META-INF/MANIFEST.MF ../javahl-win32/fragment.xml ../ui/plugin.xml ../update-site/.sitebuild/sitebuild.xml ../update-site/site.xml)
 usage="./bump.sh <old version> <new version>"
 
 if [ ! $# -eq 2 ];then
