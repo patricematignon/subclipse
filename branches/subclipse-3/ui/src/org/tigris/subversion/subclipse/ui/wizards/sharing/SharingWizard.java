@@ -16,6 +16,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Properties;
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -29,6 +30,10 @@ import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.ui.IConfigurationWizard;
+import org.eclipse.team.ui.TeamUI;
+import org.eclipse.team.ui.synchronize.ISynchronizeParticipant;
+import org.eclipse.team.ui.synchronize.ResourceScope;
+import org.eclipse.team.ui.synchronize.SubscriberParticipant;
 import org.eclipse.ui.IWorkbench;
 import org.tigris.subversion.subclipse.core.ISVNLocalFolder;
 import org.tigris.subversion.subclipse.core.ISVNRemoteFolder;
@@ -40,6 +45,7 @@ import org.tigris.subversion.subclipse.core.util.Util;
 import org.tigris.subversion.subclipse.ui.ISVNUIConstants;
 import org.tigris.subversion.subclipse.ui.Policy;
 import org.tigris.subversion.subclipse.ui.SVNUIPlugin;
+import org.tigris.subversion.subclipse.ui.subscriber.SVNSynchronizeParticipant;
 import org.tigris.subversion.subclipse.ui.wizards.ConfigurationWizardMainPage;
 
 /**
@@ -275,6 +281,15 @@ public class SharingWizard extends Wizard implements IConfigurationWizard {
 					}
 				}
 			});
+			if (doSync[0]) {
+			    IResource[] resources = { project };
+			    SVNSynchronizeParticipant participant = (SVNSynchronizeParticipant)SubscriberParticipant.getMatchingParticipant(SVNSynchronizeParticipant.ID, resources);
+				if (participant == null) {
+					participant = new SVNSynchronizeParticipant(new ResourceScope(resources));
+					TeamUI.getSynchronizeManager().addSynchronizeParticipants(new ISynchronizeParticipant[] {participant});
+				}
+				participant.refresh(resources, "Synchronizing", "Synchronizing " + participant.getName(), SVNUIPlugin.getActivePage().getActivePart().getSite());			
+			}
 //			if (doSync[0]) {
 //				// Sync of the project
 //				IWorkbenchPage activePage = null; /* not sure how to get the active page */
