@@ -16,7 +16,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
 import org.tigris.subversion.svnclientadapter.ISVNProperty;
 import org.tigris.subversion.svnclientadapter.ISVNStatus;
-import org.tigris.subversion.svnclientadapter.SVNUrl;
+import org.tigris.subversion.svnclientadapter.SVNRevision;
 
 /**
  * SVN Local resource
@@ -86,12 +86,11 @@ public interface ISVNLocalResource extends ISVNResource, IAdaptable {
   public ISVNRemoteResource getLatestRemoteResource() throws SVNException;
 
   /**
-   * get the url of the remote resource corresponding to this local resource
-   * The remote resource does not need to exist 
-   * @return
+   * get the remote resource corresponding to the given revision of this local resource
+   * @return null if there is no remote file corresponding to this local resource
    * @throws SVNException
    */
-  public SVNUrl getUrl() throws SVNException;
+  public ISVNRemoteResource getRemoteResource(SVNRevision revision) throws SVNException;
   
   /**
    * Method isModified.

@@ -157,6 +157,7 @@ public class LocalResourceStatusCache {
 
     /**
      * get the status of the given resource
+     * @throws SVNException
      */
     public static ISVNStatus getStatus(IResource resource) throws SVNException {
         ISVNStatus status = null;

@@ -22,6 +22,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.Team;
+import org.tigris.subversion.subclipse.core.ISVNLocalFile;
 import org.tigris.subversion.subclipse.core.ISVNLocalFolder;
 import org.tigris.subversion.subclipse.core.ISVNLocalResource;
 import org.tigris.subversion.subclipse.core.ISVNRemoteResource;
@@ -188,8 +189,14 @@ public abstract class LocalResource implements ISVNLocalResource, Comparable {
 	/**
 	 * return the repository that must be used for any operations on this resource
 	 */
-	public ISVNRepositoryLocation getRepository() throws SVNException {
-		return getWorkspaceRoot().getRepository();
+	public ISVNRepositoryLocation getRepository()  {
+		try {
+			return getWorkspaceRoot().getRepository();
+		} catch (SVNException e) {
+			// an exception is thrown when project is not managed
+			SVNProviderPlugin.log(e);
+			return null;
+		}
 	}
 
     /**
@@ -198,24 +205,28 @@ public abstract class LocalResource implements ISVNLocalResource, Comparable {
      * @return the url or null if cannot get the url (when project is not managed) 
      * @throws SVNException
      */
-    public SVNUrl getUrl() throws SVNException
+    public SVNUrl getUrl()
     {
-        if (isManaged()) {
-        	// if the resource is managed, get the url directly
-        	return getStatus().getUrl();
-        } else {
-        	// otherwise, get the url of the parent
-			ISVNLocalResource parent = getParent();
-			if (parent == null) {
-				return null; // we cannot find the url
-			}
-			SVNUrl urlParent = getParent().getUrl();
-			try {
-				return new SVNUrl(Util.appendPath(urlParent.toString(),resource.getName()));	
-			} catch (MalformedURLException e) {
-				return null;
-			} 
-        }
+    	try {
+    		if (isManaged()) {
+    			// if the resource is managed, get the url directly
+    			return getStatus().getUrl();
+    		} else {
+    			// otherwise, get the url of the parent
+    			ISVNLocalResource parent = getParent();
+    			if (parent == null) {
+    				return null; // we cannot find the url
+    			}
+    			SVNUrl urlParent = getParent().getUrl();
+    			try {
+    				return new SVNUrl(Util.appendPath(urlParent.toString(),resource.getName()));	
+    			} catch (MalformedURLException e) {
+    				return null;
+    			} 	
+    		}
+    	} catch (SVNException e) {
+    		return null;
+    	}
     }
 
     /**
@@ -224,7 +235,58 @@ public abstract class LocalResource implements ISVNLocalResource, Comparable {
      * @throws SVNException
      */
     public ISVNRemoteResource getLatestRemoteResource() throws SVNException {
-        // even if file is not managed, there can be a corresponding resource
+        return getRemoteResource(SVNRevision.HEAD); 
+    }
+
+    /**
+     * get the base for this local resource
+     * @return
+     * @throws SVNException
+     */
+    public ISVNRemoteResource getBaseResource() throws SVNException {
+        ISVNClientAdapter svnClient = getRepository().getSVNClient();
+		ISVNDirEntry dirEntry;
+		try {
+        	dirEntry = svnClient.getDirEntry(getFile(),SVNRevision.BASE);
+        } catch (SVNClientException e) {
+            throw new SVNException("Can't get base resource for "+resource.toString(),e);   
+        }
+        
+        if (dirEntry == null)
+            return null; // no remote file
+        else
+        {
+            if (dirEntry.getNodeKind() == SVNNodeKind.FILE)
+                return new BaseFile(
+                    (ISVNLocalFile)this,
+                    dirEntry.getHasProps(),
+                    dirEntry.getLastChangedRevision(),
+                    dirEntry.getLastChangedDate(),
+                    dirEntry.getLastCommitAuthor()
+                );
+             else
+                return new BaseFolder(
+                	(ISVNLocalFolder)this,
+                    dirEntry.getHasProps(),
+                    dirEntry.getLastChangedRevision(),
+                    dirEntry.getLastChangedDate(),
+                    dirEntry.getLastCommitAuthor()
+                );                
+        }
+    }
+    
+    /**
+     * get the remote resource corresponding to the given revision of this local resource
+     * @return null if there is no remote file corresponding to this local resource
+     * @throws SVNException
+     */
+    public ISVNRemoteResource getRemoteResource(SVNRevision revision) throws SVNException {
+        if (revision.equals(SVNRevision.BASE)) {
+        	// if the user wants the base resource, we can't get it using the url
+        	return getBaseResource();
+        }
+    	
+    	// even if file is not managed, there can be a corresponding resource
         
         // first we get the url of the resource
         SVNUrl url = getUrl();
@@ -232,7 +294,7 @@ public abstract class LocalResource implements ISVNLocalResource, Comparable {
         ISVNClientAdapter svnClient = getRepository().getSVNClient();
 		ISVNDirEntry dirEntry;
 		try {
-        	dirEntry = svnClient.getDirEntry(url,SVNRevision.HEAD);
+        	dirEntry = svnClient.getDirEntry(url,revision);
         } catch (SVNClientException e) {
             throw new SVNException("Can't get latest remote resource for "+resource.toString(),e);   
         }
@@ -246,7 +308,7 @@ public abstract class LocalResource implements ISVNLocalResource, Comparable {
                     null,  // we don't know its parent
                     getRepository(),
                     url,
-                    SVNRevision.HEAD,
+                    revision,
                     dirEntry.getHasProps(),
                     dirEntry.getLastChangedRevision(),
                     dirEntry.getLastChangedDate(),
@@ -257,7 +319,7 @@ public abstract class LocalResource implements ISVNLocalResource, Comparable {
                     null,  // we don't know its parent
                     getRepository(),
                     url,
-                    SVNRevision.HEAD,
+                    revision,
                     dirEntry.getHasProps(),
                     dirEntry.getLastChangedRevision(),
                     dirEntry.getLastChangedDate(),
@@ -265,7 +327,7 @@ public abstract class LocalResource implements ISVNLocalResource, Comparable {
                 );                
         }
     }
-
+    
     /**
      * Remove file or directory from version control.
      */

@@ -14,6 +14,7 @@ package org.tigris.subversion.subclipse.core.resources;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.tigris.subversion.subclipse.core.ISVNLocalFile;
+import org.tigris.subversion.subclipse.core.ISVNLocalResource;
 import org.tigris.subversion.subclipse.core.ISVNRemoteResource;
 import org.tigris.subversion.subclipse.core.ISVNResourceVisitor;
 import org.tigris.subversion.subclipse.core.SVNException;

@@ -20,16 +20,15 @@ import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.variants.IResourceVariant;
 import org.tigris.subversion.subclipse.core.history.LogEntry;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
-import org.tigris.subversion.svnclientadapter.SVNUrl;
 
 /**
- * The interface represents a resource that exists in a CVS repository.
+ * The interface represents a resource that exists in a SVN repository.
  * It purpose is to provide information about the remote resource from
  * the repository.
  * 
  * Clients are not expected to implement this interface.
  */
-public interface ISVNRemoteResource extends ISVNResource, IAdaptable, IResourceVariant{
+public interface ISVNRemoteResource extends ISVNResource, IAdaptable, IResourceVariant {
 	
 	/**
 	 * Does the remote resource represented by this handle exist on the server. This
@@ -52,11 +51,6 @@ public interface ISVNRemoteResource extends ISVNResource, IAdaptable, IResourceV
 	 * @return an indication of whether the objects are equals
 	 */
 	public boolean equals(Object other);
-
-    /**
-     * get the url for this remote resource
-     */
-    public SVNUrl getUrl();
 
     /**
      * @return true if this remote resource has properties
@@ -91,8 +85,6 @@ public interface ISVNRemoteResource extends ISVNResource, IAdaptable, IResourceV
     public LogEntry[] getLogEntries(IProgressMonitor monitor) throws TeamException;
 
     public ISVNRemoteFolder getParent();
-    
-    public ISVNRepositoryLocation getRepository();
     
     public ISVNRemoteResource[] members(IProgressMonitor progress) throws TeamException;
 

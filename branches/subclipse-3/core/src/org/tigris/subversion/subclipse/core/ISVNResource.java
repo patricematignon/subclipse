@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.tigris.subversion.subclipse.core;
 
+import org.tigris.subversion.svnclientadapter.SVNUrl;
+
 
 
 
@@ -51,6 +53,12 @@ public interface ISVNResource {
      * @return the repository location
      * @throws SVNException
      */	
-	public ISVNRepositoryLocation getRepository() throws SVNException;	
+	public ISVNRepositoryLocation getRepository();
+	
+    /**
+     * get the url corresponding to this resource (which needs not to exist)
+     * @throws SVNException
+     */
+    public SVNUrl getUrl();	
 	
 }

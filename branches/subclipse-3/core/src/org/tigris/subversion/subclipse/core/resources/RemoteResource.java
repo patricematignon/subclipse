@@ -57,14 +57,9 @@ public abstract class RemoteResource
 		
 		lastChangedRevision = new SVNRevision.Number(Long.parseLong(nfo));
 		ISVNLocalResource res = SVNWorkspaceRoot.getSVNResourceFor(local);
-		try {
-			url = res.getUrl();
-			repository = res.getRepository();
-			
-		} catch (SVNException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+
+		url = res.getUrl();
+		repository = res.getRepository();
 	}
 	
 	/**
@@ -142,13 +137,19 @@ public abstract class RemoteResource
 		return parent;
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
 	public boolean equals(Object target) {
 		if (this == target)
 			return true;
 		if (!(target instanceof RemoteResource))
 			return false;
 		RemoteResource remote = (RemoteResource) target;
-		return remote.isContainer() == isContainer() && remote.getUrl().equals(getUrl());
+		return remote.isContainer() == isContainer() && 
+			remote.getUrl().equals(getUrl()) 
+			&& remote.getRevision() == getRevision();
 	}
 
 

@@ -21,7 +21,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.TeamException;
-import org.tigris.subversion.javahl.Revision.Kind;
 import org.tigris.subversion.subclipse.core.ISVNFolder;
 import org.tigris.subversion.subclipse.core.ISVNRemoteFolder;
 import org.tigris.subversion.subclipse.core.ISVNRemoteResource;
@@ -45,7 +44,7 @@ import org.tigris.subversion.svnclientadapter.SVNUrl;
  */
 public class RemoteFolder extends RemoteResource implements ISVNRemoteFolder, ISVNFolder {
 
-    private ISVNRemoteResource[] children;
+    protected ISVNRemoteResource[] children;
 	
 	/**
 	 * Constructor for RemoteFolder.
@@ -120,7 +119,7 @@ public class RemoteFolder extends RemoteResource implements ISVNRemoteFolder, IS
     }
 
     /**
-     * get the members of this folder 
+     * get the members of this folder at the same revision than this resource
      */
 	protected ISVNRemoteResource[] getMembers(IProgressMonitor monitor) throws SVNException {
 
@@ -136,7 +135,7 @@ public class RemoteFolder extends RemoteResource implements ISVNRemoteFolder, IS
 		try {
             ISVNClientAdapter client = getRepository().getSVNClient();
 				
-			ISVNDirEntry[] list = client.getList(url,new SVNRevision(Kind.head),false);
+			ISVNDirEntry[] list = client.getList(url,getRevision(),false);
 			List result = new ArrayList();
 
 			// directories first				
