@@ -27,7 +27,6 @@ import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.team.core.TeamException;
 import org.osgi.framework.BundleContext;
 import org.tigris.subversion.subclipse.core.client.IConsoleListener;
@@ -37,18 +36,20 @@ import org.tigris.subversion.subclipse.core.resourcesListeners.FileModificationM
 import org.tigris.subversion.subclipse.core.resourcesListeners.SyncFileChangeListener;
 import org.tigris.subversion.subclipse.core.status.StatusCacheManager;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
-import org.tigris.subversion.svnclientadapter.SVNClientAdapterFactory;
-import org.tigris.subversion.svnclientadapter.SVNClientException;
 
 /**
  * The plugin itself
  */
 public class SVNProviderPlugin extends Plugin {
 
-	// svn plugin id
+    // svn plugin id
 	public static final String ID = "org.tigris.subversion.subclipse.core"; //$NON-NLS-1$
 
 	public static final String PROVIDER_ID="org.tigris.subversion.subclipse.core.svnnature"; //$NON-NLS-1$
+    
+    public static final String SVN_PROPERTY_TYPES_EXTENSION = "svnPropertyTypes";
+    public static final String SVN_PROPERTY_GROUPS_EXTENSION = "svnPropertyGroups";
+    
 	// all projects shared with subversion will have this nature
 	private static final String NATURE_ID = ID + ".svnnature"; //$NON-NLS-1$
 
