@@ -19,6 +19,7 @@ import org.tigris.subversion.subclipse.core.ISVNLocalResource;
 import org.tigris.subversion.subclipse.core.SVNException;
 import org.tigris.subversion.subclipse.core.SVNProviderPlugin;
 import org.tigris.subversion.subclipse.core.resources.LocalResourceStatus;
+import org.tigris.subversion.subclipse.core.resources.SVNWorkspaceRoot;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 import org.tigris.subversion.svnclientadapter.ISVNStatus;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
@@ -96,4 +97,14 @@ public class GetStatusCommand implements ISVNCommand {
        return resource;     
     }    
     
+    /**
+     * get the ISVNLocalResource corresponding to the given status
+     * @param status
+     * @return
+     */
+    static public ISVNLocalResource getSVNLocalResource(LocalResourceStatus status) {
+        IResource resource = getResource(status);
+        return SVNWorkspaceRoot.getSVNResourceFor(resource);
+    }
+     
 }

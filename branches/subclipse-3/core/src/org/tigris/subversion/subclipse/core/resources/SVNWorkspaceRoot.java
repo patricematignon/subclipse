@@ -191,6 +191,19 @@ public class SVNWorkspaceRoot {
 	}
 	
     /**
+     * get the SVNLocalResources for the given resources
+     * @param resources
+     * @return
+     */
+    public static ISVNLocalResource[] getSVNResourcesFor(IResource resources[]) {
+        ISVNLocalResource[] svnResources = new ISVNLocalResource[resources.length];
+        for (int i = 0; i < resources.length;i++) {
+            svnResources[i] = getSVNResourceFor(resources[i]);
+        }
+        return svnResources;
+    }
+    
+    /**
      * get the base resource corresponding to the local one
      * @param resource
      * @return
