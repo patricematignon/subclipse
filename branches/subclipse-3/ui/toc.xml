@@ -5,8 +5,12 @@
    <topic label="Getting Started">
       <anchor id="gettingstarted"/>
    </topic>
+   <topic label="Daily Work">
+      <anchor id="dailywork"/>
+   </topic>
    <topic label="Reference">
       <anchor id="reference"/>
    </topic>
    <topic label="FAQ"  href="html/faq/faq.html"/>
+   <topic label="Subclipse for Subversion Users"  href="html/faq/subversion-mapping.html"/>
 </toc>

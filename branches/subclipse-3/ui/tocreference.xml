@@ -9,7 +9,9 @@
 	<topic label="Commit" href="html/reference/commit.html" />	
 	<topic label="Resource History" href="html/reference/resource-history.html" />
 	<topic label="Revert" href="html/reference/revert.html" />
+	<topic label="Mark Resolved" href="html/reference/mark-resolved.html" />
 	<topic label="SVN Ignore" href="html/reference/svn-ignore.html" />
+	<topic label="SVN Annotations View" href="html/reference/svn-ignore.html" />
 	<topic label="Add" href="html/reference/add.html" />						
 	<topic label="Compare" href="html/reference/compare.html" />						
 	<topic label="Pending Operations" href="html/reference/pending-operations.html" />						
@@ -18,4 +20,5 @@
 	<topic label="Branching" href="html/reference/branching.html" />		
 	<topic label="Merging" href="html/reference/merging.html" />				
 	<topic label="SVN Console" href="html/reference/svn-console.html" />		
+		
 </toc>

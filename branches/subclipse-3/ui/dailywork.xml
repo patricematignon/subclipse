@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?NLS TYPE="org.eclipse.help.toc"?>
+
+<toc label="Daily Work" link_to="toc.xml#dailywork"> 
+	<topic label="Edit, Update, Commit" href="html/dailywork/workcycle.html" /> 
+	<topic label="Using the synchronize view" href="html/dailywork/synchronize.html" /> 
+	<topic label="Comparing, QuickDiff and restoring" href="html/dailywork/diffing.html" /> 
+	<topic label="Creating and applying patches" href="html/dailywork/patches.html" /> 
+</toc>
