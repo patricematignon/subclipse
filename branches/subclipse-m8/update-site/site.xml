@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+
+   <description url="http://www.loonsoft.com/updates">
+      LoonSoft Eclipse Plugins Update Site
+   </description>
+   <category-def name="linuxfeatures" label="linux features">
+      <description>
+         linux features
+      </description>
+   </category-def>
+   <category-def name="win32 features" label="win32 features">
+      <description>
+         Features For Windows
+      </description>
+   </category-def>
+   <category-def name="OSX Features" label="OSX Features">
+      <description>
+         Features for Mac OSX
+      </description>
+   </category-def>
+</site>
