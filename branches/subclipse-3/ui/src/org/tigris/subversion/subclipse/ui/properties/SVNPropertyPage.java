@@ -12,6 +12,7 @@ package org.tigris.subversion.subclipse.ui.properties;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
@@ -66,15 +67,12 @@ public class SVNPropertyPage extends PropertyPage {
         Label separator = new Label(parent, SWT.SEPARATOR | SWT.HORIZONTAL);
         GridData gridData = new GridData();
         gridData.horizontalAlignment = GridData.FILL;
-        //gridData.grabExcessHorizontalSpace = true;
+        gridData.grabExcessHorizontalSpace = true;
         separator.setLayoutData(gridData);
     }
 
     private void addSecondSection(Composite parent) {
         Composite composite = createDefaultComposite(parent);
-
-        GridData gd = new GridData();
-        gd.widthHint = convertWidthInCharsToPixels(TEXT_FIELD_WIDTH);
 
         Label label = new Label(composite, SWT.NONE);
         label.setText("Ignored");
@@ -135,7 +133,7 @@ public class SVNPropertyPage extends PropertyPage {
         label = new Label(composite, SWT.NONE);
         label.setText("Path");
 
-        gd = new GridData();
+        GridData gd = new GridData();
         gd.horizontalSpan = 2;
         pathValue = new Label(composite, SWT.WRAP);
         pathValue.setLayoutData(gd);
@@ -194,7 +192,6 @@ public class SVNPropertyPage extends PropertyPage {
     protected Control createContents(Composite parent) {
         Composite composite = new Composite(parent, SWT.NONE);
         GridLayout layout = new GridLayout();
-        layout.numColumns = 2;
         composite.setLayout(layout);
         GridData data = new GridData(GridData.FILL);
 
@@ -203,6 +200,8 @@ public class SVNPropertyPage extends PropertyPage {
         addFirstSection(composite);
         addSeparator(composite);
         addSecondSection(composite);
+        
+        Dialog.applyDialogFont(parent);
         return composite;
     }
 
