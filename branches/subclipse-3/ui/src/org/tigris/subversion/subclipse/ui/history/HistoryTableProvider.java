@@ -50,7 +50,7 @@ import org.tigris.subversion.svnclientadapter.SVNRevision;
 public class HistoryTableProvider {
 
 	private ISVNRemoteResource currentRemoteResource;
-	private SVNRevision currentRevision;
+	private SVNRevision.Number currentRevision;
 	private TableViewer viewer;
 	private Font currentRevisionFont;
 		
@@ -341,7 +341,7 @@ public class HistoryTableProvider {
 	}
 	
 
-	private SVNRevision getRevision(ISVNRemoteResource currentEdition) {
+	private SVNRevision.Number getRevision(ISVNRemoteResource currentEdition) {
 		if (currentEdition == null) return SVNRevision.INVALID_REVISION;
 		return currentEdition.getLastChangedRevision();
 	}
@@ -351,10 +351,17 @@ public class HistoryTableProvider {
 		this.currentRevision = getRevision(remoteResource);
 	}
 	
-	public SVNRevision getCurrentRevision() {
+    /**
+     * get the current revision (ie the lastChangedRevision of the remoteResource) 
+     */
+	public SVNRevision.Number getCurrentRevision() {
 		return currentRevision;
 	}
 	
+    /**
+     * get the remote resource from which we want the history 
+     * @return
+     */
 	public ISVNRemoteResource getRemoteResource() {
 		return this.currentRemoteResource;
 	}

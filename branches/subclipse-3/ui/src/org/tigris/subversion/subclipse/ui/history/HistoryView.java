@@ -834,7 +834,7 @@ public class HistoryView extends ViewPart implements IResourceStateChangeListene
 	/**
 	 * Select the revision in the receiver.
 	 */
-	public void selectRevision(SVNRevision revision) {
+	public void selectRevision(SVNRevision.Number revision) {
 		if (entries == null) {
 			return;
 		}
@@ -887,7 +887,7 @@ public class HistoryView extends ViewPart implements IResourceStateChangeListene
 			try {
 				if(remoteResource != null && !shutdown) {
 					entries = remoteResource.getLogEntries(monitor);
-					final SVNRevision revisionId = remoteResource.getRevision();
+					final SVNRevision.Number revisionId = remoteResource.getLastChangedRevision();
 					getSite().getShell().getDisplay().asyncExec(new Runnable() {
 						public void run() {
 							if(entries != null && tableHistoryViewer != null && ! tableHistoryViewer.getTable().isDisposed()) {
