@@ -645,7 +645,9 @@ public class HistoryView extends ViewPart implements IResourceStateChangeListene
 		if (teamProvider != null) {
 			try {
 				ISVNLocalResource localResource = SVNWorkspaceRoot.getSVNResourceFor(resource);
-				if (localResource != null && !localResource.getStatus().isAdded()) {
+				if ( localResource != null
+				        && !localResource.getStatus().isAdded()
+				        && localResource.getStatus().isManaged() ) {
 					ISVNRemoteResource baseResource = localResource.getBaseResource();
 					historyTableProvider.setRemoteResource(baseResource);
 					tableViewer.setInput(baseResource);
