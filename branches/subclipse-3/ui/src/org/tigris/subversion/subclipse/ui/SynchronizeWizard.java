@@ -20,7 +20,7 @@ import org.eclipse.team.ui.TeamImages;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.synchronize.ISynchronizeParticipant;
 import org.eclipse.team.ui.synchronize.SubscriberParticipant;
-import org.tigris.subversion.subclipse.core.SVNSubscriber;
+import org.tigris.subversion.subclipse.core.sync.SVNWorkspaceSubscriber;
 import org.tigris.subversion.subclipse.ui.subscriber.SVNSynchronizeParticipant;
 
 public class SynchronizeWizard extends Wizard {
@@ -43,7 +43,7 @@ public class SynchronizeWizard extends Wizard {
 	 * @see org.eclipse.jface.wizard.Wizard#addPages()
 	 */
 	public void addPages() {
-		selectionPage = new GlobalRefreshResourceSelectionPage(SVNSubscriber.getInstance().roots());
+		selectionPage = new GlobalRefreshResourceSelectionPage(SVNWorkspaceSubscriber.getInstance().roots());
 		selectionPage.setTitle("Synchronize File System Example");
 		selectionPage.setMessage("Synchronize File System Example");
 		addPage(selectionPage);

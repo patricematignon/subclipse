@@ -26,7 +26,7 @@ import org.eclipse.team.ui.synchronize.ISynchronizeParticipantDescriptor;
 import org.eclipse.team.ui.synchronize.ISynchronizeScope;
 import org.eclipse.team.ui.synchronize.SubscriberParticipant;
 import org.eclipse.team.ui.synchronize.SynchronizePageActionGroup;
-import org.tigris.subversion.subclipse.core.SVNSubscriber;
+import org.tigris.subversion.subclipse.core.sync.SVNWorkspaceSubscriber;
 import org.tigris.subversion.subclipse.ui.actions.CommitSynchronizeAction;
 import org.tigris.subversion.subclipse.ui.actions.UpdateSynchronizeAction;
 
@@ -69,7 +69,7 @@ public class SVNSynchronizeParticipant extends SubscriberParticipant {
 				if (element instanceof ISynchronizeModelElement) {
 					IResource resource = ((ISynchronizeModelElement) element).getResource();
 					if (resource != null && resource.getType() == IResource.FILE) {
-						SyncInfo info = SVNSubscriber.getInstance().getSyncInfo(resource);
+						SyncInfo info = SVNWorkspaceSubscriber.getInstance().getSyncInfo(resource);
 						IResourceVariant variant = info.getRemote();
 						if (variant != null) {
 							return text + " (" + variant.getContentIdentifier() + ")";
@@ -106,7 +106,7 @@ public class SVNSynchronizeParticipant extends SubscriberParticipant {
 	
 	public SVNSynchronizeParticipant(ISynchronizeScope scope) {
 		super(scope);
-		setSubscriber(SVNSubscriber.getInstance());
+		setSubscriber(SVNWorkspaceSubscriber.getInstance());
 	}
 	
 	/* (non-Javadoc)

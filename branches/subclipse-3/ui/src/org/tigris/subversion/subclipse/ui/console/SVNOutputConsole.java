@@ -321,6 +321,8 @@ public class SVNOutputConsole extends MessageConsole implements IConsoleListener
     public void logMessage(String message) {
         appendLine(ConsoleDocument.MESSAGE, "  " + message); //$NON-NLS-1$
     }
+    public void logRevision(long revision) {
+    }
     public void logCompleted(String message) {
         appendLine(ConsoleDocument.MESSAGE, "  " + message); //$NON-NLS-1$
     }
