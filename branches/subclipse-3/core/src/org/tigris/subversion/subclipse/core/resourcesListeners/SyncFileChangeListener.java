@@ -30,6 +30,7 @@ import org.tigris.subversion.subclipse.core.Policy;
 import org.tigris.subversion.subclipse.core.SVNException;
 import org.tigris.subversion.subclipse.core.SVNProviderPlugin;
 import org.tigris.subversion.subclipse.core.resources.SVNWorkspaceRoot;
+import org.tigris.subversion.svnclientadapter.SVNConstants;
 
 /*
  * Listens to subversion meta-file changes :
@@ -55,10 +56,6 @@ public class SyncFileChangeListener implements IResourceChangeListener {
 											IResourceDelta.REPLACED |
 											IResourceDelta.TYPE;
 	
-    public static final String SVN_DIRNAME = ".svn"; //$NON-NLS-1$
-    public static final String SVN_ENTRIES = "entries"; //$NON-NLS-1$
-	public static final String SVN_DIRPROPS = "dir-props"; //$NON-NLS-1$
-	public static final String SVN_PROPS = "props"; //$NON-NLS-1$
 				
 	
 	/*
@@ -97,7 +94,7 @@ public class SyncFileChangeListener implements IResourceChangeListener {
 					
 					IResource[] toBeNotified = new IResource[0];
 										
-					if(name.equals(SVN_DIRNAME)) {
+					if(name.equals(SVNConstants.SVN_DIRNAME)) {
 						handleSVNDir((IContainer)resource, kind);
 					}
 										
@@ -158,7 +155,7 @@ public class SyncFileChangeListener implements IResourceChangeListener {
 		if((kind & IResourceDelta.ALL_WITH_PHANTOMS)!=0) {
 			if(kind==IResourceDelta.ADDED) {
 				// should this dir be made team-private? If it contains Entries then yes!
-				IFile entriesFile = svnDir.getFile(new Path(SVN_ENTRIES));
+				IFile entriesFile = svnDir.getFile(new Path(SVNConstants.SVN_ENTRIES));
 
 				if (entriesFile.exists() &&  !svnDir.isTeamPrivateMember()) {
 					try {
@@ -181,13 +178,13 @@ public class SyncFileChangeListener implements IResourceChangeListener {
 		IContainer parent = resource.getParent();		
 		
 		if ((parent == null) || 
-		    (!parent.getName().equals(SVN_DIRNAME)) || 
+		    (!parent.getName().equals(SVNConstants.SVN_DIRNAME)) || 
 		    (!parent.isTeamPrivateMember() && parent.exists()) ) {
 			return false;
 		}
 		
 		if (resource.getType() == IResource.FILE &&
-            resource.getName().equals(SVN_ENTRIES)) {    
+            resource.getName().equals(SVNConstants.SVN_ENTRIES)) {    
         	return true;
         }
 		return false;
@@ -200,13 +197,13 @@ public class SyncFileChangeListener implements IResourceChangeListener {
 		IContainer parent = resource.getParent();		
 		
 		if ((parent == null) || 
-			(!parent.getName().equals(SVN_DIRNAME)) || 
+			(!parent.getName().equals(SVNConstants.SVN_DIRNAME)) || 
 			(!parent.isTeamPrivateMember() && parent.exists()) ) {
 			return false;
 		}
 		
 		if (resource.getType() == IResource.FILE &&
-			resource.getName().equals(SVN_DIRPROPS)) {     
+			resource.getName().equals(SVNConstants.SVN_DIRPROPS)) {     
 			return true;
 		}
 		return false;
@@ -220,14 +217,14 @@ public class SyncFileChangeListener implements IResourceChangeListener {
 		// we first verify that parent is props
 		IContainer parent = resource.getParent();		
 		if ((parent == null)  || 
-		    (!parent.getName().equals(SVN_PROPS)) ) {
+		    (!parent.getName().equals(SVNConstants.SVN_PROPS)) ) {
 			return false;
 		}
 		parent = parent.getParent();
 		
 		// we then verify that grand-father is svn
 		if ((parent == null) || 
-			(!parent.getName().equals(SVN_DIRNAME)) || 
+			(!parent.getName().equals(SVNConstants.SVN_DIRNAME)) || 
 			(!parent.isTeamPrivateMember() && parent.exists()) ) {
 			return false;
 		}

@@ -178,6 +178,10 @@
             enabled="true"
             pattern=".svn">
       </ignore>
+      <ignore
+            enabled="true"
+            pattern="_svn">
+      </ignore>
    </extension>
 
 </plugin>

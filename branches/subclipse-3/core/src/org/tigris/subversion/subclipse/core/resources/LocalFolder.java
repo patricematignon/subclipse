@@ -33,6 +33,7 @@ import org.tigris.subversion.subclipse.core.SVNException;
 import org.tigris.subversion.subclipse.core.SVNProviderPlugin;
 import org.tigris.subversion.subclipse.core.SVNTeamProvider;
 import org.tigris.subversion.svnclientadapter.ISVNStatus;
+import org.tigris.subversion.svnclientadapter.SVNConstants;
 import org.tigris.subversion.svnclientadapter.SVNUrl;
 
 /**
@@ -230,7 +231,7 @@ public class LocalFolder extends LocalResource implements ISVNLocalFolder {
                 for (int i = 0; i < dirs.size();i++) {
                     monitorDel.worked(1);
                     IContainer container = (IContainer)dirs.get(i);
-                    IFolder svnFolder = container.getFolder(new Path(".svn"));
+                    IFolder svnFolder = container.getFolder(new Path(SVNConstants.SVN_DIRNAME));
                     if (svnFolder.exists()) {
                         try {
 							svnFolder.delete(true,null);

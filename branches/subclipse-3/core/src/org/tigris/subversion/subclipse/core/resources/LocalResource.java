@@ -37,6 +37,7 @@ import org.tigris.subversion.svnclientadapter.ISVNDirEntry;
 import org.tigris.subversion.svnclientadapter.ISVNProperty;
 import org.tigris.subversion.svnclientadapter.ISVNStatus;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
+import org.tigris.subversion.svnclientadapter.SVNConstants;
 import org.tigris.subversion.svnclientadapter.SVNNodeKind;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
 import org.tigris.subversion.svnclientadapter.SVNUrl;
@@ -113,7 +114,7 @@ abstract class LocalResource implements ISVNLocalResource, Comparable {
 		
 		// always ignore .svn
 		String name = getName();
-		if (name.equals(".svn")) return true; //$NON-NLS-1$
+		if (name.equals(SVNConstants.SVN_DIRNAME)) return true; //$NON-NLS-1$
 		
 		// check the global ignores from Team
 		if (Team.isIgnoredHint(resource)) return true;

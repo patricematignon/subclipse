@@ -30,6 +30,7 @@ import org.tigris.subversion.subclipse.core.SVNException;
 import org.tigris.subversion.subclipse.core.util.ReentrantLock;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 import org.tigris.subversion.svnclientadapter.ISVNNotifyListener;
+import org.tigris.subversion.svnclientadapter.SVNConstants;
 import org.tigris.subversion.svnclientadapter.SVNNodeKind;
 
 /**
@@ -112,7 +113,7 @@ public class OperationManager implements ISVNNotifyListener {
 
 		
         if (kind == SVNNodeKind.UNKNOWN)  { // delete, revert 
-            IPath pathEntries = pathEclipse.removeLastSegments(1).append(".svn");
+            IPath pathEntries = pathEclipse.removeLastSegments(1).append(SVNConstants.SVN_DIRNAME);
             IResource entries = workspaceRoot.getFolder(pathEntries);
             changedResources.add(entries);
         }
@@ -125,12 +126,12 @@ public class OperationManager implements ISVNNotifyListener {
     			// be modified
                 resource = workspaceRoot.getContainerForLocation(pathEclipse);
 				if (resource != null) {
-					svnDir = ((IContainer)resource).getFolder(new Path(".svn"));
+					svnDir = ((IContainer)resource).getFolder(new Path(SVNConstants.SVN_DIRNAME));
 					changedResources.add(svnDir);
 					
 					if (resource.getProject() != resource) {
 						// if resource is a project. We can't refresh ../.svn						
-						svnDir = resource.getParent().getFolder(new Path(".svn"));
+						svnDir = resource.getParent().getFolder(new Path(SVNConstants.SVN_DIRNAME));
 						changedResources.add(svnDir); 
 					}
 				}
@@ -140,7 +141,7 @@ public class OperationManager implements ISVNNotifyListener {
                 resource =  workspaceRoot.getFileForLocation(pathEclipse);
 				
 				if (resource != null) {
-					svnDir = resource.getParent().getFolder(new Path(".svn"));
+					svnDir = resource.getParent().getFolder(new Path(SVNConstants.SVN_DIRNAME));
 					changedResources.add(svnDir);
 				}
 			}            

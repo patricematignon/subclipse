@@ -451,11 +451,11 @@
       </ignore>
       <ignore
             enabled="true"
-            pattern="svn-commit*.tmp">
+            pattern="_svn">
       </ignore>
       <ignore
             enabled="true"
-            pattern="ui.ignore3">
+            pattern="svn-commit*.tmp">
       </ignore>
       <ignore
             enabled="true"
