@@ -29,7 +29,6 @@ import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
@@ -45,7 +44,6 @@ import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.part.DrillDownAdapter;
 import org.eclipse.ui.part.ViewPart;
-import org.eclipse.ui.part.WorkbenchPart;
 import org.tigris.subversion.subclipse.core.ISVNRemoteFile;
 import org.tigris.subversion.subclipse.core.ISVNRemoteFolder;
 import org.tigris.subversion.subclipse.core.ISVNRemoteResource;
@@ -149,7 +147,7 @@ public class RepositoriesView extends ViewPart implements ISelectionListener {
 		// Create actions
 
 		// New Repository (popup)
-		newAction = new Action(Policy.bind("RepositoriesView.new"), 
+		newAction = new Action(Policy.bind("RepositoriesView.new"), //$NON-NLS-1$
             SVNUIPlugin.getPlugin().getImageDescriptor(ISVNUIConstants.IMG_NEWLOCATION)) { //$NON-NLS-1$
 			public void run() {
 				NewLocationWizard wizard = new NewLocationWizard();
@@ -319,17 +317,6 @@ public class RepositoriesView extends ViewPart implements ISelectionListener {
                 handleDoubleClick(e);
             }
         });        
-       
-        // when DEL is pressed, we remove the selected repository
-		treeViewer.getControl().addKeyListener(new KeyListener() {
-			public void keyPressed(KeyEvent event) {
-                if (event.character == SWT.DEL && event.stateMask == 0) {
-                    removeRootAction.run();
-                }
-			}
-			public void keyReleased(KeyEvent event) {
-			}
-		});
 	}
     
 	/**
