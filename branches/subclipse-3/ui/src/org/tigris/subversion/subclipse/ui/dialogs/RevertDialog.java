@@ -202,7 +202,10 @@ public class RevertDialog extends Dialog {
 	    ISVNLocalResource svnResource = SVNWorkspaceRoot.getSVNResourceFor(resource);
         String result = null;
 	       try {
-	            LocalResourceStatus status = svnResource.getStatus();
+	           LocalResourceStatus status = svnResource.getStatus();
+		       if (status.isTextConflicted())
+		           result = Policy.bind("CommitDialog.conflicted"); //$NON-NLS-1$
+		       else	            
 	            if (status.isAdded())
                    result = Policy.bind("CommitDialog.added"); //$NON-NLS-1$
                else
@@ -227,7 +230,9 @@ public class RevertDialog extends Dialog {
         String result = null;
 	       try {
 	            LocalResourceStatus status = svnResource.getStatus();
-	            if ((svnResource.getStatus() != null) &&
+	            if (status.isPropConflicted())
+	                result = Policy.bind("CommitDialog.conflicted"); //$NON-NLS-1$		            
+	            else if ((svnResource.getStatus() != null) &&
 	                (svnResource.getStatus().getPropStatus() != null) &&
 	                (svnResource.getStatus().getPropStatus().equals(SVNStatusKind.MODIFIED)))
 	                result = Policy.bind("CommitDialog.modified"); //$NON-NLS-1$		
