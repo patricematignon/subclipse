@@ -3,7 +3,7 @@
 <plugin
    id="org.tigris.subversion.subclipse.ui"
    name="%pluginName"
-   version="0.9.25"
+   version="0.9.26"
    provider-name="%providerName"
    class="org.tigris.subversion.subclipse.ui.SVNUIPlugin">
 
@@ -52,17 +52,17 @@
             id="org.tigris.subversion.subclipse.ui.history.HistoryView">
       </view>
       <view
-            icon="icons/full/tortoise/showchanged.gif"
-            class="org.tigris.subversion.subclipse.ui.pending.PendingOperationsView"
-            category="org.tigris.subversion.subclipse"
             name="%PendingOperationsView.name"
+            icon="icons/full/tortoise/showchanged.gif"
+            category="org.tigris.subversion.subclipse"
+            class="org.tigris.subversion.subclipse.ui.pending.PendingOperationsView"
             id="org.tigris.subversion.subclipse.ui.pending.PendingOperationsView">
       </view>
       <view
-            icon="icons/full/cview16/props_view.gif"
-            class="org.tigris.subversion.subclipse.ui.svnproperties.SvnPropertiesView"
             name="%SvnPropertiesView.name"
+            icon="icons/full/cview16/props_view.gif"
             category="org.tigris.subversion.subclipse"
+            class="org.tigris.subversion.subclipse.ui.svnproperties.SvnPropertiesView"
             id="org.tigris.subversion.subclipse.ui.svnproperties.SvnPropertiesView">
       </view>
       <view
@@ -71,7 +71,7 @@
             category="org.tigris.subversion.subclipse"
             class="org.tigris.subversion.subclipse.ui.annotations.AnnotateView"
             id="org.tigris.subversion.subclipse.ui.annotations.AnnotateView">
-      </view>      
+      </view>
    </extension>
    <extension
          point="org.eclipse.ui.perspectives">
@@ -92,28 +92,28 @@
          <view
                relative="org.eclipse.ui.views.TaskList"
                visible="false"
-               id="org.tigris.subversion.subclipse.ui.history.HistoryView"
-               relationship="stack">
+               relationship="stack"
+               id="org.tigris.subversion.subclipse.ui.history.HistoryView">
          </view>
          <view
                relative="org.eclipse.ui.views.ResourceNavigator"
                visible="false"
-               id="org.tigris.subversion.subclipse.ui.repository.RepositoriesView"
-               relationship="stack">
+               relationship="stack"
+               id="org.tigris.subversion.subclipse.ui.repository.RepositoriesView">
          </view>
          <view
                relative="org.eclipse.ui.views.ResourceNavigator"
                visible="false"
-               id="org.tigris.subversion.subclipse.ui.annotations.AnnotateView"
-               relationship="stack">
+               relationship="stack"
+               id="org.tigris.subversion.subclipse.ui.annotations.AnnotateView">
          </view>
       </perspectiveExtension>
       <perspectiveExtension
             targetID="org.tigris.subversion.subclipse.ui.svnPerspective">
          <view
                relative="org.tigris.subversion.subclipse.ui.repository.RepositoriesView"
-               id="org.tigris.subversion.subclipse.ui.annotations.AnnotateView"
-               relationship="stack">
+               relationship="stack"
+               id="org.tigris.subversion.subclipse.ui.annotations.AnnotateView">
          </view>
       </perspectiveExtension>
       <perspectiveExtension
@@ -124,17 +124,17 @@
          <view
                relative="org.eclipse.ui.views.TaskList"
                visible="false"
-               id="org.tigris.subversion.subclipse.ui.history.HistoryView"
-               relationship="stack">
+               relationship="stack"
+               id="org.tigris.subversion.subclipse.ui.history.HistoryView">
          </view>
          <view
                relative="org.eclipse.team.sync.views.SynchronizeView"
                visible="false"
-               id="org.tigris.subversion.subclipse.ui.repository.RepositoriesView"
-               relationship="stack">
+               relationship="stack"
+               id="org.tigris.subversion.subclipse.ui.repository.RepositoriesView">
          </view>
-       </perspectiveExtension>
-   </extension>   
+      </perspectiveExtension>
+   </extension>
    <extension
          point="org.eclipse.ui.popupMenus">
       <objectContribution
@@ -144,8 +144,8 @@
                label="%CreateRemoteFolderAction.label"
                icon="icons/full/wizards/newfolder_wiz.gif"
                helpContextId="org.tigris.subversion.subclipse.ui.create_remote_folder_action_context"
-               class="org.tigris.subversion.subclipse.ui.actions.CreateRemoteFolderAction"
                tooltip="%CreateRemoteFolderAction.tooltip"
+               class="org.tigris.subversion.subclipse.ui.actions.CreateRemoteFolderAction"
                menubarPath="group.add/additions"
                id="org.tigris.subversion.subclipse.ui.createRemoteFolder">
          </action>
@@ -157,8 +157,8 @@
                label="%CreateRemoteFolderAction.label"
                icon="icons/full/wizards/newfolder_wiz.gif"
                helpContextId="org.tigris.subversion.subclipse.ui.create_remote_folder_action_context"
-               class="org.tigris.subversion.subclipse.ui.actions.CreateRemoteFolderAction"
                tooltip="%CreateRemoteFolderAction.tooltip"
+               class="org.tigris.subversion.subclipse.ui.actions.CreateRemoteFolderAction"
                menubarPath="group.add/additions"
                id="org.tigris.subversion.subclipse.ui.createRemoteFolder">
          </action>
@@ -166,40 +166,40 @@
                label="%DeleteRemoteAction.label"
                icon="icons/full/ctool16/delete.gif"
                helpContextId="org.tigris.subversion.subclipse.ui.delete_remote_resource_action_context"
-               class="org.tigris.subversion.subclipse.ui.actions.DeleteRemoteResourceAction"
                tooltip="%DeleteRemoteAction.tooltip"
+               class="org.tigris.subversion.subclipse.ui.actions.DeleteRemoteResourceAction"
                id="org.tigris.subversion.subclipse.ui.deleteRemoteResource">
          </action>
          <action
                label="%CopyRemoteAction.label"
                icon="icons/full/ctool16/copy_edit.gif"
                helpContextId="org.tigris.subversion.subclipse.ui.copy_remote_resource_action_context"
-               class="org.tigris.subversion.subclipse.ui.actions.CopyRemoteResourceAction"
                tooltip="%CopyRemoteAction.tooltip"
+               class="org.tigris.subversion.subclipse.ui.actions.CopyRemoteResourceAction"
                id="org.tigris.subversion.subclipse.ui.copyRemoteResource">
          </action>
          <action
                label="%PasteRemoteAction.label"
                icon="icons/full/ctool16/paste_edit.gif"
                helpContextId="org.tigris.subversion.subclipse.ui.paste_remote_resource_action_context"
-               class="org.tigris.subversion.subclipse.ui.actions.PasteRemoteResourceAction"
                tooltip="%PasteRemoteAction.tooltip"
+               class="org.tigris.subversion.subclipse.ui.actions.PasteRemoteResourceAction"
                id="org.tigris.subversion.subclipse.ui.pasteRemoteResource">
          </action>
          <action
-               helpContextId="org.tigris.subversion.subclipse.ui.move_remote_resource_action_context"
                label="%MoveRemoteAction.label"
                icon="icons/full/tortoise/rename.gif"
-               tooltip="%MoveRemoteAction.tooltip"
+               helpContextId="org.tigris.subversion.subclipse.ui.move_remote_resource_action_context"
                class="org.tigris.subversion.subclipse.ui.actions.MoveRemoteResourceAction"
+               tooltip="%MoveRemoteAction.tooltip"
                id="org.tigris.subversion.subclipse.ui.moveRemoteResource">
          </action>
          <action
-               helpContextId="org.tigris.subversion.subclipse.ui.show_in_history_action_context"
                label="%ShowHistoryAction.label"
                icon="icons/full/tortoise/log.gif"
-               tooltip="%ShowHistoryAction.tooltip"
+               helpContextId="org.tigris.subversion.subclipse.ui.show_in_history_action_context"
                class="org.tigris.subversion.subclipse.ui.actions.ShowHistoryAction"
+               tooltip="%ShowHistoryAction.tooltip"
                id="org.tigris.subversion.subclipse.ui.showHistory">
          </action>
       </objectContribution>
@@ -209,8 +209,8 @@
          <action
                label="%OpenRemoteFileAction.label"
                helpContextId="org.tigris.subversion.subclipse.ui.open_remote_file_action_context"
-               class="org.tigris.subversion.subclipse.ui.actions.OpenRemoteFileAction"
                tooltip="%OpenRemoteFileAction.tooltip"
+               class="org.tigris.subversion.subclipse.ui.actions.OpenRemoteFileAction"
                id="org.tigris.subversion.subclipse.ui.openRemoteFile">
          </action>
       </objectContribution>
@@ -218,19 +218,19 @@
             objectClass="org.tigris.subversion.subclipse.core.ISVNRemoteFolder"
             id="org.tigris.subversion.subclipse.ui.RemoteFolderContributions">
          <action
-               helpContextId="org.tigris.subversion.subclipse.ui.checkout_as_project_action_context"
                label="%AddToWorkspaceAction.label"
                icon="icons/full/tortoise/checkout.gif"
-               tooltip="%AddToWorkspaceAction.tooltip"
+               helpContextId="org.tigris.subversion.subclipse.ui.checkout_as_project_action_context"
                class="org.tigris.subversion.subclipse.ui.actions.CheckoutAsProjectAction"
+               tooltip="%AddToWorkspaceAction.tooltip"
                menubarPath="checkoutGroup"
                id="org.tigris.subversion.subclipse.ui.addToWorkspace">
          </action>
          <action
                label="%CheckoutAsAction.label"
                helpContextId="org.tigris.subversion.subclipse.ui.checkout_as_action_context"
-               class="org.tigris.subversion.subclipse.ui.actions.CheckoutAsAction"
                tooltip="%CheckoutAsAction.tooltip"
+               class="org.tigris.subversion.subclipse.ui.actions.CheckoutAsAction"
                menubarPath="checkoutGroup"
                id="org.tigris.subversion.subclipse.ui.checkoutAs">
          </action>
@@ -239,12 +239,12 @@
             objectClass="org.tigris.subversion.subclipse.core.history.LogEntry"
             id="org.tigris.subversion.subclipse.ui.LogEntryContributions">
          <action
-               helpContextId="org.tigris.subversion.subclipse.ui.compare_remote_resources_action_context"
-               enablesFor="2"
                label="%CompareRemoteResourcesAction.label"
                icon="icons/full/tortoise/compare.gif"
-               tooltip="%CompareRemoteResourcesAction.tooltip"
+               helpContextId="org.tigris.subversion.subclipse.ui.compare_remote_resources_action_context"
                class="org.tigris.subversion.subclipse.ui.actions.CompareRemoteResourcesAction"
+               tooltip="%CompareRemoteResourcesAction.tooltip"
+               enablesFor="2"
                id="org.tigris.subversion.subclipse.ui.compareLogEntries">
          </action>
       </objectContribution>
@@ -254,8 +254,8 @@
          <action
                label="%ModifySVNPropertyAction.label"
                helpContextId="org.tigris.subversion.subclipse.ui.modify_svnProperty_action_context"
-               class="org.tigris.subversion.subclipse.ui.actions.SVNPropertyModifyAction"
                tooltip="%ModifySVNPropertyAction.tooltip"
+               class="org.tigris.subversion.subclipse.ui.actions.SVNPropertyModifyAction"
                enablesFor="1"
                id="org.tigris.subversion.subclipse.ui.modifySVNProperty">
          </action>
@@ -263,21 +263,21 @@
                label="%deletesvnpropertyaction.label"
                icon="icons/full/ctool16/delete.gif"
                helpContextId="org.tigris.subversion.subclipse.ui.delete_svnProperty_action_context"
-               class="org.tigris.subversion.subclipse.ui.actions.SVNPropertyDeleteAction"
                tooltip="%deletesvnpropertyaction.tooltip"
+               class="org.tigris.subversion.subclipse.ui.actions.SVNPropertyDeleteAction"
                id="org.tigris.subversion.subclipse.ui.deleteSVNProperty">
          </action>
          <action
                label="%SaveSVNPropertyAction.label"
                helpContextId="org.tigris.subversion.subclipse.ui.save_svnProperty_action_context"
-               class="org.tigris.subversion.subclipse.ui.actions.SVNPropertySaveAction"
                tooltip="%SaveSVNPropertyAction.tooltip"
+               class="org.tigris.subversion.subclipse.ui.actions.SVNPropertySaveAction"
                id="org.tigris.subversion.subclipse.ui.saveSVNProperty">
          </action>
       </objectContribution>
       <objectContribution
-            adaptable="true"
             objectClass="org.eclipse.core.resources.IProject"
+            adaptable="true"
             id="org.tigris.subversion.subclipse.ui.IProjectContributions">
          <filter
                name="projectPersistentProperty"
@@ -286,254 +286,256 @@
          <action
                label="%UnmanageFolder.label"
                helpContextId="org.tigris.subversion.subclipse.ui.team_disconnect_action_context"
-               class="org.tigris.subversion.subclipse.ui.actions.UnmanageAction"
                tooltip="%UnmanageFolder.tooltip"
+               class="org.tigris.subversion.subclipse.ui.actions.UnmanageAction"
                menubarPath="team.main/projectGroup"
                id="org.tigris.subversion.subclipse.ui.unmanage">
          </action>
       </objectContribution>
       <objectContribution
-            adaptable="true"
             objectClass="org.eclipse.core.resources.IResource"
+            adaptable="true"
             id="org.tigris.subversion.subclipse.ui.ResourceContributions">
          <filter
                name="projectPersistentProperty"
                value="org.eclipse.team.core.repository=org.tigris.subversion.subclipse.core.svnnature">
          </filter>
          <action
-               helpContextId="org.tigris.subversion.subclipse.ui.team_ignore_action_context"
                label="%IgnoreAction.label"
                icon="icons/full/tortoise/ignore.gif"
-               tooltip="%IgnoreAction.tooltip"
+               helpContextId="org.tigris.subversion.subclipse.ui.team_ignore_action_context"
                class="org.tigris.subversion.subclipse.ui.actions.IgnoreAction"
+               tooltip="%IgnoreAction.tooltip"
                menubarPath="team.main/group3"
                id="org.tigris.subversion.subclipse.ui.ignore">
          </action>
          <action
-               helpContextId="org.tigris.subversion.subclipse.ui.team_add_action_context"
                label="%AddAction.label"
                icon="icons/full/tortoise/add.gif"
-               tooltip="%AddAction.tooltip"
+               helpContextId="org.tigris.subversion.subclipse.ui.team_add_action_context"
                class="org.tigris.subversion.subclipse.ui.actions.AddAction"
+               tooltip="%AddAction.tooltip"
                menubarPath="team.main/group3"
                id="org.tigris.subversion.subclipse.ui.add">
          </action>
          <action
                label="%AddKeywords.label"
                helpContextId="org.tigris.subversion.subclipse.ui.team_add_keywords_action_context"
-               class="org.tigris.subversion.subclipse.ui.actions.AddKeywordsAction"
                tooltip="%AddKeywords.tooltip"
+               class="org.tigris.subversion.subclipse.ui.actions.AddKeywordsAction"
                menubarPath="team.main/group3"
                id="org.tigris.subversion.subclipse.ui.AddKeywords">
          </action>
          <action
-               helpContextId="org.tigris.subversion.subclipse.ui.team_set_svnpropery_action_context"
                label="%SetSvnProperty.label"
                icon="icons/full/ctool16/svn_prop_add.gif"
-               tooltip="%SetSvnProperty.tooltip"
+               helpContextId="org.tigris.subversion.subclipse.ui.team_set_svnpropery_action_context"
                class="org.tigris.subversion.subclipse.ui.actions.SetSvnPropertyAction"
+               tooltip="%SetSvnProperty.tooltip"
                menubarPath="team.main/group3"
                id="org.tigris.subversion.subclipse.ui.SetSvnProperty">
          </action>
          <action
-               helpContextId="org.tigris.subversion.subclipse.team_show_svn_properties_action_context"
                label="%ShowSvnPropertiesAction.label"
                icon="icons/full/cview16/props_view.gif"
-               tooltip="%ShowSvnPropertiesAction.tooltip"
+               helpContextId="org.tigris.subversion.subclipse.team_show_svn_properties_action_context"
                class="org.tigris.subversion.subclipse.ui.actions.ShowSvnPropertiesAction"
+               tooltip="%ShowSvnPropertiesAction.tooltip"
                menubarPath="team.main/group3"
                id="org.tigris.subversion.subclipse.ui.showSvnProperties">
          </action>
-          <action
+         <action
                label="%CompareWithPreviousAction.label"
                helpContextId="org.tigris.subversion.subclipse.ui.compare_with_previous_action_context"
-               class="org.tigris.subversion.subclipse.ui.actions.CompareWithPreviousRevisionAction"
                tooltip="%CompareWithPreviousAction.tooltip"
+               class="org.tigris.subversion.subclipse.ui.actions.CompareWithPreviousRevisionAction"
                menubarPath="compareWithMenu/compareWithGroup"
                id="org.tigris.subversion.subclipse.ui.compareWithPrevious">
          </action>
          <action
                label="%CompareWithHeadAction.label"
                helpContextId="org.tigris.subversion.subclipse.ui.compare_with_latest_action_context"
-               class="org.tigris.subversion.subclipse.ui.actions.CompareWithHeadRevisionAction"
                tooltip="%CompareWithRemoteAction.tooltip"
+               class="org.tigris.subversion.subclipse.ui.actions.CompareWithHeadRevisionAction"
                menubarPath="compareWithMenu/compareWithGroup"
                id="org.tigris.subversion.subclipse.ui.compareWithHead">
          </action>
          <action
                label="%CompareWithBaseAction.label"
                helpContextId="org.tigris.subversion.subclipse.ui.compare_with_base_action_context"
-               class="org.tigris.subversion.subclipse.ui.actions.CompareWithBaseRevisionAction"
                tooltip="%CompareWithBaseAction.tooltip"
+               class="org.tigris.subversion.subclipse.ui.actions.CompareWithBaseRevisionAction"
                menubarPath="compareWithMenu/compareWithGroup"
                id="org.tigris.subversion.subclipse.ui.compareWithBase">
          </action>
          <action
-               helpContextId="org.tigris.subversion.subclipse.ui.team_revert_action_context"
                label="%RevertAction.label"
                icon="icons/full/tortoise/revert.gif"
-               tooltip="%RevertAction.tooltip"
+               helpContextId="org.tigris.subversion.subclipse.ui.team_revert_action_context"
                class="org.tigris.subversion.subclipse.ui.actions.RevertAction"
+               tooltip="%RevertAction.tooltip"
                menubarPath="team.main/group5"
                id="org.tigris.subversion.subclipse.ui.revert">
          </action>
          <action
-               helpContextId="org.tigris.subversion.subclipse.ui.team_merge_action_context"
                label="%MergeAction.label"
                icon="icons/full/tortoise/merge.gif"
-               tooltip="%MergeAction.tooltip"
+               helpContextId="org.tigris.subversion.subclipse.ui.team_merge_action_context"
                class="org.tigris.subversion.subclipse.ui.actions.MergeAction"
+               tooltip="%MergeAction.tooltip"
                menubarPath="team.main/group4"
                enablesFor="1"
                id="org.tigris.subversion.subclipse.ui.merge">
-         </action>                 
+         </action>
          <action
-               helpContextId="org.tigris.subversion.subclipse.ui.team_switch_action_context"
                label="%SwitchAction.label"
                icon="icons/full/tortoise/switch.gif"
-               tooltip="%SwitchAction.tooltip"
+               helpContextId="org.tigris.subversion.subclipse.ui.team_switch_action_context"
                class="org.tigris.subversion.subclipse.ui.actions.SwitchAction"
+               tooltip="%SwitchAction.tooltip"
                menubarPath="team.main/group4"
                enablesFor="1"
                id="org.tigris.subversion.subclipse.ui.switch">
          </action>
          <action
-               helpContextId="org.tigris.subversion.subclipse.ui.team_branchtag_action_context"
                label="%BranchTagAction.label"
                icon="icons/full/tortoise/copy.gif"
-               tooltip="%BranchTagAction.tooltip"
+               helpContextId="org.tigris.subversion.subclipse.ui.team_branchtag_action_context"
                class="org.tigris.subversion.subclipse.ui.actions.BranchTagAction"
+               tooltip="%BranchTagAction.tooltip"
                menubarPath="team.main/group4"
                enablesFor="1"
                id="org.tigris.subversion.subclipse.ui.branchtag">
-         </action>                                   
+         </action>
          <action
-               helpContextId="org.tigris.subversion.subclipse.ui.team_edit_conflicts_action_context"
                label="%EditConflictsAction.label"
                icon="icons/full/tortoise/conflict.gif"
-               tooltip="%EditConflictsAction.tooltip"
+               helpContextId="org.tigris.subversion.subclipse.ui.team_edit_conflicts_action_context"
                class="org.tigris.subversion.subclipse.ui.actions.EditConflictsAction"
+               tooltip="%EditConflictsAction.tooltip"
                menubarPath="team.main/group5"
                id="org.tigris.subversion.subclipse.ui.editConflicts">
          </action>
          <action
-               helpContextId="org.eclipse.team.cvs.ui.replace_with_latest_action_context"
                label="%ReplaceWithAction.label"
-               class="org.tigris.subversion.subclipse.ui.actions.ReplaceWithRemoteAction"
+               helpContextId="org.eclipse.team.cvs.ui.replace_with_latest_action_context"
                tooltip="%ReplaceWithAction.tooltip"
+               class="org.tigris.subversion.subclipse.ui.actions.ReplaceWithRemoteAction"
                menubarPath="replaceWithMenu/replaceWithGroup"
                id="org.tigris.subversion.subclipse.ui.replace">
          </action>
          <action
-               helpContextId="org.tigris.subversion.subclipse.ui.team_create_patch_action_context"
                label="%generatediff.label"
                icon="icons/full/tortoise/diff.gif"
-               tooltip="%GenerateDiff.tooltip"
+               helpContextId="org.tigris.subversion.subclipse.ui.team_create_patch_action_context"
                class="org.tigris.subversion.subclipse.ui.actions.GenerateDiffFileAction"
+               tooltip="%GenerateDiff.tooltip"
                menubarPath="team.main/group1"
                id="org.tigris.subversion.subclipse.ui.GenerateDiff">
          </action>
          <action
-               helpContextId="org.tigris.subversion.subclipse.ui.team_update_action_context"
                label="%UpdateAction.label"
                icon="icons/full/tortoise/update.gif"
-               tooltip="%UpdateAction.tooltip"
+               helpContextId="org.tigris.subversion.subclipse.ui.team_update_action_context"
                class="org.tigris.subversion.subclipse.ui.actions.UpdateAction"
+               tooltip="%UpdateAction.tooltip"
                menubarPath="team.main/group1"
                id="org.tigris.subversion.subclipse.ui.update">
          </action>
          <action
-               helpContextId="org.tigris.subversion.subclipse.ui.team_commit_action_context"
                label="%CommitAction.label"
                icon="icons/full/tortoise/commit.gif"
-               tooltip="%CommitAction.tooltip"
+               helpContextId="org.tigris.subversion.subclipse.ui.team_commit_action_context"
                class="org.tigris.subversion.subclipse.ui.actions.CommitAction"
+               tooltip="%CommitAction.tooltip"
                menubarPath="team.main/group1"
                id="org.tigris.subversion.subclipse.ui.commit">
          </action>
          <action
-               helpContextId="org.tigris.subversion.subclipse.ui.team_synchronize_action_context"
                label="%SynchronizeAction.label"
                icon="icons/full/obj16/synch_synch.gif"
-               tooltip="%SynchronizeAction.tooltip"
+               helpContextId="org.tigris.subversion.subclipse.ui.team_synchronize_action_context"
                class="org.tigris.subversion.subclipse.ui.actions.SynchronizeAction"
+               tooltip="%SynchronizeAction.tooltip"
                menubarPath="team.main/group1"
                id="org.tigris.subversion.subclipse.synchronize">
-		</action>
-        <action
-              helpContextId="org.tigris.subversion.subclipse.ui.show_in_history_action_context"
-              label="%ShowHistoryAction.label"
-              icon="icons/full/tortoise/log.gif"
-              tooltip="%ShowHistoryAction.tooltip"
-              class="org.tigris.subversion.subclipse.ui.actions.ShowResourceInHistoryAction"
-              menubarPath="team.main/group2"
-              id="org.tigris.subversion.subclipse.ui.ShowResourceInHistoryAction">
-        </action>		
+         </action>
+         <action
+               label="%ShowHistoryAction.label"
+               icon="icons/full/tortoise/log.gif"
+               helpContextId="org.tigris.subversion.subclipse.ui.show_in_history_action_context"
+               class="org.tigris.subversion.subclipse.ui.actions.ShowResourceInHistoryAction"
+               tooltip="%ShowHistoryAction.tooltip"
+               menubarPath="team.main/group2"
+               id="org.tigris.subversion.subclipse.ui.ShowResourceInHistoryAction">
+         </action>
       </objectContribution>
       <objectContribution
-            adaptable="true"
             objectClass="org.eclipse.core.resources.IFile"
+            adaptable="true"
             id="org.tigris.subversion.subclipse.ui.IFileContributions">
          <filter
                name="projectPersistentProperty"
                value="org.eclipse.team.core.repository=org.tigris.subversion.subclipse.core.svnnature">
          </filter>
          <action
-               helpContextId="org.tigris.subversion.subclipse.ui.team_resolve_action_context"
                label="%ResolveAction.label"
                icon="icons/full/tortoise/resolve.gif"
-               class="org.tigris.subversion.subclipse.ui.actions.ResolveAction"
+               helpContextId="org.tigris.subversion.subclipse.ui.team_resolve_action_context"
                tooltip="%ResolveAction.tooltip"
+               class="org.tigris.subversion.subclipse.ui.actions.ResolveAction"
                menubarPath="team.main/group5"
-               id="org.tigris.subversion.subclipse.ui.resolve"/>
+               id="org.tigris.subversion.subclipse.ui.resolve">
+         </action>
          <action
                label="%CompareWithRevisionAction.label"
                helpContextId="org.tigris.subversion.subclipse.ui.compare_with_revision_action_context"
-               class="org.tigris.subversion.subclipse.ui.actions.CompareWithRevisionAction"
                tooltip="%CompareWithRevisionAction.tooltip"
+               class="org.tigris.subversion.subclipse.ui.actions.CompareWithRevisionAction"
                menubarPath="compareWithMenu/compareWithGroup"
                id="org.tigris.subversion.subclipse.ui.compareWithRevision">
          </action>
          <action
-               helpContextId="org.tigris.subversion.subclipse.ui.replace_with_revision_action_context"
                label="%ReplaceWithRevisionAction.label"
-               tooltip="%ReplaceWithRevisionAction.tooltip"
+               helpContextId="org.tigris.subversion.subclipse.ui.replace_with_revision_action_context"
                class="org.tigris.subversion.subclipse.ui.actions.ReplaceWithRevisionAction"
+               tooltip="%ReplaceWithRevisionAction.tooltip"
                menubarPath="replaceWithMenu/replaceWithGroup"
-               id="org.tigris.subversion.subclipse.ui.replaceWithRevision"/>
+               id="org.tigris.subversion.subclipse.ui.replaceWithRevision">
+         </action>
          <action
                label="%ShowAnnotationAction.label"
                icon="icons/full/tortoise/blame.gif"
                helpContextId="org.tigris.subversion.subclipse.ui.get_annotate_action_context"
-               tooltip="%ShowAnnotationAction.tooltip"
                class="org.tigris.subversion.subclipse.ui.actions.ShowAnnotationAction"
+               tooltip="%ShowAnnotationAction.tooltip"
                menubarPath="team.main/group2"
                id="org.tigris.subversion.subclipse.ui.showAnnotation">
-         </action>               
+         </action>
       </objectContribution>
       <objectContribution
-            adaptable="true"
             objectClass="org.eclipse.core.resources.IContainer"
+            adaptable="true"
             id="org.tigris.subversion.subclipse.ui.IContainerContributions">
          <filter
                name="projectPersistentProperty"
                value="org.eclipse.team.core.repository=org.tigris.subversion.subclipse.core.svnnature">
          </filter>
-          <action
-                helpContextId="org.tigris.subversion.subclipse.ui.team_cleanup_action_context"
-                label="%CleanupAction.label"
-                icon="icons/full/tortoise/cleanup.gif"
-                tooltip="%CleanupAction.tooltip"
-                class="org.tigris.subversion.subclipse.ui.actions.CleanupAction"
-                menubarPath="team.main/group5"
-                id="org.tigris.subversion.subclipse.ui.cleanup">
+         <action
+               label="%CleanupAction.label"
+               icon="icons/full/tortoise/cleanup.gif"
+               helpContextId="org.tigris.subversion.subclipse.ui.team_cleanup_action_context"
+               class="org.tigris.subversion.subclipse.ui.actions.CleanupAction"
+               tooltip="%CleanupAction.tooltip"
+               menubarPath="team.main/group5"
+               id="org.tigris.subversion.subclipse.ui.cleanup">
          </action>
          <action
-               helpContextId="org.tigris.subversion.subclipse.team_show_pending_operations_action_context"
                label="%ShowPendingOperationsAction.label"
                icon="icons/full/tortoise/showchanged.gif"
-               tooltip="%ShowPendingOperationsAction.tooltip"
+               helpContextId="org.tigris.subversion.subclipse.team_show_pending_operations_action_context"
                class="org.tigris.subversion.subclipse.ui.actions.ShowPendingOperationsAction"
+               tooltip="%ShowPendingOperationsAction.tooltip"
                menubarPath="team.main/group5"
                id="org.tigris.subversion.subclipse.ui.showPendingOperations">
          </action>
@@ -543,11 +545,11 @@
          point="org.eclipse.ui.decorators">
       <decorator
             lightweight="true"
-            adaptable="true"
             objectClass="org.eclipse.core.resources.IResource"
+            adaptable="true"
             label="%DecoratorStandard.name"
-            class="org.tigris.subversion.subclipse.ui.decorator.SVNLightweightDecorator"
             state="true"
+            class="org.tigris.subversion.subclipse.ui.decorator.SVNLightweightDecorator"
             id="org.tigris.subversion.subclipse.ui.decorator">
          <description>
             %DecoratorStandard.desc
@@ -562,14 +564,13 @@
          <action
                label="%SVNActionSet.newLabel"
                icon="icons/full/wizards/newlocation_wiz.gif"
-               tooltip="%SVNActionSet.newTooltip"
                class="org.tigris.subversion.subclipse.ui.actions.NewRepositoryAction"
+               tooltip="%SVNActionSet.newTooltip"
                toolbarPath="actions"
                id="org.tigris.subversion.ui.actions.NewRepositoryAction">
          </action>
       </viewContribution>
    </extension>
-   
    <extension
          point="org.eclipse.team.ui.configurationWizards">
       <wizard
@@ -600,18 +601,20 @@
    <extension
          point="org.eclipse.ui.preferencePages">
       <page
-            class="org.tigris.subversion.subclipse.ui.console.ConsolePreferencesPage"
-            category="org.tigris.subversion.subclipse.ui.SVNPreferences"
             name="%ConsolePreferencePage.name"
-            id="org.tigris.subversion.subclipse.ui.ConsolePreferences"/>
+            category="org.tigris.subversion.subclipse.ui.SVNPreferences"
+            class="org.tigris.subversion.subclipse.ui.console.ConsolePreferencesPage"
+            id="org.tigris.subversion.subclipse.ui.ConsolePreferences">
+      </page>
    </extension>
    <extension
          point="org.eclipse.ui.preferencePages">
       <page
-            class="org.tigris.subversion.subclipse.ui.conflicts.DiffMergePreferencePage"
-            category="org.tigris.subversion.subclipse.ui.SVNPreferences"
             name="%DiffMergePreferencePage.name"
-            id="org.tigris.subversion.subclipse.ui.DiffMergePreferences"/>
+            category="org.tigris.subversion.subclipse.ui.SVNPreferences"
+            class="org.tigris.subversion.subclipse.ui.conflicts.DiffMergePreferencePage"
+            id="org.tigris.subversion.subclipse.ui.DiffMergePreferences">
+      </page>
    </extension>
    <extension
          point="org.eclipse.ui.ide.markerResolution">
@@ -623,17 +626,17 @@
    <extension
          point="org.eclipse.ui.propertyPages">
       <page
-            adaptable="true"
             objectClass="org.eclipse.core.resources.IResource"
-            class="org.tigris.subversion.subclipse.ui.properties.SVNPropertyPage"
+            adaptable="true"
             name="Subversion"
+            class="org.tigris.subversion.subclipse.ui.properties.SVNPropertyPage"
             id="org.tigris.subversion.subclipse.ui.properties.SVNPropertyPage">
          <filter
                name="projectPersistentProperty"
                value="org.eclipse.team.core.repository=org.tigris.subversion.subclipse.core.svnnature">
          </filter>
       </page>
-	  <page
+      <page
             objectClass="org.tigris.subversion.subclipse.core.ISVNRepositoryLocation"
             name="%SVN"
             class="org.tigris.subversion.subclipse.ui.properties.SVNRepositoryPropertiesPage"
@@ -653,39 +656,45 @@
             file="tocreference.xml">
       </toc>
       <toc
-            file="dailywork.xml"/>
+            file="dailywork.xml">
+      </toc>
       <toc
-            file="toc_platformGettingstarted.xml"/>
+            file="toc_platformGettingstarted.xml">
+      </toc>
    </extension>
    <extension
          point="org.eclipse.team.ui.synchronizeParticipants">
       <participant
             persistent="true"
+            name="%SVNWorkspaceParticipant"
             icon="icons/full/cview16/svn_persp.gif"
             class="org.tigris.subversion.subclipse.ui.subscriber.SVNSynchronizeParticipant"
-            name="%SVNWorkspaceParticipant"
             id="org.tigris.subversion.subclipse.participant">
       </participant>
    </extension>
    <extension
          point="org.eclipse.team.ui.synchronizeWizards">
       <wizard
-            class="org.tigris.subversion.subclipse.ui.SynchronizeWizard"
+            name="Synchronize SVN Provider"
             icon="icons/full/cview16/svn_persp.gif"
             description="Synchronize files managed with SVN"
-            name="Synchronize SVN Provider"
-            id="org.tigris.subversion.subclipse.synchronizeWizard"/>
+            class="org.tigris.subversion.subclipse.ui.SynchronizeWizard"
+            id="org.tigris.subversion.subclipse.synchronizeWizard">
+      </wizard>
    </extension>
    <extension
          point="org.eclipse.ui.workbench.texteditor.quickDiffReferenceProvider">
       <referenceprovider
             label="Pristine SVN Copy"
             class="org.tigris.subversion.subclipse.ui.SVNPristineCopyQuickDiffProvider"
-            id="org.tigris.subversion.subclipse.quickdiff.providers.SVNReferenceProvider"/>
+            id="org.tigris.subversion.subclipse.quickdiff.providers.SVNReferenceProvider">
+      </referenceprovider>
    </extension>
    <extension
          point="org.eclipse.help.contexts">
-      <contexts file="help_contexts.xml"/>
+      <contexts
+            file="help_contexts.xml">
+      </contexts>
    </extension>
 
 </plugin>
