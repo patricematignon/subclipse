@@ -46,20 +46,22 @@ public class SVNLocalCompareEditorInput extends SVNSyncCompareInput {
 		try {
 			for (int i = 0; i < trees.length; i++) {
 				IResource resource = resources[i];	
-
                 IRemoteResource remote = SVNWorkspaceRoot.getRemoteResourceFor(resource);
-//				IRemoteResource remote = SVNWorkspaceRoot.getRemoteTree(resource, Policy.subMonitorFor(monitor, 50));
-				trees[i] = new SVNRemoteSyncElement(false /* two-way */, resource, null, remote);				 
+    			trees[i] = new SVNRemoteSyncElement(false /* two-way */, resource, null, remote);				 
 			}
 		} finally {
 			monitor.done();
 		}
-		//getViewer().resetFilters();
 		return trees;
 	}
 	
 	public String getTitle() {
-		return Policy.bind("SVNLocalCompareEditorInput.title" /* , tags[0].getName() */); //$NON-NLS-1$
+	    IResource[] resources = getResources();
+	    String name="";
+	     for(int i = 0; i < resources.length; i++){
+	        name+=resources[i].getName()+' ';
+	    }
+		return Policy.bind("SVNLocalCompareEditorInput.title", name.trim()); //$NON-NLS-1$
 	}
 	
 	protected void contentsChanged(ICompareInput source) {
