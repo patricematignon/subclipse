@@ -58,6 +58,11 @@ import org.tigris.subversion.subclipse.ui.decorator.SVNLightweightDecorator;
  */
 public class SVNDecoratorPreferencesPage extends PreferencePage implements IWorkbenchPreferencePage {
 
+	private Button imageShowDirty;
+	private Button imageShowHasRemote;
+	private Button imageShowAdded;
+	private Button imageShowNewResource;
+	
 	private Text fileTextFormat;
 	private Text fileTextFormatExample;
 	
@@ -198,6 +203,11 @@ public class SVNDecoratorPreferencesPage extends PreferencePage implements IWork
 		tabItem.setText(Policy.bind("SVNDecoratorPreferencesPage.textLabel"));//$NON-NLS-1$		
 		tabItem.setControl(createTextDecoratorPage(tabFolder));
 
+		// image decoration options
+		tabItem = new TabItem(tabFolder, SWT.NONE);
+		tabItem.setText(Policy.bind("Icon_Overlays_24"));//$NON-NLS-1$		
+		tabItem.setControl(createIconDecoratorPage(tabFolder));
+		
 		// general decoration options
 		tabItem = new TabItem(tabFolder, SWT.NONE);
 		tabItem.setText(Policy.bind("SVNDecoratorPreferencesPage.generalTabFolder"));//$NON-NLS-1$
@@ -263,6 +273,21 @@ public class SVNDecoratorPreferencesPage extends PreferencePage implements IWork
 		return fileTextGroup;	
 	}
     
+	private Control createIconDecoratorPage(Composite parent) {
+		Composite imageGroup = new Composite(parent, SWT.NULL);
+		GridLayout layout = new GridLayout();
+		imageGroup.setLayout(layout);
+		GridData data = new GridData();
+		data.horizontalAlignment = GridData.FILL;
+		imageGroup.setLayoutData(data);
+		
+		imageShowDirty = createCheckBox(imageGroup, Policy.bind("Sho&w_outgoing_25")); //$NON-NLS-1$
+		imageShowHasRemote = createCheckBox(imageGroup, Policy.bind("Show_has_&remote_26")); //$NON-NLS-1$
+		imageShowAdded = createCheckBox(imageGroup, Policy.bind("S&how_is_added_27")); //$NON-NLS-1$
+		imageShowNewResource = createCheckBox(imageGroup, Policy.bind("SVNDecoratorPreferencesPage.newResources")); //$NON-NLS-1$		
+		return imageGroup;
+	}
+	
     /**
      * creates a label
      */
@@ -289,6 +314,11 @@ public class SVNDecoratorPreferencesPage extends PreferencePage implements IWork
 		addedFlag.setText(store.getString(ISVNUIConstants.PREF_ADDED_FLAG));
 		dirtyFlag.setText(store.getString(ISVNUIConstants.PREF_DIRTY_FLAG));
 		
+		imageShowDirty.setSelection(store.getBoolean(ISVNUIConstants.PREF_SHOW_DIRTY_DECORATION));
+		imageShowAdded.setSelection(store.getBoolean(ISVNUIConstants.PREF_SHOW_ADDED_DECORATION));
+		imageShowHasRemote.setSelection(store.getBoolean(ISVNUIConstants.PREF_SHOW_HASREMOTE_DECORATION));
+		imageShowNewResource.setSelection(store.getBoolean(ISVNUIConstants.PREF_SHOW_NEWRESOURCE_DECORATION));
+		
 		showDirty.setSelection(store.getBoolean(ISVNUIConstants.PREF_CALCULATE_DIRTY));
 		
 		setValid(true);
@@ -314,6 +344,11 @@ public class SVNDecoratorPreferencesPage extends PreferencePage implements IWork
 		store.setValue(ISVNUIConstants.PREF_ADDED_FLAG, addedFlag.getText());
 		store.setValue(ISVNUIConstants.PREF_DIRTY_FLAG, dirtyFlag.getText());
 		
+		store.setValue(ISVNUIConstants.PREF_SHOW_DIRTY_DECORATION, imageShowDirty.getSelection());
+		store.setValue(ISVNUIConstants.PREF_SHOW_ADDED_DECORATION, imageShowAdded.getSelection());
+		store.setValue(ISVNUIConstants.PREF_SHOW_HASREMOTE_DECORATION, imageShowHasRemote.getSelection());
+		store.setValue(ISVNUIConstants.PREF_SHOW_NEWRESOURCE_DECORATION, imageShowNewResource.getSelection());
+		
 		store.setValue(ISVNUIConstants.PREF_CALCULATE_DIRTY, showDirty.getSelection());
 		
 		SVNLightweightDecorator.refresh();
@@ -336,6 +371,13 @@ public class SVNDecoratorPreferencesPage extends PreferencePage implements IWork
 		
 		addedFlag.setText(store.getDefaultString(ISVNUIConstants.PREF_ADDED_FLAG));
 		dirtyFlag.setText(store.getDefaultString(ISVNUIConstants.PREF_DIRTY_FLAG));
+		
+		imageShowDirty.setSelection(store.getDefaultBoolean(ISVNUIConstants.PREF_SHOW_DIRTY_DECORATION));
+		imageShowAdded.setSelection(store.getDefaultBoolean(ISVNUIConstants.PREF_SHOW_ADDED_DECORATION));
+		imageShowHasRemote.setSelection(store.getDefaultBoolean(ISVNUIConstants.PREF_SHOW_HASREMOTE_DECORATION));
+		imageShowNewResource.setSelection(store.getDefaultBoolean(ISVNUIConstants.PREF_SHOW_NEWRESOURCE_DECORATION));
+		
+		showDirty.setSelection(store.getDefaultBoolean(ISVNUIConstants.PREF_CALCULATE_DIRTY));
     }
 
 	/**
