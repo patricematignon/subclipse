@@ -12,6 +12,7 @@
 package org.tigris.subversion.subclipse.core;
 
 
+
 /**
  * SVN file. Can be local or remote
  * 

@@ -12,6 +12,7 @@
 package org.tigris.subversion.subclipse.core.resources;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
@@ -23,7 +24,6 @@ import org.eclipse.team.core.TeamException;
 import org.tigris.subversion.subclipse.core.ISVNRemoteFile;
 import org.tigris.subversion.subclipse.core.ISVNRemoteResource;
 import org.tigris.subversion.subclipse.core.ISVNRepositoryLocation;
-import org.tigris.subversion.subclipse.core.Policy;
 import org.tigris.subversion.subclipse.core.SVNException;
 import org.tigris.subversion.subclipse.core.history.ILogEntry;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
@@ -39,6 +39,7 @@ public class RemoteFile extends SVNRemoteResource implements ISVNRemoteFile  {
 
     // buffer for file contents received from the server
     private byte[] contents;
+	private static final int BUFSIZE = 0;
 
 
     public RemoteFile(RemoteFolder parent, 
@@ -62,14 +63,10 @@ public class RemoteFile extends SVNRemoteResource implements ISVNRemoteFile  {
 	/**
 	 * @see ISVNRemoteFile#getContents()
 	 */
-	public InputStream getContents(IProgressMonitor monitor) throws SVNException {
+	public InputStream getContents() throws IOException{
         // we cache the contents as getContents can be called several times
         // on the same RemoteFile
-		if (monitor == null)
-			monitor = new NullProgressMonitor();
-        monitor.beginTask(Policy.bind("RemoteFile.getContents"), 100);//$NON-NLS-1$
-        try
-        {
+		
             if (contents == null)
             {
                 ISVNClientAdapter svnClient = repository.getSVNClient();
@@ -78,16 +75,12 @@ public class RemoteFile extends SVNRemoteResource implements ISVNRemoteFile  {
                     inputStream = svnClient.getContent(url, getLastChangedRevision());
                     contents = new byte[inputStream.available()];
                     inputStream.read(contents);
-                } catch (IOException e) {
 		        } catch (SVNClientException e) {
-                    throw SVNException.wrapException(e);
+                    e.printStackTrace();
+                    //TODO: don't leave this like this.
 		        }
-                monitor.done();
             }
             return new ByteArrayInputStream(contents);
-        } finally {
-            monitor.done();
-        }
 	}
 
 	/*
@@ -128,18 +121,49 @@ public class RemoteFile extends SVNRemoteResource implements ISVNRemoteFile  {
         }
     }
 
-    public IStorage getBufferedStorage(IProgressMonitor monitor) throws TeamException
-    {
-        this.getContents(monitor);
-		return (IStorage)this;
-    }
+   
+
+	
 
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.subclipse.core.ISVNRemoteFile#getContents()
+	 * @see org.eclipse.team.core.variants.IResourceVariant#getStorage(org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public InputStream getContents() throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+	public IStorage getStorage(IProgressMonitor monitor) throws TeamException {
+		try{
+			this.getContents();
+		}catch(IOException e){
+			throw new TeamException(e.getMessage());
+			//TODO:this probably shouldn't do this. 
+			//also put in the monitor manipulation.
+		}
+		return (IStorage)this;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.variants.IResourceVariant#asBytes()
+	 */
+	public byte[] asBytes() {
+		ByteArrayOutputStream bos = null;
+		byte[] contents = null;
+		try{
+			InputStream in = getContents();
+			bos = new ByteArrayOutputStream();
+			byte[] buf = new byte[BUFSIZE];
+			while(true){
+				int read = in.read(buf,0,buf.length);
+				bos.write(buf, 0, read);
+				if(read == -1)break;
+			}
+			bos.flush();
+			
+			contents = bos.toByteArray();
+		}catch(IOException e){
+			
+		}finally{
+			
+			try{if(bos!=null)bos.close();}catch(Exception e){}
+		}
+		return contents;
 	}
 
 }

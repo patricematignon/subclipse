@@ -11,9 +11,7 @@
  *******************************************************************************/
 package org.tigris.subversion.subclipse.core;
 
-import java.io.InputStream;
-
-import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.team.core.variants.IResourceVariant;
 
  
 
@@ -23,9 +21,9 @@ import org.eclipse.core.runtime.IProgressMonitor;
   * of the remote file.
   * 
   */
-public interface ISVNRemoteFile extends ISVNRemoteResource, ISVNFile {
+public interface ISVNRemoteFile extends ISVNRemoteResource, ISVNFile, IResourceVariant {
 	
-	InputStream getContents(IProgressMonitor monitor)throws SVNException;
+	
 	
 	
 }

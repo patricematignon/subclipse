@@ -87,7 +87,7 @@ public class CheckoutAsProjectAction extends SVNAction {
 								if(".project".equals(resource.getName())){
 									ISVNRemoteFile dotProject = folders[0].getRepository().getRemoteFile(new SVNUrl(Util.appendPath(folders[i].getUrl().get(), ".project")));
 																
-									InputStream is = dotProject.getContents(monitor);
+									InputStream is = dotProject.getStorage(monitor).getContents();
 									DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 									org.w3c.dom.Document doc = db.parse(is);
 									is.close();

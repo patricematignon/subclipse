@@ -45,8 +45,10 @@ public class RemoteFileStorage extends PlatformObject implements IStorage {
 			SVNUIPlugin.runWithProgress(null, true /*cancelable*/, new IRunnableWithProgress() {
 				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 					try {
-						holder[0] = file.getContents(monitor);
+						holder[0] = file.getStorage(monitor).getContents();
 					} catch (TeamException e) {
+						throw new InvocationTargetException(e);
+					}catch(CoreException e){
 						throw new InvocationTargetException(e);
 					}
 				}
@@ -64,11 +66,6 @@ public class RemoteFileStorage extends PlatformObject implements IStorage {
 		return new ByteArrayInputStream(new byte[0]);
 	}
 	public IPath getFullPath() {
-//		ISVNRepositoryLocation location = file.getRepository();
-//		IPath path = new Path(location.getRootDirectory());
-//		path = path.setDevice(location.getHost() + Path.DEVICE_SEPARATOR);
-//		path = path.append(file.getRepositoryRelativePath());
-//		return path;
         return null;
 	}
 	public String getName() {

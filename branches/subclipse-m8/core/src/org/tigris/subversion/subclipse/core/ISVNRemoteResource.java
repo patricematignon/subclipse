@@ -91,14 +91,7 @@ public interface ISVNRemoteResource extends ISVNResource {
     public ISVNRemoteFolder getParent();
     
     public ISVNRepositoryLocation getRepository();
-    
-    /**
-     * Is this resource a folder
-     * @return
-     * @todo Generated comment
-     */
-    public boolean isContainer();
-    
+ 
    
 
 }

@@ -18,10 +18,12 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.variants.IResourceVariant;
 import org.tigris.subversion.javahl.Revision.Kind;
 import org.tigris.subversion.subclipse.core.ISVNFolder;
 import org.tigris.subversion.subclipse.core.ISVNRemoteFolder;
@@ -277,6 +279,54 @@ public class RemoteFolder extends SVNRemoteResource implements ISVNRemoteFolder,
 	 */
 	public ISVNRemoteResource[] members() {
 		return children;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.variants.IResourceVariantTree#roots()
+	 */
+	public IResource[] roots() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.variants.IResourceVariantTree#members(org.eclipse.core.resources.IResource)
+	 */
+	public IResource[] members(IResource resource) throws TeamException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.variants.IResourceVariantTree#getResourceVariant(org.eclipse.core.resources.IResource)
+	 */
+	public IResourceVariant getResourceVariant(IResource resource) throws TeamException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.variants.IResourceVariantTree#hasResourceVariant(org.eclipse.core.resources.IResource)
+	 */
+	public boolean hasResourceVariant(IResource resource) throws TeamException {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.variants.IResourceVariantTree#refresh(org.eclipse.core.resources.IResource[], int, org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public IResource[] refresh(IResource[] resources, int depth, IProgressMonitor monitor) throws TeamException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.variants.IResourceVariantTree#flushVariants(org.eclipse.core.resources.IResource, int)
+	 */
+	public void flushVariants(IResource resource, int depth) throws TeamException {
+		// TODO Auto-generated method stub
+		
 	}
 
     

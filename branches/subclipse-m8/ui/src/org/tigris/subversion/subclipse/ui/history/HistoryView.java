@@ -179,7 +179,7 @@ public class HistoryView extends ViewPart {
 				monitor.beginTask(null, 100);
 				try {
 					if(confirmOverwrite()) {
-						InputStream in = remoteFile.getContents(new SubProgressMonitor(monitor, 50));
+						InputStream in = remoteFile.getStorage(new SubProgressMonitor(monitor, 50)).getContents();
 						file.setContents(in, false, true, new SubProgressMonitor(monitor, 50));				
 					}
 				} catch (TeamException e) {
