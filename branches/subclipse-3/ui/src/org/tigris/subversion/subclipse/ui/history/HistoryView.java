@@ -81,11 +81,14 @@ import org.tigris.subversion.subclipse.core.ISVNLocalFile;
 import org.tigris.subversion.subclipse.core.ISVNLocalResource;
 import org.tigris.subversion.subclipse.core.ISVNRemoteFile;
 import org.tigris.subversion.subclipse.core.ISVNRemoteResource;
+import org.tigris.subversion.subclipse.core.ISVNRepositoryLocation;
 import org.tigris.subversion.subclipse.core.SVNException;
 import org.tigris.subversion.subclipse.core.SVNProviderPlugin;
 import org.tigris.subversion.subclipse.core.SVNTeamProvider;
 import org.tigris.subversion.subclipse.core.history.ILogEntry;
 import org.tigris.subversion.subclipse.core.history.LogEntry;
+import org.tigris.subversion.subclipse.core.history.LogEntryChangePath;
+import org.tigris.subversion.subclipse.core.resources.RemoteFile;
 import org.tigris.subversion.subclipse.core.resources.SVNWorkspaceRoot;
 import org.tigris.subversion.subclipse.ui.IHelpContextIds;
 import org.tigris.subversion.subclipse.ui.ISVNUIConstants;
@@ -124,6 +127,7 @@ public class HistoryView extends ViewPart implements IResourceStateChangeListene
 	private Action updateToRevisionAction;
 	private Action refreshAction;
 	private Action linkWithEditorAction;
+    private Action openChangedPathAction;
 
 	private SashForm sashForm;
 	private SashForm innerSashForm;
@@ -230,7 +234,7 @@ public class HistoryView extends ViewPart implements IResourceStateChangeListene
 	
     // open remote file action (double-click)
 	private Action getOpenRemoteFileAction() {
-		if (openAction == null) {
+        if (openAction == null) {
 			SVNUIPlugin plugin = SVNUIPlugin.getPlugin();
 			openAction = new Action() {
 				public void run() {
@@ -251,6 +255,30 @@ public class HistoryView extends ViewPart implements IResourceStateChangeListene
 		return openAction;
 	}
 
+    // open changed Path (double-click)
+    private Action getOpenChangedPathAction() {
+        if (openChangedPathAction == null) {
+            SVNUIPlugin plugin = SVNUIPlugin.getPlugin();
+            openChangedPathAction = new Action() {
+                public void run() {
+                    OpenRemoteFileAction delegate = new OpenRemoteFileAction();
+                    delegate.init(this);
+                    delegate.selectionChanged(this,tableChangePathViewer.getSelection());
+                    if (isEnabled()) {
+                        try {
+                            disableEditorActivation = true;
+                            delegate.run(this);
+                        } finally {
+                            disableEditorActivation = false;
+                        }
+                    }
+                }
+            };          
+        }
+        return openChangedPathAction;
+        
+    }
+    
 	// Refresh action (toolbar)
 	private Action getRefreshAction() {
 		if (refreshAction == null) {
@@ -353,6 +381,12 @@ public class HistoryView extends ViewPart implements IResourceStateChangeListene
 			}
 		});
 
+        tableChangePathViewer.getTable().addListener(SWT.DefaultSelection, new Listener() {
+            public void handleEvent(Event e) {
+                getOpenChangedPathAction().run();
+            }
+        });
+        
 		// Contribute actions to popup menu for the table
 		MenuManager menuMgr = new MenuManager();
 		Menu menu = menuMgr.createContextMenu(tableHistoryViewer.getTable());

@@ -1,12 +1,23 @@
-/*
- * Created on 13 août 2004
- *
- * TODO To change the template for this generated file go to
- * Window - Preferences - Java - Code Style - Code Templates
- */
+/*******************************************************************************
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     Cédric Chabanois (cchabanois@ifrance.com) - modified for Subversion 
+ *******************************************************************************/
 package org.tigris.subversion.subclipse.ui.properties;
 
+import java.net.MalformedURLException;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -17,18 +28,19 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.dialogs.ListDialog;
 import org.eclipse.ui.dialogs.PropertyPage;
+import org.eclipse.ui.internal.dialogs.ListContentProvider;
 import org.tigris.subversion.subclipse.core.ISVNRepositoryLocation;
 import org.tigris.subversion.subclipse.core.SVNException;
 import org.tigris.subversion.subclipse.core.SVNProviderPlugin;
 import org.tigris.subversion.subclipse.core.repo.SVNRepositories;
+import org.tigris.subversion.subclipse.ui.Policy;
 import org.tigris.subversion.subclipse.ui.SVNUIPlugin;
+import org.tigris.subversion.svnclientadapter.SVNUrl;
 
 /**
- * @author cedric
- *
- * TODO To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Style - Code Templates
+ * Property page to modify settings for a given repository
  */
 public class SVNRepositoryPropertiesPage extends PropertyPage {
     private ISVNRepositoryLocation location;
@@ -39,6 +51,7 @@ public class SVNRepositoryPropertiesPage extends PropertyPage {
     private Button useUrlLabelButton;
     private Button useCustomLabelButton;
     private boolean passwordChanged;
+    private Text repositoryRootText;
     
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
@@ -71,7 +84,7 @@ public class SVNRepositoryPropertiesPage extends PropertyPage {
 
         // use url as label
 		useUrlLabelButton = new Button(labelGroup, SWT.RADIO);
-		useUrlLabelButton.setText("Use the repository url as the label");
+		useUrlLabelButton.setText(Policy.bind("SVNRepositoryPropertiesPage.useRepositoryUrlAsLabel")); //$NON-NLS-1$
         useUrlLabelButton.addListener(SWT.Selection,labelListener);
 		data = new GridData();
 		data.horizontalSpan = 2;
@@ -79,7 +92,7 @@ public class SVNRepositoryPropertiesPage extends PropertyPage {
 
         // use custom label
 		useCustomLabelButton = new Button(labelGroup, SWT.RADIO);
-		useCustomLabelButton.setText("Use a custom label : ");
+		useCustomLabelButton.setText(Policy.bind("SVNRepositoryPropertiesPage.useCustomLabel")); //$NON-NLS-1$
         useCustomLabelButton.addListener(SWT.Selection,labelListener);
 		data = new GridData();
 		useCustomLabelButton.setLayoutData(data);
@@ -101,7 +114,7 @@ public class SVNRepositoryPropertiesPage extends PropertyPage {
         
         // login
         label = new Label(userPasswordGroup, SWT.NONE);
-        label.setText("Login :");
+        label.setText(Policy.bind("SVNRepositoryPropertiesPage.login")); //$NON-NLS-1$
         loginText = new Text(userPasswordGroup, SWT.SINGLE | SWT.BORDER);
         data = new GridData(GridData.FILL_HORIZONTAL);
         data.grabExcessHorizontalSpace = true;
@@ -109,7 +122,7 @@ public class SVNRepositoryPropertiesPage extends PropertyPage {
 
         // password
         label = new Label(userPasswordGroup, SWT.NONE);
-        label.setText("Password :");
+        label.setText(Policy.bind("SVNRepositoryPropertiesPage.password")); //$NON-NLS-1$
         passwordText = new Text(userPasswordGroup, SWT.SINGLE | SWT.BORDER| SWT.PASSWORD);
         data = new GridData(GridData.FILL_HORIZONTAL);
         data.grabExcessHorizontalSpace = true;
@@ -119,10 +132,82 @@ public class SVNRepositoryPropertiesPage extends PropertyPage {
                 passwordChanged = !passwordText.getText().equals(FAKE_PASSWORD);
             }
         });
+        
+        // empty label to separate
+        label = new Label(composite, SWT.NONE);
+
+        // group for repository root
+        Composite repositoryRootGroup = new Composite(composite, SWT.NONE);
+        repositoryRootGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        layout = new GridLayout();
+        layout.numColumns = 3;
+        repositoryRootGroup.setLayout(layout);
+        
+        // url of the repository root 
+        label = new Label(repositoryRootGroup, SWT.NONE);
+        label.setText(Policy.bind("SVNRepositoryPropertiesPage.repositoryRootUrl")); //$NON-NLS-1$
+        repositoryRootText = new Text(repositoryRootGroup, SWT.SINGLE | SWT.BORDER);
+        repositoryRootText.setEditable(false);
+        data = new GridData(GridData.FILL_HORIZONTAL);
+        data.grabExcessHorizontalSpace = true;
+        repositoryRootText.setLayoutData(data);
+        
+        Button button = new Button(repositoryRootGroup, SWT.NONE);
+        button.setText(Policy.bind("SVNRepositoryPropertiesPage.browseRootUrl")); //$NON-NLS-1$
+        button.addListener(SWT.Selection, new Listener() {
+            public void handleEvent(Event event) {
+                
+                SVNUrl url = openChooseRootDialog(location.getUrl());
+                if (url != null) {
+                	repositoryRootText.setText(url.get());
+                }
+            }
+        });
+
+        // warning for repository root
+        Composite warningComposite = new Composite(composite, SWT.NONE);
+        layout = new GridLayout();
+        layout.numColumns = 2;
+        layout.marginHeight = 0;
+        layout.marginHeight = 0;
+        warningComposite.setLayout(layout);
+        
+        Label warningLabel = new Label(warningComposite, SWT.NONE);
+        warningLabel.setImage(Dialog.getImage(Dialog.DLG_IMG_MESSAGE_WARNING));
+        Label warningText = new Label(warningComposite, SWT.WRAP);
+        warningText.setText(Policy.bind("SVNRepositoryPropertiesPage.rootUrlWarning")); //$NON-NLS-1$
+        
         initializeValues();
 		return composite;
 	}
 
+    /**
+     * open a dialog for the user to choose the root repository url
+     * @param url
+     * @return
+     */
+    private SVNUrl openChooseRootDialog(SVNUrl url) {
+        List list = new ArrayList();
+        
+        while (url != null) {
+        	list.add(url);
+        	url = url.getParent();
+        }
+        
+        ListDialog dialog= new ListDialog(getShell());
+        dialog.setTitle(Policy.bind("SVNRepositoryPropertiesPage.rootUrlDialogTitle")); //$NON-NLS-1$
+        dialog.setAddCancelButton(true);
+        dialog.setLabelProvider(new LabelProvider());
+        dialog.setMessage(Policy.bind("SVNRepositoryPropertiesPage.chooseRootUrl")); //$NON-NLS-1$
+        dialog.setContentProvider(new ListContentProvider());
+        dialog.setInput(list);
+        if (dialog.open() == Window.OK) {
+        	return (SVNUrl)dialog.getResult()[0];
+        } else {
+        	return null;
+        }
+    }
+    
     
     /**
      * Updates widget enablements and sets error message if appropriate.
@@ -165,6 +250,13 @@ public class SVNRepositoryPropertiesPage extends PropertyPage {
             label = location.getLocation();
         }
         customLabelText.setText(label);
+        
+        SVNUrl repositoryRoot = location.getRepositoryRoot();
+        if (repositoryRoot != null) {
+            repositoryRootText.setText(repositoryRoot.get());   
+        } else {
+            repositoryRootText.setText(""); //$NON-NLS-1$
+        }
     }    
 
     /**
@@ -207,6 +299,14 @@ public class SVNRepositoryPropertiesPage extends PropertyPage {
         	location.setLabel(null);
         }
         
+        if (!repositoryRootText.getText().equals("")) { //$NON-NLS-1$
+        	try {
+				location.setRepositoryRoot(new SVNUrl(repositoryRootText.getText()));
+			} catch (MalformedURLException e1) {
+                // should not occur, we don't change the url of the root
+			}
+        }
+        
         try {
             SVNRepositories repositories = SVNProviderPlugin.getPlugin().getRepositories();
             repositories.addOrUpdateRepository(location);
@@ -224,6 +324,8 @@ public class SVNRepositoryPropertiesPage extends PropertyPage {
     protected void handle(Throwable e) {
         SVNUIPlugin.openError(getShell(), null, null, e);
     }    
+    
+    
     
     
 }
