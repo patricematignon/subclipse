@@ -66,6 +66,8 @@ public class SVNProviderPlugin extends Plugin {
 
 	private RepositoryResourcesManager repositoryResourcesManager = new RepositoryResourcesManager();
 
+	private SVNAdapterFactories adapterFactories;
+
     private int svnClientInterface;  
 	
 	/**
@@ -118,12 +120,15 @@ public class SVNProviderPlugin extends Plugin {
 		// been localized
 		Policy.localize("org.tigris.subversion.subclipse.core.messages"); //$NON-NLS-1$
 
-		// load the state which includes the known repositories
-		repositories = new SVNRepositories();
-		repositories.startup();
-
-		// Initialize SVN change listeners. Note tha the report type is
-		// important.
+        // load the state which includes the known repositories
+        repositories = new SVNRepositories();
+        repositories.startup();
+		
+		// register all the adapter factories
+		adapterFactories = new SVNAdapterFactories();
+		adapterFactories.startup();
+		
+		// Initialize SVN change listeners. Note tha the report type is important.
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 
 		// this listener will listen to modifications to files
@@ -149,11 +154,13 @@ public class SVNProviderPlugin extends Plugin {
 		super.stop(ctxt);
 
 		// save the state which includes the known repositories
-		repositories.shutdown();
-
-		// save the plugin preferences
-		savePluginPreferences();
-
+        repositories.shutdown();
+		
+		adapterFactories.shutdown();
+		
+        // save the plugin preferences
+        savePluginPreferences();
+		
 		// remove listeners
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		workspace.removeResourceChangeListener(metaFileSyncListener);
