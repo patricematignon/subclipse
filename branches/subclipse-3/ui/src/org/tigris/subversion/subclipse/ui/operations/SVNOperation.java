@@ -71,7 +71,7 @@ public abstract class SVNOperation extends TeamOperation {
 	protected URL getOperationIcon() {
 		URL url = null;
 		try {
-			URL baseURL = SVNUIPlugin.getPlugin().getDescriptor().getInstallURL();
+			URL baseURL = SVNUIPlugin.getPlugin().getBundle().getEntry("/");
 			return  new URL(baseURL, ISVNUIConstants.ICON_PATH + ISVNUIConstants.IMG_CHECKOUT);
 		} catch (MalformedURLException e) {
 			return null;
