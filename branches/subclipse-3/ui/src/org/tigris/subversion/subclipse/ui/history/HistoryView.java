@@ -108,11 +108,13 @@ public class HistoryView extends ViewPart implements IResourceStateChangeListene
 	private IResource resource;
 
 	// cached for efficiency
-	private LogEntry[] entries;
+	private ILogEntry[] entries;
 
 	private HistoryTableProvider historyTableProvider;
-	
-	private TableViewer tableViewer;
+	private ChangePathsTableProvider changePathsTableProvider;
+    
+	private TableViewer tableHistoryViewer;
+    private TableViewer tableChangePathViewer;
 	private TextViewer textViewer;
 	
     private Action openAction;
@@ -133,6 +135,9 @@ public class HistoryView extends ViewPart implements IResourceStateChangeListene
 	
 	private FetchLogEntriesJob fetchLogEntriesJob = null;
 	private boolean shutdown = false;
+    
+    // we disable editor activation when double clicking on a log entry
+    private boolean disableEditorActivation = false;
 
 	public static final String VIEW_ID = "org.tigris.subversion.subclipse.ui.history.HistoryView"; //$NON-NLS-1$
 
@@ -191,7 +196,7 @@ public class HistoryView extends ViewPart implements IResourceStateChangeListene
             public void run() {
                 try {
                     if (resource == null) return;
-                    ISelection selection = tableViewer.getSelection();
+                    ISelection selection = tableHistoryViewer.getSelection();
                     if (!(selection instanceof IStructuredSelection)) return;
                     IStructuredSelection ss = (IStructuredSelection)selection;
                     currentSelection = (LogEntry)ss.getFirstElement();
@@ -213,7 +218,7 @@ public class HistoryView extends ViewPart implements IResourceStateChangeListene
             
             // we don't allow multiple selection
             public boolean isEnabled() {
-                ISelection selection = tableViewer.getSelection();
+                ISelection selection = tableHistoryViewer.getSelection();
                 if (!(selection instanceof IStructuredSelection)) return false;
                 IStructuredSelection ss = (IStructuredSelection)selection;
                 if(ss.size() != 1) return false;
@@ -231,9 +236,15 @@ public class HistoryView extends ViewPart implements IResourceStateChangeListene
 				public void run() {
 					OpenRemoteFileAction delegate = new OpenRemoteFileAction();
 					delegate.init(this);
-					delegate.selectionChanged(this,tableViewer.getSelection());
-					if (isEnabled())
-						delegate.run(this); 
+					delegate.selectionChanged(this,tableHistoryViewer.getSelection());
+					if (isEnabled()) {
+                        try {
+                            disableEditorActivation = true;
+                        	delegate.run(this);
+                        } finally {
+                            disableEditorActivation = false;
+                        }
+                    }
 				}
 			};			
 		}
@@ -315,7 +326,7 @@ public class HistoryView extends ViewPart implements IResourceStateChangeListene
 							SVNTeamProvider provider = (SVNTeamProvider)RepositoryProvider.getProvider(file.getProject());
 	                        provider.update(new IResource[] {file}, remoteFile.getLastChangedRevision(), monitor);					 
 							historyTableProvider.setRemoteResource(remoteFile);
-							tableViewer.refresh();
+							tableHistoryViewer.refresh();
 						}
 					} catch (TeamException e) {
 						throw new CoreException(e.getStatus());
@@ -332,7 +343,7 @@ public class HistoryView extends ViewPart implements IResourceStateChangeListene
 	 */
 	protected void contributeActions() {
 		// Double click open action
-		tableViewer.getTable().addListener(SWT.DefaultSelection, new Listener() {
+		tableHistoryViewer.getTable().addListener(SWT.DefaultSelection, new Listener() {
 			public void handleEvent(Event e) {
 				getOpenRemoteFileAction().run();
 			}
@@ -340,15 +351,15 @@ public class HistoryView extends ViewPart implements IResourceStateChangeListene
 
 		// Contribute actions to popup menu for the table
 		MenuManager menuMgr = new MenuManager();
-		Menu menu = menuMgr.createContextMenu(tableViewer.getTable());
+		Menu menu = menuMgr.createContextMenu(tableHistoryViewer.getTable());
 		menuMgr.addMenuListener(new IMenuListener() {
 			public void menuAboutToShow(IMenuManager menuMgr) {
 				fillTableMenu(menuMgr);
 			}
 		});
 		menuMgr.setRemoveAllWhenShown(true);
-		tableViewer.getTable().setMenu(menu);
-		getSite().registerContextMenu(menuMgr, tableViewer);
+		tableHistoryViewer.getTable().setMenu(menu);
+		getSite().registerContextMenu(menuMgr, tableHistoryViewer);
 
 		// Create the local tool bar
 		IToolBarManager tbm = getViewSite().getActionBars().getToolBarManager();
@@ -391,9 +402,10 @@ public class HistoryView extends ViewPart implements IResourceStateChangeListene
 
 		sashForm = new SashForm(parent, SWT.VERTICAL);
 		sashForm.setLayoutData(new GridData(GridData.FILL_BOTH));
-		tableViewer = createTable(sashForm);
+		tableHistoryViewer = createTableHistory(sashForm);
 		innerSashForm = new SashForm(sashForm, SWT.HORIZONTAL);
 		textViewer = createText(innerSashForm);
+        tableChangePathViewer = createTableChangePath(innerSashForm);
 		sashForm.setWeights(new int[] { 70, 30 });
 
 		contributeActions();
@@ -413,20 +425,44 @@ public class HistoryView extends ViewPart implements IResourceStateChangeListene
 		SVNProviderPlugin.removeResourceStateChangeListener(this);
 	}   
 
+    
+    protected TableViewer createTableChangePath(Composite parent) {
+        changePathsTableProvider = new ChangePathsTableProvider();
+        tableChangePathViewer = changePathsTableProvider.createTable(parent);
+        
+        tableChangePathViewer.setContentProvider(new IStructuredContentProvider() {
+
+			public Object[] getElements(Object inputElement) {
+                if ((inputElement == null) || (!(inputElement instanceof ILogEntry))) {
+                    return null;
+                }
+                ILogEntry logEntry = (ILogEntry)inputElement;
+				return logEntry.getLogEntryChangePaths();
+			}
+
+			public void dispose() {
+			}
+
+			public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+			}
+            
+        });
+        return tableChangePathViewer;
+    }
+    
 	/**
-	 * Creates the group that displays lists of the available repositories
-	 * and team streams.
+	 * Creates the table that displays the log history
 	 *
 	 * @param the parent composite to contain the group
 	 * @return the group control
 	 */
-	protected TableViewer createTable(Composite parent) {
+	protected TableViewer createTableHistory(Composite parent) {
 		
 		historyTableProvider = new HistoryTableProvider();
-		TableViewer viewer = historyTableProvider.createTable(parent);
+		tableHistoryViewer = historyTableProvider.createTable(parent);
 		
 		// set the content provider for the table
-		viewer.setContentProvider(new IStructuredContentProvider() {
+		tableHistoryViewer.setContentProvider(new IStructuredContentProvider() {
 			public Object[] getElements(Object inputElement) {
 				// Short-circuit to optimize
 				if (entries != null) return entries;
@@ -459,7 +495,7 @@ public class HistoryView extends ViewPart implements IResourceStateChangeListene
 		
         // set the selectionchanged listener for the table
         // updates the comments when selection changes
-		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
+		tableHistoryViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
 				ISelection selection = event.getSelection();
 				if (selection == null || !(selection instanceof IStructuredSelection)) {
@@ -473,10 +509,13 @@ public class HistoryView extends ViewPart implements IResourceStateChangeListene
 				}
 				LogEntry entry = (LogEntry)ss.getFirstElement();
 				textViewer.setDocument(new Document(entry.getComment()));
+                changePathsTableProvider.setLogEntry(entry);
+                tableChangePathViewer.setInput(entry);
+                
 			}
 		});
 		
-		return viewer;
+		return tableHistoryViewer;
 	}
 
     /**
@@ -496,7 +535,7 @@ public class HistoryView extends ViewPart implements IResourceStateChangeListene
 	 * Returns the table viewer contained in this view.
 	 */
 	protected TableViewer getViewer() {
-		return tableViewer;
+		return tableHistoryViewer;
 	}
 
 	/**
@@ -505,7 +544,7 @@ public class HistoryView extends ViewPart implements IResourceStateChangeListene
 	void initDragAndDrop() {
 		int ops = DND.DROP_MOVE | DND.DROP_COPY | DND.DROP_LINK;
 		Transfer[] transfers = new Transfer[] {ResourceTransfer.getInstance()};
-		tableViewer.addDropSupport(ops, transfers, new HistoryDropAdapter(tableViewer, this));
+		tableHistoryViewer.addDropSupport(ops, transfers, new HistoryDropAdapter(tableHistoryViewer, this));
 	}
 
     /**
@@ -516,7 +555,7 @@ public class HistoryView extends ViewPart implements IResourceStateChangeListene
 		manager.add(new Separator(IWorkbenchActionConstants.GROUP_FILE));
 		if (resource != null) {
 			// Add the "Add to Workspace" action if 1 revision is selected.
-			ISelection sel = tableViewer.getSelection();
+			ISelection sel = tableHistoryViewer.getSelection();
 			if (!sel.isEmpty()) {
 				if (sel instanceof IStructuredSelection) {
 					if (((IStructuredSelection)sel).size() == 1) {
@@ -559,8 +598,8 @@ public class HistoryView extends ViewPart implements IResourceStateChangeListene
 	 * Method declared on IWorkbenchPart
 	 */
 	public void setFocus() {
-		if (tableViewer != null) {
-			Table control = tableViewer.getTable();
+		if (tableHistoryViewer != null) {
+			Table control = tableHistoryViewer.getTable();
 			if (control != null && !control.isDisposed()) {
 				control.setFocus();
 			}
@@ -575,10 +614,15 @@ public class HistoryView extends ViewPart implements IResourceStateChangeListene
 	 * @since 3.0
 	 */
 	protected void editorActivated(IEditorPart editor) {
-		// Only fetch contents if the view is shown in the current page.
+		if (disableEditorActivation) {
+			return;
+        }
+        
+        // Only fetch contents if the view is shown in the current page.
 		if (editor == null || !isLinkingEnabled() || !checkIfPageIsVisible()) {
 			return;
-		}       
+		}
+        
 		IEditorInput input = editor.getEditorInput();
 		// Handle compare editors opened from the Synchronize View
 		// TODO uncommnet when there is sync support        
@@ -618,7 +662,7 @@ public class HistoryView extends ViewPart implements IResourceStateChangeListene
 	 */
 	public void showHistory(ISVNRemoteResource remoteResource, boolean refetch) {
 		if (remoteResource == null) {
-			tableViewer.setInput(null);
+			tableHistoryViewer.setInput(null);
 			setContentDescription(Policy.bind("HistoryView.title")); //$NON-NLS-1$
 			setTitleToolTip(""); //$NON-NLS-1$
 			return;
@@ -627,7 +671,7 @@ public class HistoryView extends ViewPart implements IResourceStateChangeListene
 		if(!refetch && existingRemoteResource != null && existingRemoteResource.equals(remoteResource)) return;
 		this.resource = null;
 		historyTableProvider.setRemoteResource(remoteResource);
-		tableViewer.setInput(remoteResource);
+		tableHistoryViewer.setInput(remoteResource);
 		setContentDescription(Policy.bind("HistoryView.titleWithArgument", remoteResource.getName())); //$NON-NLS-1$
 		setTitleToolTip(remoteResource.getRepositoryRelativePath());
 	}
@@ -650,7 +694,7 @@ public class HistoryView extends ViewPart implements IResourceStateChangeListene
 				        && localResource.getStatus().isManaged() ) {
 					ISVNRemoteResource baseResource = localResource.getBaseResource();
 					historyTableProvider.setRemoteResource(baseResource);
-					tableViewer.setInput(baseResource);
+					tableHistoryViewer.setInput(baseResource);
 					setContentDescription(Policy.bind("HistoryView.titleWithArgument", baseResource.getName())); //$NON-NLS-1$
 					setTitleToolTip(baseResource.getRepositoryRelativePath());
 					this.resource = resource;
@@ -666,14 +710,14 @@ public class HistoryView extends ViewPart implements IResourceStateChangeListene
 	 */
 	public void showHistory(ISVNRemoteResource remoteResource, String currentRevision) {
 		if (remoteResource == null) {
-			tableViewer.setInput(null);
+			tableHistoryViewer.setInput(null);
 			setContentDescription(Policy.bind("HistoryView.title")); //$NON-NLS-1$
 			setTitleToolTip(""); //$NON-NLS-1$
 			return;
 		}
 		this.resource = null;
 		historyTableProvider.setRemoteResource(remoteResource);
-		tableViewer.setInput(remoteResource);
+		tableHistoryViewer.setInput(remoteResource);
 		setContentDescription(Policy.bind("HistoryView.titleWithArgument", remoteResource.getName()));
 		setTitleToolTip(""); //$NON-NLS-1$
 	}
@@ -715,9 +759,9 @@ public class HistoryView extends ViewPart implements IResourceStateChangeListene
 	private void refresh() {
 		entries = null;
         // show a Busy Cursor during refresh
-		BusyIndicator.showWhile(tableViewer.getTable().getDisplay(), new Runnable() {
+		BusyIndicator.showWhile(tableHistoryViewer.getTable().getDisplay(), new Runnable() {
 			public void run() {
-				tableViewer.refresh();
+				tableHistoryViewer.refresh();
 			}
 		});
 	}
@@ -764,7 +808,7 @@ public class HistoryView extends ViewPart implements IResourceStateChangeListene
 	
 		if (entry != null) {
 			IStructuredSelection selection = new StructuredSelection(entry);
-			tableViewer.setSelection(selection, true);
+			tableHistoryViewer.setSelection(selection, true);
 		}
 	}
 
@@ -781,7 +825,7 @@ public class HistoryView extends ViewPart implements IResourceStateChangeListene
                     if (localResource != null && !localResource.getStatus().isAdded()) {
                     	ISVNRemoteResource baseResource = localResource.getBaseResource();
                     	historyTableProvider.setRemoteResource(baseResource);
-                    	tableViewer.refresh();
+                    	tableHistoryViewer.refresh();
                     }
                 } catch (SVNException e) {
                     SVNUIPlugin.openError(getViewSite().getShell(), null, null, e);
@@ -805,8 +849,8 @@ public class HistoryView extends ViewPart implements IResourceStateChangeListene
 					final SVNRevision revisionId = remoteResource.getRevision();
 					getSite().getShell().getDisplay().asyncExec(new Runnable() {
 						public void run() {
-							if(entries != null && tableViewer != null && ! tableViewer.getTable().isDisposed()) {
-								tableViewer.add(entries);
+							if(entries != null && tableHistoryViewer != null && ! tableHistoryViewer.getTable().isDisposed()) {
+								tableHistoryViewer.add(entries);
 								selectRevision(revisionId);
 							}
 						}
