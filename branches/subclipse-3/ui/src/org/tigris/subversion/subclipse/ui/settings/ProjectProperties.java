@@ -185,8 +185,12 @@ public class ProjectProperties {
     // is found.  If none found, returns null.
     public static ProjectProperties getProjectProperties(IResource resource) throws SVNException {
         ISVNLocalResource svnResource = SVNWorkspaceRoot.getSVNResourceFor(resource);
-        ISVNProperty property = svnResource.getSvnProperty("bugtraq:message"); //$NON-NLS-1$
-        ISVNProperty labelProperty = svnResource.getSvnProperty("bugtraq:label"); //$NON-NLS-1$
+        ISVNProperty property = null;
+        ISVNProperty labelProperty = null;
+        if (svnResource.isManaged()) {
+            property = svnResource.getSvnProperty("bugtraq:message"); //$NON-NLS-1$
+            labelProperty = svnResource.getSvnProperty("bugtraq:label"); //$NON-NLS-1$
+        }
         if ((property != null) && (property.getValue() != null) && (property.getValue().trim().length() > 0)) {
             ProjectProperties projectProperties = new ProjectProperties();
             projectProperties.setMessage(property.getValue());
@@ -206,7 +210,8 @@ public class ProjectProperties {
             checkResource = checkResource.getParent();
             if (checkResource.getParent() == null) return null;
             svnResource = SVNWorkspaceRoot.getSVNResourceFor(checkResource);
-            property = svnResource.getSvnProperty("bugtraq:message"); //$NON-NLS-1$
+            if (svnResource.isManaged())
+                property = svnResource.getSvnProperty("bugtraq:message"); //$NON-NLS-1$
             if (property != null) return getProjectProperties(checkResource);
         }
         return null;

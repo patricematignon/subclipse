@@ -14,9 +14,11 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.ui.IWorkbenchPart;
+import org.tigris.subversion.subclipse.core.ISVNLocalResource;
 import org.tigris.subversion.subclipse.core.SVNException;
 import org.tigris.subversion.subclipse.core.SVNProviderPlugin;
 import org.tigris.subversion.subclipse.core.SVNTeamProvider;
+import org.tigris.subversion.subclipse.core.resources.SVNWorkspaceRoot;
 import org.tigris.subversion.subclipse.ui.Policy;
 
 public class CommitOperation extends SVNOperation {
@@ -58,7 +60,7 @@ public class CommitOperation extends SVNOperation {
 				SVNTeamProvider provider = (SVNTeamProvider)iterator.next();
 				List list = (List)table.get(provider);
 				IResource[] providerResources = (IResource[])list.toArray(new IResource[list.size()]);
-				provider.checkin(providerResources, commitComment, IResource.DEPTH_ZERO, null);
+				provider.checkin(providerResources, commitComment, getDepth(providerResources), null);
 			}			
 			for (int i = 0; i < selectedResources.length; i++) {
 				IResource projectHandle = selectedResources[i].getProject();
@@ -73,7 +75,26 @@ public class CommitOperation extends SVNOperation {
 		}
     }
 
-    protected String getTaskName() {
+    /**
+	 * This method figures out of if we should commit with DEPTH_ZERO or DEPTH_INFINITE
+	 * If there are any modified folders (which could only be a prop change) in the list of committed items,
+	 * then it should return DEPTH_ZERO, otherwise it should return DEPTH_INFINITE.
+	 */
+	private int getDepth(IResource[] resources) {
+		for (int i = 0; i < resources.length; i++) {
+			if (resources[i].getType() == IResource.FOLDER) {
+				ISVNLocalResource svnResource = SVNWorkspaceRoot.getSVNResourceFor(resources[i]);
+				try {
+					if (svnResource.getStatus().isPropModified())
+						return IResource.DEPTH_ZERO;
+				} catch (SVNException e) {
+				}
+			}
+		}
+		return IResource.DEPTH_INFINITE;
+	}
+
+	protected String getTaskName() {
         return Policy.bind("CommitOperation.taskName"); //$NON-NLS-1$;
     }
     

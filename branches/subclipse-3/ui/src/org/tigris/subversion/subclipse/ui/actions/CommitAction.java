@@ -11,8 +11,11 @@
  *******************************************************************************/
 package org.tigris.subversion.subclipse.ui.actions;
 
+import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.resources.IResource;
@@ -37,7 +40,6 @@ import org.tigris.subversion.subclipse.ui.dialogs.CommitDialog;
 import org.tigris.subversion.subclipse.ui.operations.CommitOperation;
 import org.tigris.subversion.subclipse.ui.repository.RepositoryManager;
 import org.tigris.subversion.subclipse.ui.settings.ProjectProperties;
-import org.tigris.subversion.svnclientadapter.SVNStatusKind;
 import org.tigris.subversion.svnclientadapter.SVNUrl;
 
 /**
@@ -106,51 +108,14 @@ public class CommitAction extends WorkspaceAction {
 	}
 	
 	/**
-	 * get the unadded resources in resources parameter
-	 */
-	private IResource[] getUnaddedResources(IResource[] resources, IProgressMonitor iProgressMonitor) throws SVNException {
-		final List unadded = new ArrayList();
-		final SVNException[] exception = new SVNException[] { null };
-		for (int i = 0; i < resources.length; i++) {
-			IResource resource = resources[i];
-            if (resource.exists()) {
-			    // visit each resource deeply
-			    try {
-				    resource.accept(new IResourceVisitor() {
-					public boolean visit(IResource resource) {
-						ISVNLocalResource svnResource = SVNWorkspaceRoot.getSVNResourceFor(resource);
-						// skip ignored resources and their children
-						try {
-							if (svnResource.isIgnored())
-								return false;
-							// visit the children of shared resources
-							if (svnResource.isManaged())
-								return true;
-						} catch (SVNException e) {
-							exception[0] = e;
-						}
-						// file/folder is unshared so record it
-						unadded.add(resource);
-						return resource.getType() == IResource.FOLDER;
-					}
-				}, IResource.DEPTH_INFINITE, false /* include phantoms */);
-			    } catch (CoreException e) {
-				    throw SVNException.wrapException(e);
-			    }
-			    if (exception[0] != null) throw exception[0];
-            }
-		}
-		unaddedResources = unadded.size() > 0;
-		return (IResource[]) unadded.toArray(new IResource[unadded.size()]);
-	}	
-
-	/**
 	 * get the modified and unadded resources in resources parameter
 	 */	
 	private IResource[] getModifiedResources(IResource[] resources, IProgressMonitor iProgressMonitor) throws SVNException {
 	    IWorkspaceRoot workspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
 	    final List modified = new ArrayList();
+	    List unversionedFolders = new ArrayList();
 		final SVNException[] exception = new SVNException[] { null };		
+		unaddedResources = false;
 	    for (int i = 0; i < resources.length; i++) {
 			 IResource resource = resources[i];
 			 ISVNLocalResource svnResource = SVNWorkspaceRoot.getSVNResourceFor(resource);
@@ -163,20 +128,34 @@ public class CommitAction extends WorkspaceAction {
 			 }
 			 
 			 // get adds, deletes, updates and property updates.
-			 GetStatusCommand command = new GetStatusCommand(svnResource);
+			 GetStatusCommand command = new GetStatusCommand(svnResource, true, false);
 			 command.run(iProgressMonitor);
 			 LocalResourceStatus[] statuses = command.getStatuses();
 			 for (int j = 0; j < statuses.length; j++) {
-			     if (statuses[j].isTextModified() || statuses[j].isAdded() || statuses[j].isDeleted() || statuses[j].getPropStatus().equals(SVNStatusKind.MODIFIED) || (statuses[j].isTextConflicted() || statuses[j].isPropConflicted())) {
+			     if ((!statuses[j].isManaged() && !statuses[j].isIgnored()) ||
+			     		statuses[j].isTextModified() || statuses[j].isAdded() ||
+						statuses[j].isDeleted() || statuses[j].isPropModified() ||
+						(statuses[j].isTextConflicted() || statuses[j].isPropConflicted())) {
 			         IResource currentResource = null;
 			         currentResource = GetStatusCommand.getResource(statuses[j]);
-			         if (currentResource != null)
-			             modified.add(currentResource);
+			         if (currentResource != null) {
+			             ISVNLocalResource localResource = SVNWorkspaceRoot.getSVNResourceFor(currentResource);
+			             if (!localResource.isIgnored()) {
+			                 if (!statuses[j].isManaged()) {
+			                 	unaddedResources = true;
+			                 	if (currentResource.getType() != IResource.FILE && !isSymLink(currentResource))
+			                 		unversionedFolders.add(currentResource);
+			                 	else
+					                modified.add(currentResource);
+			                 } else
+				                 modified.add(currentResource);
+			             }
+			         }
 			     }
 			 }
-		}
+	    }
 	    // get unadded resources and add them to the list.
-	    IResource[] unaddedResources = getUnaddedResources(resources, iProgressMonitor);
+	    IResource[] unaddedResources = getUnaddedResources(unversionedFolders, iProgressMonitor);
 	    for (int i = 0; i < unaddedResources.length; i++)
 	        modified.add(unaddedResources[i]);
 	    return (IResource[]) modified.toArray(new IResource[modified.size()]);
@@ -250,4 +229,61 @@ public class CommitAction extends WorkspaceAction {
     protected boolean isEnabledForInaccessibleResources() {
         return true;
     }
+
+	/**
+	 * get the unadded resources in resources parameter
+	 */
+	private IResource[] getUnaddedResources(List resources, IProgressMonitor iProgressMonitor) throws SVNException {
+		final List unadded = new ArrayList();
+		final SVNException[] exception = new SVNException[] { null };
+		for (Iterator iter = resources.iterator(); iter.hasNext();) {
+			IResource resource = (IResource) iter.next();
+	        if (resource.exists()) {
+			    // visit each resource deeply
+			    try {
+				    resource.accept(new IResourceVisitor() {
+					public boolean visit(IResource resource) {
+						ISVNLocalResource svnResource = SVNWorkspaceRoot.getSVNResourceFor(resource);
+						// skip ignored resources and their children
+						try {
+							if (svnResource.isIgnored())
+								return false;
+							// visit the children of shared resources
+							if (svnResource.isManaged())
+								return true;
+							if ((resource.getType() == IResource.FOLDER) && isSymLink(resource)) // don't traverse into symlink folders
+								return false;
+						} catch (SVNException e) {
+							exception[0] = e;
+						}
+						// file/folder is unshared so record it
+						unadded.add(resource);
+						return resource.getType() == IResource.FOLDER;
+					}
+				}, IResource.DEPTH_INFINITE, false /* include phantoms */);
+			    } catch (CoreException e) {
+				    throw SVNException.wrapException(e);
+			    }
+			    if (exception[0] != null) throw exception[0];
+	        }
+		}
+		unaddedResources = unadded.size() > 0;
+		return (IResource[]) unadded.toArray(new IResource[unadded.size()]);
+	}
+	
+	private boolean isSymLink(IResource resource) {
+		File file = resource.getLocation().toFile();
+	    try {
+	    	if (!file.exists())
+	    		return true;
+	    	else {
+	    		String cnnpath = file.getCanonicalPath();
+	    		String abspath = file.getAbsolutePath();
+	    		return !abspath.equals(cnnpath);
+	    	}
+	    } catch(IOException ex) {
+	      return true;
+	    }	
+	}	
+
 }
