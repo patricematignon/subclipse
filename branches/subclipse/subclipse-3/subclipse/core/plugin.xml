@@ -14,7 +14,7 @@
          <export name="*"/>
       </library>
       <library name="javahl.jar">
-         <export name="*"/>
+         <export name="*"/> 
       </library>
    </runtime>
    <requires>

@@ -95,9 +95,9 @@ public class SVNUrl {
         protocol =parts[0];
         if ((!protocol.equalsIgnoreCase("http")) && 
                 !protocol.equalsIgnoreCase("https") &&
-            (!protocol.equals("file")) &&
-            (!protocol.equals("svn")) &&
-            (!protocol.equals("svn+ssh")) ) {
+            (!protocol.equalsIgnoreCase("file")) &&
+            (!protocol.equalsIgnoreCase("svn")) &&
+            (!protocol.equalsIgnoreCase("svn+ssh")) ) {
             throw new MalformedURLException("Invalid svn url :"+svnUrl);
         }
     }

@@ -18,7 +18,7 @@
  *
  * 3. The end-user documentation included with the redistribution,
  *    if any, must include the following acknowledgment:
- *       "This product includes software developed by the
+ *       "This product includes software develby the
  *        Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowledgment may appear in the software itself,
  *    if and wherever such third-party acknowledgments normally appear.
@@ -354,7 +354,7 @@ public interface ISVNClientAdapter {
 		boolean recurse)
 		throws SVNClientException, IOException;
 	/**
-	 * get a property
+	 * get a property or null if property is not found
 	 * @param path
 	 * @param propertyName
 	 * @param propertyValue
@@ -422,4 +422,40 @@ public interface ISVNClientAdapter {
 		File outFile,
 		boolean recurse)
 		throws SVNClientException;
+
+    /**
+     * returns the keywords used for substitution for the given resource
+     * @param path
+     * @return
+     * @throws SVNClientException
+     */         
+    public abstract SVNKeywords getKeywords(File path) throws SVNClientException;    
+
+    /**
+     * set the keywords substitution for the given resource
+     * @param path
+     * @param keywords
+     * @param recurse
+     * @throws SVNClientException
+     */    
+    public abstract void setKeywords(File path, SVNKeywords keywords, boolean recurse) throws SVNClientException;
+
+    /**
+     * add some keyword to the keywords substitution list
+     * @param path
+     * @param keywords
+     * @return
+     * @throws SVNClientException
+     */    
+    public abstract SVNKeywords addKeywords(File path, SVNKeywords keywords) throws SVNClientException;
+
+    /**
+     * remove some keywords to the keywords substitution list
+     * @param path
+     * @param keywords
+     * @return
+     * @throws SVNClientException
+     */    
+    public SVNKeywords removeKeywords(File path, SVNKeywords keywords) throws SVNClientException;
+
 }

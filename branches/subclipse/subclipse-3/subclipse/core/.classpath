@@ -32,8 +32,8 @@
     <classpathentry kind="var"
         path="ECLIPSE_HOME/plugins/org.eclipse.core.runtime_3.0.0/runtime.jar" sourcepath="ORG_ECLIPSE_PLATFORM_SOURCE_SRC/org.eclipse.core.runtime_3.0.0/runtimesrc.zip"/>
     <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-    <classpathentry exported="true" kind="lib" path="javahl.jar"/>
-    <classpathentry kind="lib" path="svnClientAdapter.jar"/>
+    <classpathentry exported="true" kind="lib" path="javahl.jar" sourcepath="/home/mml/subversion-0.32.1/subversion/bindings/java/javahl/src/"/>
+    <classpathentry kind="lib" path="svnClientAdapter.jar" sourcepath="/svnClientAdapter/src"/>
     <classpathentry kind="src" path="/svnClientAdapter"/>
     <classpathentry kind="output" path="classes"/>
 </classpath>

@@ -60,18 +60,24 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 import org.tigris.subversion.svnclientadapter.ISVNDirEntry;
 import org.tigris.subversion.svnclientadapter.SVNNodeKind;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
 
 /**
+ * <p>
+ * Implements a DirEntry on a remote location using the
+ * "svn list" command.</p>
  * 
- * @author philip schatz
+ * @author Philip Schatz (schatz at tigris)
  */
-public class CmdLineRemoteDirEntry implements ISVNDirEntry {
+class CmdLineRemoteDirEntry implements ISVNDirEntry {
 
-	private static DateFormat df = new SimpleDateFormat("MMM dd hh:mm");
+	//Fields
+	private static DateFormat df1 = new SimpleDateFormat("MMM dd hh:mm", Locale.US);
+    private static DateFormat df2 = new SimpleDateFormat("MMM dd  yyyy", Locale.US);
 
 	private String path;
 	private URL url;
@@ -79,11 +85,13 @@ public class CmdLineRemoteDirEntry implements ISVNDirEntry {
 	private SVNNodeKind nodeKind;
 	private String lastCommitAuthor;
 	private Date lastChangedDate;
+	private long size;
 
-	/**
-	 * @param line
-	 */
-	public CmdLineRemoteDirEntry(String baseUrl, String line) {
+	//Constructors
+	CmdLineRemoteDirEntry(String baseUrl, String line) {
+
+        // see ls-cmd.c for the format used
+        
 		int last = line.length() - 1;
 		boolean folder = ('/' == line.charAt(last));
 
@@ -99,13 +107,26 @@ public class CmdLineRemoteDirEntry implements ISVNDirEntry {
 		nodeKind = (folder) ? SVNNodeKind.DIR : SVNNodeKind.FILE;
 		lastCommitAuthor = line.substring(9, 18).trim();
 
-		try {
-			lastChangedDate = df.parse(line.substring(28, 39));
+		size = Long.parseLong(line.substring(18, 27).trim());
+
+        String dateString = line.substring(28, 40);
+        
+        try {
+            // two formats are possible (see ls-cmd.c) depending on the numbers of days between current date
+            // and lastChangedDate
+            if (dateString.indexOf(':') != -1) {
+                lastChangedDate = df1.parse(dateString); // something like "Sep 24 18:01"
+            }
+            else
+            {
+                lastChangedDate = df2.parse(dateString); // something like "Mar 01  2003"
+            }
 		} catch (ParseException e1) {
 			e1.printStackTrace();
 		}
 	}
 
+	//Methods
 	/* (non-Javadoc)
 	 * @see org.tigris.subversion.subclipse.client.ISVNDirEntry#getHasProps()
 	 */
@@ -150,8 +171,7 @@ public class CmdLineRemoteDirEntry implements ISVNDirEntry {
 	}
 
     public long getSize() {
-        // TODO : implement getSize
-        return 0;
+        return size;
     }
 
 }

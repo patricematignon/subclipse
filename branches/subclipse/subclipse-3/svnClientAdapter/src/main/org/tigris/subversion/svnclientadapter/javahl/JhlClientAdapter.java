@@ -78,6 +78,7 @@ import org.tigris.subversion.svnclientadapter.ISVNNotifyListener;
 import org.tigris.subversion.svnclientadapter.ISVNProperty;
 import org.tigris.subversion.svnclientadapter.ISVNStatus;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
+import org.tigris.subversion.svnclientadapter.SVNKeywords;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
 import org.tigris.subversion.svnclientadapter.SVNUrl;
 
@@ -102,6 +103,22 @@ public class JhlClientAdapter implements ISVNClientAdapter {
         notificationHandler = new JhlNotificationHandler();
         svnClient.notification(notificationHandler);        
         svnClient.setPrompt(new DefaultPromptUserPassword());
+    }
+
+    /**
+     * tells if JhlClientAdapter is usable
+     * @return
+     */
+    public static boolean isAvailable() {
+        try {
+            // if library is already loaded, it will not be reloaded
+            System.loadLibrary("svnjavahl");
+            return true;
+        } catch (Exception e) {
+            return false;
+        } catch (UnsatisfiedLinkError e) {
+            return false;
+        }
     }
 
     /**
@@ -168,14 +185,17 @@ public class JhlClientAdapter implements ISVNClientAdapter {
     }
 
 
-    private static String fileToSVNPath(File file) {
+    private static String fileToSVNPath(File file, boolean canonical) {
     	// SVN need paths with '/' separators
-    	try {
-			return file.getCanonicalPath().replace('\\', '/');    		 
-    	} catch (IOException e)
-    	{
-    		return null;
-    	}
+    	if (canonical) {
+            try {
+	   	       return file.getCanonicalPath().replace('\\', '/');    		 
+    	   } catch (IOException e)
+    	   {
+    	       return null;
+    	   }
+        } else
+            return file.getPath().replace('\\', '/');
     }
     
     /**
@@ -186,7 +206,7 @@ public class JhlClientAdapter implements ISVNClientAdapter {
         try{
             notificationHandler.setCommand(ISVNNotifyListener.Command.ADD);
             notificationHandler.setCommandLine("add -N "+file.toString());
-            svnClient.add(fileToSVNPath(file), false);
+            svnClient.add(fileToSVNPath(file, true), false);
         } catch (ClientException e) {
             notificationHandler.setException(e);
             throw new SVNClientException(e);
@@ -202,7 +222,7 @@ public class JhlClientAdapter implements ISVNClientAdapter {
         try {
             notificationHandler.setCommand(ISVNNotifyListener.Command.ADD);            
             notificationHandler.setCommandLine("add -N "+dir.toString());
-            svnClient.add(fileToSVNPath(dir), recurse);
+            svnClient.add(fileToSVNPath(dir, true), recurse);
         } catch (ClientException e) {
             notificationHandler.setException(e);
             throw new SVNClientException(e);
@@ -233,7 +253,7 @@ public class JhlClientAdapter implements ISVNClientAdapter {
                 " "+moduleName.toString());        
             svnClient.checkout(
 			    moduleName.toString(),
-                fileToSVNPath(destPath),
+                fileToSVNPath(destPath, true),
                 JhlConverter.convert(revision),
                 recurse);
         } catch (ClientException e) {
@@ -262,7 +282,7 @@ public class JhlClientAdapter implements ISVNClientAdapter {
                 commandLine+=" -N";
 
             for (int i = 0; i < paths.length; i++) {
-                files[i] = fileToSVNPath((File) paths[i]);
+                files[i] = fileToSVNPath((File) paths[i], true);
                 commandLine+=" "+files[i].toString();
             }
             notificationHandler.setCommandLine(commandLine);
@@ -306,7 +326,7 @@ public class JhlClientAdapter implements ISVNClientAdapter {
     public ISVNStatus getSingleStatus(File path) 
             throws SVNClientException {
         notificationHandler.setCommand(ISVNNotifyListener.Command.STATUS);
-        String filePathSVN = fileToSVNPath(path);
+        String filePathSVN = fileToSVNPath(path, true);
         notificationHandler.setCommandLine("status -N "+filePathSVN);
         try {
             return new JhlStatus(svnClient.singleStatus(filePathSVN, false));
@@ -350,7 +370,7 @@ public class JhlClientAdapter implements ISVNClientAdapter {
 	public ISVNStatus[] getStatusRecursively(File path, boolean getAll)
 		throws SVNClientException {
 		notificationHandler.setCommand(ISVNNotifyListener.Command.STATUS);
-		String filePathSVN = fileToSVNPath(path);
+		String filePathSVN = fileToSVNPath(path, true);
 		notificationHandler.setCommandLine("status " + filePathSVN);
 		try {
 			return JhlConverter.convert(svnClient.status(filePathSVN, true, false, getAll));
@@ -370,8 +390,8 @@ public class JhlClientAdapter implements ISVNClientAdapter {
 		try {
 			notificationHandler.setCommand(ISVNNotifyListener.Command.COPY);
 
-			String src = fileToSVNPath(srcPath);
-			String dest = fileToSVNPath(destPath);
+			String src = fileToSVNPath(srcPath, true);
+			String dest = fileToSVNPath(destPath, true);
 			notificationHandler.setCommandLine("copy " + src + " " + dest);
 			svnClient.copy(src, dest, "", Revision.HEAD);
 			// last two parameters are not used
@@ -391,7 +411,7 @@ public class JhlClientAdapter implements ISVNClientAdapter {
 		throws SVNClientException {
 		try {
 			notificationHandler.setCommand(ISVNNotifyListener.Command.COPY);
-			String src = fileToSVNPath(srcPath);
+			String src = fileToSVNPath(srcPath, true);
 			String dest = destUrl.toString();
 			notificationHandler.setCommandLine("copy " + src + " " + dest);
 			svnClient.copy(src, dest, message, Revision.HEAD);
@@ -413,7 +433,7 @@ public class JhlClientAdapter implements ISVNClientAdapter {
 		try {
 			notificationHandler.setCommand(ISVNNotifyListener.Command.COPY);
 			String src = srcUrl.toString();
-			String dest = fileToSVNPath(destPath);
+			String dest = fileToSVNPath(destPath, true);
 			notificationHandler.setCommandLine("copy " + src + " " + dest);
 			svnClient.copy(src, dest, "", JhlConverter.convert(revision));
 		} catch (ClientException e) {
@@ -491,7 +511,7 @@ public class JhlClientAdapter implements ISVNClientAdapter {
             String targets[] = new String[file.length];
             
             for (int i = 0; i < file.length;i++) {
-                targets[i] = fileToSVNPath(file[i]);
+                targets[i] = fileToSVNPath(file[i], true);
                 commandLine += " "+targets[i];
             }
             
@@ -521,7 +541,7 @@ public class JhlClientAdapter implements ISVNClientAdapter {
 		try {
 			notificationHandler.setCommand(ISVNNotifyListener.Command.EXPORT);
 			String src = srcUrl.toString();
-			String dest = fileToSVNPath(destPath);
+			String dest = fileToSVNPath(destPath, true);
 			notificationHandler.setCommandLine(
 				"export -r " + revision.toString() + ' ' + src + ' ' + dest);
 
@@ -544,8 +564,8 @@ public class JhlClientAdapter implements ISVNClientAdapter {
 		throws SVNClientException {
 		try {
 			notificationHandler.setCommand(ISVNNotifyListener.Command.EXPORT);
-			String src = fileToSVNPath(srcPath);
-			String dest = fileToSVNPath(destPath);
+			String src = fileToSVNPath(srcPath, true);
+			String dest = fileToSVNPath(destPath, true);
 			notificationHandler.setCommandLine("export " + src + ' ' + dest);
 			// in this case, revision is not used but must be valid
 			svnClient.doExport(src, dest, Revision.HEAD, force);
@@ -573,7 +593,7 @@ public class JhlClientAdapter implements ISVNClientAdapter {
 		throws SVNClientException {
 		try {
 			notificationHandler.setCommand(ISVNNotifyListener.Command.IMPORT);
-			String src = fileToSVNPath(path);
+			String src = fileToSVNPath(path, true);
 			String dest = url.toString();
 			notificationHandler.setCommandLine(
 				"import -m \""
@@ -617,7 +637,7 @@ public class JhlClientAdapter implements ISVNClientAdapter {
 	public void mkdir(File file) throws SVNClientException {
         try {
             notificationHandler.setCommand(ISVNNotifyListener.Command.MKDIR);
-            String target = fileToSVNPath(file);
+            String target = fileToSVNPath(file, true);
             notificationHandler.setCommandLine(
                 "mkdir "+target);
             svnClient.mkdir(new String[] { target },"");
@@ -637,8 +657,8 @@ public class JhlClientAdapter implements ISVNClientAdapter {
         // use force when you want to move file even if there are local modifications
         try {
             notificationHandler.setCommand(ISVNNotifyListener.Command.MOVE);
-		    String src = fileToSVNPath(srcPath);
-            String dest = fileToSVNPath(destPath);
+		    String src = fileToSVNPath(srcPath, true);
+            String dest = fileToSVNPath(destPath, true);
             notificationHandler.setCommandLine(
                     "move "+src+' '+dest);        
             svnClient.move(src,dest,"",Revision.HEAD,force);
@@ -691,7 +711,7 @@ public class JhlClientAdapter implements ISVNClientAdapter {
 		throws SVNClientException {
 		try {
 			notificationHandler.setCommand(ISVNNotifyListener.Command.UPDATE);
-			String target = fileToSVNPath(path);
+			String target = fileToSVNPath(path, true);
 			notificationHandler.setCommandLine(
 				"update -r "
 					+ revision.toString()
@@ -714,7 +734,7 @@ public class JhlClientAdapter implements ISVNClientAdapter {
     public void revert(File path, boolean recurse) throws SVNClientException {
         try {
             notificationHandler.setCommand(ISVNNotifyListener.Command.REVERT);
-            String target = fileToSVNPath(path);
+            String target = fileToSVNPath(path, true);
             notificationHandler.setCommandLine(
                 "revert "+
                 (recurse?"":"-N ")+
@@ -771,7 +791,7 @@ public class JhlClientAdapter implements ISVNClientAdapter {
 		try {
 			notificationHandler.setCommand(
 				ISVNNotifyListener.Command.UNDEFINED);
-			String target = fileToSVNPath(path);
+			String target = fileToSVNPath(path, true);
 			notificationHandler.setCommandLine(
 				"log -r "
 					+ revisionStart.toString()
@@ -793,7 +813,7 @@ public class JhlClientAdapter implements ISVNClientAdapter {
 	 * @param filePath
 	 */	
 	public static void enableLogging(int logLevel,File filePath) {
-		SVNClient.enableLogging(logLevel,fileToSVNPath(filePath));	
+		SVNClient.enableLogging(logLevel,fileToSVNPath(filePath, true));	
 	}
 
     /**
@@ -832,7 +852,7 @@ public class JhlClientAdapter implements ISVNClientAdapter {
 		try {
 			notificationHandler.setCommand(ISVNNotifyListener.Command.PROPSET);
 
-			String target = fileToSVNPath(path);
+			String target = fileToSVNPath(path, true);
 			notificationHandler.setCommandLine(
 				"propset "
 					+ propertyName
@@ -860,7 +880,7 @@ public class JhlClientAdapter implements ISVNClientAdapter {
 		try {
 			notificationHandler.setCommand(ISVNNotifyListener.Command.PROPSET);
 
-			String target = fileToSVNPath(path);
+			String target = fileToSVNPath(path, true);
 			notificationHandler.setCommandLine(
 				"propset "
 					+ propertyName
@@ -887,7 +907,7 @@ public class JhlClientAdapter implements ISVNClientAdapter {
      * @param path
      * @param propertyName
      * @param propertyValue
-     * @return
+     * @return the property or null if property was not found
      * @throws ClientException
      */
 	public ISVNProperty propertyGet(File path, String propertyName)
@@ -895,12 +915,15 @@ public class JhlClientAdapter implements ISVNClientAdapter {
 		try {
 			notificationHandler.setCommand(ISVNNotifyListener.Command.PROPSET);
 
-			String target = fileToSVNPath(path);
+			String target = fileToSVNPath(path, true);
 			notificationHandler.setCommandLine(
 				"propget " + propertyName + " " + target);
 
 			PropertyData propData = svnClient.propertyGet(target, propertyName);
-			return new JhlPropertyData(propData);
+            if (propData == null)
+                return null;
+            else
+			    return new JhlPropertyData(propData);
 		} catch (ClientException e) {
 			notificationHandler.setException(e);
 			throw new SVNClientException(e);
@@ -919,7 +942,7 @@ public class JhlClientAdapter implements ISVNClientAdapter {
         try {
             notificationHandler.setCommand(ISVNNotifyListener.Command.PROPDEL);
             
-            String target = fileToSVNPath(path);
+            String target = fileToSVNPath(path, true);
             notificationHandler.setCommandLine("propdel "+propertyName+" "+target);
                     
             svnClient.propertySet(target, propertyName, (String)null, recurse);
@@ -937,7 +960,7 @@ public class JhlClientAdapter implements ISVNClientAdapter {
         if (!path.isDirectory())
             return null;
         List list = new ArrayList();
-        ISVNProperty pd = propertyGet(path, "svn:ignore");
+        ISVNProperty pd = propertyGet(path, ISVNProperty.IGNORE);
         if (pd == null)
             return list;
         String patterns = pd.getValue();
@@ -951,7 +974,9 @@ public class JhlClientAdapter implements ISVNClientAdapter {
     }
     
     /**
-     * add a pattern to svn:ignore property 
+     * add a pattern to svn:ignore property
+     * @param must be a directory 
+     * @throws SVNClientException
      */
     public void addToIgnoredPatterns(File path, String pattern)  throws SVNClientException {
         List patterns = getIgnoredPatterns(path);
@@ -967,6 +992,84 @@ public class JhlClientAdapter implements ISVNClientAdapter {
         patterns.add(pattern);
         setIgnoredPatterns(path,patterns);
     }
+
+    /**
+     * returns the keywords used for substitution for the given resource
+     * @param path
+     * @return
+     * @throws SVNClientException
+     */ 
+    public SVNKeywords getKeywords(File path) throws SVNClientException {
+        ISVNProperty prop = propertyGet(path, ISVNProperty.KEYWORDS);
+        if (prop == null)
+            return new SVNKeywords(); 
+
+        // value is a space-delimited list of the keywords names
+        String value = prop.getValue();
+        
+        return new SVNKeywords(value);
+    }
+
+    /**
+     * set the keywords substitution for the given resource
+     * @param path
+     * @param keywords
+     * @param recurse
+     * @throws SVNClientException
+     */
+    public void setKeywords(File path, SVNKeywords keywords, boolean recurse) throws SVNClientException {
+        propertySet(path, ISVNProperty.KEYWORDS, keywords.toString(), recurse);
+    }
+
+    /**
+     * add some keyword to the keywords substitution list
+     * @param path
+     * @param keywords
+     * @return
+     * @throws SVNClientException
+     */
+    public SVNKeywords addKeywords(File path, SVNKeywords keywords) throws SVNClientException {
+        SVNKeywords currentKeywords = getKeywords(path);
+        if (keywords.isHeadUrl())
+            currentKeywords.setHeadUrl(true);
+        if (keywords.isId())
+            currentKeywords.setId(true);
+        if (keywords.isLastChangedBy())
+            currentKeywords.setLastChangedBy(true);
+        if (keywords.isLastChangedDate())
+            currentKeywords.setLastChangedBy(true);
+        if (keywords.isLastChangedRevision())
+            currentKeywords.setLastChangedRevision(true);
+        setKeywords(path,currentKeywords,false);
+        
+        return currentKeywords;                
+    }
+
+    /**
+     * remove some keywords to the keywords substitution list
+     * @param path
+     * @param keywords
+     * @return
+     * @throws SVNClientException
+     */
+    public SVNKeywords removeKeywords(File path, SVNKeywords keywords) throws SVNClientException {
+        SVNKeywords currentKeywords = getKeywords(path);
+        if (keywords.isHeadUrl())
+            currentKeywords.setHeadUrl(false);
+        if (keywords.isId())
+            currentKeywords.setId(false);
+        if (keywords.isLastChangedBy())
+            currentKeywords.setLastChangedBy(false);
+        if (keywords.isLastChangedDate())
+            currentKeywords.setLastChangedBy(false);
+        if (keywords.isLastChangedRevision())
+            currentKeywords.setLastChangedRevision(false);
+        setKeywords(path,currentKeywords,false);
+        
+        return currentKeywords;                
+    }
+
+
     
     /**
      * set the ignored patterns for the given directory 
@@ -979,7 +1082,7 @@ public class JhlClientAdapter implements ISVNClientAdapter {
             String pattern = (String)it.next();
             value = value + '\n' + pattern;    
         }
-        propertySet(path, "svn:ignore", value, false);       
+        propertySet(path, ISVNProperty.IGNORE, value, false);       
     }
 
     /**
@@ -1000,9 +1103,12 @@ public class JhlClientAdapter implements ISVNClientAdapter {
             if (newPathRevision == null)
                 newPathRevision = SVNRevision.WORKING;
             
-            String oldTarget = fileToSVNPath(oldPath);
-            String newTarget = fileToSVNPath(newPath);
-            String svnOutFile = fileToSVNPath(outFile);
+            // we don't want canonical file path (otherwise the complete file name
+            // would be in the patch). This way the user can choose to use a relative
+            // path
+            String oldTarget = fileToSVNPath(oldPath, false);
+            String newTarget = fileToSVNPath(newPath, false);
+            String svnOutFile = fileToSVNPath(outFile, true);
             
             String commandLine = "diff ";
             if ( (oldPathRevision.getKind() != Revision.Kind.base) ||
@@ -1027,8 +1133,10 @@ public class JhlClientAdapter implements ISVNClientAdapter {
         }
     }
 
-
-     public void diff(File path, File outFile, boolean recurse) throws SVNClientException {
+    /**
+     * diff between path and head revision
+     */
+    public void diff(File path, File outFile, boolean recurse) throws SVNClientException {
         diff(path, null,null,null,outFile,recurse);
     }
 
@@ -1048,7 +1156,7 @@ public class JhlClientAdapter implements ISVNClientAdapter {
             if (newUrlRevision == null)
                 newUrlRevision = SVNRevision.HEAD;
             
-            String svnOutFile = fileToSVNPath(outFile);
+            String svnOutFile = fileToSVNPath(outFile, true);
             
             String commandLine = "diff ";
             if ( (oldUrlRevision.getKind() != Revision.Kind.head) ||

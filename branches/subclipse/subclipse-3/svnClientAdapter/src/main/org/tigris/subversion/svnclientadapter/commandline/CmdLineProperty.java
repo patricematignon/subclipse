@@ -51,104 +51,52 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  *
- */
+ */ 
 package org.tigris.subversion.svnclientadapter.commandline;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.StringTokenizer;
-
-import org.tigris.subversion.svnclientadapter.SVNNodeKind;
-import org.tigris.subversion.svnclientadapter.SVNRevision;
-import org.tigris.subversion.svnclientadapter.SVNUrl;
+import org.tigris.subversion.svnclientadapter.ISVNProperty;
 
 /**
- * <p>
- * <strong>NOTE:</strong> Not the most "efficient"
- * implementation, but it works.</p>
- * 
  * @author Philip Schatz (schatz at tigris)
  */
-class CmdLineInfo {
+class CmdLineProperty implements ISVNProperty {
+	private String propName;
+	private String propValue;
+	private String path;
+	private byte[] data;
 
-	//"Constants"
-	private static final String KEY_PATH = "Path";
-	private static final String KEY_URL = "URL";
-	private static final String KEY_REVISION = "Revision";
-	private static final String KEY_NODEKIND = "Node Kind";
-	private static final String KEY_LASTCHANGEDAUTHOR = "Last Changed Author";
-	private static final String KEY_LASTCHANGEDREV = "Last Changed Rev";
-	private static final String KEY_LASTCHANGEDDATE = "Last Changed Date";
-
-	//Fields
-	private Map infoMap = new HashMap();
-	private boolean unversioned = false;
-
-	//Constructors
-	CmdLineInfo(String infoString) {
-		load(infoString);
+	CmdLineProperty(String name, String value, String path, byte[] data) {
+		this.propName = name;
+		this.propValue = value;
+		this.path = path;
+		this.data = data;
 	}
 
-	//Methods
-	public Date getLastChangedDate() {
-		return (unversioned) ? null : Helper.toDate(get(KEY_LASTCHANGEDDATE));
+	/* (non-Javadoc)
+	 * @see org.tigris.subversion.svnclientadapter.ISVNProperty#getName()
+	 */
+	public String getName() {
+		return propName;
 	}
 
-	public SVNRevision.Number getLastChangedRevision() {
-		return (unversioned) ? null : Helper.toRevNum(get(KEY_LASTCHANGEDREV));
+	/* (non-Javadoc)
+	 * @see org.tigris.subversion.svnclientadapter.ISVNProperty#getValue()
+	 */
+	public String getValue() {
+		return propValue;
 	}
 
-	public String getLastCommitAuthor() {
-		return (unversioned) ? null : get(KEY_LASTCHANGEDAUTHOR);
-	}
-
-	public SVNNodeKind getNodeKind() {
-		if ("directory".equals(get(KEY_NODEKIND)))
-			return SVNNodeKind.DIR;
-		if ("file".equals(get(KEY_NODEKIND)))
-			return SVNNodeKind.FILE;
-		return SVNNodeKind.UNKNOWN;
-	}
-
+	/* (non-Javadoc)
+	 * @see org.tigris.subversion.svnclientadapter.ISVNProperty#getPath()
+	 */
 	public String getPath() {
-		return get(KEY_PATH);
+		return path;
 	}
 
-	public SVNRevision.Number getRevision() {
-		return (unversioned) ? SVNRevision.INVALID_REVISION : Helper.toRevNum(get(KEY_REVISION));
-	}
-
-	public SVNUrl getUrl() {
-		return (unversioned) ? null : Helper.toSVNUrl(get(KEY_URL));
-	}
-
-	private String get(String key) {
-		Object value = infoMap.get(key);
-		return (value == null) ? null : value.toString();
-	}
-
-	private void load(String infoString) {
-		StringTokenizer st = new StringTokenizer(infoString, Helper.NEWLINE);
-
-		//this does not have to be a versioned resource.
-		//if it is not, the first line will end with
-		// ":  (Not a versioned resource)"
-		if (st.countTokens() == 1) {
-			unversioned = true;
-		} else {
-
-			//First, go through and take each line and throw
-			// it into a map with the key being the text to
-			// the left of the colon, and value being to the
-			// right.
-			while (st.hasMoreTokens()) {
-				String line = st.nextToken();
-				int middle = line.indexOf(':');
-				String key = line.substring(0, middle);
-				String value = line.substring(middle + 2);
-				infoMap.put(key, value);
-			}
-		}
+	/* (non-Javadoc)
+	 * @see org.tigris.subversion.svnclientadapter.ISVNProperty#getData()
+	 */
+	public byte[] getData() {
+		return data;
 	}
 }

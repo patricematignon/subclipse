@@ -23,6 +23,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.sync.IRemoteResource;
+import org.tigris.subversion.javahl.Revision;
+import org.tigris.subversion.javahl.Revision.Kind;
 import org.tigris.subversion.subclipse.core.ISVNFolder;
 import org.tigris.subversion.subclipse.core.ISVNRemoteFolder;
 import org.tigris.subversion.subclipse.core.ISVNRemoteResource;
@@ -129,7 +131,7 @@ public class RemoteFolder extends RemoteResource implements ISVNRemoteFolder, IS
 		try {
             ISVNClientAdapter client = getRepository().getSVNClient();
 				
-			ISVNDirEntry[] list = client.getList(url,getRevision(),false);
+			ISVNDirEntry[] list = client.getList(url,new SVNRevision(Kind.head),false);
 			List result = new ArrayList();
 
 			// directories first				
