@@ -125,6 +125,9 @@ public interface ISVNUIConstants {
     // svn client interface or svnjavahl
     public final String PREF_SVNINTERFACE = "pref_svninterface"; //$NON-NLS-1$
 	
+    // svn client config directory
+    public final String PREF_SVNCONFIGDIR = "pref_svnconfigdir";
+    
 	// Wizard banners
 	public final String IMG_WIZBAN_SHARE = "wizban/newconnect_wizban.gif";	 //$NON-NLS-1$
 	public final String IMG_WIZBAN_MERGE = "wizban/mergestream_wizban.gif";	 //$NON-NLS-1$

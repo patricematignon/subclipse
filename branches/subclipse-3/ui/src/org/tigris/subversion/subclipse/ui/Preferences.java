@@ -11,11 +11,14 @@
  *******************************************************************************/
 package org.tigris.subversion.subclipse.ui;
 
+import java.io.File;
+
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.graphics.RGB;
+import org.tigris.subversion.subclipse.core.SVNClientManager;
 import org.tigris.subversion.subclipse.core.SVNProviderPlugin;
 import org.tigris.subversion.subclipse.ui.decorator.SVNDecoratorConfiguration;
 import org.tigris.subversion.svnclientadapter.SVNClientAdapterFactory;
@@ -59,10 +62,35 @@ private IPreferenceStore store;
         store.setDefault(ISVNUIConstants.PREF_SHOW_COMPARE_REVISION_IN_DIALOG, false);
         
         store.setDefault(ISVNUIConstants.PREF_SVNINTERFACE, SVNClientAdapterFactory.JAVAHL_CLIENT);
-        
-        SVNProviderPlugin.getPlugin().setSvnClientInterface(store.getInt(ISVNUIConstants.PREF_SVNINTERFACE));
+        store.setDefault(ISVNUIConstants.PREF_SVNCONFIGDIR, "");
+
+        setSvnClientInterface(store.getInt(ISVNUIConstants.PREF_SVNINTERFACE));
+        setSvnClientConfigDir(store.getString(ISVNUIConstants.PREF_SVNCONFIGDIR));
     }
 
+    /**
+     * set the svn client interface
+     * @param clientInterface
+     */
+    private void setSvnClientInterface(int clientInterface) {
+        SVNProviderPlugin.getPlugin().getSVNClientManager().setSvnClientInterface(clientInterface);
+    }
+
+    /**
+     * set the svn client config dir
+     * @param configDir
+     */
+    private void setSvnClientConfigDir(String configDir) {
+        SVNProviderPlugin plugin = SVNProviderPlugin.getPlugin();
+        SVNClientManager svnClientManager = plugin.getSVNClientManager();
+        if ("".equals(configDir)) {
+        	svnClientManager.setConfigDir(null);
+        } else {
+        	File configDirFile = new File(configDir);
+            svnClientManager.setConfigDir(configDirFile);
+        }
+    }
+    
     /**
      * @see IPropertyChangeListener#propertyChange(PropertyChangeEvent)
      */
@@ -70,7 +98,11 @@ private IPreferenceStore store;
         String property = event.getProperty();
         if (property == ISVNUIConstants.PREF_SVNINTERFACE) {
             Integer newValue = (Integer)event.getNewValue();
-            SVNProviderPlugin.getPlugin().setSvnClientInterface(newValue.intValue());
+            setSvnClientInterface(newValue.intValue());
+        }
+        if (property == ISVNUIConstants.PREF_SVNCONFIGDIR) {
+        	String configDir = (String)event.getNewValue();
+            setSvnClientConfigDir(configDir);
         }
             
     }

@@ -12,18 +12,24 @@
 
 package org.tigris.subversion.subclipse.ui.preferences;
 
+import java.io.File;
+
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.tigris.subversion.subclipse.ui.ISVNUIConstants;
@@ -42,21 +48,15 @@ public class SVNPreferencesPage extends PreferencePage implements IWorkbenchPref
     private Button javahlRadio;
     private Button commandLineRadio;
     private Button showCompareRevisionInDialog;
+    private Button defaultConfigLocationRadio;
+    private Button useDirectoryLocationRadio;
+    private Text directoryLocationText;
+    private Button browseConfigDirButton;
 
 	public SVNPreferencesPage() {
 		// sort the options by display text
 		setDescription(Policy.bind("SVNPreferencePage.description")); //$NON-NLS-1$
 	}
-
-
-	/**
-	 * listener used when selection changes
-	 */
-	Listener checkInterfaceListener = new Listener() {
-		public void handleEvent(Event event) {
-			verifyInterface();
-		}
-	};
 
 	/**
 	 * Utility method that creates a label instance
@@ -66,11 +66,11 @@ public class SVNPreferencesPage extends PreferencePage implements IWorkbenchPref
 	 * @param text  the text for the new label
 	 * @return the new label
 	 */
-	private Label createLabel(Composite parent, String text) {
+	private Label createLabel(Composite parent, String text, int horizontalSpan) {
 		Label label = new Label(parent, SWT.LEFT);
 		label.setText(text);
 		GridData data = new GridData();
-		data.horizontalSpan = 1;
+		data.horizontalSpan = horizontalSpan;
 		data.horizontalAlignment = GridData.FILL;
 		label.setLayoutData(data);
 		return label;
@@ -93,6 +93,15 @@ public class SVNPreferencesPage extends PreferencePage implements IWorkbenchPref
 		return button;
 	}	
 
+    private Button createRadio(Composite group, String label, int horizontalSpan) {
+        Button button = new Button(group, SWT.RADIO);
+        button.setText(label);
+        GridData data = new GridData();
+        data.horizontalSpan = horizontalSpan;
+        button.setLayoutData(data);
+        return button;
+    }
+    
 	/**
 	 * @see PreferencePage#createContents(Composite)
 	 */
@@ -100,33 +109,78 @@ public class SVNPreferencesPage extends PreferencePage implements IWorkbenchPref
 		
 		// create the composite
 		Composite composite = new Composite(parent, SWT.NULL);
-		composite.setLayoutData(new GridData());
+		GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
+        composite.setLayoutData(gridData);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 		composite.setLayout(layout);
 		
 		showCompareRevisionInDialog = createCheckBox(composite, Policy.bind("SVNPreferencePage.showCompareMergeInSync")); //$NON-NLS-1$
-		createLabel(composite, ""); createLabel(composite, ""); //$NON-NLS-1$ //$NON-NLS-2$
+		createLabel(composite, "", 2); //$NON-NLS-1$
 		
-		// create the group
+		// group javahl/command line
 		Group group = new Group(composite, SWT.NULL);
 		group.setText(Policy.bind("SVNPreferencePage.svnClientInterface")); //$NON-NLS-1$
-		GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
-		gridData.grabExcessHorizontalSpace = true;
+		gridData = new GridData(GridData.FILL_HORIZONTAL);
 		gridData.horizontalSpan = 2;
 		group.setLayoutData(gridData);
 		layout = new GridLayout();
 		group.setLayout(layout); 	
-		javahlRadio = new Button(group, SWT.RADIO);
-		javahlRadio.setText(Policy.bind("SVNPreferencePage.svnjavahl")); //$NON-NLS-1$
-		commandLineRadio = new Button(group, SWT.RADIO);
-		commandLineRadio.setText(Policy.bind("SVNPreferencePage.svncommandline")); //$NON-NLS-1$
-		
-		javahlRadio.addListener(SWT.Selection,checkInterfaceListener);
+		javahlRadio = createRadio(group, Policy.bind("SVNPreferencePage.svnjavahl"),1); //$NON-NLS-1$
+		commandLineRadio = createRadio(group, Policy.bind("SVNPreferencePage.svncommandline"),1); //$NON-NLS-1$
+        Listener checkInterfaceListener = new Listener() {
+            public void handleEvent(Event event) {
+                verifyValidation();
+            }
+        };
+        javahlRadio.addListener(SWT.Selection,checkInterfaceListener);
 		commandLineRadio.addListener(SWT.Selection,checkInterfaceListener);
 		
+        createLabel(composite, "", 2); //$NON-NLS-1$
+        
+        // group for config location
+        group = new Group(composite, SWT.NULL);
+        group.setText("Configuration location :");
+        gridData = new GridData(GridData.FILL_HORIZONTAL);
+        gridData.horizontalSpan = 2;
+        group.setLayoutData(gridData);
+        layout = new GridLayout();
+        layout.numColumns = 3;
+        group.setLayout(layout); 
+        defaultConfigLocationRadio = createRadio(group,"Use default config location",3); 
+        useDirectoryLocationRadio = createRadio(group,"Use directory :",1);
+        directoryLocationText = new Text(group, SWT.SINGLE | SWT.BORDER);
+        gridData = new GridData();
+        gridData.horizontalAlignment = GridData.FILL;
+        gridData.widthHint = 200;
+        gridData.grabExcessHorizontalSpace = true;
+        directoryLocationText.setLayoutData(gridData);
+        directoryLocationText.setEditable(false);
+        browseConfigDirButton = new Button(group, SWT.NONE);
+        browseConfigDirButton.setText("Browse...");
+
+        Listener configUpdateEnablements = new Listener() {
+            public void handleEvent(Event event) {
+                browseConfigDirButton.setEnabled(useDirectoryLocationRadio.getSelection());
+                verifyValidation();
+            }
+        };
+        defaultConfigLocationRadio.addListener(SWT.Selection,configUpdateEnablements);
+        useDirectoryLocationRadio.addListener(SWT.Selection,configUpdateEnablements);
+        browseConfigDirButton.addSelectionListener(new SelectionAdapter(){
+            public void widgetSelected(SelectionEvent event) {
+                DirectoryDialog directoryDialog = new DirectoryDialog(getShell(),SWT.OPEN);
+                String res = directoryDialog.open();
+                if (res != null) {
+                    directoryLocationText.setText(res);
+                }
+                verifyValidation();
+            }
+        });
+        
+        
 		initializeValues();
-		verifyInterface();
+		verifyValidation();
 		
 		return composite;
 	}
@@ -139,13 +193,23 @@ public class SVNPreferencesPage extends PreferencePage implements IWorkbenchPref
 		
 		showCompareRevisionInDialog.setSelection(store.getBoolean(ISVNUIConstants.PREF_SHOW_COMPARE_REVISION_IN_DIALOG));
 		
-        if (store.getInt(ISVNUIConstants.PREF_SVNINTERFACE) == SVNClientAdapterFactory.JAVAHL_CLIENT){
-            javahlRadio.setSelection(true);
-        }else{
-            commandLineRadio.setSelection(true);
+        javahlRadio.setSelection(store.getInt(ISVNUIConstants.PREF_SVNINTERFACE) == SVNClientAdapterFactory.JAVAHL_CLIENT);
+        commandLineRadio.setSelection(store.getInt(ISVNUIConstants.PREF_SVNINTERFACE) == SVNClientAdapterFactory.COMMANDLINE_CLIENT);
+        
+        String configLocation = store.getString(ISVNUIConstants.PREF_SVNCONFIGDIR); 
+        directoryLocationText.setText(configLocation);
+        if (configLocation.equals("")) {
+            defaultConfigLocationRadio.setSelection(true);
+            useDirectoryLocationRadio.setSelection(false);
+            browseConfigDirButton.setEnabled(false);
+        } else {
+            defaultConfigLocationRadio.setSelection(false);
+            useDirectoryLocationRadio.setSelection(true);
+            browseConfigDirButton.setEnabled(true);
         }
 	}
 
+    
    /**
 	* @see IWorkbenchPreferencePage#init(IWorkbench)
 	*/
@@ -159,14 +223,24 @@ public class SVNPreferencesPage extends PreferencePage implements IWorkbenchPref
 	 */
 	public boolean performOk() {
 		IPreferenceStore store = getPreferenceStore();
-		
+
+        // save show compare revision in dialog pref
 		store.setValue(ISVNUIConstants.PREF_SHOW_COMPARE_REVISION_IN_DIALOG, showCompareRevisionInDialog.getSelection());
 
+        // save svn interface pref
         if (javahlRadio.getSelection() ){
             store.setValue(ISVNUIConstants.PREF_SVNINTERFACE, SVNClientAdapterFactory.JAVAHL_CLIENT);
         }else{
             store.setValue(ISVNUIConstants.PREF_SVNINTERFACE, SVNClientAdapterFactory.COMMANDLINE_CLIENT);
         }
+        
+        // save config location pref
+        if (defaultConfigLocationRadio.getSelection()) {
+        	store.setValue(ISVNUIConstants.PREF_SVNCONFIGDIR, "");
+        } else {
+            store.setValue(ISVNUIConstants.PREF_SVNCONFIGDIR,directoryLocationText.getText());
+        }
+        
 		SVNUIPlugin.getPlugin().savePluginPreferences();
 		return true;
 	}
@@ -177,17 +251,9 @@ public class SVNPreferencesPage extends PreferencePage implements IWorkbenchPref
 	 */
 	protected void performDefaults() {
 		super.performDefaults();
-		IPreferenceStore store = getPreferenceStore();
+        initializeValues();
 		
-		showCompareRevisionInDialog.setSelection(store.getDefaultBoolean(ISVNUIConstants.PREF_SHOW_COMPARE_REVISION_IN_DIALOG));
-		
-		if (store.getInt(ISVNUIConstants.PREF_SVNINTERFACE) == SVNClientAdapterFactory.JAVAHL_CLIENT){
-			javahlRadio.setSelection(true);
-		}else{
-			commandLineRadio.setSelection(true);
-		}
-		
-		verifyInterface();
+        verifyValidation();
 	}
 
 	/*
@@ -201,23 +267,34 @@ public class SVNPreferencesPage extends PreferencePage implements IWorkbenchPref
 	/**
 	 * Verify the selection of the interface method
 	 */
-	private void verifyInterface() {
-		if (javahlRadio.getSelection()) {
+	private void verifyValidation() {
+		setErrorMessage(null);
+        
+        if (useDirectoryLocationRadio.getSelection()) {
+            File configDir = new File(directoryLocationText.getText());
+            if (!configDir.exists()) {
+            	setErrorMessage("Svn config directory does not exist.");
+            } else {
+                File serversFile = new File(configDir,"servers");
+                File configFile = new File(configDir,"config");
+                if (!serversFile.exists() && !configFile.exists()) {
+                	setErrorMessage("Selected directory is not a svn config dir");
+                }
+            }
+        }
+        
+        if (javahlRadio.getSelection()) {
 			if (!SVNClientAdapterFactory.isSVNClientAvailable(SVNClientAdapterFactory.JAVAHL_CLIENT)) {
 				setErrorMessage(Policy.bind("SVNPreferencePage.javahlNotAvailable")); //$NON-NLS-1$
-			} else {
-				setErrorMessage(null);															
 			}
 		}
 		if (commandLineRadio.getSelection()) {
 			if (!SVNClientAdapterFactory.isSVNClientAvailable(SVNClientAdapterFactory.COMMANDLINE_CLIENT)) {
 				setErrorMessage(Policy.bind("SVNPreferencePage.commandLineNotAvailable")); //$NON-NLS-1$
-			} else {
-				setErrorMessage(null);															
 			}
 		}
 		
 		setValid(getErrorMessage() == null);
 	}
-
+    
 }
