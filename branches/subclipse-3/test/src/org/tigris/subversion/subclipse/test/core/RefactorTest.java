@@ -157,5 +157,34 @@ public class RefactorTest extends SubclipseTest {
 		folder = testProject.getProject().getFolder(new Path("src/pack2"));
 		assertTrue(folder.exists());
 	}
+	
+	public void testPackageRenameScheduledAdd() throws Exception {
+		TestProject testProject = new TestProject("testProject");
+		shareProject(testProject.getProject());
+		
+		// create a file
+		IPackageFragment package1 = testProject.createPackage("pack1");
+		IType type = testProject.createJavaType(package1,"AClass.java",
+			"public class AClass { \n" +
+			"  public void m() {}\n" +
+			"}");
+
+		SVNTeamProvider provider = getProvider(testProject.getProject());
+		
+		IFile resource = testProject.getProject().getFile(new Path("src/pack1/AClass.java"));
+		
+		// add and commit it
+		addNoCommit(testProject.getProject(),resource);
+		
+		// let's rename the package
+		IFolder folder =  testProject.getProject().getFolder(new Path("src/pack1"));
+		folder.move(new Path("pack2"),true, null);
+		
+		// note that the initial folder still exist after package renaming
+		
+		// the renamed package should exist now
+		folder = testProject.getProject().getFolder(new Path("src/pack2"));
+		assertTrue(folder.exists());
+	}
 
 }
