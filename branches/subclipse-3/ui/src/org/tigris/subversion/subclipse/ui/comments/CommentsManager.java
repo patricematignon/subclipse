@@ -18,7 +18,10 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-import org.apache.xerces.parsers.SAXParser;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+
 import org.eclipse.core.internal.resources.XMLWriter;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Status;
@@ -75,12 +78,15 @@ public class CommentsManager {
         try {
             BufferedInputStream is = new BufferedInputStream(new FileInputStream(file));
             try {
-                SAXParser parser = new SAXParser();
-                parser.setContentHandler(new CommentHistoryContentHandler());
+            	SAXParserFactory factory = SAXParserFactory.newInstance();
+
                 try {
-                    parser.parse(new InputSource(is));
+                	SAXParser parser = factory.newSAXParser();                	
+                    parser.parse(new InputSource(is), new CommentHistoryContentHandler());
                 } catch (SAXException ex) {
                     throw new SVNException(Policy.bind("RepositoryManager.parsingProblem", COMMENT_HIST_FILE), ex); //$NON-NLS-1$
+                } catch (ParserConfigurationException e) {
+                    throw new SVNException(Policy.bind("RepositoryManager.parsingProblem", COMMENT_HIST_FILE), e); //$NON-NLS-1$				
                 }
             } finally {
                 is.close();
