@@ -44,7 +44,7 @@ public class LocalFile extends LocalResource implements ISVNLocalFile {
 	 */
     public ISVNRemoteResource getBaseResource() throws SVNException {
     	
-		if (!isManaged())
+		if (!hasRemote()) // no base if no remote
 			return null;
 		LocalResourceStatus status = getStatus();
 
