@@ -17,8 +17,12 @@ import java.util.Date;
 import org.eclipse.core.runtime.PlatformObject;
 import org.tigris.subversion.subclipse.core.ISVNRemoteResource;
 import org.tigris.subversion.subclipse.core.ISVNResource;
+import org.tigris.subversion.subclipse.core.SVNException;
+import org.tigris.subversion.subclipse.core.SVNProviderPlugin;
+import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 import org.tigris.subversion.svnclientadapter.ISVNLogMessage;
 import org.tigris.subversion.svnclientadapter.ISVNLogMessageChangePath;
+import org.tigris.subversion.svnclientadapter.SVNClientException;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
 
 /**
@@ -99,7 +103,21 @@ public class LogEntry extends PlatformObject implements ILogEntry {
      * @see org.tigris.subversion.subclipse.core.history.ILogEntry#getLogEntryChangePaths()
      */
     public LogEntryChangePath[] getLogEntryChangePaths() {
-    	ISVNLogMessageChangePath[] changePaths = logMessage.getChangedPaths();
+    	ISVNLogMessageChangePath[] changePaths = null;
+    	if (SVNProviderPlugin.getPlugin().getSVNClientManager().isFetchChangePathOnDemand()) {
+    	try {
+    		ISVNClientAdapter client = resource.getRepository().getSVNClient();
+    		ISVNLogMessage[] tmpMessage = client.getLogMessages(resource.getUrl(), getRevision(), getRevision(), true);
+    		changePaths = tmpMessage[0].getChangedPaths();
+		} catch (SVNException e) {
+			e.printStackTrace();
+		} catch (SVNClientException e) {
+			e.printStackTrace();
+		}
+    	} else {
+    		changePaths = logMessage.getChangedPaths();
+    	}
+		
         LogEntryChangePath[] logEntryChangePaths = new LogEntryChangePath[changePaths.length]; 
         for (int i = 0; i < changePaths.length; i++) {
         	logEntryChangePaths[i] = new LogEntryChangePath(this,changePaths[i]);

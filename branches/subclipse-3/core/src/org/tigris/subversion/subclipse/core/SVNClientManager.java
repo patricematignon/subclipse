@@ -31,6 +31,7 @@ public class SVNClientManager implements IManager {
     private SVNAdapterFactories adapterFactories;
     private String svnClientInterface;  
     private File configDir = null;
+    private boolean fetchChangePathOnDemand = true;
     
     /* (non-Javadoc)
      * @see org.eclipse.core.internal.resources.IManager#startup(org.eclipse.core.runtime.IProgressMonitor)
@@ -63,6 +64,8 @@ public class SVNClientManager implements IManager {
             throw new CoreException(new Status(Status.ERROR, SVNProviderPlugin.ID, IStatus.OK, e
                     .getMessage(), e));
         }
+        
+        setFetchChangePathOnDemand(fetchChangePathOnDemand);
     }
     
     
@@ -118,4 +121,17 @@ public class SVNClientManager implements IManager {
         }
     }    
 
+	/**
+	 * @return Returns the fetchChangePathOnDemand.
+	 */
+	public boolean isFetchChangePathOnDemand() {
+		return fetchChangePathOnDemand;
+	}
+	/**
+	 * @param fetchChangePathOnDemand The fetchChangePathOnDemand to set.
+	 */
+	public void setFetchChangePathOnDemand(
+			boolean fetchChangePathOnDemand) {
+		this.fetchChangePathOnDemand = fetchChangePathOnDemand;
+	}
 }

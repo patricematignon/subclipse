@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.tigris.subversion.subclipse.core.ISVNRemoteResource;
 import org.tigris.subversion.subclipse.core.Policy;
 import org.tigris.subversion.subclipse.core.SVNException;
+import org.tigris.subversion.subclipse.core.SVNProviderPlugin;
 import org.tigris.subversion.subclipse.core.history.ILogEntry;
 import org.tigris.subversion.subclipse.core.history.LogEntry;
 import org.tigris.subversion.subclipse.core.resources.RemoteFile;
@@ -51,11 +52,20 @@ public class GetLogsCommand implements ISVNCommand {
         
         ISVNLogMessage[] logMessages;
         try {
+        	// Conditional behavior to retieve the log messages 
+        	if (SVNProviderPlugin.getPlugin().getSVNClientManager().isFetchChangePathOnDemand()) {
             logMessages =
                 client.getLogMessages(
                     remoteResource.getUrl(),
                     new SVNRevision.Number(0),
-                    SVNRevision.HEAD);
+                    SVNRevision.HEAD, false);
+        	} else {
+        		logMessages =
+                    client.getLogMessages(
+                        remoteResource.getUrl(),
+                        new SVNRevision.Number(0),
+                        SVNRevision.HEAD, true);	
+        	}
         } catch (SVNClientException e) {
             throw SVNException.wrapException(e);
         }
