@@ -196,7 +196,7 @@ public class CommitAction extends WorkspaceAction {
 			 // if only one resource selected, get url.  Commit dialog displays this.
 			 if (resources.length == 1) {
 				   SVNUrl svnUrl = svnResource.getStatus().getUrl();
-				   if (svnUrl == null) url = getParentUrl(svnResource);
+				   if ((svnUrl == null) || (resource.getType() == IResource.FILE)) url = getParentUrl(svnResource);
 				   else url = svnResource.getStatus().getUrl().toString();
 			 }
 			 
