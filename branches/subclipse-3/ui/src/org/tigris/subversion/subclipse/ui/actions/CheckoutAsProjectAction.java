@@ -29,6 +29,7 @@ import org.tigris.subversion.subclipse.core.ISVNRepositoryLocation;
 import org.tigris.subversion.subclipse.core.commands.CheckoutCommand;
 import org.tigris.subversion.subclipse.core.resources.SVNWorkspaceRoot;
 import org.tigris.subversion.subclipse.ui.Policy;
+import org.tigris.subversion.subclipse.ui.operations.CheckoutAsProjectOperation;
 import org.tigris.subversion.subclipse.ui.util.IPromptCondition;
 import org.tigris.subversion.subclipse.ui.util.PromptingDialog;
 
@@ -37,8 +38,10 @@ import org.tigris.subversion.subclipse.ui.util.PromptingDialog;
  * -Works only for remote folders
  * -Does not prompt for project name; uses folder name instead
  */
-public class CheckoutAsProjectAction extends SVNAction {
-
+public class CheckoutAsProjectAction extends WorkspaceAction {
+    private IProject[] localFolders;
+    private ISVNRemoteFolder[] remoteFolders;
+    private IResource[] projects;
 
 	/*
 	 * @see SVNAction#execute()
@@ -46,16 +49,16 @@ public class CheckoutAsProjectAction extends SVNAction {
 	public void execute(IAction action) throws InvocationTargetException, InterruptedException {
 		checkoutSelectionIntoWorkspaceDirectory();
 	}
-	
+
     /**
      * checkout into a workspace directory, ie as a project
      * @throws InvocationTargetException
      * @throws InterruptedException
-     */
-	protected void checkoutSelectionIntoWorkspaceDirectory() throws InvocationTargetException, InterruptedException {
-		run(new WorkspaceModifyOperation() {
+     */	
+	protected void checkoutSelectionIntoWorkspaceDirectory() throws InvocationTargetException, InterruptedException { 
+	    run(new WorkspaceModifyOperation() {
 			public void execute(IProgressMonitor monitor) throws InterruptedException, InvocationTargetException {
-				try {
+			    try {
 					ISVNRemoteFolder[] folders = getSelectedRemoteFolders();
 							
 					List targetProjects = new ArrayList();
@@ -69,7 +72,7 @@ public class CheckoutAsProjectAction extends SVNAction {
 					}
 					
 
-					IResource[] projects = (IResource[]) targetProjects.toArray(new IResource[targetProjects.size()]);
+					projects = (IResource[]) targetProjects.toArray(new IResource[targetProjects.size()]);
 					
 					// if a project with the same name already exist, we ask the user if he want to overwrite it
 					PromptingDialog prompt = new PromptingDialog(getShell(), projects, 
@@ -78,24 +81,21 @@ public class CheckoutAsProjectAction extends SVNAction {
 					projects = prompt.promptForMultiple();
 															
 					if (projects.length != 0) {
-						IProject[] localFolders = new IProject[projects.length];
-						ISVNRemoteFolder[] remoteFolders = new ISVNRemoteFolder[projects.length];
+						localFolders = new IProject[projects.length];
+						remoteFolders = new ISVNRemoteFolder[projects.length];
 						for (int i = 0; i < projects.length; i++) {
 							localFolders[i] = (IProject)projects[i];
 							remoteFolders[i] = (ISVNRemoteFolder)targetFolders.get(projects[i].getName());
 						}
-						
-						monitor.setTaskName(getTaskName(remoteFolders));						
-						CheckoutCommand command = new CheckoutCommand(remoteFolders, localFolders);
-                        command.run(Policy.subMonitorFor(monitor, 100));
 					}
-				} catch (TeamException e) {
+				} catch (Exception e) {
 					throw new InvocationTargetException(e);
 				} finally {
 					monitor.done();
 				}
 			}
 		}, true /* cancelable */, PROGRESS_DIALOG);
+	    new CheckoutAsProjectOperation(getTargetPart(), remoteFolders, localFolders).run();
 	}
 		
 	/*
