@@ -8,12 +8,15 @@
  ******************************************************************************/
 package org.tigris.subversion.subclipse.core.resources;
 
+import java.io.File;
+
 import org.eclipse.core.internal.resources.ResourceStatus;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.resources.team.IResourceTree;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -26,6 +29,7 @@ import org.tigris.subversion.subclipse.core.SVNException;
 import org.tigris.subversion.subclipse.core.SVNTeamProvider;
 import org.tigris.subversion.subclipse.core.client.OperationManager;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
+import org.tigris.subversion.svnclientadapter.ISVNStatus;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
 
 public class SVNMoveDeleteHook extends DefaultMoveDeleteHook {
@@ -140,17 +144,31 @@ public class SVNMoveDeleteHook extends DefaultMoveDeleteHook {
 				// force is set to true because when we rename (refactor) a
 				// java class, the file is modified before being moved
 				// A modified file cannot be moved without force
-				svnClient.move(source.getLocation().toFile(), destination
+				
+				if(SVNWorkspaceRoot.getSVNFileFor(source).getStatus().getTextStatus() == ISVNStatus.Kind.ADDED){
+					//can't move a file that's in state added, so copy to new location
+					//remove old location, add new location  
+					//fix for issue 87 -mml
+					source.copy(destination.getFullPath(), updateFlags==IResource.FORCE, monitor);
+
+					svnClient.addFile(destination.getLocation().toFile());
+					svnClient.remove(new File[]{source.getLocation().toFile()},true);
+					tree.deletedFile(source);
+				}else{
+					svnClient.move(source.getLocation().toFile(), destination
 						.getLocation().toFile(), true);
 
-				// movedFile must be done before endOperation because
+				}
+				 //movedFile must be done before endOperation because
 				// destination file must not already exist in the workspace
 				// resource tree.
 				tree.movedFile(source, destination);
 			} catch (SVNClientException e) {
 				throw SVNException.wrapException(e);
-			} catch (TeamException te) {
-				throw SVNException.wrapException(te);
+			} catch (TeamException e) {
+				throw SVNException.wrapException(e);
+			} catch (CoreException e) {
+				throw SVNException.wrapException(e);
 			} finally {
 				OperationManager.getInstance().endOperation();
 			}
@@ -208,13 +226,25 @@ public class SVNMoveDeleteHook extends DefaultMoveDeleteHook {
 					provider.add(new IResource[]{destination.getParent()},
 							IResource.DEPTH_ZERO, new NullProgressMonitor());
 				}
+				
+				if(SVNWorkspaceRoot.getSVNFolderFor(source).getStatus().getTextStatus() == ISVNStatus.Kind.ADDED){
+					//can't rename a folder that's in state added, so copy to new location
+					//remove old location, add new location  
+					//fix for issue 87 -mml
+					source.copy(destination.getFullPath(), updateFlags==IResource.FORCE, monitor);
+					svnClient.remove(new File[]{source.getLocation().toFile()},true);
+					tree.deletedFolder(source);
+				}else{
 				svnClient.move(source.getLocation().toFile(), destination
 						.getLocation().toFile(), true);
+				}
 
 			} catch (SVNClientException e) {
 				throw SVNException.wrapException(e);
-			} catch (TeamException te) {
-				throw SVNException.wrapException(te);
+			} catch (TeamException e) {
+				throw SVNException.wrapException(e);
+			} catch (CoreException e) {
+				throw SVNException.wrapException(e);
 			} finally {
 				OperationManager.getInstance().endOperation();
 			}
