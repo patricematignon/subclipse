@@ -24,6 +24,7 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.team.internal.core.InfiniteSubProgressMonitor;
 
 public class Policy {
+    private static final String BUNDLE_NAME = "org.tigris.subversion.subclipse.core.messages"; //$NON-NLS-1$
 	protected static ResourceBundle bundle = null;
 	
 	//debug constants
@@ -46,12 +47,12 @@ public class Policy {
 		}
 	}
 
-	/**
-	 * Creates a NLS catalog for the default locale.
-	 */
-	public static void localize(String bundleName) {
-		bundle = ResourceBundle.getBundle(bundleName);
-	}
+	private static ResourceBundle getResourceBundle() {
+        if (bundle == null) {
+            bundle = ResourceBundle.getBundle(BUNDLE_NAME);
+        }
+        return bundle;
+    }
 	
 	/**
 	 * Lookup the message with the given ID in this catalog and bind its
@@ -75,7 +76,7 @@ public class Policy {
 	 */
 	public static String bind(String key) {
 		try {
-			return bundle.getString(key);
+			return getResourceBundle().getString(key);
 		} catch (MissingResourceException e) {
 			return key;
 		} catch (NullPointerException e) {

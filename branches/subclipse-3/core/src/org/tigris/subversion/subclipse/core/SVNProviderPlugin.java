@@ -109,13 +109,6 @@ public class SVNProviderPlugin extends Plugin {
 	public void start(BundleContext ctxt) throws Exception {
 		super.start(ctxt);
 
-        // this will use
-		// org/tigris/subversion/subclipse/core/messages.properties if it has
-		// not
-		// been localized
-		Policy.localize("org.tigris.subversion.subclipse.core.messages"); //$NON-NLS-1$
-
-        
         svnClientManager = new SVNClientManager();
         svnClientManager.startup(null);
         
