@@ -12,6 +12,7 @@
 package org.tigris.subversion.subclipse.core.sync;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -143,20 +144,33 @@ public class SVNWorkspaceSubscriber extends Subscriber implements IResourceState
      * @see org.eclipse.team.core.subscribers.Subscriber#members(org.eclipse.core.resources.IResource)
      */
     public IResource[] members(IResource resource) throws TeamException {
-        System.out.println("SVNSubscriber.members()"+resource);
-        if( resource.exists() && resource instanceof IContainer ) {
-            IContainer container = (IContainer) resource;
-            try {
-                return container.members();
-            } catch (CoreException e) {
-                throw new TeamException("could not get members",e);
-            }
-        }
-        else
-            return new IResource[0];
+		if(resource.getType() == IResource.FILE) {
+			return new IResource[0];
+		}	
+		try {
+			Set allMembers = new HashSet();
+			try {
+				allMembers.addAll(Arrays.asList(((IContainer)resource).members()));
+			} catch (CoreException e) {
+				if (e.getStatus().getCode() == IResourceStatus.RESOURCE_NOT_FOUND) {
+					// The resource is no longer exists so ignore the exception
+				} else {
+					throw e;
+				}
+			}
+			//add remote changed resources (they may not exist locally)
+			allMembers.addAll(Arrays.asList( remoteSyncStateStore.members( resource ) ) );
+
+			//add local changed resources (they may not exist locally)
+			allMembers.addAll(Arrays.asList( localSyncStateStore.members( resource ) ) );
+
+			return (IResource[]) allMembers.toArray(new IResource[allMembers.size()]);
+		} catch (CoreException e) {
+			throw TeamException.asTeamException(e);
+		}
     }
 
-    /* (non-Javadoc)
+	/* (non-Javadoc)
      * @see org.eclipse.team.core.subscribers.Subscriber#getSyncInfo(org.eclipse.core.resources.IResource)
      */
     public SyncInfo getSyncInfo(IResource resource) throws TeamException {
@@ -247,8 +261,16 @@ public class SVNWorkspaceSubscriber extends Subscriber implements IResourceState
                 else if ( status.getNodeKind() == SVNNodeKind.UNKNOWN ) {
                     changedResource = workspaceRoot.getContainerForLocation(path);
                     
-                    if( changedResource.exists() )
+                    if( changedResource.exists() ) {
                         containerSet.add( changedResource );
+
+                        //if the resource is a locally added folder then
+                        //add it's members
+                        if( changedResource.exists() 
+                                && status.getRevision() == null ) {
+                            addLocalContainerStatusInfo((IContainer) changedResource, allChanges);
+                        }
+                    }
                     else  if( !containerSet.contains( changedResource ) )
                         changedResource = workspaceRoot.getFileForLocation(path);
                 }
@@ -270,6 +292,36 @@ public class SVNWorkspaceSubscriber extends Subscriber implements IResourceState
             return (IResource[]) allChanges.toArray(new IResource[allChanges.size()]);
         } catch (SVNClientException e) {
             throw new TeamException("Error getting status for resource "+resource, e);
+        }
+    }
+
+    private void addLocalContainerStatusInfo(IContainer container, List allChanges) throws TeamException {
+        IResource[] members;
+        try {
+            members = container.members();
+        } catch (CoreException e) {
+        	if (e.getStatus().getCode() == IResourceStatus.RESOURCE_NOT_FOUND) {
+        		// The resource is no longer exists so ignore the exception
+        	    members = null;
+        	} else {
+        		throw new TeamException("Error getting members of:"+container,e);
+        	}
+        }
+
+        for (int j = 0; members!=null && j < members.length; j++) {
+            IResource resource = members[j];
+
+            StatusInfo localInfo = new StatusInfo(null, Kind.UNVERSIONED );
+            localSyncStateStore.setBytes( resource,  localInfo.asBytes() );
+
+            StatusInfo remoteInfo = new StatusInfo(null, Kind.NONE );
+            remoteSyncStateStore.setBytes( resource, remoteInfo.asBytes() );
+
+            allChanges.add(resource);
+
+            if( resource.exists() && resource instanceof IContainer ) {
+                addLocalContainerStatusInfo( (IContainer) resource, allChanges);
+            }
         }
     }
 
