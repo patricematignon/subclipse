@@ -363,7 +363,7 @@ public static SVNRepositoryLocation fromProperties(Properties configuration)
 	// We build a string to allow validation of the components that are provided to us
 
 	String user = configuration.getProperty("user"); //$NON-NLS-1$ 
-	if (user.length() == 0)
+	if ((user == null) || (user.length() == 0))
 		user = null;
 	String password = configuration.getProperty("password"); //$NON-NLS-1$ 
 	if (user == null)
@@ -480,5 +480,7 @@ public Object getAdapter(Class adapter) {
 	else
 		return Platform.getAdapterManager().getAdapter(this, adapter);
 }
+
+
 
 }
