@@ -63,6 +63,8 @@ public class RemoteFile extends RemoteResource implements ISVNRemoteFile  {
 	public InputStream getContents(IProgressMonitor monitor) throws SVNException {
         // we cache the contents as getContents can be called several times
         // on the same RemoteFile
+		if (monitor == null)
+			monitor = new NullProgressMonitor();
         monitor.beginTask(Policy.bind("RemoteFile.getContents"), 100);//$NON-NLS-1$
         try
         {
