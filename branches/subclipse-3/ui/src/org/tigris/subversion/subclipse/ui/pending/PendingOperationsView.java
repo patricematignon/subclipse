@@ -558,7 +558,8 @@ public class PendingOperationsView extends ViewPart implements IResourceStateCha
 					getSite().getShell().getDisplay().asyncExec(new Runnable() {
 						public void run() {
 							if(changedResources != null && tableViewer != null && ! tableViewer.getTable().isDisposed()) {
-								tableViewer.add( changedResources );
+							    // once we got the entries, we refresh the table 
+                                tableViewer.refresh();
 							}
 						}
 					});
