@@ -45,20 +45,20 @@
       </view>
       <view
             name="%historyview.name"
-            icon="icons/full/cview16/history_view.gif"
+            icon="icons/full/tortoise/log.gif"
             category="org.tigris.subversion.subclipse"
             class="org.tigris.subversion.subclipse.ui.history.HistoryView"
             id="org.tigris.subversion.subclipse.ui.history.HistoryView">
       </view>
       <view
-            icon="icons/full/clcl16/pending.png"
+            icon="icons/full/tortoise/showchanged.gif"
             class="org.tigris.subversion.subclipse.ui.pending.PendingOperationsView"
             category="org.tigris.subversion.subclipse"
             name="%PendingOperationsView.name"
             id="org.tigris.subversion.subclipse.ui.pending.PendingOperationsView">
       </view>
       <view
-            icon="icons/full/clcl16/properties.png"
+            icon="icons/full/cview16/props_view.gif"
             class="org.tigris.subversion.subclipse.ui.svnproperties.SvnPropertiesView"
             name="%SvnPropertiesView.name"
             category="org.tigris.subversion.subclipse"
@@ -66,7 +66,7 @@
       </view>
       <view
             name="%AnnotateView.name"
-            icon="icons/full/cview16/annotate_view.gif"
+            icon="icons/full/tortoise/blame.gif"
             category="org.tigris.subversion.subclipse"
             class="org.tigris.subversion.subclipse.ui.annotations.AnnotateView"
             id="org.tigris.subversion.subclipse.ui.annotations.AnnotateView">
@@ -326,18 +326,20 @@
                id="org.tigris.subversion.subclipse.ui.AddKeywords">
          </action>
          <action
-               label="%SetSvnProperty.label"
                helpContextId="org.tigris.subversion.subclipse.ui.team_set_svnpropery_action_context"
-               class="org.tigris.subversion.subclipse.ui.actions.SetSvnPropertyAction"
+               label="%SetSvnProperty.label"
+               icon="icons/full/ctool16/svn_prop_add.gif"
                tooltip="%SetSvnProperty.tooltip"
+               class="org.tigris.subversion.subclipse.ui.actions.SetSvnPropertyAction"
                menubarPath="team.main/group3"
                id="org.tigris.subversion.subclipse.ui.SetSvnProperty">
          </action>
          <action
-               label="%ShowSvnPropertiesAction.label"
                helpContextId="org.tigris.subversion.subclipse.team_show_svn_properties_action_context"
-               class="org.tigris.subversion.subclipse.ui.actions.ShowSvnPropertiesAction"
+               label="%ShowSvnPropertiesAction.label"
+               icon="icons/full/cview16/props_view.gif"
                tooltip="%ShowSvnPropertiesAction.tooltip"
+               class="org.tigris.subversion.subclipse.ui.actions.ShowSvnPropertiesAction"
                menubarPath="team.main/group3"
                id="org.tigris.subversion.subclipse.ui.showSvnProperties">
          </action>
@@ -419,10 +421,11 @@
                id="org.tigris.subversion.subclipse.ui.commit">
          </action>
          <action
-               label="%SynchronizeAction.label"
                helpContextId="org.tigris.subversion.subclipse.ui.team_synchronize_action_context"
-               class="org.tigris.subversion.subclipse.ui.actions.SynchronizeAction"
+               label="%SynchronizeAction.label"
+               icon="icons/full/obj16/synch_synch.gif"
                tooltip="%SynchronizeAction.tooltip"
+               class="org.tigris.subversion.subclipse.ui.actions.SynchronizeAction"
                menubarPath="team.main/group1"
                id="org.tigris.subversion.subclipse.synchronize">
 		</action>
