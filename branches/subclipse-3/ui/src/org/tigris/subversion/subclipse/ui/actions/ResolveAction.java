@@ -54,7 +54,7 @@ public class ResolveAction extends WorkspaceAction {
 	 * @see org.eclipse.team.internal.ccvs.ui.actions.CVSAction#getErrorTitle()
 	 */
 	protected String getErrorTitle() {
-		return Policy.bind("RevertAction.revert"); //$NON-NLS-1$
+		return Policy.bind("ResolveAction.resolve"); //$NON-NLS-1$
 	}
 
 	/**
