@@ -8,7 +8,6 @@ import java.net.URLStreamHandler;
 public class SvnURLHandler extends URLStreamHandler {
 
 	protected URLConnection openConnection(URL arg0) throws IOException {
-		// TODO Auto-generated method stub
 		return null;
 	}
 

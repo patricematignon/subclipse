@@ -8,12 +8,12 @@
 
    <runtime>
       <library name="SVNPluginCore.jar">
-         <export name="*"/>      
+         <export name="*"/>
       </library>
       <library name="svnClientAdapter.jar">
          <export name="*"/>
       </library>
-      <library name="svnjavahl.jar">
+      <library name="svnjavahl.jar"> 
          <export name="*"/>
       </library>
    </runtime>
@@ -21,31 +21,47 @@
       <import plugin="org.eclipse.core.resources"/>
       <import plugin="org.eclipse.ui"/>
       <import plugin="org.eclipse.team.core"/>
-      <import plugin="org.apache.xerces"/>      
+      <import plugin="org.apache.xerces"/>
    </requires>
 
-	<!-- *************** Repository Provider **************** -->
-	<extension
+
+<!-- *************** Repository Provider **************** -->
+   <extension
          point="org.eclipse.team.core.repository">
       <repository
             class="org.tigris.subversion.subclipse.core.SVNTeamProvider"
             id="org.tigris.subversion.subclipse.core.svnnature">
       </repository>
-	</extension>
-
- <!--           typeClass="org.tigris.subversion.subclipse.core.SVNTeamProviderType" -->
-
-  	<!-- *************** Markers **************** -->
-	<extension id="svnmarker" point="org.eclipse.core.resources.markers"/>
-	<extension id="svnremove" point="org.eclipse.core.resources.markers" name="%svnRemove">
-		<super type="org.eclipse.core.resources.problemmarker"/>
-		<super type="org.tigris.subversion.subclipse.core.svnmarker"/>
-		<attribute name="name"/>
-		<persistent value="true"/>
-	</extension>
-	
-   <extension point="org.eclipse.core.runtime.urlHandlers"> 
-      <handler protocol="svn" class="org.tigris.subversion.subclipse.core.util.SvnURLHandler"/> 
-   </extension> 	
+   </extension>
+<!-- *************** Markers **************** -->
+<!--           typeClass="org.tigris.subversion.subclipse.core.SVNTeamProviderType" -->
+   <extension
+         id="svnmarker"
+         point="org.eclipse.core.resources.markers">
+   </extension>
+   <extension
+         id="svnremove"
+         name="%svnRemove"
+         point="org.eclipse.core.resources.markers">
+      <super
+            type="org.eclipse.core.resources.problemmarker">
+      </super>
+      <super
+            type="org.tigris.subversion.subclipse.core.svnmarker">
+      </super>
+      <attribute
+            name="name">
+      </attribute>
+      <persistent
+            value="true">
+      </persistent>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.urlHandlers">
+      <handler
+            class="org.tigris.subversion.subclipse.core.util.SvnURLHandler"
+            protocol="svn">
+      </handler>
+   </extension>
 
 </plugin>
