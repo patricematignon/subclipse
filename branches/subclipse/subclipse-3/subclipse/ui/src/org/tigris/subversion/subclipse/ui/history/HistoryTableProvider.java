@@ -41,7 +41,11 @@ import org.tigris.subversion.subclipse.ui.Policy;
  * revision history This is used from HistoryView and SVNCompareRevisionsInput
  */
 public class HistoryTableProvider {
-
+    //column constants
+    private static final int COL_REVISION= 0;
+    private static final int COL_DATE= 1;
+    private static final int COL_AUTHOR= 2;
+    private static final int COL_COMMENT= 3;
     private ISVNRemoteFile currentFile;
 
     /**
@@ -50,12 +54,6 @@ public class HistoryTableProvider {
     public HistoryTableProvider() {
         super();
     }
-
-    //column constants
-    private static final int COL_REVISION= 0;
-    private static final int COL_DATE= 1;
-    private static final int COL_AUTHOR= 2;
-    private static final int COL_COMMENT= 3;
 
     /**
 	 * The history label provider.
@@ -66,37 +64,37 @@ public class HistoryTableProvider {
         }
         public String getColumnText(Object element, int columnIndex) {
             ILogEntry entry= adaptToLogEntry(element);
+            String value= "";
 
-            if (entry == null)
-                return ""; //$NON-NLS-1$
+            if (entry == null) {
+                return value; //$NON-NLS-1$
+            }
+
             switch (columnIndex) {
                 case COL_REVISION :
                     String revision= entry.getRevision().toString();
                     if (currentFile.getLastChangedRevision().equals(entry.getRevision())) {
-                        revision= Policy.bind("currentRevision", revision); //$NON-NLS-1$
+                        value= Policy.bind("currentRevision", revision); //$NON-NLS-1$
                     }
-                    return revision;
+                    break;
                 case COL_DATE :
                     Date date= entry.getDate();
-                    if (date == null)
+                    if (date == null) {
                         return Policy.bind("notAvailable"); //$NON-NLS-1$
-                    return DateFormat.getInstance().format(date);
-                case COL_AUTHOR :
-                    //fix for npe issue 24
-                    return entry.getAuthor() == null ? Policy.bind("notAvailable") : entry.getAuthor();
-                case COL_COMMENT :
-                    String comment= entry.getComment();
-                    int index= comment.indexOf("\n"); //$NON-NLS-1$
-                    switch (index) {
-                        case -1 :
-                            return comment;
-                        case 0 :
-                            return Policy.bind("HistoryView.[...]_4"); //$NON-NLS-1$
-                        default :
-                            return Policy.bind("SVNCompareRevisionsInput.truncate", comment.substring(0, index)); //$NON-NLS-1$
                     }
+                    value= DateFormat.getInstance().format(date);
+                    break;
+                case COL_AUTHOR :
+                    //				fix for npe issue 24
+                    value= entry.getAuthor() == null ? Policy.bind("notAvailable") : entry.getAuthor();
+                    break;
+                case COL_COMMENT :
+                    String[] comments= entry.getComment().split("\r?\n");
+                    value= comments[0];
+                    break;
             }
-            return ""; //$NON-NLS-1$
+
+            return value; //$NON-NLS-1$
         }
     }
 
@@ -129,28 +127,30 @@ public class HistoryTableProvider {
 		 * order.
 		 */
         public int compare(Viewer viewer, Object o1, Object o2) {
-            ILogEntry e1= adaptToLogEntry(o1);
-            ILogEntry e2= adaptToLogEntry(o2);
+            ILogEntry entryOne= adaptToLogEntry(o1);
+            ILogEntry entryTwo= adaptToLogEntry(o2);
             int result= 0;
-            if (e1 == null || e2 == null) {
+            if (entryOne == null || entryTwo == null) {
                 result= super.compare(viewer, o1, o2);
             } else {
                 int[] columnSortOrder= SORT_ORDERS_BY_COLUMN[columnNumber];
                 for (int i= 0; i < columnSortOrder.length; ++i) {
-                    result= compareColumnValue(columnSortOrder[i], e1, e2);
-                    if (result != 0)
+                    result= compareColumnValue(columnSortOrder[i], entryOne, entryTwo);
+                    if (result != 0){
                         break;
+                    }
                 }
             }
-            if (reversed)
+            if (reversed){
                 result= -result;
+            }
             return result;
         }
         /**
 		 * Compares two markers, based only on the value of the specified
 		 * column.
 		 */
-        int compareColumnValue(int columnNumber, ILogEntry e1, ILogEntry e2) {
+      private  int compareColumnValue(int columnNumber, ILogEntry e1, ILogEntry e2) {
             switch (columnNumber) {
                 case COL_REVISION : /* revision */
                     return (
@@ -172,19 +172,19 @@ public class HistoryTableProvider {
         /**
 		 * Returns the number of the column by which this is sorting.
 		 */
-        public int getColumnNumber() {
+        private int getColumnNumber() {
             return columnNumber;
         }
         /**
 		 * Returns true for descending, or false for ascending sorting order.
 		 */
-        public boolean isReversed() {
+        private boolean isReversed() {
             return reversed;
         }
         /**
 		 * Sets the sorting order.
 		 */
-        public void setReversed(boolean newReversed) {
+        private void setReversed(boolean newReversed) {
             reversed= newReversed;
         }
     }
@@ -193,9 +193,9 @@ public class HistoryTableProvider {
         // Get the log entry for the provided object
         ILogEntry entry= null;
         if (element instanceof ILogEntry) {
-            entry= (ILogEntry)element;
+            entry= (ILogEntry) element;
         } else if (element instanceof IAdaptable) {
-            entry= (ILogEntry) ((IAdaptable)element).getAdapter(ILogEntry.class);
+            entry= (ILogEntry) ((IAdaptable) element).getAdapter(ILogEntry.class);
         }
         return entry;
     }
@@ -287,8 +287,8 @@ public class HistoryTableProvider {
 			 */
             public void widgetSelected(SelectionEvent e) {
                 // column selected - need to sort
-                int column= tableViewer.getTable().indexOf((TableColumn)e.widget);
-                HistorySorter oldSorter= (HistorySorter)tableViewer.getSorter();
+                int column= tableViewer.getTable().indexOf((TableColumn) e.widget);
+                HistorySorter oldSorter= (HistorySorter) tableViewer.getSorter();
                 if (oldSorter != null && column == oldSorter.getColumnNumber()) {
                     oldSorter.setReversed(!oldSorter.isReversed());
                     tableViewer.refresh();

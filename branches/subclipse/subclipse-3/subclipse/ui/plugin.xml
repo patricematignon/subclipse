@@ -241,6 +241,7 @@
                menubarPath="team.main/group1"
                helpContextId="org.tigris.subversion.subclipse.ui.team_synchronize_action_context"
                id="org.tigris.subversion.subclipse.ui.sync">
+<<<<<<< .working
          </action-->
          <action
                label="%AddAction.label"
@@ -402,6 +403,19 @@
                value="org.eclipse.team.core.repository=org.tigris.subversion.subclipse.core.svnnature">
          </filter>
       </page>
-   </extension>
+  </extension>
+  <extension
+      point="org.eclipse.help.toc">
+      <toc
+          file="toc.xml"
+          primary="true">
+      </toc>
+      <toc
+          file="tocgettingstarted.xml">
+      </toc>
+      <toc
+          file="tocreference.xml">
+      </toc>      
+  </extension>   
 
 </plugin>

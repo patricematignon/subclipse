@@ -29,6 +29,8 @@
         path="ECLIPSE_HOME/plugins/org.eclipse.ui.editors_3.0.0/editors.jar" sourcepath="ORG_ECLIPSE_PLATFORM_SOURCE_SRC/org.eclipse.ui.editors_3.0.0/editorssrc.zip"/>
     <classpathentry kind="var"
         path="ECLIPSE_HOME/plugins/org.eclipse.team.core_3.0.0/team.jar" sourcepath="ORG_ECLIPSE_PLATFORM_SOURCE_SRC/org.eclipse.team.core_3.0.0/teamsrc.zip"/>
+    <classpathentry kind="var" path="ECLIPSE_HOME/plugins/org.apache.xerces_4.0.13/xmlParserAPIs.jar"/>
+    <classpathentry kind="var" path="ECLIPSE_HOME/plugins/org.apache.xerces_4.0.13/xercesImpl.jar"/>
     <classpathentry kind="var"
         path="ECLIPSE_HOME/plugins/org.eclipse.core.boot_3.0.0/boot.jar" sourcepath="ORG_ECLIPSE_PLATFORM_SOURCE_SRC/org.eclipse.core.boot_3.0.0/bootsrc.zip"/>
     <classpathentry kind="var"
