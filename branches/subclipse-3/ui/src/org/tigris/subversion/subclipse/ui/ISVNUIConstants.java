@@ -149,6 +149,9 @@ public interface ISVNUIConstants {
 	
     // svn client config directory
     public final String PREF_SVNCONFIGDIR = "pref_svnconfigdir";
+ 
+    // svn commit comment font
+    public final String SVN_COMMENT_FONT = "svn_comment_font"; //$NON-NLS-1$
     
 	// Wizard banners
 	public final String IMG_WIZBAN_SHARE = "wizban/newconnect_wizban.gif";	 //$NON-NLS-1$

@@ -713,5 +713,20 @@
             file="help_contexts.xml">
       </contexts>
    </extension>
+   
+   <extension point="org.eclipse.ui.themes">
+		<themeElementCategory
+	    	id="org.tigris.subversion.subclipse.ui.fontsandcolors"
+	       	label="SVN"/>
+	    <fontDefinition
+	            label="SVN Commit Comment Font"
+	            categoryId="org.tigris.subversion.subclipse.ui.fontsandcolors"
+	            defaultsTo="org.eclipse.jface.textfont"
+	            id="svn_comment_font">
+	         <description>
+	            The font for SVN commit comments.
+	         </description>
+	    </fontDefinition>   	
+	</extension>   
 
 </plugin>

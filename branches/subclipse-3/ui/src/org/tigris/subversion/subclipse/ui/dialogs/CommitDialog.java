@@ -23,6 +23,8 @@ import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -51,6 +53,7 @@ import org.tigris.subversion.subclipse.ui.IHelpContextIds;
 import org.tigris.subversion.subclipse.ui.Policy;
 import org.tigris.subversion.subclipse.ui.SVNUIPlugin;
 import org.tigris.subversion.subclipse.ui.comments.CommitCommentArea;
+import org.tigris.subversion.subclipse.ui.settings.CommentProperties;
 import org.tigris.subversion.subclipse.ui.settings.ProjectProperties;
 import org.tigris.subversion.subclipse.ui.util.TableSetter;
 import org.tigris.subversion.svnclientadapter.SVNStatusKind;
@@ -74,12 +77,28 @@ public class CommitDialog extends Dialog {
     private TableSetter setter;
     private int sorterColumn = 1;
     private boolean sorterReversed = false;
+    
+    private Button okButton;
+    private CommentProperties commentProperties;
 
     public CommitDialog(Shell parentShell, IResource[] resourcesToCommit, String url, boolean unaddedResources, ProjectProperties projectProperties) {
         super(parentShell);
 		int shellStyle = getShellStyle();
 		setShellStyle(shellStyle | SWT.RESIZE);
-		commitCommentArea = new CommitCommentArea(this, null);
+		if (resourcesToCommit.length > 0) {
+            try {
+                commentProperties = CommentProperties.getCommentProperties(resourcesToCommit[0]);
+            } catch (SVNException e) {}
+		}
+		commitCommentArea = new CommitCommentArea(this, null, commentProperties);
+		if ((commentProperties != null) && (commentProperties.getMinimumLogMessageSize() != 0)) {
+		    ModifyListener modifyListener = new ModifyListener() {
+                public void modifyText(ModifyEvent e) {
+                    okButton.setEnabled(commitCommentArea.getText().getText().trim().length() >= commentProperties.getMinimumLogMessageSize());
+                }		        
+		    };
+		    commitCommentArea.setModifyListener(modifyListener);
+		}
 		this.resourcesToCommit = resourcesToCommit;
 		this.url = url;
 		this.unaddedResources = unaddedResources;
@@ -496,6 +515,21 @@ public class CommitDialog extends Dialog {
 			List result = Arrays.asList(selectedResources);
 			return (IResource[]) result.toArray(new IResource[result.size()]);
 		}
+	}
+	
+	protected Button createButton(
+		Composite parent,
+		int id,
+		String label,
+		boolean defaultButton) {
+		Button button = super.createButton(parent, id, label, defaultButton);
+		if (id == IDialogConstants.OK_ID) {
+			okButton = button;
+			if ((commentProperties != null) && (commentProperties.getMinimumLogMessageSize() != 0)) {
+				okButton.setEnabled(false);
+			}
+		}
+		return button;
 	}	
 	
 	protected static final int LABEL_WIDTH_HINT = 400;

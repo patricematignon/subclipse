@@ -57,6 +57,7 @@ import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.graphics.Cursor;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.program.Program;
@@ -460,6 +461,8 @@ public class HistoryView extends ViewPart implements IResourceStateChangeListene
 		tableHistoryViewer = createTableHistory(sashForm);
 		innerSashForm = new SashForm(sashForm, SWT.HORIZONTAL);
 		textViewer = createText(innerSashForm);
+		Font font = PlatformUI.getWorkbench().getThemeManager().getCurrentTheme().getFontRegistry().get(ISVNUIConstants.SVN_COMMENT_FONT);
+		if (font != null) textViewer.getTextWidget().setFont(font);
 		textViewer.getTextWidget().addMouseListener(new MouseAdapter() {
 			public void mouseDown(MouseEvent e) {
 				if (e.button != 1) {
