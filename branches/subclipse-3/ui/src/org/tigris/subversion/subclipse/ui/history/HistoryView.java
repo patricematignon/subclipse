@@ -793,11 +793,11 @@ public class HistoryView extends ViewPart implements IResourceStateChangeListene
 		ISVNRemoteResource existingRemoteResource = historyTableProvider.getRemoteResource(); 
 		if(!refetch && existingRemoteResource != null && existingRemoteResource.equals(remoteResource)) return;
 		this.resource = null;
+        projectProperties = ProjectProperties.getProjectProperties(remoteResource);
 		historyTableProvider.setRemoteResource(remoteResource);
 		tableHistoryViewer.setInput(remoteResource);
 		setContentDescription(Policy.bind("HistoryView.titleWithArgument", remoteResource.getName())); //$NON-NLS-1$
 		setTitleToolTip(remoteResource.getRepositoryRelativePath());
-		projectProperties = ProjectProperties.getProjectProperties(remoteResource);
 	}
 
 	/**
@@ -816,13 +816,13 @@ public class HistoryView extends ViewPart implements IResourceStateChangeListene
 				if ( localResource != null
 				        && !localResource.getStatus().isAdded()
 				        && localResource.getStatus().isManaged() ) {
+                    projectProperties = ProjectProperties.getProjectProperties(resource);
 					ISVNRemoteResource baseResource = localResource.getBaseResource();
 					historyTableProvider.setRemoteResource(baseResource);
 					tableHistoryViewer.setInput(baseResource);
 					setContentDescription(Policy.bind("HistoryView.titleWithArgument", baseResource.getName())); //$NON-NLS-1$
 					setTitleToolTip(baseResource.getRepositoryRelativePath());
 					this.resource = resource;
-					projectProperties = ProjectProperties.getProjectProperties(resource);
 				}
 			} catch (TeamException e) {
 				SVNUIPlugin.openError(getViewSite().getShell(), null, null, e);
@@ -841,11 +841,11 @@ public class HistoryView extends ViewPart implements IResourceStateChangeListene
 			return;
 		}
 		this.resource = null;
+        projectProperties = ProjectProperties.getProjectProperties(remoteResource);
 		historyTableProvider.setRemoteResource(remoteResource);
 		tableHistoryViewer.setInput(remoteResource);
-		setContentDescription(Policy.bind("HistoryView.titleWithArgument", remoteResource.getName()));
+		setContentDescription(Policy.bind("HistoryView.titleWithArgument", remoteResource.getName())); //$NON-NLS-1$
 		setTitleToolTip(""); //$NON-NLS-1$
-		projectProperties = ProjectProperties.getProjectProperties(remoteResource);
 	}
 	
     
