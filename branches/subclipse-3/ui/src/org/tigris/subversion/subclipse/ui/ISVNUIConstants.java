@@ -63,6 +63,14 @@ public interface ISVNUIConstants {
     public final String IMG_FILEMODIFIED_PENDING = "pending16/filemodified_pending.gif"; //$NON-NLS-1$
     public final String IMG_FOLDERMODIFIED_PENDING = "pending16/foldermodified_pending.gif"; //$NON-NLS-1$
 
+    //  tortoise
+    public final String IMG_COMMIT = "tortoise/commit.gif"; //$NON-NLS-1$
+    public final String IMG_UPDATE = "tortoise/update.gif"; //$NON-NLS-1$
+    public final String IMG_CONFLICT = "tortoise/conflict.gif"; //$NON-NLS-1$
+    public final String IMG_REVERT = "tortoise/revert.gif"; //$NON-NLS-1$
+    public final String IMG_RESOLVE = "tortoise/resolve.gif"; //$NON-NLS-1$
+    public final String IMG_LOG = "tortoise/log.gif"; //$NON-NLS-1$
+    
     // views
     public final String IMG_SVN_CONSOLE = "cview16/console_view.gif";
     

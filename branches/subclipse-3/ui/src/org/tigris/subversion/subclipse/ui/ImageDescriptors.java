@@ -83,6 +83,12 @@ public class ImageDescriptors {
 		createImageDescriptor(ISVNUIConstants.IMG_ADDED, baseURL);
         createImageDescriptor(ISVNUIConstants.IMG_EXTERNAL, baseURL);
 		createImageDescriptor(ISVNUIConstants.IMG_ADD_PROPERTY, baseURL);
+		createImageDescriptor(ISVNUIConstants.IMG_COMMIT, baseURL);
+		createImageDescriptor(ISVNUIConstants.IMG_UPDATE, baseURL);
+		createImageDescriptor(ISVNUIConstants.IMG_CONFLICT, baseURL);
+		createImageDescriptor(ISVNUIConstants.IMG_REVERT, baseURL);
+		createImageDescriptor(ISVNUIConstants.IMG_RESOLVE, baseURL);
+		createImageDescriptor(ISVNUIConstants.IMG_LOG, baseURL);
         
         // special
         createImageDescriptor("glyphs/glyph1.gif", baseURL);  //$NON-NLS-1$

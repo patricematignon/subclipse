@@ -11,6 +11,7 @@
 package org.tigris.subversion.subclipse.ui.subscriber;
 
 import org.eclipse.core.resources.IResource;
+import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
@@ -27,6 +28,8 @@ import org.eclipse.team.ui.synchronize.SynchronizePageActionGroup;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.PartInitException;
 import org.tigris.subversion.subclipse.core.sync.SVNWorkspaceSubscriber;
+import org.tigris.subversion.subclipse.ui.ISVNUIConstants;
+import org.tigris.subversion.subclipse.ui.SVNUIPlugin;
 
 
 /**
@@ -90,18 +93,50 @@ public class SVNSynchronizeParticipant extends ScopableSubscriberParticipant {
 		 */
 		public void initialize(ISynchronizePageConfiguration configuration) {
 			super.initialize(configuration);
+			CommitSynchronizeAction commitAction = new CommitSynchronizeAction("Commit...", configuration);
+			commitAction.setImageDescriptor(SVNUIPlugin.getPlugin().getImageDescriptor(ISVNUIConstants.IMG_COMMIT));
 			appendToGroup(
 					ISynchronizePageConfiguration.P_CONTEXT_MENU, 
 					CONTEXT_MENU_CONTRIBUTION_GROUP_1,
-					new UpdateSynchronizeAction("Update", configuration));
+					commitAction);
+			UpdateSynchronizeAction updateAction = new UpdateSynchronizeAction("Update", configuration);
+			updateAction.setImageDescriptor(SVNUIPlugin.getPlugin().getImageDescriptor(ISVNUIConstants.IMG_UPDATE));
 			appendToGroup(
 					ISynchronizePageConfiguration.P_CONTEXT_MENU, 
 					CONTEXT_MENU_CONTRIBUTION_GROUP_1,
-					new CommitSynchronizeAction("Commit...", configuration));
+					updateAction);
 			appendToGroup(
 					ISynchronizePageConfiguration.P_CONTEXT_MENU, 
 					CONTEXT_MENU_CONTRIBUTION_GROUP_1,
-					new RevertSynchronizeAction("Revert...", configuration));			
+					new Separator());
+			ShowHistorySynchronizeAction historyAction = new ShowHistorySynchronizeAction("Show in Resource History", configuration);
+			historyAction.setImageDescriptor(SVNUIPlugin.getPlugin().getImageDescriptor(ISVNUIConstants.IMG_LOG));			
+			appendToGroup(
+					ISynchronizePageConfiguration.P_CONTEXT_MENU, 
+					CONTEXT_MENU_CONTRIBUTION_GROUP_1,
+					historyAction);	
+			appendToGroup(
+					ISynchronizePageConfiguration.P_CONTEXT_MENU, 
+					CONTEXT_MENU_CONTRIBUTION_GROUP_1,
+					new Separator());				
+			EditConflictsSynchronizeAction conflictsAction = new EditConflictsSynchronizeAction("Edit conflicts", configuration);				
+			conflictsAction.setImageDescriptor(SVNUIPlugin.getPlugin().getImageDescriptor(ISVNUIConstants.IMG_CONFLICT));
+			appendToGroup(
+					ISynchronizePageConfiguration.P_CONTEXT_MENU, 
+					CONTEXT_MENU_CONTRIBUTION_GROUP_1,
+					conflictsAction);
+			RevertSynchronizeAction revertAction = new RevertSynchronizeAction("Revert...", configuration);
+			revertAction.setImageDescriptor(SVNUIPlugin.getPlugin().getImageDescriptor(ISVNUIConstants.IMG_REVERT));
+			appendToGroup(
+					ISynchronizePageConfiguration.P_CONTEXT_MENU, 
+					CONTEXT_MENU_CONTRIBUTION_GROUP_1,
+					revertAction);
+			ResolveSynchronizeAction resolveAction = new ResolveSynchronizeAction("Mark resolved", configuration);
+			resolveAction.setImageDescriptor(SVNUIPlugin.getPlugin().getImageDescriptor(ISVNUIConstants.IMG_RESOLVE));
+			appendToGroup(
+					ISynchronizePageConfiguration.P_CONTEXT_MENU, 
+					CONTEXT_MENU_CONTRIBUTION_GROUP_1,
+					resolveAction);							
 		}
 
 	}
