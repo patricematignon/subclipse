@@ -121,6 +121,8 @@ public class CommitAction extends WorkspaceAction {
 									
 									// commit resources.
 									manager.commit(resourcesToCommit, commitComment, Policy.subMonitorFor(monitor,ticks));
+									resourcesToCommit = null;
+									commitComment = null;
 									for (int i = 0; i < resources.length; i++) {
 										IResource projectHandle = resources[i].getProject();
 										projectHandle.refreshLocal(IResource.DEPTH_INFINITE, monitor);
@@ -237,6 +239,7 @@ public class CommitAction extends WorkspaceAction {
 	protected boolean confirmCommit(IResource[] modifiedResources) {
 	   CommitDialog dialog = new CommitDialog(getShell(), modifiedResources, url, unaddedResources);
 	   boolean commit = (dialog.open() == CommitDialog.OK);
+	   url = null;
 	   commitComment = dialog.getComment();
 	   resourcesToCommit = dialog.getSelectedResources();
 	   return commit;
