@@ -226,10 +226,14 @@ public class SVNRepositories
      * @throws IOException
      * @throws SVNException
      */
-    private void readState(DataInputStream dis) throws IOException {
+    private void readState(DataInputStream dis) throws IOException, SVNException {
         int count = dis.readInt();
         if (count == REPOSITORIES_STATE_FILE_VERSION_1) {
             count = dis.readInt();
+            for(int i = 0; i < count;i++){
+                ISVNRepositoryLocation root = getRepository(dis.readUTF());
+
+            }
             
         } else {
             Util.logError(Policy.bind("SVNProviderPlugin.unknownStateFileVersion", new Integer(count).toString()), null); //$NON-NLS-1$
