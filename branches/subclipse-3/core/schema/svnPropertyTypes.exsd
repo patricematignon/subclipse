@@ -58,7 +58,7 @@
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="type" use="default">
+         <attribute name="type" use="default" value="String">
             <annotation>
                <documentation>
                   Datatype used for editing the property.
