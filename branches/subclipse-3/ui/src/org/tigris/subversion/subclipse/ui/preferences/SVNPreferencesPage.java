@@ -12,29 +12,17 @@
 
 package org.tigris.subversion.subclipse.ui.preferences;
 
+import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.preference.PreferencePage;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.graphics.FontMetrics;
-import org.eclipse.swt.graphics.GC;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Combo;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchPreferencePage;
-import org.tigris.subversion.subclipse.ui.ISVNUIConstants;
-import org.tigris.subversion.subclipse.ui.Policy;
-import org.tigris.subversion.subclipse.ui.SVNUIPlugin;
-import org.tigris.subversion.svnclientadapter.SVNClientAdapterFactory;
+import org.eclipse.jface.preference.*;
+import org.eclipse.swt.*;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.layout.*;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.*;
+import org.tigris.subversion.subclipse.ui.*;
+import org.tigris.subversion.svnclientadapter.*;
 
 /**
  * SVN Preference Page
@@ -45,6 +33,7 @@ import org.tigris.subversion.svnclientadapter.SVNClientAdapterFactory;
 public class SVNPreferencesPage extends PreferencePage implements IWorkbenchPreferencePage {
 
     private Combo svnInterfaceCombo;
+    private Button deepCalcCheckbox;
 	
 	public SVNPreferencesPage() {
 		// sort the options by display text
@@ -99,12 +88,15 @@ public class SVNPreferencesPage extends PreferencePage implements IWorkbenchPref
 		layout.marginWidth = 0;
 		layout.marginHeight = 0;
 		composite.setLayout(layout);
+		
 
 		//GridData
 		GridData data = new GridData();
 		data.verticalAlignment = GridData.FILL;
 		data.horizontalAlignment = GridData.FILL;
 		composite.setLayoutData(data);
+		
+		
 		return composite;
 	}
 
@@ -130,12 +122,12 @@ public class SVNPreferencesPage extends PreferencePage implements IWorkbenchPref
 	 */
 	protected Control createContents(Composite parent) {
 		Composite composite = createComposite(parent, 2);
-
+		
 		createLabel(composite, Policy.bind("SVNPreferencePage.svnClientInterface")); //$NON-NLS-1$
         svnInterfaceCombo = createCombo(composite);
 
 		createLabel(composite, ""); createLabel(composite, ""); //$NON-NLS-1$ //$NON-NLS-2$
-				
+		deepCalcCheckbox = createCheckBox(composite, Policy.bind("SVNPreferencePage.calculateDeepDecoration"));		
 		initializeValues();
 		
         svnInterfaceCombo.addSelectionListener(new SelectionListener() {
@@ -146,6 +138,8 @@ public class SVNPreferencesPage extends PreferencePage implements IWorkbenchPref
 			}
 		});
 
+        
+        
 //		WorkbenchHelp.setHelp(svnInterfaceCombo, IHelpContextIds.PREF_QUIET);
 		Dialog.applyDialogFont(parent);
 		return composite;
@@ -188,6 +182,8 @@ public class SVNPreferencesPage extends PreferencePage implements IWorkbenchPref
         svnInterfaceCombo.add(Policy.bind("SVNPreferencePage.svnjavahl")); //$NON-NLS-1$
         svnInterfaceCombo.add(Policy.bind("SVNPreferencePage.svncommandline")); //$NON-NLS-1$
 
+        deepCalcCheckbox.setSelection(store.getBoolean(ISVNUIConstants.PREF_CALCULATE_DIRTY));
+        
         if (store.getInt(ISVNUIConstants.PREF_SVNINTERFACE) == SVNClientAdapterFactory.JAVAHL_CLIENT)
             svnInterfaceCombo.select(0);
         else
@@ -213,7 +209,8 @@ public class SVNPreferencesPage extends PreferencePage implements IWorkbenchPref
         else
             store.setValue(ISVNUIConstants.PREF_SVNINTERFACE, SVNClientAdapterFactory.COMMANDLINE_CLIENT);
 		
-		
+        store.setValue(ISVNUIConstants.PREF_CALCULATE_DIRTY, deepCalcCheckbox.getSelection());
+        
 //		CVSProviderPlugin.getPlugin().setQuietness(
 //			getQuietnessOptionFor(store.getInt(ICVSUIConstants.PREF_QUIETNESS)));
 		
@@ -233,6 +230,8 @@ public class SVNPreferencesPage extends PreferencePage implements IWorkbenchPref
             svnInterfaceCombo.select(0);
         else
             svnInterfaceCombo.select(1);
+        
+        deepCalcCheckbox.setSelection(false);
 	}
 
  
