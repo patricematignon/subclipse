@@ -93,10 +93,11 @@ public class SVNRepositoryLocation
 	/*
 	 * Create a SVNRepositoryLocation from its composite parts.
 	 */
-	private SVNRepositoryLocation(String user, String password, SVNUrl url) {
+	private SVNRepositoryLocation(String user, String password, SVNUrl url, SVNUrl repositoryRootUrl) {
 		this.user = user;
 		this.password = password;
 		this.url = url;
+        this.repositoryRootUrl = repositoryRootUrl; 
 
 		rootFolder = new RemoteFolder(this, url, SVNRevision.HEAD);
 	}
@@ -388,6 +389,7 @@ public class SVNRepositoryLocation
      *   user The username for the connection (optional)
      *   password The password used for the connection (optional)
      *   url The url where the repository resides
+     *   rootUrl The repository root url
      */
     public static SVNRepositoryLocation fromProperties(Properties configuration)
     	throws SVNException {
@@ -399,6 +401,9 @@ public class SVNRepositoryLocation
     	String password = configuration.getProperty("password"); //$NON-NLS-1$ 
     	if (user == null)
     		password = null;
+        String rootUrl = configuration.getProperty("rootUrl"); //$NON-NLS-1$
+        if ((rootUrl == null) || (rootUrl.length() == 0))
+            rootUrl = null;
     	String url = configuration.getProperty("url"); //$NON-NLS-1$ 
     	if (url == null)
     		throw new SVNException(new Status(IStatus.ERROR, SVNProviderPlugin.ID, TeamException.UNABLE, Policy.bind("SVNRepositoryLocation.hostRequired"), null)); //$NON-NLS-1$ 
@@ -410,7 +415,16 @@ public class SVNRepositoryLocation
     		throw new SVNException(e.getMessage());
     	}
     
-    	return new SVNRepositoryLocation(user, password, urlURL);
+        SVNUrl rootUrlURL = null;
+        if (rootUrl != null) {
+            try {
+                rootUrlURL = new SVNUrl(rootUrl);
+            } catch (MalformedURLException e) {
+                throw new SVNException(e.getMessage());
+            }
+        }
+        
+    	return new SVNRepositoryLocation(user, password, urlURL, rootUrlURL);
     }
 
     /*
@@ -449,12 +463,13 @@ public class SVNRepositoryLocation
     	try {
     		String user = null;
     		String password = null;
+            SVNUrl rootUrl = null;
     		SVNUrl url = new SVNUrl(location);
     
     		if (validateOnly)
     			throw new SVNException(new SVNStatus(SVNStatus.OK, Policy.bind("ok"))); //$NON-NLS-1$ 
     
-    		return new SVNRepositoryLocation(user, password, url);
+    		return new SVNRepositoryLocation(user, password, url, rootUrl);
     	} catch (MalformedURLException e) {
     		throw new SVNException(Policy.bind(partId));
     	} catch (IndexOutOfBoundsException e) {

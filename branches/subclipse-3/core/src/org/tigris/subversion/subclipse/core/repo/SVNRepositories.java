@@ -115,6 +115,7 @@ public class SVNRepositories
      *   user The username for the connection (optional)
      *   password The password used for the connection (optional)
      *   url The url where the repository resides
+     *   rootUrl The root url of the subversion repository (optional) 
      * 
      * The created instance is not known by the provider and it's user information is not cached.
      * The purpose of the created location is to allow connection validation before adding the
