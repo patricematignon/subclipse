@@ -28,6 +28,40 @@ public class RefactorTest extends SubclipseTest {
 	public RefactorTest(String name) {
 		super(name);
 	}
+	public void testAddedClassRename() throws Exception {
+		TestProject testProject = new TestProject("testProject");
+		shareProject(testProject.getProject());
+		
+		// create a file
+		IPackageFragment package1 = testProject.createPackage("pack1");
+		IType type = testProject.createJavaType(package1,"AClass.java",
+			"public class AClass { \n" +
+			"  public void m() {}\n" +
+			"}");
+			
+		IFile resource = testProject.getProject().getFile(new Path("src/pack1/AClass.java"));
+		
+		// add and commit it
+		addNoCommit(testProject.getProject(),resource,"committed");
+
+		// let's rename the resource
+		resource.move(new Path("AClassRenamed.java"),false, null);
+		
+		// make sure the initial resource is not there anymore
+		assertFalse(resource.exists());
+		
+		// the initial resource should have "DELETED" status
+		ISVNLocalResource svnResource = SVNWorkspaceRoot.getSVNResourceFor(resource);
+		assertEquals(svnResource.getStatus().getTextStatus(), SVNStatusKind.UNVERSIONED);
+		
+		// the renamed resource should exist now
+		resource = testProject.getProject().getFile(new Path("src/pack1/AClassRenamed.java"));
+		assertTrue(resource.exists());
+		
+		// and should have "ADDED" status
+		svnResource = SVNWorkspaceRoot.getSVNResourceFor(resource);
+		assertEquals(svnResource.getStatus().getTextStatus(), SVNStatusKind.ADDED);
+	}
 
 	public void testClassRename() throws Exception {
 		TestProject testProject = new TestProject("testProject");
