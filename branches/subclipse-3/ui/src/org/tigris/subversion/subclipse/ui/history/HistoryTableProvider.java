@@ -15,7 +15,9 @@ import java.text.DateFormat;
 import java.util.Date;
 
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.ColumnWeightData;
+import org.eclipse.jface.viewers.IFontProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TableLayout;
@@ -23,9 +25,13 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
@@ -34,6 +40,7 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.tigris.subversion.subclipse.core.ISVNRemoteFile;
 import org.tigris.subversion.subclipse.core.history.ILogEntry;
 import org.tigris.subversion.subclipse.ui.Policy;
+import org.tigris.subversion.svnclientadapter.SVNRevision;
 
 /**
  * This class provides the table and it's required components for a file's revision
@@ -43,8 +50,10 @@ import org.tigris.subversion.subclipse.ui.Policy;
 public class HistoryTableProvider {
 
 	private ISVNRemoteFile currentFile;
-	
-	
+	private SVNRevision currentRevision;
+	private TableViewer viewer;
+	private Font currentRevisionFont;
+		
 	/**
 	 * Constructor for HistoryTableProvider.
 	 */
@@ -61,7 +70,7 @@ public class HistoryTableProvider {
 	/**
 	 * The history label provider.
 	 */
-	class HistoryLabelProvider extends LabelProvider implements ITableLabelProvider {
+	class HistoryLabelProvider extends LabelProvider implements ITableLabelProvider, IFontProvider {
 		public Image getColumnImage(Object element, int columnIndex) {
 			return null;
 		}
@@ -99,6 +108,31 @@ public class HistoryTableProvider {
 			}
 			return ""; //$NON-NLS-1$
 		}
+		
+		/*
+		 * (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.IFontProvider#getFont(java.lang.Object)
+		 */
+		public Font getFont(Object element) {
+			ILogEntry entry = adaptToLogEntry(element);
+			if (entry == null)
+				return null;
+			SVNRevision revision = entry.getRevision();
+			SVNRevision currentRevision = getCurrentRevision();
+			if (currentRevision != null && currentRevision.equals(revision)) {
+				if (currentRevisionFont == null) {
+					Font defaultFont = JFaceResources.getDefaultFont();
+					FontData[] data = defaultFont.getFontData();
+					for (int i = 0; i < data.length; i++) {
+						data[i].setStyle(SWT.BOLD);
+					}               
+					currentRevisionFont = new Font(viewer.getTable().getDisplay(), data);
+				}
+				return currentRevisionFont;
+			}
+			return null;
+		}
+		
 	}
 
 	/**
@@ -224,7 +258,16 @@ public class HistoryTableProvider {
 		HistorySorter sorter = new HistorySorter(COL_REVISION);
 		sorter.setReversed(true);
 		viewer.setSorter(sorter);
-		
+
+        table.addDisposeListener(new DisposeListener() {
+            public void widgetDisposed(DisposeEvent e) {
+                if(currentRevisionFont != null) {
+                    currentRevisionFont.dispose();
+                }
+            }
+        });
+        
+		this.viewer = viewer;
 		return viewer;
 	}
 	
@@ -297,7 +340,18 @@ public class HistoryTableProvider {
 		};
 	}
 	
+
+	private SVNRevision getRevision(ISVNRemoteFile currentEdition) {
+		if (currentEdition == null) return SVNRevision.INVALID_REVISION;
+		return currentEdition.getLastChangedRevision();
+	}
+	
 	public void setFile(ISVNRemoteFile file) {
 		this.currentFile = file;
+		this.currentRevision = getRevision(file);
+	}
+	
+	public SVNRevision getCurrentRevision() {
+		return currentRevision;
 	}
 }
