@@ -32,7 +32,6 @@ import org.tigris.subversion.subclipse.ui.IHelpContextIds;
 import org.tigris.subversion.subclipse.ui.Policy;
 import org.tigris.subversion.subclipse.ui.SVNUIPlugin;
 import org.tigris.subversion.subclipse.ui.wizards.SVNWizardPage;
-import org.tigris.subversion.svnclientadapter.ISVNStatus;
 
 /**
  * This configuration page explains to the user that .svn/ directories already exists and

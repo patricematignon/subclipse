@@ -40,7 +40,6 @@ import org.tigris.subversion.subclipse.ui.ISVNUIConstants;
 import org.tigris.subversion.subclipse.ui.Policy;
 import org.tigris.subversion.subclipse.ui.SVNUIPlugin;
 import org.tigris.subversion.subclipse.ui.wizards.ConfigurationWizardMainPage;
-import org.tigris.subversion.svnclientadapter.ISVNStatus;
 
 /**
  * This wizard helps the user to import a new project in their workspace
