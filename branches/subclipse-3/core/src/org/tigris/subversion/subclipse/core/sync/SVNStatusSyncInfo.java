@@ -37,7 +37,9 @@ public class SVNStatusSyncInfo extends SyncInfo {
      */
     protected int calculateKind() throws TeamException {
         SVNStatusKind localKind = localStatusInfo.getKind();
-        SVNStatusKind repositoryKind = remoteStatusInfo.getKind();
+        SVNStatusKind repositoryKind = SVNStatusKind.NORMAL;
+        if( remoteStatusInfo != null)
+            repositoryKind = remoteStatusInfo.getKind();
 
         if( localKind == SVNStatusKind.NONE 
          || localKind == SVNStatusKind.MISSING

@@ -53,10 +53,10 @@ import org.tigris.subversion.subclipse.core.resources.LocalResourceStatus;
 import org.tigris.subversion.subclipse.core.resources.SVNWorkspaceRoot;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 import org.tigris.subversion.svnclientadapter.ISVNStatus;
-import org.tigris.subversion.svnclientadapter.SVNStatusKind;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
 import org.tigris.subversion.svnclientadapter.SVNNodeKind;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
+import org.tigris.subversion.svnclientadapter.SVNStatusKind;
 import org.tigris.subversion.svnclientadapter.SVNRevision.Number;
 
 public class SVNWorkspaceSubscriber extends Subscriber implements IResourceStateChangeListener {
@@ -76,7 +76,6 @@ public class SVNWorkspaceSubscriber extends Subscriber implements IResourceState
 
 	protected SVNRevisionComparator comparator = new SVNRevisionComparator();
 
-	protected ResourceVariantByteStore localSyncStateStore = new SessionResourceVariantByteStore();
 	protected ResourceVariantByteStore remoteSyncStateStore = new SessionResourceVariantByteStore();
 
 	public SVNWorkspaceSubscriber() {
@@ -161,8 +160,8 @@ public class SVNWorkspaceSubscriber extends Subscriber implements IResourceState
 			//add remote changed resources (they may not exist locally)
 			allMembers.addAll(Arrays.asList( remoteSyncStateStore.members( resource ) ) );
 
-			//add local changed resources (they may not exist locally)
-			allMembers.addAll(Arrays.asList( localSyncStateStore.members( resource ) ) );
+			//TODO: add local changed resources (they may not exist locally)
+			//allMembers.addAll(Arrays.asList( localSyncStateStore.members( resource ) ) );
 
 			return (IResource[]) allMembers.toArray(new IResource[allMembers.size()]);
 		} catch (CoreException e) {
@@ -174,10 +173,21 @@ public class SVNWorkspaceSubscriber extends Subscriber implements IResourceState
      * @see org.eclipse.team.core.subscribers.Subscriber#getSyncInfo(org.eclipse.core.resources.IResource)
      */
     public SyncInfo getSyncInfo(IResource resource) throws TeamException {
-        StatusInfo localStatusInfo = StatusInfo.fromBytes(localSyncStateStore.getBytes( resource ));
-        StatusInfo remoteStatusInfo = StatusInfo.fromBytes(remoteSyncStateStore.getBytes( resource ));
-        if( localStatusInfo ==  null && remoteStatusInfo == null )
+        if( ! isSupervised( resource ) )
             return null;
+        ISVNLocalResource localResource = SVNWorkspaceRoot.getSVNResourceFor(resource);
+        LocalResourceStatus localStatus = localResource.getStatus();
+
+        StatusInfo localStatusInfo = new StatusInfo(localStatus.getLastChangedRevision(), localStatus.getTextStatus());
+
+        StatusInfo remoteStatusInfo = null;
+        byte[] remoteBytes = remoteSyncStateStore.getBytes( resource );
+        if( remoteBytes != null )
+            remoteStatusInfo = StatusInfo.fromBytes(remoteBytes);
+        else {
+            if( localStatus.hasRemote() )
+                remoteStatusInfo = new StatusInfo(localStatus.getLastChangedRevision(), SVNStatusKind.NORMAL);
+        }
 
         SyncInfo syncInfo = new SVNStatusSyncInfo(resource, localStatusInfo, remoteStatusInfo, comparator);
         syncInfo.init();
@@ -231,7 +241,6 @@ public class SVNWorkspaceSubscriber extends Subscriber implements IResourceState
         IWorkspace workspace = ResourcesPlugin.getWorkspace();
         IWorkspaceRoot workspaceRoot = workspace.getRoot();
         
-        localSyncStateStore.flushBytes(resource, depth);
         remoteSyncStateStore.flushBytes(resource, depth);
 
         ISVNClientAdapter client = SVNProviderPlugin.getPlugin().createSVNClient();
@@ -261,17 +270,8 @@ public class SVNWorkspaceSubscriber extends Subscriber implements IResourceState
                 else if ( status.getNodeKind() == SVNNodeKind.UNKNOWN ) {
                     changedResource = workspaceRoot.getContainerForLocation(path);
                     
-                    if( changedResource.exists() ) {
+                    if( changedResource.exists() )
                         containerSet.add( changedResource );
-
-                        //if the resource is a locally added folder then
-                        //add it's members
-                        if( changedResource.exists() 
-                                && status.getRevision() == null 
-                                && status.getTextStatus() != SVNStatusKind.EXTERNAL) {
-                            addLocalContainerStatusInfo((IContainer) changedResource, allChanges);
-                        }
-                    }
                     else  if( !containerSet.contains( changedResource ) )
                         changedResource = workspaceRoot.getFileForLocation(path);
                 }
@@ -279,13 +279,10 @@ public class SVNWorkspaceSubscriber extends Subscriber implements IResourceState
                 if( changedResource != null ) {
                     containerSet.add(changedResource.getParent());
                     
-                    StatusInfo localInfo = new StatusInfo(status.getLastChangedRevision(), status.getTextStatus() );
-                    localSyncStateStore.setBytes( changedResource,  localInfo.asBytes() );
-
                     StatusInfo remoteInfo = new StatusInfo(cmd.getRevision(), status.getRepositoryTextStatus() );
                     remoteSyncStateStore.setBytes( changedResource, remoteInfo.asBytes() );
 
-                    System.out.println(cmd.getRevision()+" "+changedResource+" R:"+status.getLastChangedRevision()+" L:"+status.getTextStatus()+" R:"+status.getRepositoryTextStatus());
+                    //System.out.println(cmd.getRevision()+" "+changedResource+" R:"+status.getLastChangedRevision()+" L:"+status.getTextStatus()+" R:"+status.getRepositoryTextStatus());
                     allChanges.add(changedResource);
                 }
             }
@@ -293,36 +290,6 @@ public class SVNWorkspaceSubscriber extends Subscriber implements IResourceState
             return (IResource[]) allChanges.toArray(new IResource[allChanges.size()]);
         } catch (SVNClientException e) {
             throw new TeamException("Error getting status for resource "+resource, e);
-        }
-    }
-
-    private void addLocalContainerStatusInfo(IContainer container, List allChanges) throws TeamException {
-        IResource[] members;
-        try {
-            members = container.members();
-        } catch (CoreException e) {
-        	if (e.getStatus().getCode() == IResourceStatus.RESOURCE_NOT_FOUND) {
-        		// The resource is no longer exists so ignore the exception
-        	    members = null;
-        	} else {
-        		throw new TeamException("Error getting members of:"+container,e);
-        	}
-        }
-
-        for (int j = 0; members!=null && j < members.length; j++) {
-            IResource resource = members[j];
-
-            StatusInfo localInfo = new StatusInfo(null, SVNStatusKind.UNVERSIONED );
-            localSyncStateStore.setBytes( resource,  localInfo.asBytes() );
-
-            StatusInfo remoteInfo = new StatusInfo(null, SVNStatusKind.NONE );
-            remoteSyncStateStore.setBytes( resource, remoteInfo.asBytes() );
-
-            allChanges.add(resource);
-
-            if( resource.exists() && resource instanceof IContainer ) {
-                addLocalContainerStatusInfo( (IContainer) resource, allChanges);
-            }
         }
     }
 
@@ -350,8 +317,6 @@ public class SVNWorkspaceSubscriber extends Subscriber implements IResourceState
                 if( resource.exists() ) {
                     ISVNLocalResource localResource = SVNWorkspaceRoot.getSVNResourceFor( resource );
                     LocalResourceStatus status = localResource.getStatus();
-                    StatusInfo localInfo = new StatusInfo(status.getLastChangedRevision(), status.getTextStatus() );
-                    localSyncStateStore.setBytes( resource,  localInfo.asBytes() );
 
                     if( remoteSyncStateStore.getBytes( resource ) == null ) {
                         StatusInfo remoteInfo;
@@ -364,15 +329,16 @@ public class SVNWorkspaceSubscriber extends Subscriber implements IResourceState
                         remoteSyncStateStore.setBytes( resource, remoteInfo.asBytes() );
                     }
                 }
-                else {
-                    if( remoteSyncStateStore.getBytes( resource ) == null ) {
-                        localSyncStateStore.deleteBytes( resource );
-                    }
-                    else {
-                        StatusInfo localInfo = new StatusInfo(null, SVNStatusKind.NONE );
-                        localSyncStateStore.setBytes( resource,  localInfo.asBytes() );
-                    }
-                }
+//TODO: catch outgoing deletions
+//                else {
+//                    if( remoteSyncStateStore.getBytes( resource ) == null ) {
+//                        localSyncStateStore.deleteBytes( resource );
+//                    }
+//                    else {
+//                        StatusInfo localInfo = new StatusInfo(null, SVNStatusKind.NONE );
+//                        localSyncStateStore.setBytes( resource,  localInfo.asBytes() );
+//                    }
+//                }
             } catch (TeamException e) {
                 e.printStackTrace();
             }
@@ -392,9 +358,7 @@ public class SVNWorkspaceSubscriber extends Subscriber implements IResourceState
 	 * @see org.tigris.subversion.subclipse.core.IResourceStateChangeListener#projectDeconfigured(org.eclipse.core.resources.IProject)
 	 */
 	public void projectDeconfigured(IProject project) {
-/*	    localSyncStateStore.flushBytes( project, IResource.DEPTH_INFINITE);
-	    remoteSyncStateStore.flushBytes( project, IResource.DEPTH_INFINITE);
-*/		SubscriberChangeEvent delta = new SubscriberChangeEvent(this, ISubscriberChangeEvent.ROOT_REMOVED, project);
+		SubscriberChangeEvent delta = new SubscriberChangeEvent(this, ISubscriberChangeEvent.ROOT_REMOVED, project);
 		fireTeamResourceChange(new SubscriberChangeEvent[] {delta});
 	}
 }
