@@ -14,7 +14,6 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.tigris.subversion.subclipse.core.SVNException;
 import org.tigris.subversion.subclipse.core.resources.LocalResourceStatus;
 import org.tigris.subversion.svnclientadapter.ISVNStatus;
@@ -53,18 +52,10 @@ public abstract class StatusUpdateStrategy {
         IWorkspace workspace = ResourcesPlugin.getWorkspace();
         IWorkspaceRoot workspaceRoot = workspace.getRoot();
         
-        int segments = basePath.segmentCount();
-        
         for (int i = 0; i < statuses.length;i++) {
             ISVNStatus status = statuses[i];
 
-            // we don't use :
-            //   IPath pathEclipse = new Path(status.getFile().getAbsolutePath());
-            // because IWorkspaceRoot.getContainerForLocation and IWorkspaceRoot.getFileForLocation 
-            // are case-sensitive (see bug #147)
-            
-            IPath pathEclipse = basePath.append(new Path(status.getFile().getAbsolutePath()).removeFirstSegments(segments));
-
+            IPath pathEclipse = basePath.append(status.getFile().getAbsolutePath());
                 
             IResource resourceStatus = null;
             
