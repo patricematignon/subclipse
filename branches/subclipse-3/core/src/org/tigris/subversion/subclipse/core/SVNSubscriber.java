@@ -25,6 +25,7 @@ import org.eclipse.team.core.variants.ThreeWayRemoteTree;
 import org.eclipse.team.core.variants.ThreeWaySubscriber;
 import org.eclipse.team.core.variants.ThreeWaySynchronizer;
 import org.tigris.subversion.subclipse.core.sync.SVNRemoteTree;
+import org.tigris.subversion.subclipse.core.sync.SVNRevisionComparator;
 import org.tigris.subversion.subclipse.core.sync.SVNSyncInfo;
 
 /**

@@ -7,11 +7,14 @@
  *
  * All Rights are Reserved by the various authors.
  *******************************************************************************/
-package org.tigris.subversion.subclipse.core;
+package org.tigris.subversion.subclipse.core.sync;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.team.core.variants.IResourceVariant;
 import org.eclipse.team.core.variants.IResourceVariantComparator;
+import org.tigris.subversion.subclipse.core.ISVNLocalResource;
+import org.tigris.subversion.subclipse.core.ISVNRemoteResource;
+import org.tigris.subversion.subclipse.core.SVNException;
 import org.tigris.subversion.subclipse.core.resources.SVNWorkspaceRoot;
 import org.tigris.subversion.subclipse.core.util.Util;
 
