@@ -24,6 +24,7 @@ import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
+import org.tigris.subversion.subclipse.core.ISVNLocalResource;
 import org.tigris.subversion.subclipse.core.ISVNRepositoryLocation;
 import org.tigris.subversion.subclipse.core.SVNException;
 import org.tigris.subversion.subclipse.core.SVNProviderPlugin;
@@ -221,10 +222,11 @@ public abstract class SubclipseTest extends TestCase {
 		// commit it
 		provider.checkin(new IResource[]{resource}, comment,
 				IResource.DEPTH_ZERO, null);
+		ISVNLocalResource res = SVNWorkspaceRoot.getSVNResourceFor(resource);
+		
 	}
 	
-	protected void addNoCommit(IProject project, IResource resource,
-			String comment) throws SVNException, TeamException {
+	protected void addNoCommit(IProject project, IResource resource) throws SVNException, TeamException {
 		SVNTeamProvider provider = getProvider(project);
 		// add it to repository
 		provider.add(new IResource[]{resource}, IResource.DEPTH_ZERO, null);

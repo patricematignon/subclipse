@@ -42,7 +42,7 @@ public class RefactorTest extends SubclipseTest {
 		IFile resource = testProject.getProject().getFile(new Path("src/pack1/AClass.java"));
 		
 		// add and commit it
-		addNoCommit(testProject.getProject(),resource,"committed");
+		addNoCommit(testProject.getProject(),resource);
 
 		// let's rename the resource
 		resource.move(new Path("AClassRenamed.java"),false, null);

@@ -35,7 +35,7 @@ public class SVNMoveDeleteHook extends DefaultMoveDeleteHook {
 
 	public boolean deleteFile(IResourceTree tree, IFile file, int updateFlags,
 			IProgressMonitor monitor) {
-
+System.out.println("delfile: "+file);
 		ISVNLocalFile resource = new LocalFile(file);
 		try {
 			if (!resource.isManaged())
@@ -61,7 +61,7 @@ public class SVNMoveDeleteHook extends DefaultMoveDeleteHook {
 
 	public boolean deleteFolder(IResourceTree tree, IFolder folder,
 			int updateFlags, IProgressMonitor monitor) {
-
+		System.out.println("delfolder: "+folder);
 		ISVNLocalFolder resource = new LocalFolder(folder);
 
 		try {
@@ -92,7 +92,7 @@ public class SVNMoveDeleteHook extends DefaultMoveDeleteHook {
 	 */
 	public boolean moveFile(IResourceTree tree, IFile source,
 			IFile destination, int updateFlags, IProgressMonitor monitor) {
-
+		System.out.println("mvfile : "+source);
 		try {
 			ISVNLocalFile resource = new LocalFile(source);
 
@@ -188,6 +188,7 @@ public class SVNMoveDeleteHook extends DefaultMoveDeleteHook {
 
 	public boolean moveFolder(IResourceTree tree, IFolder source,
 			IFolder destination, int updateFlags, IProgressMonitor monitor) {
+		System.out.println("mvfolder: "+source);
 		try {
 			ISVNLocalFolder resource = new LocalFolder(source);
 			if (!resource.isManaged())
