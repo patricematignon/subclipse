@@ -335,6 +335,20 @@ public void validateConnection(IProgressMonitor monitor) throws SVNException {
 }
 
 /*
+ *  this should be made more robust --mml 11/27/03
+ * @see org.tigris.subversion.subclipse.core.ISVNRepositoryLocation#pathExists()
+ */
+public boolean pathExists(){
+	ISVNClientAdapter svnClient = getSVNClient();
+	try{
+		svnClient.getList(getUrl(), SVNRevision.HEAD, false);
+	}catch(SVNClientException e){
+		return false;
+	}
+	return true;
+}
+
+/*
  * Create a repository location instance from the given properties.
  * The supported properties are:
  *   user The username for the connection (optional)

@@ -28,6 +28,7 @@ import org.tigris.subversion.svnclientadapter.SVNUrl;
  */
 public interface ISVNRepositoryLocation  extends IAdaptable {
 
+	
 	/**
 	 * port value which indicates to a connection method to use the default port
 	 */
@@ -109,5 +110,11 @@ public interface ISVNRepositoryLocation  extends IAdaptable {
 	 * @param monitor the progress monitor used while validating
 	 */
 	public void validateConnection(IProgressMonitor monitor) throws SVNException;
+	
+	/**
+	 * Verify that said location contains said path.
+	 *
+	 */
+	public boolean pathExists();
 }
 
