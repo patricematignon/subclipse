@@ -260,7 +260,15 @@ public class LocalFolder extends LocalResource implements ISVNLocalFolder {
 
     public void revert() throws SVNException {
         super.revert(true);
-    }    
+    }
+
+	/* (non-Javadoc)
+	 * @see org.tigris.subversion.subclipse.core.ISVNLocalResource#resolve()
+	 */
+	public void resolve() {
+		// TODO Auto-generated method stub
+		
+	}    
     
     
 }

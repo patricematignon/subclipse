@@ -149,5 +149,11 @@ public interface ISVNLocalResource extends ISVNResource, IAdaptable {
    */
   public void deleteSvnProperty(String name,boolean recurse) throws SVNException;
 
+/**
+ * @throws SVNException
+ * 
+ */
+public void resolve() throws SVNException;
+
 
 }
