@@ -22,7 +22,10 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.console.ConsolePlugin;
 import org.eclipse.ui.console.IConsole;
 import org.eclipse.ui.console.IConsoleManager;
@@ -30,8 +33,8 @@ import org.eclipse.ui.console.IConsoleView;
 import org.eclipse.ui.console.MessageConsole;
 import org.eclipse.ui.console.MessageConsoleStream;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.console.MessageConsolePage;
 import org.eclipse.ui.part.IPageBookViewPage;
+import org.eclipse.ui.part.IPageSite;
 import org.tigris.subversion.subclipse.core.SVNProviderPlugin;
 import org.tigris.subversion.subclipse.core.client.IConsoleListener;
 import org.tigris.subversion.subclipse.ui.IHelpContextIds;
@@ -160,16 +163,47 @@ public class SVNOutputConsole extends MessageConsole implements IConsoleListener
      * @see org.eclipse.ui.console.IConsole#createPage(org.eclipse.ui.console.IConsoleView)
      */
     public IPageBookViewPage createPage(IConsoleView view) {
-    	return new MessageConsolePage(view, this) {
-    	    /* (non-Javadoc)
-             * @see org.eclipse.ui.internal.console.MessageConsolePage#createControl(org.eclipse.swt.widgets.Composite)
+        
+        // We don't have a more elegant way of overriding this, unfortunately...
+        final IPageBookViewPage delegate = super.createPage(view);
+        return new IPageBookViewPage() {
+            /* (non-Javadoc)
+             * @see org.eclipse.ui.console.IPageBookViewPage#createControl(org.eclipse.swt.widgets.Composite)
              */
             public void createControl(Composite parent) {
-                super.createControl(parent);
-                WorkbenchHelp.setHelp(getControl(), IHelpContextIds.CONSOLE_VIEW);
+                delegate.createControl(parent);
+                WorkbenchHelp.setHelp(delegate.getControl(), IHelpContextIds.CONSOLE_VIEW);
             }
-    	};
-    }
+            
+            public void dispose() {
+                delegate.dispose();
+            }
+            public boolean equals(Object obj) {
+                return delegate.equals(obj);
+            }
+            public Control getControl() {
+                return delegate.getControl();
+            }
+            public IPageSite getSite() {
+                return delegate.getSite();
+            }
+            public int hashCode() {
+                return delegate.hashCode();
+            }
+            public void init(IPageSite site) throws PartInitException {
+                delegate.init(site);
+            }
+            public void setActionBars(IActionBars actionBars) {
+                delegate.setActionBars(actionBars);
+            }
+            public void setFocus() {
+                delegate.setFocus();
+            }
+            public String toString() {
+                return delegate.toString();
+            }
+        };
+	}
     
 	private void dump() {
 		synchronized(document) {
