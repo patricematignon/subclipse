@@ -12,7 +12,6 @@ package org.tigris.subversion.subclipse.ui.conflicts;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
-import java.text.MessageFormat;
 
 import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.CompareEditorInput;
@@ -20,7 +19,6 @@ import org.eclipse.compare.ITypedElement;
 import org.eclipse.compare.internal.BufferedResourceNode;
 import org.eclipse.compare.internal.Utilities;
 import org.eclipse.compare.structuremergeviewer.Differencer;
-import org.eclipse.compare.structuremergeviewer.IStructureComparator;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;

@@ -13,7 +13,9 @@ package org.tigris.subversion.subclipse.ui.actions;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.team.ui.TeamUI;
-import org.eclipse.team.ui.synchronize.*;
+import org.eclipse.team.ui.synchronize.ISynchronizeParticipant;
+import org.eclipse.team.ui.synchronize.ResourceScope;
+import org.eclipse.team.ui.synchronize.SubscriberParticipant;
 import org.tigris.subversion.subclipse.ui.subscriber.SVNSynchronizeParticipant;
 
 /**

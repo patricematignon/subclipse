@@ -4,8 +4,6 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.IAction;
-import org.tigris.subversion.subclipse.core.ISVNLocalResource;
-import org.tigris.subversion.subclipse.core.resources.SVNWorkspaceRoot;
 import org.tigris.subversion.subclipse.ui.Policy;
 import org.tigris.subversion.subclipse.ui.dialogs.MergeDialog;
 import org.tigris.subversion.subclipse.ui.operations.MergeOperation;

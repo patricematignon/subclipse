@@ -12,8 +12,12 @@ package org.tigris.subversion.subclipse.ui.actions;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.ui.SaveablePartDialog;
 import org.tigris.subversion.subclipse.ui.Policy;

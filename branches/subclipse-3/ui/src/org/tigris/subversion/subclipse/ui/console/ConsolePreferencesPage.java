@@ -10,7 +10,9 @@
  *******************************************************************************/
 package org.tigris.subversion.subclipse.ui.console;
 
-import org.eclipse.jface.preference.*;
+import org.eclipse.jface.preference.BooleanFieldEditor;
+import org.eclipse.jface.preference.ColorFieldEditor;
+import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;

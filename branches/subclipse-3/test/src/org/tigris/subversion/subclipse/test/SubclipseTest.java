@@ -33,7 +33,6 @@ import org.tigris.subversion.subclipse.core.SVNTeamProvider;
 import org.tigris.subversion.subclipse.core.repo.SVNRepositories;
 import org.tigris.subversion.subclipse.core.resources.SVNWorkspaceRoot;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
-import org.tigris.subversion.svnclientadapter.SVNClientAdapterFactory;
 import org.tigris.subversion.svnclientadapter.SVNUrl;
 import org.tigris.subversion.svnclientadapter.commandline.CmdLineClientAdapterFactory;
 import org.tigris.subversion.svnclientadapter.javahl.JhlClientAdapterFactory;

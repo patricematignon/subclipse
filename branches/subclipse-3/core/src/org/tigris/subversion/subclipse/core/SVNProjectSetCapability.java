@@ -13,7 +13,6 @@
 
 package org.tigris.subversion.subclipse.core;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;

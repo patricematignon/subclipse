@@ -23,7 +23,6 @@ import org.tigris.subversion.subclipse.core.client.OperationManager;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
 import org.tigris.subversion.svnclientadapter.SVNKeywords;
-import org.tigris.subversion.svnclientadapter.SVNStatusKind;
 
 /**
  * Represents handles to SVN resource on the local file system. Synchronization
