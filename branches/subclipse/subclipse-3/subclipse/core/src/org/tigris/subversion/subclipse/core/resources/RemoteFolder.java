@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.sync.IRemoteResource;
 import org.tigris.subversion.subclipse.core.ISVNFolder;
@@ -31,6 +32,7 @@ import org.tigris.subversion.subclipse.core.Policy;
 import org.tigris.subversion.subclipse.core.SVNException;
 import org.tigris.subversion.subclipse.core.SVNProviderPlugin;
 import org.tigris.subversion.subclipse.core.SVNStatus;
+import org.tigris.subversion.subclipse.core.history.ILogEntry;
 import org.tigris.subversion.subclipse.core.util.Util;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 import org.tigris.subversion.svnclientadapter.ISVNDirEntry;
@@ -255,20 +257,24 @@ public class RemoteFolder extends RemoteResource implements ISVNRemoteFolder, IS
     }    
 
     public String getCreatorDisplayName(){
-		return "not implemented";
+        return this.getAuthor();
     }
-
     public String getContentIdentifier(){
-        return "not implemented";
+        return this.getRevision().toString();
     }
-
-    public String getComment(){
-        return "not implemented";
+    public String getComment() throws SVNException{
+        ILogEntry[] entries = getLogEntries(new NullProgressMonitor());
+        if(entries == null || entries.length ==0) {
+            return "None";
+        }else {
+            return entries[0].getComment();
+        }
     }
 
     public IStorage getBufferedStorage(IProgressMonitor monitor) throws TeamException
     {
-		return null;
+        return null;
     }
+
     
 }
