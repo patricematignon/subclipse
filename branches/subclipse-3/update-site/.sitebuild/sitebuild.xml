@@ -3,7 +3,7 @@
       autobuild="false"
       scrub-output="false"
       use-console="true">
-   <feature id="org.tigris.subversion.subclipse.linux" version="0.9.16"/>
-   <feature id="org.tigris.subversion.subclipse.osx" version="0.9.16"/>
-   <feature id="org.tigris.subversion.subclipse.win32" version="0.9.16"/>
+   <feature id="org.tigris.subversion.subclipse.linux" version="0.9.17"/>
+   <feature id="org.tigris.subversion.subclipse.osx" version="0.9.17"/>
+   <feature id="org.tigris.subversion.subclipse.win32" version="0.9.17"/>
 </site-build>
