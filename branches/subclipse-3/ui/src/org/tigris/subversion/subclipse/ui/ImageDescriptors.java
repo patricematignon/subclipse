@@ -81,6 +81,7 @@ public class ImageDescriptors {
         createImageDescriptor(ISVNUIConstants.IMG_NO_REMOTEDIR, baseURL);
 		createImageDescriptor(ISVNUIConstants.IMG_CONFLICTED, baseURL);
 		createImageDescriptor(ISVNUIConstants.IMG_ADDED, baseURL);
+        createImageDescriptor(ISVNUIConstants.IMG_EXTERNAL, baseURL);
 		createImageDescriptor(ISVNUIConstants.IMG_ADD_PROPERTY, baseURL);
         
         // special

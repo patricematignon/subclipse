@@ -78,6 +78,7 @@ public class SVNDecoratorPreferencesPage extends PreferencePage implements IWork
 	
 	private Text dirtyFlag;
 	private Text addedFlag;
+    private Text externalFlag;
 
 	private Button showDirty;
 	
@@ -182,6 +183,7 @@ public class SVNDecoratorPreferencesPage extends PreferencePage implements IWork
         bindings.put(SVNDecoratorConfiguration.RESOURCE_URL, "http://localhost:8080/svn/repos/"); //$NON-NLS-1$
 		bindings.put(SVNDecoratorConfiguration.DIRTY_FLAG, dirtyFlag.getText());
 		bindings.put(SVNDecoratorConfiguration.ADDED_FLAG, addedFlag.getText());
+        bindings.put(SVNDecoratorConfiguration.EXTERNAL_FLAG, externalFlag.getText());
             
         String example;
         example = SVNDecoratorConfiguration.decorate("file.txt",fileTextFormat.getText(), bindings);
@@ -265,7 +267,7 @@ public class SVNDecoratorPreferencesPage extends PreferencePage implements IWork
 		});
 		createLabel(fileTextGroup, "", 1); // spacer //$NON-NLS-1$
 
-		createLabel(fileTextGroup, Policy.bind("SVNDecoratorPreferencesPage.labelDecorat&ionAdded"), 1); //$NON-NLS-1$
+		createLabel(fileTextGroup, Policy.bind("SVNDecoratorPreferencesPage.labelDecorationAdded"), 1); //$NON-NLS-1$
 		addedFlag = new Text(fileTextGroup, SWT.BORDER);
 		addedFlag.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		addedFlag.addModifyListener(new ModifyListener() {
@@ -273,6 +275,17 @@ public class SVNDecoratorPreferencesPage extends PreferencePage implements IWork
 				updateExamples();
 			}
 		});
+        
+        createLabel(fileTextGroup, "", 1); // spacer //$NON-NLS-1$
+
+        createLabel(fileTextGroup, Policy.bind("SVNDecoratorPreferencesPage.labelDecorationExternal"), 1); //$NON-NLS-1$
+        externalFlag = new Text(fileTextGroup, SWT.BORDER);
+        externalFlag.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        externalFlag.addModifyListener(new ModifyListener() {
+            public void modifyText(ModifyEvent e) {
+                updateExamples();
+            }
+        });
 
 		return fileTextGroup;	
 	}
@@ -317,6 +330,7 @@ public class SVNDecoratorPreferencesPage extends PreferencePage implements IWork
 		
 		addedFlag.setText(store.getString(ISVNUIConstants.PREF_ADDED_FLAG));
 		dirtyFlag.setText(store.getString(ISVNUIConstants.PREF_DIRTY_FLAG));
+        externalFlag.setText(store.getString(ISVNUIConstants.PREF_EXTERNAL_FLAG));
 		
 		imageShowDirty.setSelection(store.getBoolean(ISVNUIConstants.PREF_SHOW_DIRTY_DECORATION));
 		imageShowAdded.setSelection(store.getBoolean(ISVNUIConstants.PREF_SHOW_ADDED_DECORATION));
@@ -347,6 +361,7 @@ public class SVNDecoratorPreferencesPage extends PreferencePage implements IWork
 		
 		store.setValue(ISVNUIConstants.PREF_ADDED_FLAG, addedFlag.getText());
 		store.setValue(ISVNUIConstants.PREF_DIRTY_FLAG, dirtyFlag.getText());
+        store.setValue(ISVNUIConstants.PREF_EXTERNAL_FLAG, externalFlag.getText());
 		
 		store.setValue(ISVNUIConstants.PREF_SHOW_DIRTY_DECORATION, imageShowDirty.getSelection());
 		store.setValue(ISVNUIConstants.PREF_SHOW_ADDED_DECORATION, imageShowAdded.getSelection());
@@ -379,6 +394,7 @@ public class SVNDecoratorPreferencesPage extends PreferencePage implements IWork
 		
 		addedFlag.setText(store.getDefaultString(ISVNUIConstants.PREF_ADDED_FLAG));
 		dirtyFlag.setText(store.getDefaultString(ISVNUIConstants.PREF_DIRTY_FLAG));
+        externalFlag.setText(store.getDefaultString(ISVNUIConstants.PREF_EXTERNAL_FLAG));
 		
 		imageShowDirty.setSelection(store.getDefaultBoolean(ISVNUIConstants.PREF_SHOW_DIRTY_DECORATION));
 		imageShowAdded.setSelection(store.getDefaultBoolean(ISVNUIConstants.PREF_SHOW_ADDED_DECORATION));
@@ -455,7 +471,7 @@ public class SVNDecoratorPreferencesPage extends PreferencePage implements IWork
         bindings.put(SVNDecoratorConfiguration.RESOURCE_REVISION, Policy.bind("SVNDecoratorPreferencesPage.revisionResourceVariable")); //$NON-NLS-1$
         bindings.put(SVNDecoratorConfiguration.DIRTY_FLAG, Policy.bind("SVNDecoratorPreferencesPage.flagDirtyVariable")); //$NON-NLS-1$
         bindings.put(SVNDecoratorConfiguration.ADDED_FLAG, Policy.bind("SVNDecoratorPreferencesPage.flagAddedVariable")); //$NON-NLS-1$
-		bindings.put(SVNDecoratorConfiguration.DIRTY_FLAG, Policy.bind("SVNDecoratorPreferencesPage.flagDirtyVariable")); //$NON-NLS-1$
+		bindings.put(SVNDecoratorConfiguration.EXTERNAL_FLAG, Policy.bind("SVNDecoratorPreferencesPage.flagExternalVariable")); //$NON-NLS-1$
         bindings.put(SVNDecoratorConfiguration.RESOURCE_AUTHOR, Policy.bind("SVNDecoratorPreferencesPage.authorVariable")); //$NON-NLS-1$        
         bindings.put(SVNDecoratorConfiguration.RESOURCE_DATE, Policy.bind("SVNDecoratorPreferencesPage.dateVariable")); //$NON-NLS-1$        
 		return bindings;

@@ -18,13 +18,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -66,6 +64,7 @@ public class SVNLightweightDecorator
 	private static ImageDescriptor newResource;
 	private static ImageDescriptor conflicted;
 	private static ImageDescriptor merged;
+    private static ImageDescriptor external;
 
 	private static IPropertyChangeListener propertyListener;
 
@@ -75,9 +74,11 @@ public class SVNLightweightDecorator
 	private IDecoratorComponent[][] fileDecoratorFormat;
 	private String dirtyFlag;
 	private String addedFlag;
+    private String externalFlag;
 	private boolean showNewResources;
 	private boolean showDirty;
 	private boolean showAdded;
+    private boolean showExternal;
 	private boolean showHasRemote;
 	private DateFormat dateFormat;
 
@@ -104,7 +105,7 @@ public class SVNLightweightDecorator
 		added = new CachedImageDescriptor(SVNUIPlugin.getPlugin().getImageDescriptor(ISVNUIConstants.IMG_ADDED));
 		merged = new CachedImageDescriptor(TeamImages.getImageDescriptor(ISharedImages.IMG_DIRTY_OVR));
 		newResource = new CachedImageDescriptor(SVNUIPlugin.getPlugin().getImageDescriptor(ISVNUIConstants.IMG_QUESTIONABLE));
-		
+		external = new CachedImageDescriptor(SVNUIPlugin.getPlugin().getImageDescriptor(ISVNUIConstants.IMG_EXTERNAL));
 		conflicted = new CachedImageDescriptor(SVNUIPlugin.getPlugin().getImageDescriptor(ISVNUIConstants.IMG_CONFLICTED));
 	}
 
@@ -118,9 +119,11 @@ public class SVNLightweightDecorator
 		fileDecoratorFormat = SVNDecoratorConfiguration.compileFormatString(store.getString(ISVNUIConstants.PREF_FILETEXT_DECORATION));
 		dirtyFlag = store.getString(ISVNUIConstants.PREF_DIRTY_FLAG);
 		addedFlag = store.getString(ISVNUIConstants.PREF_ADDED_FLAG);
+        externalFlag = store.getString(ISVNUIConstants.PREF_EXTERNAL_FLAG);
 		showNewResources = store.getBoolean(ISVNUIConstants.PREF_SHOW_NEWRESOURCE_DECORATION);
 		showDirty = store.getBoolean(ISVNUIConstants.PREF_SHOW_DIRTY_DECORATION);
 		showAdded = store.getBoolean(ISVNUIConstants.PREF_SHOW_ADDED_DECORATION);
+        showExternal = store.getBoolean(ISVNUIConstants.PREF_SHOW_EXTERNAL_DECORATION);
 		showHasRemote = store.getBoolean(ISVNUIConstants.PREF_SHOW_HASREMOTE_DECORATION);
 
 		propertyListener = new IPropertyChangeListener() {
@@ -137,13 +140,17 @@ public class SVNLightweightDecorator
 								dirtyFlag = (String)event.getNewValue();
 							} else if (ISVNUIConstants.PREF_ADDED_FLAG.equals(event.getProperty())) {
 								addedFlag = (String)event.getNewValue();
-							} else if (ISVNUIConstants.PREF_SHOW_NEWRESOURCE_DECORATION.equals(event.getProperty())){
+							} else if (ISVNUIConstants.PREF_EXTERNAL_FLAG.equals(event.getProperty())) {
+                                externalFlag = (String)event.getNewValue();
+                            } else if (ISVNUIConstants.PREF_SHOW_NEWRESOURCE_DECORATION.equals(event.getProperty())){
 								showNewResources = ((Boolean)event.getNewValue()).booleanValue();
 							} else if (ISVNUIConstants.PREF_SHOW_DIRTY_DECORATION.equals(event.getProperty())) {
 								showDirty = ((Boolean)event.getNewValue()).booleanValue();
 							} else if (ISVNUIConstants.PREF_SHOW_ADDED_DECORATION.equals(event.getProperty())) {
 								showAdded = ((Boolean)event.getNewValue()).booleanValue();
-							} else if (ISVNUIConstants.PREF_SHOW_HASREMOTE_DECORATION.equals(event.getProperty())) {
+							} else if (ISVNUIConstants.PREF_SHOW_EXTERNAL_DECORATION.equals(event.getProperty())) {
+                                showExternal = ((Boolean)event.getNewValue()).booleanValue();
+                            } else if (ISVNUIConstants.PREF_SHOW_HASREMOTE_DECORATION.equals(event.getProperty())) {
 								showHasRemote = ((Boolean)event.getNewValue()).booleanValue();
 							}
 						}
@@ -275,9 +282,10 @@ public class SVNLightweightDecorator
 			}
 			
 			if (status.isAdded()) {
-				bindings.put(
-					SVNDecoratorConfiguration.ADDED_FLAG, addedFlag);
-			} else {
+				bindings.put(SVNDecoratorConfiguration.ADDED_FLAG, addedFlag);
+			} else if (SVNStatusKind.EXTERNAL.equals(status.getTextStatus())) {
+                bindings.put(SVNDecoratorConfiguration.EXTERNAL_FLAG, externalFlag);
+            } else {
 				if ((status.getTextStatus() != SVNStatusKind.UNVERSIONED) &&
 					(status.getTextStatus() != SVNStatusKind.ADDED) &&
 				    (status.getRevision() != null) &&
@@ -335,6 +343,16 @@ public class SVNLightweightDecorator
 			}
 		}
 		
+        if (showExternal) {
+            try {
+                if (SVNStatusKind.EXTERNAL.equals(svnResource.getStatus().getTextStatus())) {
+                    return external;
+                }
+            } catch (SVNException e) {
+                SVNUIPlugin.log(e.getStatus());
+            }
+        }
+        
 		// show dirty icon
 		if(showDirty && isDirty) {
 			 return dirty;

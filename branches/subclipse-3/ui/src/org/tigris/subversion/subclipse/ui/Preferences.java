@@ -21,7 +21,6 @@ import org.eclipse.swt.graphics.RGB;
 import org.tigris.subversion.subclipse.core.SVNClientManager;
 import org.tigris.subversion.subclipse.core.SVNProviderPlugin;
 import org.tigris.subversion.subclipse.ui.decorator.SVNDecoratorConfiguration;
-import org.tigris.subversion.svnclientadapter.SVNClientAdapterFactory;
 import org.tigris.subversion.svnclientadapter.javahl.JhlClientAdapterFactory;
 
 /**
@@ -49,7 +48,9 @@ private IPreferenceStore store;
         store.setDefault(ISVNUIConstants.PREF_PROJECTTEXT_DECORATION, SVNDecoratorConfiguration.DEFAULT_PROJECTTEXTFORMAT);
         
         store.setDefault(ISVNUIConstants.PREF_ADDED_FLAG, SVNDecoratorConfiguration.DEFAULT_ADDED_FLAG);
-        store.setDefault(ISVNUIConstants.PREF_DIRTY_FLAG, SVNDecoratorConfiguration.DEFAULT_DIRTY_FLAG);    
+        store.setDefault(ISVNUIConstants.PREF_DIRTY_FLAG, SVNDecoratorConfiguration.DEFAULT_DIRTY_FLAG);
+        store.setDefault(ISVNUIConstants.PREF_EXTERNAL_FLAG, SVNDecoratorConfiguration.DEFAULT_EXTERNAL_FLAG);
+        store.setDefault(ISVNUIConstants.PREF_SHOW_EXTERNAL_DECORATION, true);
         store.setDefault(ISVNUIConstants.PREF_SHOW_ADDED_DECORATION, true);
         store.setDefault(ISVNUIConstants.PREF_SHOW_HASREMOTE_DECORATION, true);
         store.setDefault(ISVNUIConstants.PREF_SHOW_DIRTY_DECORATION, false);

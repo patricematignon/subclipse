@@ -25,6 +25,7 @@ public interface ISVNUIConstants {
 	public final String IMG_EDITED = "ovr16/edited_ov.gif"; //$NON-NLS-1$
 	public final String IMG_NO_REMOTEDIR = "ovr16/no_remotedir_ov.gif"; //$NON-NLS-1$
 	public final String IMG_ADDED = "ovr16/added_ov.gif"; //$NON-NLS-1$
+    public final String IMG_EXTERNAL = "ovr16/external_ov.gif"; //$NON-NLS-1$
 	
 	// objects
 	public final String IMG_REPOSITORY = "obj16/repository_rep.gif"; //$NON-NLS-1$
@@ -110,11 +111,13 @@ public interface ISVNUIConstants {
 	
 	public final String PREF_SHOW_DIRTY_DECORATION = "pref_show_overlaydirty"; //$NON-NLS-1$
 	public final String PREF_SHOW_ADDED_DECORATION = "pref_show_added"; //$NON-NLS-1$
+    public final String PREF_SHOW_EXTERNAL_DECORATION = "pref_show_external"; //$NON-NLS-1$
 	public final String PREF_SHOW_HASREMOTE_DECORATION = "pref_show_hasremote"; //$NON-NLS-1$
 	public final String PREF_SHOW_NEWRESOURCE_DECORATION = "pref_show_newresource"; //$NON-NLS-1$
 	
 	public final String PREF_DIRTY_FLAG = "pref_dirty_flag"; //$NON-NLS-1$
 	public final String PREF_ADDED_FLAG = "pref_added_flag"; //$NON-NLS-1$
+    public final String PREF_EXTERNAL_FLAG = "pref_external_flag"; //$NON-NLS-1$
 	
 	public final String PREF_CALCULATE_DIRTY = "pref_calculate_dirty";	 //$NON-NLS-1$
 	
