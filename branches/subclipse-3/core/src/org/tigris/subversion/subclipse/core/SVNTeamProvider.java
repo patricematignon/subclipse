@@ -258,11 +258,18 @@ public class SVNTeamProvider extends RepositoryProvider {
         SVNProviderPlugin.run(new ISVNRunnable() {
             public void run(IProgressMonitor monitor) throws SVNException {
                 try {
-                    monitor.beginTask(null, 100);                    
+                    monitor.beginTask(null, 100 * resources.length);                    
                     ISVNClientAdapter svnClient = getSVNWorkspaceRoot().getRepository().getSVNClient();
                     OperationManager.getInstance().beginOperation(svnClient);
-                    for (int i = 0; i < resources.length;i++)
+                    for (int i = 0; i < resources.length; i++) {
+                    	if (monitor.isCanceled()) {
+                    		return;
+                    	}
+                    	
+                    	monitor.subTask(resources[i].getName());
                         svnClient.update(resources[i].getLocation().toFile(),revision,true);
+                        monitor.worked(100);
+                    }
                 } catch (SVNClientException e) {
                     throw SVNException.wrapException(e);
                 } finally {
