@@ -21,7 +21,11 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -42,15 +46,17 @@ import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.team.core.TeamException;
+import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.IWorkbench;
@@ -91,6 +97,10 @@ public class PendingOperationsView extends ViewPart implements IResourceStateCha
     private Action toggleDeletedAction;
     private Action toggleModifiedAction;
 
+    private IResource[] changedResources = null;
+    private boolean shutdown = false;
+    private ComputeStatusJob computeStatusJob = null;
+    
     public PendingOperationsView() {
         SVNProviderPlugin.addResourceStateChangeListener(this);
     }
@@ -100,47 +110,34 @@ public class PendingOperationsView extends ViewPart implements IResourceStateCha
      * @see org.eclipse.ui.IWorkbenchPart#dispose()
      */
     public void dispose() {
+        shutdown = true;
         super.dispose();
         SVNProviderPlugin.removeResourceStateChangeListener(this);
     }
 
 	class EditorsContentProvider implements IStructuredContentProvider {
-
 		/**
 		 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
 		 */
 		public Object[] getElements(Object inputElement) {
-            ISVNStatus[] status = (ISVNStatus[]) inputElement;
-            IWorkspaceRoot workspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
-                    
-            List resourceList = new ArrayList();
-            for (int i = 0; i < status.length;i++) {
-                if ( ((status[i].isAdded()) && (toggleAddedAction.isChecked())) ||
-                     ((status[i].isDeleted()) && (toggleDeletedAction.isChecked())) ||
-                     ((status[i].isModified()) && (toggleModifiedAction.isChecked())) ) {
+				// Short-circuit to optimize
+				if (changedResources != null) return changedResources;
+				
+				if(computeStatusJob == null) {
+				    computeStatusJob = new ComputeStatusJob();
+				}
+				if(computeStatusJob.getState() != Job.NONE) {
+				    computeStatusJob.cancel();
+					try {
+					    computeStatusJob.join();
+					} catch (InterruptedException e) {
+						SVNUIPlugin.log(new SVNException(Policy.bind("PendingOperationsView.errorComputingStatus", parent.getName()), e)); //$NON-NLS-1$
+					}
+				}
+				computeStatusJob.setContainer( parent );
+				Utils.schedule(computeStatusJob, getViewSite());
 
-                    // path is sometimes absolute, sometimes relative.
-                    // here we make sure it is absolute
-                    IPath pathEclipse = null;
-                    try {
-                        pathEclipse = new Path( (new Path(status[i].getPath())).toFile().getCanonicalPath());
-                    } catch (IOException e)
-                    {
-                        break; // should never occur ...
-                    }
-        
-                    IResource resource = null;
-                    if (status[i].getNodeKind()  == SVNNodeKind.DIR)       
-                        resource = workspaceRoot.getContainerForLocation(pathEclipse);
-                    else
-                    if (status[i].getNodeKind() == SVNNodeKind.FILE)
-                        resource =  workspaceRoot.getFileForLocation(pathEclipse);
-                
-                    resourceList.add(resource);
-                }
-            }
-            IResource[] resourceArray = new IResource[resourceList.size()];
-            return (IResource[]) resourceList.toArray(resourceArray);
+				return new IResource[0];
 		}
 
 		/**
@@ -156,6 +153,7 @@ public class PendingOperationsView extends ViewPart implements IResourceStateCha
 			Viewer viewer,
 			Object oldInput,
 			Object newInput) {
+		    changedResources = null;
 		}
 
 	}
@@ -423,9 +421,9 @@ public class PendingOperationsView extends ViewPart implements IResourceStateCha
         tableViewer.addDropSupport(ops, transfers, new PendingDropAdapter(tableViewer, this));
     }
     
-	public void setInput(ISVNStatus[] status) {
-		tableViewer.setInput(status);
-	}
+//	public void setInput(ISVNStatus[] status) {
+//		tableViewer.setInput(status);
+//	}
 
     /**
      * fill the popup menu for the table
@@ -488,17 +486,14 @@ public class PendingOperationsView extends ViewPart implements IResourceStateCha
      * refresh the view
      */
     public void refresh()  {
+        changedResources = null;
 
-        Display.getDefault().syncExec(new Runnable() {
-            public void run() {
-                try {
-                    tableViewer.setInput(getStatus());
-                    tableViewer.refresh();
-                } catch (SVNException e) {
-                    // silently ignore exception
-                }
-            }
-        });
+        // show a Busy Cursor during refresh
+		BusyIndicator.showWhile(tableViewer.getTable().getDisplay(), new Runnable() {
+			public void run() {
+				tableViewer.refresh();
+			}
+		});
     }
 
     public void resourceSyncInfoChanged(IResource[] changedResources) {
@@ -519,22 +514,7 @@ public class PendingOperationsView extends ViewPart implements IResourceStateCha
         parent = container;
         setPartName(Policy.bind("PendingOperationsView.titleWithArgument", container.getName())); //$NON-NLS-1$
         setContentDescription(Policy.bind("PendingOperationsView.titleWithArgument", container.getName())); //$NON-NLS-1$
-        tableViewer.setInput(getStatus());
-    }
-
-    private ISVNStatus[] getStatus() throws SVNException {
-    	// can be a null parent if we have the view open before we select anything
-    	if(parent == null)
-    		return null;
-        ISVNStatus[] statuses = null;
-        ISVNLocalResource svnResource = SVNWorkspaceRoot.getSVNResourceFor(parent);
-        ISVNClientAdapter svnClient = svnResource.getRepository().getSVNClient();
-        try { 
-            statuses = svnClient.getStatus(parent.getLocation().toFile(),true,true);
-        } catch (SVNClientException e) {
-            throw SVNException.wrapException(e);
-        }
-        return statuses;
+        tableViewer.setInput(container);
     }
 
     /**
@@ -564,4 +544,82 @@ public class PendingOperationsView extends ViewPart implements IResourceStateCha
         } 
     }
 
+	private class ComputeStatusJob extends Job {
+		public IContainer container;
+		public ComputeStatusJob() {
+			super(Policy.bind("PendingOperationsView.computeStatusJob"));  //$NON-NLS-1$;
+		}
+		public void setContainer(IContainer container) {
+			this.container = container;
+		}
+		public IStatus run(IProgressMonitor monitor) {
+			try {
+				if(container != null && !shutdown) {
+					ISVNStatus[] status = getStatus( container );
+					changedResources = getChangedResources( status ); 
+					
+					getSite().getShell().getDisplay().asyncExec(new Runnable() {
+						public void run() {
+							if(changedResources != null && tableViewer != null && ! tableViewer.getTable().isDisposed()) {
+								tableViewer.add( changedResources );
+							}
+						}
+					});
+				}
+				return Status.OK_STATUS;
+			} catch (TeamException e) {
+				return e.getStatus();
+			}
+		}
+	};
+
+    private ISVNStatus[] getStatus(IContainer container) throws SVNException {
+    	// can be a null parent if we have the view open before we select anything
+    	if(parent == null)
+    		return null;
+        ISVNStatus[] statuses = null;
+        ISVNLocalResource svnResource = SVNWorkspaceRoot.getSVNResourceFor(parent);
+        ISVNClientAdapter svnClient = svnResource.getRepository().getSVNClient();
+        try { 
+            statuses = svnClient.getStatus(container.getLocation().toFile(),true,true);
+        } catch (SVNClientException e) {
+            throw SVNException.wrapException(e);
+        }
+        return statuses;
+    }
+
+    private IResource[] getChangedResources(ISVNStatus[] status) {
+        if( status == null )
+            return null;
+        IWorkspaceRoot workspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
+        
+        List resourceList = new ArrayList();
+        for (int i = 0; i < status.length;i++) {
+            if ( ((status[i].isAdded()) && (toggleAddedAction.isChecked())) ||
+                    ((status[i].isDeleted()) && (toggleDeletedAction.isChecked())) ||
+                    ((status[i].isModified()) && (toggleModifiedAction.isChecked())) ) {
+                
+                // path is sometimes absolute, sometimes relative.
+                // here we make sure it is absolute
+                IPath pathEclipse = null;
+                try {
+                    pathEclipse = new Path( (new Path(status[i].getPath())).toFile().getCanonicalPath());
+                } catch (IOException e)
+                {
+                    break; // should never occur ...
+                }
+                
+                IResource resource = null;
+                if (status[i].getNodeKind()  == SVNNodeKind.DIR)       
+                    resource = workspaceRoot.getContainerForLocation(pathEclipse);
+                else
+                    if (status[i].getNodeKind() == SVNNodeKind.FILE)
+                        resource =  workspaceRoot.getFileForLocation(pathEclipse);
+                    
+                resourceList.add(resource);
+            }
+        }
+        IResource[] resourceArray = new IResource[resourceList.size()];
+        return (IResource[]) resourceList.toArray(resourceArray);
+    }
 }
