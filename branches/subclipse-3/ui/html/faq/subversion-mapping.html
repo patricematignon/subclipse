@@ -79,7 +79,9 @@ View</a></td>
       <a href="../gettingstarted/importing.html">Importing a project
       </a></td>
       <td>This doesn't work quite like with the command line, as you
-cannot do this in one single Subversion revision.</td>
+cannot do this in one single Subversion revision, rather the import
+is done by creating the existing Eclipse project in a Subversion
+repository and then scheduling all the project contents for addition.</td>
     </tr>
     <tr>
       <td><tt>info</tt></td>
@@ -144,7 +146,8 @@ Operations View</a> and <a href="../reference/properties.html">Subversion Proper
     <tr>
       <td><tt>switch (sw)</tt></td>
       <td><a href="../reference/switch.html">Team > Switch</a> </td>
-      <td></td>
+      <td>Note that it is not possible to do a relocate <tt>--relocate</tt>.
+      Also note that the switch cannot happen above the project level, since that would be outside Eclipse's workspace.</td>
     </tr>
     <tr>
       <td><tt>update (up)</tt></td>

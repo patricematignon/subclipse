@@ -654,6 +654,8 @@
       </toc>
       <toc
             file="dailywork.xml"/>
+      <toc
+            file="toc_platformGettingstarted.xml"/>
    </extension>
    <extension
          point="org.eclipse.team.ui.synchronizeParticipants">
