@@ -4,16 +4,16 @@
    <description url="http://www.loonsoft.com/updates">
       LoonSoft Eclipse Plugins Update Site
    </description>
-   <feature url="features/featurelinux_0.9.3.jar" id="featurelinux" version="0.9.3" os="linux" ws="gtk" arch="x86">
-      <category name="subclipse"/>
+   <feature url="features/org.tigris.subversion.subclipse.win32_0.9.4.jar" id="org.tigris.subversion.subclipse.win32" version="0.9.4" os="win32" ws="win32" arch="x86">
+      <category name="Subclipse"/>
    </feature>
-   <feature url="features/featureosx_0.9.3.jar" id="featureosx" version="0.9.3" os="macosx" ws="carbon" arch="ppc">
-      <category name="subclipse"/>
+   <feature url="features/org.tigris.subversion.subclipse.osx_0.9.4.jar" id="org.tigris.subversion.subclipse.osx" version="0.9.4" os="macosx" ws="carbon" arch="ppc">
+      <category name="Subclipse"/>
    </feature>
-   <feature url="features/featurewin32_0.9.3.jar" id="featurewin32" version="0.9.3" os="win32" ws="win32" arch="x86">
-      <category name="subclipse"/>
+   <feature url="features/org.tigris.subversion.subclipse.linux_0.9.4.jar" id="org.tigris.subversion.subclipse.linux" version="0.9.4" os="linux" ws="gtk" arch="x86">
+      <category name="Subclipse"/>
    </feature>
-   <category-def name="subclipse" label="Subclipse Plugin">
+   <category-def name="Subclipse" label="Subclipse Plugin">
       <description>
          The subclipse Subversion plugin
       </description>

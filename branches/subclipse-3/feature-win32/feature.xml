@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="featurewin32"
-      label="feature-win32"
-      version="0.9.3"
+      id="org.tigris.subversion.subclipse.win32"
+      label="Subclipse"
+      version="0.9.4"
       provider-name="tigris.org"
       os="win32"
       ws="win32"
@@ -170,22 +170,22 @@ This Agreement is governed by the laws of the State of New York and the intellec
    </requires>
 
    <plugin
+         id="org.tigris.subversion.javahl.win32"
+         download-size="0"
+         install-size="0"
+         version="0.9.4"
+         fragment="true"/>
+
+   <plugin
          id="org.tigris.subversion.subclipse.core"
          download-size="0"
          install-size="0"
-         version="0.9.3"/>
+         version="0.9.4"/>
 
    <plugin
          id="org.tigris.subversion.subclipse.ui"
          download-size="0"
          install-size="0"
-         version="0.9.3"/>
-
-   <plugin
-         id="org.tigris.subversion.javahl.win32"
-         download-size="0"
-         install-size="0"
-         version="0.9.3"
-         fragment="true"/>
+         version="0.9.4"/>
 
 </feature>
