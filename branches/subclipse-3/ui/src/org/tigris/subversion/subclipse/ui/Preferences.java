@@ -22,6 +22,7 @@ import org.tigris.subversion.subclipse.core.SVNClientManager;
 import org.tigris.subversion.subclipse.core.SVNProviderPlugin;
 import org.tigris.subversion.subclipse.ui.decorator.SVNDecoratorConfiguration;
 import org.tigris.subversion.svnclientadapter.SVNClientAdapterFactory;
+import org.tigris.subversion.svnclientadapter.javahl.JhlClientAdapterFactory;
 
 /**
  * Initializes preferences and updates markers when preferences are changed
@@ -61,10 +62,10 @@ private IPreferenceStore store;
         
         store.setDefault(ISVNUIConstants.PREF_SHOW_COMPARE_REVISION_IN_DIALOG, false);
         
-        store.setDefault(ISVNUIConstants.PREF_SVNINTERFACE, SVNClientAdapterFactory.JAVAHL_CLIENT);
+        store.setDefault(ISVNUIConstants.PREF_SVNINTERFACE, JhlClientAdapterFactory.JAVAHL_CLIENT);
         store.setDefault(ISVNUIConstants.PREF_SVNCONFIGDIR, "");
 
-        setSvnClientInterface(store.getInt(ISVNUIConstants.PREF_SVNINTERFACE));
+        setSvnClientInterface(store.getString(ISVNUIConstants.PREF_SVNINTERFACE));
         setSvnClientConfigDir(store.getString(ISVNUIConstants.PREF_SVNCONFIGDIR));
     }
 
@@ -72,7 +73,7 @@ private IPreferenceStore store;
      * set the svn client interface
      * @param clientInterface
      */
-    private void setSvnClientInterface(int clientInterface) {
+    private void setSvnClientInterface(String clientInterface) {
         SVNProviderPlugin.getPlugin().getSVNClientManager().setSvnClientInterface(clientInterface);
     }
 
@@ -97,8 +98,8 @@ private IPreferenceStore store;
     public void propertyChange(PropertyChangeEvent event) {
         String property = event.getProperty();
         if (property == ISVNUIConstants.PREF_SVNINTERFACE) {
-            Integer newValue = (Integer)event.getNewValue();
-            setSvnClientInterface(newValue.intValue());
+            String newValue = (String)event.getNewValue();
+            setSvnClientInterface(newValue);
         }
         if (property == ISVNUIConstants.PREF_SVNCONFIGDIR) {
         	String configDir = (String)event.getNewValue();

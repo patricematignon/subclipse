@@ -36,6 +36,8 @@ import org.tigris.subversion.subclipse.ui.ISVNUIConstants;
 import org.tigris.subversion.subclipse.ui.Policy;
 import org.tigris.subversion.subclipse.ui.SVNUIPlugin;
 import org.tigris.subversion.svnclientadapter.SVNClientAdapterFactory;
+import org.tigris.subversion.svnclientadapter.commandline.CmdLineClientAdapterFactory;
+import org.tigris.subversion.svnclientadapter.javahl.JhlClientAdapterFactory;
 
 /**
  * SVN Preference Page
@@ -195,8 +197,10 @@ public class SVNPreferencesPage extends PreferencePage implements IWorkbenchPref
 		
 		showCompareRevisionInDialog.setSelection(store.getBoolean(ISVNUIConstants.PREF_SHOW_COMPARE_REVISION_IN_DIALOG));
 		
-        javahlRadio.setSelection(store.getInt(ISVNUIConstants.PREF_SVNINTERFACE) == SVNClientAdapterFactory.JAVAHL_CLIENT);
-        commandLineRadio.setSelection(store.getInt(ISVNUIConstants.PREF_SVNINTERFACE) == SVNClientAdapterFactory.COMMANDLINE_CLIENT);
+        javahlRadio.setSelection(store.getString(
+                ISVNUIConstants.PREF_SVNINTERFACE).equals(JhlClientAdapterFactory.JAVAHL_CLIENT));
+        commandLineRadio.setSelection(store.getString(
+                ISVNUIConstants.PREF_SVNINTERFACE).equals(CmdLineClientAdapterFactory.COMMANDLINE_CLIENT));
         
         String configLocation = store.getString(ISVNUIConstants.PREF_SVNCONFIGDIR); 
         directoryLocationText.setText(configLocation);
@@ -231,9 +235,9 @@ public class SVNPreferencesPage extends PreferencePage implements IWorkbenchPref
 
         // save svn interface pref
         if (javahlRadio.getSelection() ){
-            store.setValue(ISVNUIConstants.PREF_SVNINTERFACE, SVNClientAdapterFactory.JAVAHL_CLIENT);
+            store.setValue(ISVNUIConstants.PREF_SVNINTERFACE, JhlClientAdapterFactory.JAVAHL_CLIENT);
         }else{
-            store.setValue(ISVNUIConstants.PREF_SVNINTERFACE, SVNClientAdapterFactory.COMMANDLINE_CLIENT);
+            store.setValue(ISVNUIConstants.PREF_SVNINTERFACE, CmdLineClientAdapterFactory.COMMANDLINE_CLIENT);
         }
         
         // save config location pref
@@ -286,12 +290,12 @@ public class SVNPreferencesPage extends PreferencePage implements IWorkbenchPref
         }
         
         if (javahlRadio.getSelection()) {
-			if (!SVNClientAdapterFactory.isSVNClientAvailable(SVNClientAdapterFactory.JAVAHL_CLIENT)) {
+			if (!SVNClientAdapterFactory.isSVNClientAvailable(JhlClientAdapterFactory.JAVAHL_CLIENT)) {
 				setErrorMessage(Policy.bind("SVNPreferencePage.javahlNotAvailable")); //$NON-NLS-1$
 			}
 		}
 		if (commandLineRadio.getSelection()) {
-			if (!SVNClientAdapterFactory.isSVNClientAvailable(SVNClientAdapterFactory.COMMANDLINE_CLIENT)) {
+			if (!SVNClientAdapterFactory.isSVNClientAvailable(CmdLineClientAdapterFactory.COMMANDLINE_CLIENT)) {
 				setErrorMessage(Policy.bind("SVNPreferencePage.commandLineNotAvailable")); //$NON-NLS-1$
 			}
 		}
