@@ -122,7 +122,7 @@ public class StatusCacheComposite {
         	return;
         }
         if (child.children == null) {
-        	children.put(segment,null);
+            children.remove(segment);
         } else {
         	child.status = null;
         }
