@@ -28,11 +28,11 @@ import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.team.internal.ui.actions.TeamAction;
 import org.eclipse.ui.PlatformUI;
+import org.tigris.subversion.subclipse.core.ISVNRemoteFile;
 import org.tigris.subversion.subclipse.core.ISVNRemoteFolder;
 import org.tigris.subversion.subclipse.core.ISVNRemoteResource;
 import org.tigris.subversion.subclipse.core.SVNException;
 import org.tigris.subversion.subclipse.core.SVNStatus;
-import org.tigris.subversion.subclipse.core.history.ILogEntry;
 import org.tigris.subversion.subclipse.ui.ISVNUIConstants;
 import org.tigris.subversion.subclipse.ui.Policy;
 import org.tigris.subversion.subclipse.ui.SVNUIPlugin;
@@ -314,6 +314,39 @@ abstract public class SVNAction extends TeamAction {
 		return new ISVNRemoteFolder[0];
 	}
 
+	
+	/**
+	 * Returns the selected remote files
+	 */
+	protected ISVNRemoteFile[] getSelectedRemoteFiles() {
+		ArrayList resources = null;
+		if (!selection.isEmpty()) {
+			resources = new ArrayList();
+			Iterator elements = selection.iterator();
+			while (elements.hasNext()) {
+				Object next = elements.next();
+				if (next instanceof ISVNRemoteFile) {
+					resources.add(next);
+					continue;
+				}
+				if (next instanceof IAdaptable) {
+					IAdaptable a = (IAdaptable) next;
+					Object adapter = a.getAdapter(ISVNRemoteFile.class);
+					if (adapter instanceof ISVNRemoteFile) {
+						resources.add(adapter);
+						continue;
+					}
+				}
+			}
+		}
+		if (resources != null && !resources.isEmpty()) {
+			ISVNRemoteFile[] result = new ISVNRemoteFile[resources.size()];
+			resources.toArray(result);
+			return result;
+		}
+		return new ISVNRemoteFile[0];
+	}	
+	
 	/**
 	 * Returns the selected remote resources
 	 */
@@ -326,10 +359,6 @@ abstract public class SVNAction extends TeamAction {
 				Object next = elements.next();
 				if (next instanceof ISVNRemoteResource) {
 					resources.add(next);
-					continue;
-				}
-				if (next instanceof ILogEntry) {
-					resources.add(((ILogEntry)next).getRemoteResource());
 					continue;
 				}
 				if (next instanceof IAdaptable) {
