@@ -16,7 +16,6 @@ import java.util.List;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.viewers.IDecoration;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
@@ -155,31 +154,7 @@ public class SVNCatchupReleaseViewer extends CatchupReleaseViewer {
 		WorkbenchHelp.setHelp(this.getControl(), IHelpContextIds.CATCHUP_RELEASE_VIEWER);
 	}
 	
-	private static class Decoration implements IDecoration {
-		public String prefix, suffix;
-		public ImageDescriptor overlay;
-
-		/**
-		 * @see org.eclipse.jface.viewers.IDecoration#addPrefix(java.lang.String)
-		 */
-		public void addPrefix(String prefix) {
-			this.prefix = prefix;
-		}
-		/**
-		 * @see org.eclipse.jface.viewers.IDecoration#addSuffix(java.lang.String)
-		 */
-		public void addSuffix(String suffix) {
-			this.suffix = suffix;
-		}
-		/**
-		 * @see org.eclipse.jface.viewers.IDecoration#addOverlay(org.eclipse.jface.resource.ImageDescriptor)
-		 */
-		public void addOverlay(ImageDescriptor overlay) {
-			this.overlay = overlay;
-		}
-	}
-	
-//	private Image getConflictImage() {
+	//	private Image getConflictImage() {
 //		if(conflictImage != null)
 //			return conflictImage;
 //		final ImageDescriptor conflictDescriptor = SVNUIPlugin.getPlugin().getImageDescriptor(ISVNUIConstants.IMG_MERGEABLE_CONFLICT);

@@ -22,6 +22,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.widgets.Display;
@@ -109,7 +110,7 @@ public class SVNUIPlugin extends AbstractUIPlugin {
 
 	public static void runWithProgress(Shell parent, boolean cancelable,
 		final IRunnableWithProgress runnable) throws InvocationTargetException, InterruptedException {
-		TeamUIPlugin.runWithProgress(parent, cancelable, runnable);
+		new ProgressMonitorDialog(parent).run(false, cancelable, runnable);
 	}
 	
 	

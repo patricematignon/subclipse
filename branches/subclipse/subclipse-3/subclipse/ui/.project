@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>SVNPluginUI</name>
+	<name>ui</name>
 	<comment></comment>
 	<projects>
-		<project>SVNPluginCore</project>
+		<project>core</project>
 		<project>svnClientAdapter</project>
 	</projects>
 	<buildSpec>
