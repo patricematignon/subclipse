@@ -54,11 +54,12 @@ public abstract class SubclipseTest extends TestCase {
 	 */
 	protected void setUp() throws Exception {
 		// first, we create the repository
-		ISVNClientAdapter svnClientCmd = SVNClientAdapterFactory.createSVNClient(SVNClientAdapterFactory.COMMANDLINE_CLIENT);
+		ISVNClientAdapter svnClientCmd = SVNClientAdapterFactory.createSVNClient(SVNClientAdapterFactory.JAVAHL_CLIENT);
 		reposPath = new File(System.getProperty("java.io.tmpdir")+"/test_repos").getAbsoluteFile();
 		removeDir(reposPath);
-		svnClientCmd.createRepository(reposPath);
 		
+		svnClientCmd.createRepository(reposPath, ISVNClientAdapter.REPOSITORY_FSFS);
+		assertTrue(reposPath.exists());
 		// we need the corresponding url
 		url = new SVNUrl(reposPath.toURI().toString().replaceFirst("file:/","file:///"));
 		
