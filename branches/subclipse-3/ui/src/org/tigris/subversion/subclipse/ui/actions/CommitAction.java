@@ -267,7 +267,7 @@ public class CommitAction extends WorkspaceAction {
 			    if (exception[0] != null) throw exception[0];
 	        }
 		}
-		unaddedResources = unadded.size() > 0;
+		if (unadded.size() > 0) unaddedResources = true;
 		return (IResource[]) unadded.toArray(new IResource[unadded.size()]);
 	}
 	
