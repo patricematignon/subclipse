@@ -13,9 +13,6 @@ import org.tigris.subversion.subclipse.core.resources.SVNWorkspaceRoot;
 
 /**
  * @author mml
- *
- * TODO To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Style - Code Templates
  */
 public class SVNRevisionComparator implements IResourceVariantComparator {
 
@@ -26,7 +23,7 @@ public class SVNRevisionComparator implements IResourceVariantComparator {
 		ISVNLocalResource a = SVNWorkspaceRoot.getSVNResourceFor(local);
 		ISVNRemoteResource b = (ISVNRemoteResource)remote;
 		try {
-			return a.getStatus().getRevision().getNumber() == b.getLastChangedRevision().getNumber();
+			return a.getStatus().getLastChangedRevision().getNumber() == b.getLastChangedRevision().getNumber();
 		} catch (SVNException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
