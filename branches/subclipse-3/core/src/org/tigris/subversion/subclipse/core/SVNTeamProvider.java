@@ -21,10 +21,11 @@ import java.util.TreeSet;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IProjectNature;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceRuleFactory;
 import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.resources.team.IMoveDeleteHook;
+import org.eclipse.core.resources.team.ResourceRuleFactory;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -50,6 +51,12 @@ import org.tigris.subversion.svnclientadapter.SVNRevision;
 public class SVNTeamProvider extends RepositoryProvider {
 	private SVNWorkspaceRoot workspaceRoot;
 	private Object operations;
+	
+	/**
+	 * Scheduling rule to use when modifying resources.
+	 * <code>ResourceRuleFactory</code> only locks the file or its parent if read-only
+	 */
+	private static final ResourceRuleFactory RESOURCE_RULE_FACTORY = new ResourceRuleFactory() {};
 	
 	/**
 	 * No-arg Constructor for IProjectNature conformance
@@ -369,5 +376,11 @@ public class SVNTeamProvider extends RepositoryProvider {
 		
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.RepositoryProvider#getRuleFactory()
+	 */
+	public IResourceRuleFactory getRuleFactory() {
+		return RESOURCE_RULE_FACTORY;
+	}
 
 }
