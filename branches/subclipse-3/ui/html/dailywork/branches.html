@@ -16,8 +16,27 @@
 	including comparing whole branches and copying changes between branches.
 	<p>Typically, the 'main' line of development in a project using the Subversion SCM system is
 	called the <em>trunk</em>, but this is not a technical requirement, it is a convention.
-	<p>In Subversion, tagging and branching is a quite efficient mechanism, which may help you in
-	your day-to-day work.
+	<blockquote>
+		Unlike CVS (which supports tags/versions and branches as a direct mechanism) the support for
+		branches and tags are a "by-product" of the Subversion repository model, where copying is cheap
+		and where the addressing of specific resources is simplified. The <em>usual</em> Subversion
+		repository setup groups the repository into tree areas:
+		<ul>
+			<li><tt>trunk</tt> - the main line of development, the leading edge, where developers
+				usually commit their regular changes.</li>
+			<li><tt>tags</tt> - a collection of snapshots of the trunk (or a branch) at a
+				user-defined point in time, for instance release day.</li>
+			<li><tt>branches</tt> - active variations of the project compared to the trunk (or even
+				another branch). This is useful when working out a (big) change that needs to be
+				coordinated in a team or when using a single working-copy for the work with the
+				changeproject is not feasible.</li>
+			</li>
+		</ul>While this convention roughly matches the equivalent CVS constructs used for tagging (versioning)
+		and branching, the interpretation is entirely up to you (and your team), and the process of defining and
+		setting up your repository should take this into account.
+	</blockquote>
+	<p>Assuming that you've set up your repository in the conventional manner, it's easier to discuss tagging, branching
+	and merging.
 	
 	<h2>Tagging</h2>
 	<p>Assuming that most of the work in a project is done in the 'trunk' of the repository,
@@ -30,6 +49,9 @@
 	<p>To compare: In the Subversion command line, this is done simply by copying the repository location
 	(like <tt>http://svn-server/bigproj/trunk/</tt>) on to a new, different location which could
 		(like <tt>http://svn-server/bigproj/tags/client-release-0.99/</tt>) using <tt>svn cp</tt>.
+	<p>Using Subclipse, you have this functionaliy available in <a href="../reference/branch-tag.html">Branch/Tag...</a>
+	found in the Team menu.</p>
+	
 	<p>By convention, you never commit anything to a tag repository locations, they merely exist pinpoint
 	a specific repository content. There is nothing which stops you from doing this (although Subclipse
 	will warn you), it's just a convention. If you need to make a copy and work in a different direction,
@@ -37,6 +59,7 @@
 			 
 	<h2>Branching</h2>
 	<p>TODO - How to make a branch. Hint: it's the same as making a tag.
+	Remember the "WC->URL" trick.
 
 	<h2>Merging changes</h2>
 	<p>TODO - How to copy the changes from one or more revisions from the trunk to a branch.
@@ -46,10 +69,10 @@
 
 	<hr>
 	<h3>Reference:</h3>
-	<p><a href="../reference/branch-tag.html">Team > Branch/Tag</a></p>
-	<p><a href="../reference/switch.html">Team > Switch</a></p>
-	<p><a href="../reference/merge.html">Team > Merge</a></p>
-	<p><a href="../reference/commit.html">Team > Commit</a></p>
+	<p><a href="../reference/branch-tag.html">Team > Branch/Tag...</a></p>
+	<p><a href="../reference/switch.html">Team > Switch...</a></p>
+	<p><a href="../reference/merge.html">Team > Merge...</a></p>
+	<p><a href="../reference/commit.html">Team > Commit...</a></p>
 	<p><a href="../reference/edit-conflicts.html">Team > Edit conflicts</a></p>
 	<p><a href="../reference/mark-resolved.html">Team > Mark Resolved</a></p>
 		
