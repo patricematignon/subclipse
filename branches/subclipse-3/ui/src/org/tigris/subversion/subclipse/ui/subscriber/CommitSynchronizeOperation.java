@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.tigris.subversion.subclipse.ui.actions;
+package org.tigris.subversion.subclipse.ui.subscriber;
 
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.core.resources.IResource;
@@ -21,6 +21,7 @@ import org.eclipse.team.core.synchronize.SyncInfoSet;
 
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.tigris.subversion.subclipse.core.SVNTeamProvider;
+import org.tigris.subversion.subclipse.ui.actions.SVNSynchronizeOperation;
 
 /**
  * Sync view operation for putting file system resources

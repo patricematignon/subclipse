@@ -1,4 +1,4 @@
-package org.tigris.subversion.subclipse.ui.actions;
+package org.tigris.subversion.subclipse.ui.subscriber;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -23,10 +23,10 @@ import org.eclipse.team.core.variants.ThreeWaySynchronizer;
 import org.tigris.subversion.subclipse.core.ISVNRemoteResource;
 import org.tigris.subversion.subclipse.core.Policy;
 import org.tigris.subversion.subclipse.core.SVNException;
-import org.tigris.subversion.subclipse.core.SVNSubscriber;
 import org.tigris.subversion.subclipse.core.SVNTeamProvider;
 import org.tigris.subversion.subclipse.core.resources.RemoteFile;
 import org.tigris.subversion.subclipse.core.resources.RemoteFolder;
+import org.tigris.subversion.subclipse.core.sync.notused.SVNSubscriber;
 
 /**
  * @author mml

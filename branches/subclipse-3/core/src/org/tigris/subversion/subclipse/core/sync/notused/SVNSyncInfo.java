@@ -7,7 +7,7 @@
  *
  * All Rights are Reserved by the various authors.
  *******************************************************************************/
-package org.tigris.subversion.subclipse.core.sync;
+package org.tigris.subversion.subclipse.core.sync.notused;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.team.core.synchronize.SyncInfo;

@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.tigris.subversion.subclipse.core;
+package org.tigris.subversion.subclipse.core.sync.notused;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,9 +24,9 @@ import org.eclipse.team.core.variants.IResourceVariant;
 import org.eclipse.team.core.variants.ThreeWayRemoteTree;
 import org.eclipse.team.core.variants.ThreeWaySubscriber;
 import org.eclipse.team.core.variants.ThreeWaySynchronizer;
-import org.tigris.subversion.subclipse.core.sync.SVNRemoteTree;
+import org.tigris.subversion.subclipse.core.SVNProviderPlugin;
+import org.tigris.subversion.subclipse.core.SVNTeamProvider;
 import org.tigris.subversion.subclipse.core.sync.SVNRevisionComparator;
-import org.tigris.subversion.subclipse.core.sync.SVNSyncInfo;
 
 /**
  * The subscriber for svn.

@@ -27,8 +27,6 @@ import org.eclipse.team.ui.synchronize.ISynchronizeScope;
 import org.eclipse.team.ui.synchronize.SubscriberParticipant;
 import org.eclipse.team.ui.synchronize.SynchronizePageActionGroup;
 import org.tigris.subversion.subclipse.core.sync.SVNWorkspaceSubscriber;
-import org.tigris.subversion.subclipse.ui.actions.CommitSynchronizeAction;
-import org.tigris.subversion.subclipse.ui.actions.UpdateSynchronizeAction;
 
 
 /**
