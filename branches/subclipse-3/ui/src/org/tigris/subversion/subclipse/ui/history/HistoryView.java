@@ -825,7 +825,7 @@ public class HistoryView extends ViewPart implements IResourceStateChangeListene
     public void resourceSyncInfoChanged(IResource[] changedResources) {
         for (int i = 0; i < changedResources.length; i++) {
             IResource changedResource = changedResources[i];
-            if( resource.equals( changedResource ) ) {
+            if( changedResource.equals( resource ) ) {
 				resourceChanged();
             }
         }
