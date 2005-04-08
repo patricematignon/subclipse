@@ -24,6 +24,7 @@ import org.tigris.subversion.svnclientadapter.ISVNLogMessage;
 import org.tigris.subversion.svnclientadapter.ISVNLogMessageChangePath;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
+import org.tigris.subversion.svnclientadapter.SVNUrl;
 
 /**
  * represent an entry for a SVN file that results
@@ -107,7 +108,10 @@ public class LogEntry extends PlatformObject implements ILogEntry {
     	if (SVNProviderPlugin.getPlugin().getSVNClientManager().isFetchChangePathOnDemand()) {
     	try {
     		ISVNClientAdapter client = resource.getRepository().getSVNClient();
-    		ISVNLogMessage[] tmpMessage = client.getLogMessages(resource.getUrl(), getRevision(), getRevision(), true);
+    		SVNUrl url = resource.getRepository().getRepositoryRoot();
+    		if (url == null)
+    		    url = resource.getRepository().getUrl();
+    		ISVNLogMessage[] tmpMessage = client.getLogMessages(url, getRevision(), getRevision(), true);
     		changePaths = tmpMessage[0].getChangedPaths();
 		} catch (SVNException e) {
 			e.printStackTrace();
