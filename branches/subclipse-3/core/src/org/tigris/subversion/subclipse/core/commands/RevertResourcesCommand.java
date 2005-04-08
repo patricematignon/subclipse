@@ -31,7 +31,7 @@ public class RevertResourcesCommand implements ISVNCommand {
             OperationManager.getInstance().beginOperation(svnClient);
             
             for (int i = 0; i < resources.length; i++) {
-                svnClient.revert(resources[i].getLocation().toFile(), !(resources[i].getType() == IResource.FILE));
+                svnClient.revert(resources[i].getLocation().toFile(), false);
                 monitor.worked(100);
             }
         } catch (SVNClientException e) {
