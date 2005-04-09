@@ -256,7 +256,7 @@
          </action>
          <action
                label="%ShowAnnotationAction.label"
-               icon="icons/full/ctool16/annotate.gif"
+               icon="icons/full/tortoise/blame.gif"
                helpContextId="org.tigris.subversion.subclipse.ui.get_annotate_action_context"
                tooltip="%ShowAnnotationAction.tooltip"
                class="org.tigris.subversion.subclipse.ui.actions.ShowAnnotationAction"
