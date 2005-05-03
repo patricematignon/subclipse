@@ -73,7 +73,7 @@ class CmdLineException extends Exception {
 	}
 
 	CmdLineException(Throwable cause) {
-		super(cause);
+		super(cause.toString());
 	}
 
 	/*

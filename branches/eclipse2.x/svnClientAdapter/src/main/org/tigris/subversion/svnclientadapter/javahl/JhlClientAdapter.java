@@ -65,6 +65,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
 
+import org.apache.commons.lang.SystemUtils;
 import org.tigris.subversion.javahl.ClientException;
 import org.tigris.subversion.javahl.PromptUserPassword;
 import org.tigris.subversion.javahl.PropertyData;
@@ -101,6 +102,9 @@ public class JhlClientAdapter implements ISVNClientAdapter {
     private JhlNotificationHandler notificationHandler;
     private PromptUserPassword promptUserPasswordHandler;
     
+	private static boolean availabilityCached = false;
+	private static boolean available;
+    
 
     public JhlClientAdapter() {
         svnClient = new SVNClientSynchronized();
@@ -114,25 +118,67 @@ public class JhlClientAdapter implements ISVNClientAdapter {
      * @return
      */
     public static boolean isAvailable() {
-        try {
-            // if library is already loaded, it will not be reloaded
-
-        	//workaround to solve Subclipse ISSUE #83
-        	String os = System.getProperty("osgi.os");
-			if( "win32".equals(os) ) {
-				System.loadLibrary("libeay32");
-				System.loadLibrary("libdb42");
-				System.loadLibrary("ssleay32");
+		if (!availabilityCached) {
+				// if library is already loaded, it will not be reloaded
+	
+				//workaround to solve Subclipse ISSUE #83
+				// we will ignore these exceptions to handle scenarios where
+				// javaHL was built diffently.  Ultimately, if javaHL fails to load
+				// because of a problem in one of these libraries the proper behavior
+				// will still occur -- meaning JavaHL adapter is disabled.
+	        try {
+	
+	        	//workaround to solve Subclipse ISSUE #83
+				if(SystemUtils.IS_OS_WINDOWS) {
+					try {
+						System.loadLibrary("libapr");
+					} catch (Exception e) {
+					} catch (UnsatisfiedLinkError e) {
+					}
+					try {
+						System.loadLibrary("libapriconv");
+					} catch (Exception e) {
+					} catch (UnsatisfiedLinkError e) {
+					}
+					try {
+						System.loadLibrary("libeay32");
+					} catch (Exception e) {
+					} catch (UnsatisfiedLinkError e) {
+					}
+					try {
+						System.loadLibrary("libdb42");
+					} catch (Exception e) {
+					} catch (UnsatisfiedLinkError e) {
+					}
+					try {
+						System.loadLibrary("ssleay32");
+					} catch (Exception e) {
+					} catch (UnsatisfiedLinkError e) {
+					}
+					try {
+						System.loadLibrary("libaprutil");
+					} catch (Exception e) {
+					} catch (UnsatisfiedLinkError e) {
+					}
+					try {
+						System.loadLibrary("intl");
+					} catch (Exception e) {
+					} catch (UnsatisfiedLinkError e) {
+					}
+				}
+	        	//workaround to solve Subclipse ISSUE #83
+	
+	        	System.loadLibrary("libsvnjavahl-1");
+				available = true;
+			} catch (Exception e) {
+				available = false;
+			} catch (UnsatisfiedLinkError e) {
+				available = false;
+			} finally {
+				availabilityCached = true;
 			}
-        	//workaround to solve Subclipse ISSUE #83
-
-        	System.loadLibrary("svnjavahl");
-            return true;
-        } catch (Exception e) {
-            return false;
-        } catch (UnsatisfiedLinkError e) {
-            return false;
-        }
+		}
+		return available;
     }
 
 	/**
@@ -316,7 +362,10 @@ public class JhlClientAdapter implements ISVNClientAdapter {
             notificationHandler.logCommandLine(commandLine);
 			notificationHandler.setBaseDir(SVNBaseDir.getBaseDir(paths));
 
-            return svnClient.commit(files, message, recurse);
+			long newRev = svnClient.commit(files, message, recurse);
+			if (newRev > 0)
+				notificationHandler.logCompleted("Committed revision " + newRev + ".");
+			return newRev;
         } catch (ClientException e) {
             notificationHandler.logException(e);
             throw new SVNClientException(e);

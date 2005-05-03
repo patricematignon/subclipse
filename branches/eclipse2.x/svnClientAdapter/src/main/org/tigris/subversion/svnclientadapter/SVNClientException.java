@@ -76,19 +76,12 @@ public class SVNClientException extends Exception {
 		super(message);
 	}
 
-	/**
-	 * @param message
-	 * @param cause
-	 */
-	public SVNClientException(String message, Throwable cause) {
-		super(message, cause);
-	}
 
 	/**
 	 * @param cause
 	 */
 	public SVNClientException(Throwable cause) {
-		super(cause);
+		super(cause.toString());
 	}
 
 	/*

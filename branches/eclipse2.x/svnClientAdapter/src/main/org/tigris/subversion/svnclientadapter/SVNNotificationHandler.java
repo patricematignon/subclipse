@@ -151,11 +151,7 @@ public abstract class SVNNotificationHandler {
      * To call when a method of ClientAdapter throw an exception
      */        
     public void logException(Exception clientException) {
-        Throwable e = clientException;
-        while (e != null) {
-            logError(e.getMessage());
-            e = e.getCause();                
-        }
+		logError(clientException.getMessage());
     }
     
     /**

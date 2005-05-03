@@ -83,9 +83,9 @@ public class JhlConverter {
             case SVNRevision.Kind.head : return Revision.HEAD;
             case SVNRevision.Kind.number : return new Revision.Number(((SVNRevision.Number)svnRevision).getNumber());
             case SVNRevision.Kind.previous : return Revision.PREVIOUS;
-            case SVNRevision.Kind.unspecified : return new Revision(Revision.Kind.unspecified);
+            case SVNRevision.Kind.unspecified : return Revision.START;
             case SVNRevision.Kind.working : return Revision.WORKING;
-            default: return new Revision(Revision.Kind.unspecified); // should never go here
+            default: return Revision.START; // should never go here
         }
     }
 

@@ -56,6 +56,7 @@ package org.tigris.subversion.svnclientadapter;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.StringTokenizer;
 
 
 public class StringUtils {
@@ -82,26 +83,81 @@ public class StringUtils {
 		}
 		return (String[])list.toArray(new String[0]);
 	}
+	// Splitting
+	//--------------------------------------------------------------------------
+    
+	/**
+	 * Splits the provided text into a list, using whitespace as the separator.
+	 * The separator is not included in the returned String array.
+	 *
+	 * @param str  the string to parse
+	 * @return an array of parsed Strings 
+	 */
+	public static String[] split(String str) {
+		return split(str, null, -1);
+	}
 
 	/**
-	 * split using a string separator
-	 * @param str
-	 * @param separator
-	 * @return
+	 * @see #split(String, String, int)
 	 */
-	static public String[] split(String str, String separator) {
-		List list = new LinkedList();
-		StringBuffer sb = new StringBuffer(str);
-		int pos;
-		
-		while ((pos = sb.indexOf(separator)) != -1) {
-			list.add(sb.substring(0,pos));
-			sb.delete(0,pos+separator.length());
+	public static String[] split(String text, String separator) {
+		return split(text, separator, -1);
+	}
+
+	/**
+	 * Splits the provided text into a list, based on a given separator.
+	 * The separator is not included in the returned String array.
+	 * The maximum number of splits to perfom can be controlled.
+	 * A null separator will cause parsing to be on whitespace.
+	 *
+	 * <p>This is useful for quickly splitting a string directly into
+	 * an array of tokens, instead of an enumeration of tokens (as
+	 * <code>StringTokenizer</code> does).
+	 *
+	 * @param str The string to parse.
+	 * @param separator Characters used as the delimiters. If
+	 * <code>null</code>, splits on whitespace.
+	 * @param max The maximum number of elements to include in the
+	 * list.  A zero or negative value implies no limit.
+	 * @return an array of parsed Strings 
+	 */
+	public static String[] split(String str, String separator, int max) {
+		StringTokenizer tok = null;
+		if (separator == null) {
+			// Null separator means we're using StringTokenizer's default
+			// delimiter, which comprises all whitespace characters.
+			tok = new StringTokenizer(str);
+		} else {
+			tok = new StringTokenizer(str, separator);
 		}
-		if (sb.length() > 0) {
-			list.add(sb.toString());
+
+		int listSize = tok.countTokens();
+		if (max > 0 && listSize > max) {
+			listSize = max;
 		}
-		return (String[])list.toArray(new String[0]);
+
+		String[] list = new String[listSize];
+		int i = 0;
+		while (tok.hasMoreTokens()) {
+			if (max > 0 && i == listSize - 1) {
+				// In the situation where we hit the max yet have
+				// tokens left over in our input, the last list
+				// element gets all remaining text.
+				StringBuffer buf = new StringBuffer((int) 1.2 * str.length() * (listSize - i) / listSize);
+				while (tok.hasMoreTokens()) {
+					buf.append(tok.nextToken());
+					if (tok.hasMoreTokens()) {
+						buf.append(separator);
+					}
+				}
+				list[i] = buf.toString();
+				break;
+			} else {
+				list[i] = tok.nextToken();
+			}
+			i++;
+		}
+		return list;
 	}
 
 }
