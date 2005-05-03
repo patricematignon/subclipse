@@ -67,7 +67,7 @@ public class SVNAdapterFactory implements IAdapterFactory {
 		}
 		cachedPropertyObject = adaptableObject;
 		if (adaptableObject instanceof ISVNRemoteResource) {
-			cachedPropertyValue = new SVNRemoteResourcePropertySource((ISVNRemoteFile)adaptableObject);
+			cachedPropertyValue = new SVNRemoteResourcePropertySource((ISVNRemoteResource)adaptableObject);
 //		} else if (adaptableObject instanceof ISVNRepositoryLocation) {
 //			cachedPropertyValue = new SVNRepositoryLocationPropertySource((ISVNRepositoryLocation)adaptableObject);
 //		}  else if (adaptableObject instanceof RepositoryRoot) {

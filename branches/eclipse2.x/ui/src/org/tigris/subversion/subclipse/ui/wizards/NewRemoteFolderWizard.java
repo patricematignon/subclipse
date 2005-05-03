@@ -79,7 +79,7 @@ public class NewRemoteFolderWizard extends Wizard {
         } catch (InterruptedException e) {
             // operation canceled
         } catch (InvocationTargetException e) {
-            SVNUIPlugin.openError(getContainer().getShell(), Policy.bind("exception"), null, e.getCause(), SVNUIPlugin.PERFORM_SYNC_EXEC); //$NON-NLS-1$
+            SVNUIPlugin.openError(getContainer().getShell(), Policy.bind("exception"), null, e.getTargetException(), SVNUIPlugin.PERFORM_SYNC_EXEC); //$NON-NLS-1$
             return false;
         }
 	   return true;
