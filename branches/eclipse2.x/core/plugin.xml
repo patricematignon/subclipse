@@ -2,7 +2,7 @@
 <plugin
    id="org.tigris.subversion.subclipse.core"
    name="%pluginName"
-   version="0.9.3"
+   version="0.9.3.3"
    provider-name="%providerName"
    class="org.tigris.subversion.subclipse.core.SVNProviderPlugin">
 
@@ -14,6 +14,9 @@
          <export name="*"/>
       </library>
       <library name="svnjavahl.jar">
+         <export name="*"/>
+      </library>
+      <library name="commons-lang-2.0.jar">
          <export name="*"/>
       </library>
    </runtime>
