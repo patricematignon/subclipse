@@ -229,7 +229,6 @@ public class JhlClientAdapter extends AbstractClientAdapter {
         svnClient.setPrompt(prompt);        
     }
 
-
     private static String fileToSVNPath(File file, boolean canonical) {
     	// SVN need paths with '/' separators
     	if (canonical) {
@@ -1666,6 +1665,28 @@ public class JhlClientAdapter extends AbstractClientAdapter {
 	        this.setPromptUserPassword(prompt);
         }
     }
+
+    private void notImplementedYet(String command) throws SVNClientException {
+        throw new SVNClientException("Not implemented yet : " + command);
+    }
+
+    /* (non-Javadoc)
+     * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#lock(SVNUrl[], java.lang.String, boolean)
+     */
+    public void lock(SVNUrl[] uris, String comment, boolean force)
+            throws SVNClientException {
+        notImplementedYet("lock (of URI)");
+    }
+
+    /* (non-Javadoc)
+     * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#unlock(SVNUrl[], boolean)
+     */
+    public void unlock(SVNUrl[] uris, boolean force)
+        throws SVNClientException {
+        notImplementedYet("unlock (of URI)");
+    
+    }
+
     /* (non-Javadoc)
      * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#lock(java.lang.String[], java.lang.String, boolean)
      */
@@ -1674,15 +1695,16 @@ public class JhlClientAdapter extends AbstractClientAdapter {
         try {
             notificationHandler.setCommand(ISVNNotifyListener.Command.LOCK);
             String[] files = new String[paths.length];
-            String commandLine = "lock -m \""+comment+"\"";
+            StringBuffer commandLine = new StringBuffer("lock -m \"")
+                .append(comment).append('"');
             if (force)
-                commandLine+=" --force";
+                commandLine.append(" --force");
 
             for (int i = 0; i < paths.length; i++) {
                 files[i] = fileToSVNPath((File) paths[i], false);
-                commandLine+=" "+files[i].toString();
+                commandLine.append(' ').append(files[i]);
             }
-            notificationHandler.logCommandLine(commandLine);
+            notificationHandler.logCommandLine(commandLine.toString());
 			notificationHandler.setBaseDir(SVNBaseDir.getBaseDir(paths));
 
             svnClient.lock(files, comment, force);
@@ -1712,15 +1734,15 @@ public class JhlClientAdapter extends AbstractClientAdapter {
         try {
             notificationHandler.setCommand(ISVNNotifyListener.Command.LOCK);
             String[] files = new String[paths.length];
-            String commandLine = "unlock ";
+            StringBuffer commandLine = new StringBuffer("unlock ");
             if (force)
-                commandLine+=" --force";
+                commandLine.append(" --force");
     
             for (int i = 0; i < paths.length; i++) {
                 files[i] = fileToSVNPath((File) paths[i], false);
-                commandLine+=" "+files[i].toString();
+                commandLine.append(' ').append(files[i]);
             }
-            notificationHandler.logCommandLine(commandLine);
+            notificationHandler.logCommandLine(commandLine.toString());
     		notificationHandler.setBaseDir(SVNBaseDir.getBaseDir(paths));
     
             svnClient.unlock(files, force);

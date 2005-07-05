@@ -859,20 +859,40 @@ public class JavaSvnClientAdapter extends AbstractClientAdapter {
         // Default is to do nothing. If JavaSVN has a way to do callbacks
         // for authentication, it could be added here.
     }
+
     /* (non-Javadoc)
      * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#lock(java.io.File[], java.lang.String, boolean)
      */
     public void lock(File[] paths, String comment, boolean force)
             throws SVNClientException {
-        notImplementedYet("lock");
+        notImplementedYet("lock (of path)");
 
     }
+
+    /* (non-Javadoc)
+     * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#lock(SVNUrl[], java.lang.String, boolean)
+     */
+    public void lock(SVNUrl[] uris, String comment, boolean force)
+            throws SVNClientException {
+        notImplementedYet("lock (of URI)");
+
+    }
+
     /* (non-Javadoc)
      * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#unlock(java.io.File[], boolean)
      */
     public void unlock(File[] paths, boolean force) throws SVNClientException {
-        notImplementedYet("unlock");
+        notImplementedYet("unlock (of path)");
     }
+
+    /* (non-Javadoc)
+     * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#unlock(SVNUrl[], boolean)
+     */
+    public void unlock(SVNUrl[] uris, boolean force)
+        throws SVNClientException {
+        notImplementedYet("unlock (of URI)");
+    }
+
     /* (non-Javadoc)
      * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#commit(java.io.File[], java.lang.String, boolean, boolean)
      */

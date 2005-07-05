@@ -1153,7 +1153,56 @@ public class CmdLineClientAdapter extends AbstractClientAdapter {
 	}
     
 	/* (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#lock(java.lang.String[], java.lang.String, boolean)
+     * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#lock(SVNUrl[], java.lang.String, boolean)
+     */
+    public void lock(SVNUrl[] urls, String comment, boolean force)
+            throws SVNClientException {
+		String[] files = new String[urls.length];
+		for (int i = 0; i < urls.length; i++) {
+			files[i] = toString(urls[i]);
+		}
+		try {
+            // ### Unsure how to handle notification system on URLs.
+			//notificationHandler.setBaseDir(SVNUrlUtils.getCommonRootUrl(urls));
+            _cmd.lock(files, comment, force);
+        } catch (CmdLineException e) {
+        	throw SVNClientException.wrapException(e);
+        }
+        finally {
+            /*
+            for (int i = 0; i < files.length; i++) {
+                notificationHandler.notifyListenersOfChange(files[i]);
+            }
+            */
+        }
+    }
+
+    /* (non-Javadoc)
+     * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#unlock(SVNUrl[], boolean)
+     */
+    public void unlock(SVNUrl[] urls, boolean force) throws SVNClientException {
+		String[] files = new String[urls.length];
+		for (int i = 0; i < urls.length; i++) {
+			files[i] = toString(urls[i]);
+		}
+		try {
+            // ### Unsure how to handle notification system on URLs.
+			//notificationHandler.setBaseDir(SVNBaseDir.getCommonRootUrl(urls));
+            _cmd.unlock(files, force);
+        } catch (CmdLineException e) {
+        	throw SVNClientException.wrapException(e);
+        }
+        finally {
+            /*
+            for (int i = 0; i < files.length; i++) {
+                notificationHandler.notifyListenersOfChange(files[i]);
+            }
+            */
+        }
+   }
+    
+	/* (non-Javadoc)
+     * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#lock(java.io.File[], java.lang.String, boolean)
      */
     public void lock(File[] paths, String comment, boolean force)
             throws SVNClientException {
