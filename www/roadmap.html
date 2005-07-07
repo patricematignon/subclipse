@@ -1,0 +1,157 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html>
+<head>
+  <meta http-equiv="CONTENT-TYPE" content="text/html; charset=us-ascii">
+  <title>Subclipse Roadmap</title>
+  <link rel="stylesheet" href="styles_html.css" type="text/css">
+</head>
+
+<body>
+  
+
+<h3>Roadmap</h3>
+
+<p>
+Here is a list of to-do items :
+</p>
+
+<div class="table">
+<table>
+<thead>
+	<tr>
+		<th>Item</th>
+		<th>Developper(s)</th>
+		<th>Status</th>
+		<th>Version</th>
+	</tr>
+</thead>
+<tbody>
+	<tr>
+		<td>Possibility to use javasvn instead of javahl interface</td>
+		<td>cchab</td>
+		<td>Started</td>
+		<td>1.0</td>
+	</tr>
+	<tr>
+		<td>Synchronize with repository view</td>
+		<td>markphip</td>
+		<td>Started ~ 85% Done</td>
+		<td>1.0</td>
+	</tr>
+	<tr>
+		<td>Add some new commands :
+			<ul>
+				<li>Merge</li>
+				<LI>Branch/Tag</LI>
+				<li>Clean up</li>
+				<li>Switch</li>
+			</ul>
+		</td>
+		<td>markphip</td>
+		<td>done</td>
+		<td>1.0</td>
+	</tr>
+	<tr>
+		<td>make creating branches and tags a little more obvious</td>
+		<td>markphip</td>
+		<td>done</td>
+		<td>1.0</td>
+	</tr>
+	<tr>
+		<td>Improve svn+ssh support (accept digital certificates ...) </td>
+		<td>markphip</td>
+		<td>done</td>
+		<td>1.0</td>
+	</tr>
+	<tr>
+		<td>Add a preference to define an external program for merge. 
+		On Windows, users could use Tortoise Merge, on Linux there are tools like Meld that can do the job.
+		An Eclipse-based solution would also be welcome
+		</td>
+		<td>cchab</td>
+		<td>done</td>
+		<td>1.0</td>
+	</tr>
+	<tr>
+		<td>Improve properties management : 
+		show all known properties in a drop-down in the Add dialog.  
+		For example, the properties commonly used by Subversion, and also the ones used to implement bug tracking as well as control the log messages in the commit dialog.
+		</td>
+		<td>markphip</td>
+		<td>done</td>
+		<td>1.0</td>
+	</tr>
+	<tr>
+		<td>Merge support
+		</td>
+		<td>markphip</td>
+		<td>done</td>
+		<td>1.0</td>
+	</tr>
+	<tr>
+		<td>Provide some fresh icons for some of the views and supply icons for the menu actions. 
+		<p><i>
+		We could just use the icons from Tortoise with proper credit being given. <br>Or:<br>
+		We could use the ecliplse 3.0 cvs images to make the subclipse icons to be consistent with the eclipse ui.
+		</i></p>
+		</td>
+		<td>markphip</td>
+		<td>done</td>
+		<td>>=1.0</td>
+	</tr>
+	<tr>
+		<td>commit dialog should show all of what will be committed, including adds/deletes and property changes</td>
+		<td>markphip</td>
+		<td>done</td>
+		<td>>=1.0</td>
+	</tr>
+	<tr>
+		<td>Integration with bug tracking tools as described here: http://svn.collab.net/repos/tortoisesvn/trunk/doc/issuetrackers.txt</td>
+		<td>markphip</td>
+		<td>done</td>
+		<td>>=1.0</td>
+	</tr>
+	<tr>
+		<td>Improve of commit dialog including : 
+				<ul>
+					<li>Ability to define a minimum commit message length.</li>
+					<li>Ability to show a line-width marker.  Some projects do not want any line of a commit message to be more than 80 characters.  This is a guide to help with that.</li>
+					<li>Message templates.  The ability to paste in a standard template for messages.</li>
+				</ul>
+		</td>
+		<td>markphip</td>
+		<td>done</td>
+		<td>>=1.0</td>
+	</tr>
+	<tr>
+		<td>Use job apis to execute commands (operations) in the background by locking only the affected resources.
+			<p><i>A start has been made with the update action that uses the TeamOperation API. It locks the project that is being updated and
+                 allows the user to work on other projects. All lengthy subclipse actions should be backgroundable. 		
+			</i></p>
+		</td>
+		<td>pkorros, markphip, brockj</td>
+		<td>done</td>
+		<td>>=1.0</td>		
+	</tr>
+	<tr>
+		<td>
+			Handling of svn:external.
+			It would be nice to
+			<ul>
+				 <li>see when a directory is due to an svn:external</li>
+				 <li>add an external by browsing the repository and then do an svn update to  get it checked out</li>
+				 <li>see externals in the repository browser (as links, or something)</li>
+		</td>
+		<td>?</td>
+		<td>none</td>
+		<td>>=1.0</td>
+	</tr>
+</tbody>	
+</table>
+</div>
+
+
+
+</body>
+</html>

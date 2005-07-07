@@ -1,0 +1,69 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD>
+	<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=windows-1252">
+	<TITLE></TITLE>
+	<META NAME="GENERATOR" CONTENT="OpenOffice.org 1.1.0  (Win32)">
+	<META NAME="CREATED" CONTENT="20040218;22084068">
+	<META NAME="CHANGED" CONTENT="20040614;23401040">
+	<STYLE>
+	<!--
+		@page { size: 21cm 29.7cm }
+	-->
+	</STYLE>
+</HEAD>
+<BODY LANG="en-US" DIR="LTR">
+<P><A HREF="index.html">Subclipse</A> | <A HREF="svnant.html">SvnAnt</A> |
+<A HREF="">SvnClientAdapter</A> 
+</P>
+<P>SvnClientAdapter is a high level java API for subversion. 
+</P>
+<P>SvnClientAdapter can use either</P>
+<UL>
+	<LI><P>javahl interface (uses JNI) : the faster approach</P>
+	<LI><P> command line interface</P>
+</UL>
+<P><BR><BR>
+</P>
+<H3>Why should I use SvnClientAdapter instead of javahl ?</H3>
+<P>SvnClientAdapter is a higher level API (which uses javahl ...).
+That's why svnClientAdapter is easier to use in some cases.<BR>For
+example, you can use ISVNClientAdapter <FONT SIZE=2><FONT FACE="Courier New"><FONT COLOR="#000000">addToIgnoredPatterns</FONT></FONT></FONT>
+method to add a pattern of files to ignore to a directory.</P>
+<P STYLE="margin-bottom: 0cm"><FONT FACE="Courier New"><FONT SIZE=2><B><FONT COLOR="#7f0055">public</FONT></B>
+<B><FONT COLOR="#7f0055">abstract</FONT></B> <B><FONT COLOR="#7f0055">void</FONT></B>
+<FONT COLOR="#000000">addToIgnoredPatterns(File</FONT> <FONT COLOR="#000000">path,</FONT>
+<FONT COLOR="#000000">String</FONT> <FONT COLOR="#000000">pattern)</FONT></FONT></FONT></P>
+<P STYLE="margin-bottom: 0cm"><FONT SIZE=2><FONT FACE="Courier New">		<B><FONT COLOR="#7f0055">throws</FONT></B>
+<FONT COLOR="#000000">SVNClientException;</FONT></FONT></FONT><BR><BR>
+</P>
+<P STYLE="margin-bottom: 0cm">With javahl, it would have been
+necessary to get the svn:ignore property, parse it, verify that the
+pattern is not already set, add the pattern to the property string
+and then set the property.</P>
+<P STYLE="margin-bottom: 0cm"><BR>
+</P>
+<P STYLE="margin-bottom: 0cm">Same remarks apply for setting keywords
+substitution.</P>
+<P STYLE="margin-bottom: 0cm"><BR>
+</P>
+<H3>Documentation</H3>
+<P>Javadoc documentation is included in distributed file</P>
+<H3>Source</H3>
+<P>SvnClientAdapter source code is <STRONG>not </STRONG>hosted on
+tigris.org's CVS server. To obtain a working copy, you must use
+Subversion, not CVS</P>
+<P>You can <A HREF="http://svn.collab.net/repos/subclipse/">browse
+the latest source</A> 
+</P>
+<P>Otherwise you can check out the newest SvnClientAdapter source
+using svn: 
+</P>
+<PRE STYLE="margin-bottom: 0.5cm">   svn co http://svn.collab.net/repos/subclipse/trunk/svnClientAdapter/ svnClientAdapter</PRE><P>
+Links 
+</P>
+<UL>
+	<LI><P><A HREF="http://svn.collab.net/repos/svn/trunk/subversion/bindings/java/javahl/">javahl</A></P>
+</UL>
+</BODY>
+</HTML>
