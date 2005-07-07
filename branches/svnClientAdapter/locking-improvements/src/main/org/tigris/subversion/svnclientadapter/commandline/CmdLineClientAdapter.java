@@ -1152,54 +1152,33 @@ public class CmdLineClientAdapter extends AbstractClientAdapter {
         }
 	}
     
-	/* (non-Javadoc)
+    /* (non-Javadoc)
      * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#lock(SVNUrl[], java.lang.String, boolean)
      */
-    public void lock(SVNUrl[] urls, String comment, boolean force)
-            throws SVNClientException {
-		String[] files = new String[urls.length];
-		for (int i = 0; i < urls.length; i++) {
-			files[i] = toString(urls[i]);
-		}
-		try {
-            // ### Unsure how to handle notification system on URLs.
-			//notificationHandler.setBaseDir(SVNUrlUtils.getCommonRootUrl(urls));
-            _cmd.lock(files, comment, force);
+    public void lock(SVNUrl[] uris, String comment, boolean force)
+        throws SVNClientException {
+        // notificationHandler isn't used because we're operating on
+        // the repository (rather than the WC).
+        try {
+            _cmd.lock(uris, comment, force);
         } catch (CmdLineException e) {
-        	throw SVNClientException.wrapException(e);
-        }
-        finally {
-            /*
-            for (int i = 0; i < files.length; i++) {
-                notificationHandler.notifyListenersOfChange(files[i]);
-            }
-            */
+            throw SVNClientException.wrapException(e);
         }
     }
 
     /* (non-Javadoc)
      * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#unlock(SVNUrl[], boolean)
      */
-    public void unlock(SVNUrl[] urls, boolean force) throws SVNClientException {
-		String[] files = new String[urls.length];
-		for (int i = 0; i < urls.length; i++) {
-			files[i] = toString(urls[i]);
-		}
-		try {
-            // ### Unsure how to handle notification system on URLs.
-			//notificationHandler.setBaseDir(SVNBaseDir.getCommonRootUrl(urls));
-            _cmd.unlock(files, force);
+    public void unlock(SVNUrl[] uris, boolean force)
+        throws SVNClientException {
+        // notificationHandler isn't used because we're operating on
+        // the repository (rather than the WC).
+        try {
+            _cmd.unlock(uris, force);
         } catch (CmdLineException e) {
-        	throw SVNClientException.wrapException(e);
+            throw SVNClientException.wrapException(e);
         }
-        finally {
-            /*
-            for (int i = 0; i < files.length; i++) {
-                notificationHandler.notifyListenersOfChange(files[i]);
-            }
-            */
-        }
-   }
+    }
     
 	/* (non-Javadoc)
      * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#lock(java.io.File[], java.lang.String, boolean)
