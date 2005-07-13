@@ -105,6 +105,11 @@ Then install this update first, followed by the update to JavaSVN.<br>
  code at the end of the commit process.</li>
  <li>Fixed spelling error. (<a
   href="http://subclipse.tigris.org/issues/show_bug.cgi?id=330">330</a>)</li>
+ <li>Modified Show Annotations action to supply a peg revision of @HEAD.  This
+ allows the command to work properly when you perform it on a file that has
+ never been modified in its current location, such as when working in a new
+ branch or when a file has been moved.</li>
+ <li>Show Annotations should now work with the Command Line Adapter</li>
 </ul>
 <hr />
 <a name="0.9.31"></a>
