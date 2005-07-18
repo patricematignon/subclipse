@@ -118,6 +118,9 @@ Then install this update first, followed by the update to JavaSVN.<br>
  <li>Added workaround in svnClientAdapter for a JavaHL problem in retrieving
  the BASE revision for a newly added file. (<a
   href="http://subclipse.tigris.org/issues/show_bug.cgi?id=339">339</a>)</li>
+ <li>Added workaround for an apparent Eclipse bug in validateEdit().  Sometimes we are
+ passed resources that are not read-only.  So we simply added our own filter on the
+ array of resources that Eclipse passes us.</li>
 </ul>
 <hr />
 <a name="0.9.31"></a>
