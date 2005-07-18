@@ -121,6 +121,9 @@ Then install this update first, followed by the update to JavaSVN.<br>
  <li>Added workaround for an apparent Eclipse bug in validateEdit().  Sometimes we are
  passed resources that are not read-only.  So we simply added our own filter on the
  array of resources that Eclipse passes us.</li>
+ <li>Improved the message that is displayed when using Checkout As ... and creating a project
+ that creates more local files than just the .project file, such as a Java project. (<a
+  href="http://subclipse.tigris.org/issues/show_bug.cgi?id=237">237</a>)</li>
 </ul>
 <hr />
 <a name="0.9.31"></a>
