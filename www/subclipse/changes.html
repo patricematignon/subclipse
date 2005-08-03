@@ -51,9 +51,11 @@ the default client adapter if JavaHL is not found.
 <ul>
  <li>Support for JavaSVN as a client adapter</li>
  <li>Better progress information during commit and update</li>
- <li>Better reporting of errors when JavaHL library fails to load.  The errors are in the
- Eclipse .log file, but they are more detailed.</li>
+ <li>Better reporting of errors when JavaHL library fails to load.  The errors are shown
+ in a dialog when you attempt to select JavaHL in the preferences.</li>
  <li>Internal performance improvements</li>
+ <li>No longer log exceptions about loading client adapters, provided that at least one
+ adapter loads successfully.  This is just to reduce log clutter and confusion.</li>
 </ul>
 <hr />
 <a name="0.9.32"></a>
