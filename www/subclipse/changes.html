@@ -26,6 +26,35 @@ note that the file on the website may contain information about changes
 that have not yet been made available in a release. Generally, these changes
 will be available in the next release but it is also possible that a change
 will be pulled out due to testing problems.</p>
+<h2>IMPORTANT NOTE:</h2>
+<p>
+As of release 0.9.31, Subclipse <b>requires Subversion 1.2</b> (JavaHL or CLI) on
+the client. It <b>will not work with Subversion 1.1</b> on the client. As
+always, the JavaHL binaries for Windows are included. On other platforms,
+you should obtain the correct binaries before you install this release.</p>
+<p>
+As of release 0.9.33, Subclipse includes support for JavaSVN as a built-in
+option for client adapter.  A compatible version of JavaSVN is included with
+Subclipse and will be used as the default adapter when JavaHL is not available.</p>
+<hr />
+<a name="0.9.33"></a>
+<h4>Version 0.9.33<br>
+Not Released Yet</h4>
+<p>from: /trunk/subclipse<br>
+<a href="http://subclipse.tigris.org/svn/subclipse/tags/subclipse/0.9.33">
+http://subclipse.tigris.org/svn/subclipse/tags/subclipse/0.9.33</a></p>
+<p><b>NOTE to JavaSVN Users:</b> As of this release of Subclipse, support for
+JavaSVN is a client adapter is now included as part of Subclipse.  There is no
+need to install anything else.  Subclipse should automatically use JavaSVN as
+the default client adapter if JavaHL is not found.
+</p>
+<ul>
+ <li>Support for JavaSVN as a client adapter</li>
+ <li>Better progress information during commit and update</li>
+ <li>Better reporting of errors when JavaHL library fails to load.  The errors are in the
+ Eclipse .log file, but they are more detailed.</li>
+ <li>Internal performance improvements</li>
+</ul>
 <hr />
 <a name="0.9.32"></a>
 <h4>Version 0.9.32<br>
@@ -33,15 +62,9 @@ will be pulled out due to testing problems.</p>
 <p>from: /trunk/subclipse<br>
 <a href="http://subclipse.tigris.org/svn/subclipse/tags/subclipse/0.9.32">
 http://subclipse.tigris.org/svn/subclipse/tags/subclipse/0.9.32</a></p>
-<p><b>****** IMPORTANT NOTE ******</b><br>
-This release of Subclipse <b>requires Subversion 1.2</b> (JavaHL or CLI) on
-the client. It <b>will not work with Subversion 1.1</b> on the client. As
-always, the JavaHL binaries for Windows are included. On other platforms,
-you should obtain the correct binaries before you install this release.</p>
 <p><b>NOTE to JavaSVN Users:</b> If you want to continue to use JavaSVN you
 should wait until a corresponding update to JavaSVN has been made available.
-Then install this update first, followed by the update to JavaSVN.<br>
-<b>*******************************</b></p>
+Then install this update first, followed by the update to JavaSVN.</p>
 <ul>
  <li>Eclipse 3.1 GA supported</li>
  <li>Added an HTML changelog to the project and link to it in the online help.</li>
@@ -134,15 +157,9 @@ Then install this update first, followed by the update to JavaSVN.<br>
 <a href="http://subclipse.tigris.org/svn/subclipse/tags/subclipse/0.9.31">
 http://subclipse.tigris.org/svn/subclipse/tags/subclipse/0.9.31</a></p>
 
-<p><b>****** IMPORTANT NOTE ******</b><br>
-This release of Subclipse <b>requires Subversion 1.2</b> (JavaHL or CLI) on
-the client. It <b>will not work with Subversion 1.1</b> on the client. As
-always, the JavaHL binaries for Windows are included. On other platforms,
-you should obtain the correct binaries before you install this release.</p>
 <p><b>NOTE to JavaSVN Users:</b> If you want to continue to use JavaSVN you
 should wait until a corresponding update to JavaSVN has been made available.
-Then install this update first, followed by the update to JavaSVN.<br>
-<b>*******************************</b></p>
+Then install this update first, followed by the update to JavaSVN.</p>
 
 <p><b>Subversion 1.2 Support</b></p>
 <ul>
