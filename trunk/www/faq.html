@@ -224,6 +224,10 @@ defined.  The easiest workaround is to create a shell script that launches Eclip
 export LD_LIBRARY_PATH=/usr/local/lib:.
 ./eclipse
 </pre>
+Alternatively, you can also do something like this in your script:
+<pre>
+./eclipse -vmargs -Djava.library.path=/usr/local/lib
+</pre>
 </p>
 
 </div>
