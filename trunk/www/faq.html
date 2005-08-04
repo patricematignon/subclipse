@@ -27,6 +27,8 @@
 <ul>
 <li><a href="#why">Why does this project exist?</a></li>
 <li><a href="#version">Does Subclipse support Eclipse X.Y or Websphere Studio X.Y?</a></li> 
+<li><a href="#adapter">What is an adapter?  What is JavaHL?</a></li> 
+<li><a href="#adapter-choice">Which adapter should I use?</a></li> 
 </ul>
 
 <h4>How-to:</h4>
@@ -86,6 +88,41 @@ supported or actively developed.
 
 </div>
 
+<![CDATA[-----------------------------------------------------------]]>
+
+<div class="h3" id="adapter" title="adapter">
+<h3>What is an adapter?  What is JavaHL?</h3>
+
+<p>Unlike CVS, which does not have an official API, Subversion was designed from the
+start to be an API.  Subversion is written (in C) as a set of libraries.  Subversion then provides
+a default UI, in the form of a command line interface, that uses these libraries.  Subversion
+also provides language bindings for various programing languages so that these same libraries can
+be used in your language of choice.  JavaHL is the name of the Java language binding provided by
+the Subversion project.  JavaHL is an official part of the Subversion project, not the Subclipse project.<br><br>
+svnClientAdapter is a Java project that was developed for Subclipse.  It provides an even higher level
+of abstraction to the Subversion libraries.  It also allows for different ways of accessing Subversion
+functionality.  Historically, these two options were to use the JavaHL library or the Subversion
+command line.  Recently, a third option was added and that is to use the <a href="http://tmate.org/svn/">
+JavaSVN</a> library which is a 100% Pure Java implementation of the protocols used by Subversion.  
+This option has the advantage of not requiring any native libraries installed on the client.  Of course,
+since JavaSVN does not utilize the Subversion libraries it does not have the guaranteed compatability that
+you can expect from JavaHL or the command line adapters.  That being said, JavaSVN is tested against the same
+test suite that tests the Subversion command line, and passes those tests.<br><br>
+JavaSVN does not support the file:/// protocol and isn't likely to in the future.</p>
+
+</div>
+
+<![CDATA[-----------------------------------------------------------]]>
+
+<div class="h3" id="adapter-choice" title="adapter-choice">
+<h3>Which adapter should I use?</h3>
+
+<p>If the JavaHL library is available on your system, or easily attainable, then it is
+probably the best choice.  That being said, JavaSVN is a great option.  The command line
+adapter should only be used as a last resort.  Namely, if you cannot get JavaHL installed
+and you absolutely have to have file:// protocol support to your repository.</p>
+
+</div>
 </div>
 
 <div class="h2" id="how-to" title="how-to">
