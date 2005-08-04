@@ -1,0 +1,239 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<style type="text/css"> /* <![CDATA[ */
+  @import "tigris-branding/css/tigris.css";
+  @import "tigris-branding/css/inst.css";
+  /* ]]> */</style>
+<link rel="stylesheet" type="text/css" media="print"
+  href="tigris-branding/css/print.css"/>
+<script type="text/javascript" src="tigris-branding/scripts/tigris.js"></script>
+<title>Subclipse FAQ</title>
+</head>
+
+<body>
+<div class="app">
+
+<h1>Subclipse FAQ</h1>
+
+<![CDATA[=========================================================]]>
+
+<div class="h2"><!-- no 'id' or 'title' attribute for TOC -->
+<h2>Table of Contents</h2>
+
+<h4>General questions:</h4>
+<ul>
+<li><a href="#why">Why does this project exist?</a></li>
+<li><a href="#version">Does Subclipse support Eclipse X.Y or Websphere Studio X.Y?</a></li> 
+</ul>
+
+<h4>How-to:</h4>
+<ul>
+<li><a href="#checkout">How do I check out the Subclipse code?</a></li>
+<li><a href="#repository">How do I create a repository?  How do I
+    import data into it?</a></li> 
+<li><a href="#cvs2svn">How do I convert an existing CVS repository
+    into a Subversion repository?</a></li>
+</ul>
+
+<h4>Troubleshooting:</h4>
+<ul>
+<li><a href="#get-javahl">How do I get the JavaHL library for my operating system?</a></li>
+<li><a href="#build-javahl">How do I build JavaHL from source?</a></li>
+<li><a href="#library-path">I think I have a valid JavaHL library installed, but Subclipse
+    says it is not found.  What should I do?</a></li>
+</ul>
+
+</div>
+
+<![CDATA[=========================================================]]>
+
+<hr/>
+
+<div class="h2" id="general-questions" title="general-questions">
+<h2>General questions:</h2>
+
+<![CDATA[-----------------------------------------------------------]]>
+
+<div class="h3" id="why" title="why">
+<h3>Why does this project exist?</h3>
+
+<p>Subclipse exists to provide an outstanding user interface to Subversion from
+within the Eclipse IDE.  We aim to provide a client that is every bit as robust
+and user-friendly as the outstanding CVS client that comes with Eclipse.  That being said,
+there are a lot of major technical differences between Subversion and CVS.  Therefore, we
+try to strike a balance between providing a UI that will be familiar to experienced Eclipse
+CVS users, and one that is appropriate for the Subversion action being exposed.  In particular,
+the way that Subversion handles branches and tags is very, very different from CVS.  Consequently
+the UI for these features in Subclipse is different than the UI for the CVS client.</p>
+
+</div>
+
+<![CDATA[-----------------------------------------------------------]]>
+
+<div class="h3" id="version" title="version">
+<h3>Does Subclipse support Eclipse X.Y or Websphere Studio X.Y?</h3>
+
+<p>Subclipse should support any IDE or application that is built on the Eclipse
+framework.  The Subclipse feature has the appropriate &lt;requires&gt; tags to define
+the Eclipse features that we require.  The current version of Subclipse supports
+Eclipse 3.x.  There is an older version of Subclipse that supports Eclipse 2.x and applications
+that are based on it, such as WebSphere Studio 5.x.  That version of Subclipse is no longer
+supported or actively developed.
+</p>
+
+</div>
+
+</div>
+
+<div class="h2" id="how-to" title="how-to">
+<h2>How-to:</h2>
+
+<![CDATA[-----------------------------------------------------------]]>
+
+<div class="h3" id="checkout" title="checkout">
+<h3>How do I check out the Subclipse code?</h3>
+
+<p>The URL for the Subclipse repository is http://subclipse.tigris.org/svn/subclipse/.  If
+you have at least the Observer role in the Subclipse project, then provide your tigris.org
+username and password when prompted.  Otherwise use a value of "guest" for each.  Subclipse
+development is currently active on trunk.</p>
+
+</div>
+
+<![CDATA[-----------------------------------------------------------]]>
+
+<div class="h3" id="repository" title="repository">
+<h3>How do I create a repository?  How do I import data into it?</h3>
+
+<p>Subclipse does not provide anything that allows you to create a Subversion repository.  That
+action has to be performed outside of Eclipse.  Within Subclipse, you define a "connection" to
+an already existing repository.  Defining a connection is one of the first things you should do
+when using Subclipse.  This is done from the Subclipse Repository Exploring perspective.
+</p>
+
+<p>As for importing data, there are numerous ways it can be done, including doing it from outside
+of Eclipse.  Assuming you have an existing project in your Eclipse workspace that you want to add to
+your repository, you need to right-click on the project and do Team -&gt; Share Project.  Then follow
+the wizard.
+</p>
+
+</div>
+<div class="h3" id="cvs2svn" title="cvs2svn">
+<h3>How do I convert an existing CVS repository
+    into a Subversion repository?</h3>
+
+<p>Members of the Subversion development community created and
+maintain a tool called cvs2svn.  You can find it at <a
+href="http://cvs2svn.tigris.org/">http://cvs2svn.tigris.org/</a>.  Be
+sure to read the <a
+href="http://cvs2svn.tigris.org/cvs2svn.html">cvs2svn documentation</a>.
+
+</p>
+
+<p>If cvs2svn.py does not work for you, (e.g. your repository
+causes it to crash, or it doesn't deal with branches and tags
+quite how you would like), there are at least two other
+conversion utilities you can try.  These have different features
+(and possibly different bugs):</p>
+
+<ul>
+
+<li>One based on <a
+href="http://public.perforce.com/public/revml/index.html">VCP</a>
+written by Chia-liang Kao can be found on <a
+href="http://search.cpan.org/perldoc?VCP::Dest::svk">CPAN</a>.</li>
+
+<li>refinecvs written by Lev Serebryakov is at <a
+href="http://lev.serebryakov.spb.ru/refinecvs/"
+>http://lev.serebryakov.spb.ru/refinecvs/</a>.</li>
+
+</ul>
+
+<p>See also the <a href="http://subversion.tigris.org/project_links.html">Subversion links</a>
+page.</p>
+
+</div>
+
+</div>
+
+<div class="h2" id="troubleshooting" title="troubleshooting">
+<h2>Troubleshooting:</h2>
+<li><a href="#get-javahl">How do I get the JavaHL library for my operating system?</a></li>
+<li><a href="#build-javahl">How do I build JavaHL from source?</a></li>
+<li><a href="#library-path">I think I have a valid JavaHL library installed, but Subclipse
+    says it is not found.  What should I do?</a></li>
+
+<![CDATA[-----------------------------------------------------------]]>
+
+<div class="h3" id="get-javahl" title="get-javahl">
+<h3>How do I get the JavaHL library for my operating system?</h3>
+
+<p><b>Windows:</b>&nbsp;JavaHL is included as part of Subclipse.  You do not
+need to do anything.</p>
+
+<p><b>OS X:</b>&nbsp;We recommend that you install the Metissian Subversion package.
+This package includes JavaHL and installs everything in a way that it is recognized by Subclipse.
+Download the package at <a href="http://metissian.com/projects/macosx/subversion/">
+http://metissian.com/projects/macosx/subversion/</a>.</p>
+
+<p><b>Linux:</b>&nbsp;The answer varies by distribution and the packaging mechanism.  In general
+most distributions do NOT include the JavaHL library in their Subversion package.  In most cases,
+you can download the source package and alter the build spec to build JavaHL.</p>
+<p>There are Debian packages available for Subversion with JavaHL enabled. 
+The packages are provided by http://www.ggtools.net/.  Here is the sources.list entry:
+<pre> 
+deb http://www.ggtools.net/files/debian/unstable/ ./
+</pre>
+</p>
+<p><b>Others:</b>&nbsp;If your packaging mechanism does not include the JavaHL library, then
+you probably need to build the library from source.</p>
+
+</div>
+
+<![CDATA[-----------------------------------------------------------]]>
+
+<div class="h3" id="build-javahl" title="build-javahl">
+<h3>How do I build JavaHL from source?</h3>
+
+<p>JavaHL is part of the Subversion project.  So to begin, you probably want to download
+the latest source tarball.  See: <a href="http://subversion.tigris.org/project_packages.html">
+http://subversion.tigris.org/project_packages.html</a>.  You should refer to the Subversion instructions
+for detailed information, but on a *nix system the general procedure is this:
+<pre>
+./configure --your-other-flags=here --enable-javahl --with-jdk=$JAVA_HOME\
+     --with-jikes=$JAVA_HOME/bin/javac &&make && install install-javahl
+</pre>
+The main part to check before running the above command is "--your-other-flags". 
+You will typically at least want --enable-ssl.
+</p>
+
+</div>
+
+<![CDATA[-----------------------------------------------------------]]>
+
+<div class="h3" id="library-path" title="library-path">
+<h3>I think I have a valid JavaHL library installed, but Subclipse
+    says it is not found.  What should I do?</h3>
+
+<p>Starting with Subclipse 0.9.33 we now show the errors that occurred when loading
+the JavaHL library.  To see these errors open the Eclipse preferences and go to Team-&lt;SVN.
+Then click on JavaHL in the adapter section, the error messages should appear in a dialog.<br><br>
+On *nix systems the problem is almost always that the JavaHL library was not found in the java.library.path.
+The Sun JVM only looks in the value of LD_LIBRARY_PATH, and on many *nix systems this value is not
+defined.  The easiest workaround is to create a shell script that launches Eclipse:
+<pre>
+export LD_LIBRARY_PATH=/usr/local/lib:.
+./eclipse
+</pre>
+</p>
+
+</div>
+
+</div>
+
+</div>
+</body>
+</html>
