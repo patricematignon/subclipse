@@ -38,6 +38,9 @@
     import data into it?</a></li> 
 <li><a href="#cvs2svn">How do I convert an existing CVS repository
     into a Subversion repository?</a></li>
+<li><a href="#http-proxy">How do I configure an HTTP proxy connection?</a></li>
+<li><a href="#http-ssl">How do I specify SSL client certificates?</a></li>
+<li><a href="#svn-ssh">How do I configure an svn+ssh:// connection?</a></li>
 </ul>
 
 <h4>Troubleshooting:</h4>
@@ -192,6 +195,56 @@ href="http://lev.serebryakov.spb.ru/refinecvs/"
 <p>See also the <a href="http://subversion.tigris.org/project_links.html">Subversion links</a>
 page.</p>
 
+</div>
+
+<![CDATA[-----------------------------------------------------------]]>
+
+<div class="h3" id="http-proxy" title="http-proxy">
+<h3>How do I configure an HTTP proxy connection?</h3>
+
+<p>If you are using the JavaHL or command-line client adapter then all communication with
+your repository is performed by the Subversion libraries.  Consequently, the configuration
+is the same as what you would do for the Subversion command line.  See: <a 
+href="http://svnbook.red-bean.com/en/1.1/ch07.html#svn-ch-7-sect-1">
+http://svnbook.red-bean.com/en/1.1/ch07.html#svn-ch-7-sect-1</a> for more information.</p>
+<p>If you are using the JavaSVN command-line client adapter then see: <a
+href="http://tmate.org/svn/kb/plugin.html">http://tmate.org/svn/kb/plugin.html</a>
+for more information.</p>
+
+</div>
+
+<![CDATA[-----------------------------------------------------------]]>
+
+<div class="h3" id="http-ssl" title="http-ssl">
+<h3>How do I specify SSL client certificates?</h3>
+
+<p>If you are using the JavaHL or JavaSVN adapters, then, at least in theory, you
+should be prompted when/if you need to supply the server with a client certificate.
+Just as you are when using the command-line.  As of the writing of this FAQ entry, at least
+JavaHL has not implemented this prompting.  Consequently, you need to store your client
+certificate in the Subversion configuration area.   See: <a 
+href="http://svnbook.red-bean.com/en/1.1/ch07.html#svn-ch-7-sect-1">
+http://svnbook.red-bean.com/en/1.1/ch07.html#svn-ch-7-sect-1</a> for more information.</p>
+
+</div>
+
+<![CDATA[-----------------------------------------------------------]]>
+
+<div class="h3" id="svn-ssh" title="svn-ssg=h">
+<h3>How do I configure an svn+ssh:// connection?</h3>
+
+<p>If you are using the JavaHL or command-line client adapter then all communication with
+your repository is performed by the Subversion libraries.  Consequently, the configuration
+is the same as what you would do for the Subversion command line.  See: <a 
+href="http://svnbook.red-bean.com/en/1.1/ch07.html#svn-ch-7-sect-1">
+http://svnbook.red-bean.com/en/1.1/ch07.html#svn-ch-7-sect-1</a> for more information.  For
+Windows users, here is a great explanation of how to set this up from our mailing list
+archives: <a href="http://subclipse.tigris.org/servlets/ReadMsg?list=users&msgNo=3334">
+Configuring svn+ssh:// on Windows</a>.
+</p>
+<p>If you are using the JavaSVN command-line client adapter then see: <a
+href="http://tmate.org/svn/kb/plugin.html">http://tmate.org/svn/kb/plugin.html</a>
+for more information.</p>
 </div>
 
 </div>
