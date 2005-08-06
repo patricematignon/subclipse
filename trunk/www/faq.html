@@ -29,6 +29,7 @@
 <li><a href="#version">Does Subclipse support Eclipse X.Y or Websphere Studio X.Y?</a></li> 
 <li><a href="#adapter">What is an adapter?  What is JavaHL?</a></li> 
 <li><a href="#adapter-choice">Which adapter should I use?</a></li> 
+<li><a href="#passwords">Usernames and passwords.</a></li> 
 </ul>
 
 <h4>How-to:</h4>
@@ -126,6 +127,31 @@ adapter should only be used as a last resort.  Namely, if you cannot get JavaHL 
 and you absolutely have to have file:// protocol support to your repository.</p>
 
 </div>
+
+<![CDATA[-----------------------------------------------------------]]>
+
+<div class="h3" id="passwords" title="passwords">
+<h3>Usernames and passwords</h3>
+
+<p>When you define a repository connection to Subclipse there is an area to specify your
+username and password.  Since version 0.9.30 of Subclipse the best thing to do is always leave
+these fields empty.  The exception is if you are using the command line adapter.  Yes, we should
+specify this on the dialog!  Why should you leave them blank?  Because the JavaHL and JavaSVN
+adapters are intelligent enough to prompt you for this information when they need to.  You can also
+then allow the adapter to cache this information.  The adapters are also intelligent enough to prompt
+you when the password has changed.  Conversely, if you specify a usernamd and password within Subclipse
+then we supply that username and password to the adapter.  If the password has changed on the server,
+then the adapter will prompt you for a new one.  Now we get to the problem.  Subclipse does not know
+that this exchange took place so it has no way to update its password.  Consequently you keep getting
+prompted by the adapter for your password.</p>
+<p>If you just leave these fields blank within Subclipse, then you never have to worry about it.  If
+you do provide a username and password to Subclipse, and your password changes, you can update the
+stored values by right-clicking on the connection in the SVN Repository view and choosing the Properties
+option.
+</p>
+
+</div>
+
 </div>
 
 <div class="h2" id="how-to" title="how-to">
