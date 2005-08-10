@@ -48,6 +48,18 @@ JavaSVN is a client adapter is now included as part of Subclipse.  There is no
 need to install anything else.  Subclipse should automatically use JavaSVN as
 the default client adapter if JavaHL is not found.
 </p>
+<p>The Synchronize action takes another leap forward in correctness in this release.
+ However, in some cases this is at the sake of performance.  To make the view act correctly
+ we needed some information that Subversion is not returning in the status -u command.  So 
+ we have to follow that up with an svn info command.  This is an O(N) algorithm where N is the
+ number of incoming changes.  Depending on the speed of the connection, this can really slow
+ things down.  All is not lost, however.  JavaSVN was able to rev their API to provide all of
+ the information in the single status call.  So if you use the JavaSVN adapter you do not suffer
+ any performance boost.  Also, we are working hard to get the Subversion API in JavaHL revved
+ for Subversion 1.3.  Finally, we are also looking for other ways to approach the problem that
+ could work today.  Correctness has to come before performance, and the changes in this release
+ really get this action closer to the correct behavior.
+</p>
 <ul>
  <li>Support for JavaSVN as a client adapter</li>
  <li>Better progress information during commit and update</li>
@@ -56,6 +68,20 @@ the default client adapter if JavaHL is not found.
  <li>Internal performance improvements</li>
  <li>No longer log exceptions about loading client adapters, provided that at least one
  adapter loads successfully.  This is just to reduce log clutter and confusion.</li>
+ <li>Fixed a NPE querying getRepository() on RemoteResources. (<a
+  href="http://subclipse.tigris.org/issues/show_bug.cgi?id=360">360</a>)</li>
+ <li>Linked resources are now excluded from Synchronize view. (<a
+  href="http://subclipse.tigris.org/issues/show_bug.cgi?id=352">352</a>)</li>
+ <li>Fixed NPE in SVNUrlUtils.java#getUrlFromLocalFileName() when localFile equals
+  parentFile</li>
+ <li>Fixed NPE when doing Synchronize on a non-root element.</li>
+ <li>Refactored base resources to not inherit CachedResourceVariant.  Prior to this
+  change there were two extra copies of every file.  The on Subversion keeps, and the
+  one Eclipse keeps.  This eliminates the Eclipse copy.  This is a performance booster,
+  not to mention disk storage. (<a
+  href="http://subclipse.tigris.org/issues/show_bug.cgi?id=266">266</a>)</li>
+ <li>Improved performance of update action from Synchronize view. (<a
+  href="http://subclipse.tigris.org/issues/show_bug.cgi?id=346">346</a>)</li>
 </ul>
 <hr />
 <a name="0.9.32"></a>
