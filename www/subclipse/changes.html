@@ -85,6 +85,22 @@ the default client adapter if JavaHL is not found.
  <li>Changed default preferences.  Will only effect new users/workspaces.  Console
  options are on by default.  All icon decorators are on, all text decorators are off.
  Made url_short the default project decorator instead of url.</li>
+ <li>Several improvements to Share Project:
+ <ol>
+ <li>Replaced usage of term "module" with "folder"</li>
+ <li>On the Enter Folder Name page, we now show what the URL will be based
+   on what the user enters.  This should make it more understandable what
+   they are doing.</li>
+ <li>At the end of the process, instead of launching a Synchronize process, we
+   just open the commit dialog.  This should make it more obvious that a commit
+   is still needed.</li>
+ <li>If you try to share the project with an existing folder, we now stop you and
+   explain that you cannot do that.  Previously, we suggested that they would
+   be able to Synchronize with that location, which is not currently the case.</li>
+ <li>Related to #4, when you disconnect a project from SVN and choose to
+   remove the metadata, we now give a confirmation warning that explains that
+   they will not be able to share the project back to the same location.</li>
+ </li>
 </ul>
 <hr />
 <a name="0.9.32"></a>
