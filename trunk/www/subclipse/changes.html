@@ -112,6 +112,11 @@ the default client adapter if JavaHL is not found.
   href="http://subclipse.tigris.org/issues/show_bug.cgi?id=366">366</a>)</li>
  <li>Update action from Synchronize view updates to the specific revision shown
  in the view, as opposed to HEAD.</li>
+ <li>Checkout As... action no longer just deletes every local resource that was
+ created by the New Project wizard (such as the .classpath file).  Now it first
+ runs svn info to see if that file exists in the repository and only deletes
+ the local file if the file exists in the repository.  If the local file is not
+ deleted, the Subversion checkout will abort.</li>
 </ul>
 <hr />
 <a name="0.9.32"></a>
