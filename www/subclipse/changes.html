@@ -125,6 +125,17 @@ the default client adapter if JavaHL is not found.
  <li>Enhancements to Resource History view.  Added a view menu with toggles to show/hide
  the comment area and/or the affected paths.  When the latter is hidden, we run svn log
  without the -v option which generally is considerably faster making the view more responsive.</li>
+ <li>Fixed several problems with Compare.  Identified a problem in JavaHL when svn:eol-style is specified.
+ Until the JavaHL problem is fixed, users will still need to use the Eclipse preference to ignore
+ white space.  JavaSVN and the CLI do not have the problem.</li>
+ <li>Fixed NPE when doing revert on Project folder property change. (<a
+  href="http://subclipse.tigris.org/issues/show_bug.cgi?id=376">376</a>)</li>
+ <li>Improvements when using Label as project decorator. (<a
+  href="http://subclipse.tigris.org/issues/show_bug.cgi?id=309">309</a>)</li>
+ <li>Fixed potential NPE in decorator code. (<a
+  href="http://subclipse.tigris.org/issues/show_bug.cgi?id=291">291</a>)</li>
+ <li>Added Show Log button to the Switch dialog. (<a
+  href="http://subclipse.tigris.org/issues/show_bug.cgi?id=377">377</a>)</li>
 </ul>
 <hr />
 <a name="0.9.32"></a>
