@@ -55,6 +55,7 @@
 package org.tigris.subversion.svnant;
 
 import java.io.File;
+import java.text.ParseException;
 
 import org.apache.tools.ant.BuildException;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
@@ -119,8 +120,12 @@ public class Switch extends SvnCommand {
 	/**
 	 * @param revision The revision to set.
 	 */
-	public void setRevision(SVNRevision revision) {
-		this.revision = revision;
+	public void setRevision(String revision) {
+		try {
+			this.revision = SVNRevision.getRevision(revision);
+		} catch (ParseException e) {
+			throw new BuildException("Cannot parse revision : "+revision,e);
+		}
 	}
 	/**
 	 * @param url The url to set.
