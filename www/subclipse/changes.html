@@ -37,6 +37,26 @@ As of release 0.9.33, Subclipse includes support for JavaSVN as a built-in
 option for client adapter.  A compatible version of JavaSVN is included with
 Subclipse and will be used as the default adapter when JavaHL is not available.</p>
 <hr />
+<a name="0.9.34"></a>
+<h4>Version 0.9.34<br>
+12 Septermber 2005</h4>
+<p>from: /trunk/subclipse<br>
+<a href="http://subclipse.tigris.org/svn/subclipse/tags/subclipse/0.9.34">
+http://subclipse.tigris.org/svn/subclipse/tags/subclipse/0.9.34</a></p>
+<ul>
+ <li>Fixed major bug in update from Synchronize view. (<a
+  href="http://subclipse.tigris.org/issues/show_bug.cgi?id=390">390</a>)</li>
+ <li>The Add to Version Control operation will remove the read-only
+ attribute if it is set on the local file.  This can help people migrating
+ from another version control tool that sets the local files as read-only.</li>
+ <li>Minor updates from code review of FindBugs tool.</li>
+ <li>Added some additional trace information to help find a bug in
+ getResourceType() method that some users are experiencing.</li>
+ <li>Changed OperationManager so the progress dialogs now only catch
+ notify messages.  This was so that the update stats do not appear
+ in the dialog anymore.</li>
+</ul>
+<hr />
 <a name="0.9.33"></a>
 <h4>Version 0.9.33<br>
 26 August 2005</h4>
