@@ -39,7 +39,7 @@ Subclipse and will be used as the default adapter when JavaHL is not available.<
 <hr />
 <a name="0.9.34"></a>
 <h4>Version 0.9.34<br>
-12 Septermber 2005</h4>
+13 Septermber 2005</h4>
 <p>from: /trunk/subclipse<br>
 <a href="http://subclipse.tigris.org/svn/subclipse/tags/subclipse/0.9.34">
 http://subclipse.tigris.org/svn/subclipse/tags/subclipse/0.9.34</a></p>
@@ -55,6 +55,21 @@ http://subclipse.tigris.org/svn/subclipse/tags/subclipse/0.9.34</a></p>
  <li>Changed OperationManager so the progress dialogs now only catch
  notify messages.  This was so that the update stats do not appear
  in the dialog anymore.</li>
+ <li>Improved console output when update is performed from
+ Synchronize view.  Statistics and summaries are held off until
+ all updates have been performed.</li>
+ <li>Fixed bug in getInfo() of javaHL adapter.
+ It was throwing an exception when info was asked for resource 
+ not yet in repository (e.g. added files).</li>
+ <li>Fixed bug in cmdLine adapter's propget().
+ On Windows it was leaving additional CR character at end of the
+ property.</li>
+ <li>Reimplemented cmdLine adapter's list() command - now uses 
+ "--xml" argument which is reliable to parse.</li>
+ <li>Fixed cmdLine adapter's blame().   When both from and to 
+ revisions were passed, the from was always ignored.</li>
+ <li>removed dependency on commons-lang</li>
+ <li>updated to jakarta-regexp-1.4</li>
 </ul>
 <hr />
 <a name="0.9.33"></a>
