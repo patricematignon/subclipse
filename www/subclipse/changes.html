@@ -44,6 +44,9 @@ Not released yet</h4>
 <a href="http://subclipse.tigris.org/svn/subclipse/tags/subclipse/0.9.35">
 http://subclipse.tigris.org/svn/subclipse/tags/subclipse/0.9.35</a></p>
 <ul>
+ <li>Enhanced SSH support when using JavaSVN as adapter.  JavaSVN will prompt you
+ at runtime for things like your SSH keyfile and passphrase.  JavaSVN can optionally
+ cache your information using the Eclipse keyring.</li>
  <li>Fix for NPE when refreshing status of linked resources. (<a
   href="http://subclipse.tigris.org/issues/show_bug.cgi?id=375">375</a>)</li>
  <li>Commit/Revert now handles missing/replaced resources. (<a
@@ -56,6 +59,9 @@ http://subclipse.tigris.org/svn/subclipse/tags/subclipse/0.9.35</a></p>
  <li>Enhanced the JhlClientAdapter isAvailable() method to attempt to construct the
  JavaHL svnClient class.  This is to catch the scenario where it successfully loads
  the library but it is an incorrect version of the library.</li>
+ <li>Added a Checkout As Project Into .. action that allows you to specify a location
+ outside the normal workspace. (<a
+  href="http://subclipse.tigris.org/issues/show_bug.cgi?id=379">379</a>)</li>
 </ul>
 <hr />
 <a name="0.9.34"></a>
