@@ -49,6 +49,13 @@ http://subclipse.tigris.org/svn/subclipse/tags/subclipse/0.9.35</a></p>
  <li>Commit/Revert now handles missing/replaced resources. (<a
   href="http://subclipse.tigris.org/issues/show_bug.cgi?id=388">388</a>)</li>
  <li>Enhancements to handling of externals in Synchronize and status cache.</li>
+ <li>Fix for NPE in History view when a null comment was returned.</li>
+ <li>Modified JavaSVNClientAdapter to defer loading the JavaHL adapter until/unless
+ it needs it.  In Subclipse, this is never as it is only needed for the createRepository()
+ method, which Subclipse does not use</li>
+ <li>Enhanced the JhlClientAdapter isAvailable() method to attempt to construct the
+ JavaHL svnClient class.  This is to catch the scenario where it successfully loads
+ the library but it is an incorrect version of the library.</li>
 </ul>
 <hr />
 <a name="0.9.34"></a>
