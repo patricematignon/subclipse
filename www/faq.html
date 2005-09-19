@@ -323,7 +323,11 @@ http://subversion.tigris.org/project_packages.html</a>.  You should refer to the
 for detailed information, but on a *nix system the general procedure is this:
 <pre>
 ./configure --your-other-flags=here --enable-javahl --with-jdk=$JAVA_HOME\
-     --with-jikes=$JAVA_HOME/bin/javac &&make && install install-javahl
+     --with-jikes=$JAVA_HOME/bin/javac
+make
+make javahl
+make install
+make install-javahl
 </pre>
 The main part to check before running the above command is "--your-other-flags". 
 You will typically at least want --enable-ssl.
