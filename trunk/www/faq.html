@@ -50,6 +50,8 @@
 <li><a href="#build-javahl">How do I build JavaHL from source?</a></li>
 <li><a href="#library-path">I think I have a valid JavaHL library installed, but Subclipse
     says it is not found.  What should I do?</a></li>
+<li><a href="#path-case">Why am I getting an error dialog telling me the case of my Eclipse workspace
+path does not match the filesystem?  Windows does not seem to care.</a></li>
 </ul>
 
 </div>
@@ -359,6 +361,52 @@ Alternatively, you can also do something like this in your script:
 
 </div>
 
+<![CDATA[-----------------------------------------------------------]]>
+
+<div class="h3" id="path-case" title="path-case">
+<h3>Why am I getting an error dialog telling me the case of my Eclipse workspace
+path does not match the filesystem?  Windows does not seem to care.</h3>
+
+<p>The underlying problem here is in Eclipse, see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=95832">
+Bug#: 95832</a>.  Eclipse does not canonicalize the workspace path to match the
+case of the underlying OS.  That alone would not be a problem, but Eclipse also has
+code which relies on an exact string match when converting a path represented as a
+String to an Eclipse resource.  When Subclipse calls Subversion API's, Subversion
+naturally passes back paths in their exact case from the file system.  Subclipse then
+has to take those Strings and convert them to an Eclipse IResource.  The Eclipse code
+to do this fails if the case of the string does not match exactly with the value that
+Eclipse has stored for the workspace.
+</p>
+<p>This problem was causing a lot of problems for Subclipse users and it took a long
+time before the underlying cause was discovered.  See Subclipse <a
+href="http://subclipse.tigris.org/issues/show_bug.cgi?id=285">issue# 285</a>
+and all of the duplicates.  Since we cannot fix the Eclipse problem and this problem
+is so hard for a user to self-diagnose, we added in our own check which displays a
+warning dialog when we detect this situation exists.  The validation code looks like
+this:
+<pre>
+ public static boolean validateWorkspacePath() {
+    File file = ResourcesPlugin.getWorkspace().getRoot().getLocation().toFile();
+    String canonicalPath = null;
+    try {
+       canonicalPath = file.getCanonicalPath();
+    } catch (IOException e) {
+        e.printStackTrace();
+    }
+    if (!file.getAbsolutePath().equals(canonicalPath)) {
+        MessageDialog.openError(Display.getCurrent().getActiveShell(), Policy.bind("WorkspacePathValidator.title"),
+         Policy.bind("WorkspacePathValidator.eclipsePath") + "\n\n"  + file.getAbsolutePath() + 
+         "\n\n" + Policy.bind("WorkspacePathValidator.fileSystemPath") + "\n\n" + canonicalPath +
+         "\n\n" + Policy.bind("WorkspacePathValidator.instructions"));
+        return false;
+    }
+    return true;
+ }
+</pre>
+</p>
+
+
+</div>
 </div>
 
 </div>
