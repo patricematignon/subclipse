@@ -1,0 +1,48 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link rel="stylesheet" href="../book.css" charset="ISO-8859-1" type="text/css">		
+<title>Team &gt; Lock</title>
+</head>
+
+<body>
+
+<h1>Team &gt; Lock</h1>
+
+<p>Using the new features in Subversion 1.2, you can lock one or more files for editing. This is useful for
+ensuring that two team members do not waste each others' time by editing the same resource if it is hard
+or impossible to merge these changes (for instance with binary files).
+</p>
+
+<p>The lock command is issued from the 'Team' context menu of the resource.
+</p>
+
+<p><img src="../images/lock-dialog.jpg" alt="About to lock NiceClass.java"></p>
+
+<p>Once locked by you, the resource has a check-mark next to it.<br>
+<img src="../images/locked-marker.jpg" alt="NiceClass.java is now locked by you"><br>
+If you commit a change to a locked file, the lock is usuall unlocked, unless you select 'Keep locks' in
+the <a href="../reference/commit.html">commit dialog</a>.
+Alternatively, you can <a href="../reference/unlock.html">unlock</a> the resource again.</p>
+
+<p>Subversion also makes it possible to <em>steal</em> a lock,
+if a different user has locked a file and you need to take it over.
+This is accomplished by selecting the 'Steal Lock' option found in the dialog.</p>
+
+<blockquote>TIP: If you want to ensure that a specific file is <strong>always</strong> locked before committing,
+you can set the Subversion property <tt>svn:needs-lock</tt> on the file (and commit). This ensures that a lock must
+be taken before committing it.</blockquote>
+
+<h3>Tasks:</h3>
+<p><a href="../dailywork/workcycle.html">Typical work cycle: Edit, Update, Commit</a></p>
+
+<h3>Reference</h3>
+<p>
+<a href="../reference/unlock.html">Team > Unlock</a><br>
+<a href="../reference/set-property.html">Team > Set Property</a><br>
+<a href="../reference/svn-properties-view.html">SVN Properties View</a></p>
+
+</body>
+</html>
