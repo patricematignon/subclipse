@@ -273,9 +273,15 @@ Windows users, here is a great explanation of how to set this up from our mailin
 archives: <a href="http://subclipse.tigris.org/servlets/ReadMsg?list=users&msgNo=3334">
 Configuring svn+ssh:// on Windows</a>.
 </p>
-<p>If you are using the JavaSVN command-line client adapter then see: <a
-href="http://tmate.org/svn/kb/config-settings.html">http://tmate.org/svn/kb/config-settings.html</a>
-for more information.</p>
+<p>As of Subclipse 0.9.35 if you are using the JavaSVN client adapter you should be
+dynamically prompted for your SSH username, password, keyfile, port etc...  When defining the
+repository connection in Subclipse, simply specify the URL like svn+ssh://hostname/repos.  Do
+not include your username in the URL and do not provide a username and password in the connection
+dialog.  At runtime, JavaSVN will prompt you for your SSH credentials and optionally cache them in
+the Eclipse keyring.  If you are not prompted for your credentials, it may be because you have
+previously attempted to manually configure JavaSVN.  If so, then you should "undo" all of that
+manual configuration.  The older manual configuration is documented at: <a
+href="http://tmate.org/svn/kb/config-settings.html">http://tmate.org/svn/kb/config-settings.html</a>.</p>
 </div>
 
 </div>
