@@ -37,6 +37,20 @@ As of release 0.9.33, Subclipse includes support for JavaSVN as a built-in
 option for client adapter.  A compatible version of JavaSVN is included with
 Subclipse and will be used as the default adapter when JavaHL is not available.</p>
 <hr />
+<a name="0.9.36"></a>
+<h4>Version 0.9.36<br>
+26 October 2005</h4>
+<p>from: /trunk/subclipse<br>
+<a href="http://subclipse.tigris.org/svn/subclipse/tags/subclipse/0.9.36">
+http://subclipse.tigris.org/svn/subclipse/tags/subclipse/0.9.36</a></p>
+<ul>
+ <li>Various problems when committing.  This was due to an ArrayIndex problem.</li>
+ <li>Problem when doing Compare with BASE when there were svn:externals folders. (<a
+  href="http://subclipse.tigris.org/issues/show_bug.cgi?id=412">412</a>).
+  This problem is not completely resolved.  The immediate error was fixed but if
+  there are differences in the externals folders they are not being shown.</li>
+</ul>
+<hr />
 <a name="0.9.35"></a>
 <h4>Version 0.9.35<br>
 25 October 2005</h4>
