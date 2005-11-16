@@ -1,0 +1,71 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html>
+<head>
+  <meta http-equiv="CONTENT-TYPE" content="text/html; charset=us-ascii">
+  <title>JavaHL API Wishlist</title>
+  <link rel="stylesheet" href="styles_html.css" type="text/css">
+</head>
+
+<body>
+  
+
+<h3>JavaHL API Wishlist</h3>
+
+<p>
+The purpose of this page is to document enhancements to the JavaHL API that
+we could use in Subclipse.  When a Subversion developer has time to work on
+JavaHL they can use this as a bit of a to-do list.</p>
+
+<div class="table">
+<table>
+<thead>
+	<tr>
+		<th>Item</th>
+		<th>Developer(s)</th>
+		<th>Status</th>
+		<th>Version</th>
+	</tr>
+</thead>
+<tbody>
+	<tr>
+		<td>Commit Across Working Copies.  In the Eclipse environment the typical
+		setup is that you have an Eclipse workspace which is just a folder somewhere
+		and NOT a Subversion working copy.  You then do checkouts within Eclipse of
+		various projects and this creates a bunch of isolated working copies within
+		that workspace folder.  The problem is that JavaHL does not allow you to perform
+		a single atomic commit of files from multiple projects, because the working
+		copies are joined.  JavaSVN added a very nice new API that solves this problem.  We
+		just give JavaSVN everything to commit, and it figures out if the files are in
+		the same repository and if so, commits them in a single commit.  If not, it groups
+		the commits by repository.  This is a really great feature.</td>
+		<td></td>
+		<td>needed</td>
+		<td>N/A</td>
+	</tr>
+	<tr>
+		<td>Peg revision support in svn log command.  We are adding support for
+		"paging" in our history view.  This can break when looking at the history
+		of a branch and you request a "page" of revisions from before the branch
+		creation.  With peg revision support this would work better.</td>
+		<td></td>
+		<td>needed</td>
+		<td>N/A</td>
+	</tr>
+	<tr>
+		<td>Network statistics.  Subversion 1.3 included new API support for
+		reporting network statistics when using HTTP.  We could potentially
+		provide better progress information if we had this.  Ideally, all ra_ 
+		methods would support it though.</td>
+		<td></td>
+		<td>needed</td>
+		<td>N/A</td>
+	</tr>
+</tbody>	
+</table>
+</div>
+
+
+
+</body>
+</html>
