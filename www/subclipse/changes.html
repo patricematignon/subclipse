@@ -28,14 +28,48 @@ will be available in the next release but it is also possible that a change
 will be pulled out due to testing problems.</p>
 <h2>IMPORTANT NOTE:</h2>
 <p>
-As of release 0.9.31, Subclipse <b>requires Subversion 1.2</b> (JavaHL or CLI) on
-the client. It <b>will not work with Subversion 1.1</b> on the client. As
-always, the JavaHL binaries for Windows are included. On other platforms,
-you should obtain the correct binaries before you install this release.</p>
+As of release 0.9.100, Subclipse <b>requires Subversion 1.3</b> (JavaHL or CLI) on
+the client. It <b>will not work with Subversion 1.2 or earlier</b> on the client,
+unless you use the included JavaSVN adapter which can be set in the preferences.</p>
+<p>Subclipse always includes a compatible version of JavaSVN that can be used as
+the client adapter.  Likewise, on the Windows platform, Subclipse always includes a
+compatible version of the JavaHL binaries.  On other platforms, if you want to use the
+JavaHL adapter then you should obtain the correct binaries before you install this release.</p>
 <p>
-As of release 0.9.33, Subclipse includes support for JavaSVN as a built-in
-option for client adapter.  A compatible version of JavaSVN is included with
-Subclipse and will be used as the default adapter when JavaHL is not available.</p>
+Subclipse skipped from release 0.9.37 to 0.9.100 to leave room to potentially produce new
+releases of the older Subversion 1.2.x compatible version.</p>
+<hr />
+<a name="0.9.100"></a>
+<h4>Version 0.9.100<br>
+Not released yet</h4>
+<p>from: /trunk/subclipse<br>
+<a href="http://subclipse.tigris.org/svn/subclipse/tags/subclipse/0.9.100">
+http://subclipse.tigris.org/svn/subclipse/tags/subclipse/0.9.100</a></p>
+<ul>
+ <li>Subversion 1.3.0 support included.</li>
+ <li>Support for SVN_ASP_DOT_NET_HACK environment variable on Windows.</li>
+ <li>Improved performance of Synchronize action when JavaHL is the adapter.  JavaHL
+ now supports the same improved svn st -u API that JavaSVN already supported.</li>
+ <li>Reduced startup initialization times of Subclipse plugin.  Specifically, instead
+ of initializing all three client adapters, just the one chosen in the preferences is
+ initalized.  This typically eliminates a 5000ms timeout warning that appears in the
+ Eclipse error log.</li>
+ <li>Repository connection no longer shows username and password fields unless the CLI
+ adapter is being used.  This is because we do not want these fields stored in Subclipse, we
+ want to let the client adapter prompt and optionally cache the values.</li>
+ <li>Repository connection no longer asks for a Root URL.  The connection URL is not automatically
+ validated by running svn info, which as of Subversion 1.2 returns the root URL.</li>
+ <li>Fixed StringIndexOutOfBoundsException in resource history view when a log message
+ starts with a URL.</li>
+ <li>When JavaSVN is the client adapter, a commit of files across several projects
+ from the same repository will now be performed as a single atomic commit.  With other
+ adapters it is still one commit per project due to API restrictions.</li>
+ <li>When comparing against remote resources the encoding of the remote file is set based
+ on the encoding of the local file. (<a
+  href="http://subclipse.tigris.org/issues/show_bug.cgi?id=419">419</a>).</li>
+ <li>Console messages from JavaSVN and JavaHL adapters have been externalized in svnClientAdapter
+ to allow for localizations to other languages.</li>
+</ul>
 <hr />
 <a name="0.9.37"></a>
 <h4>Version 0.9.37<br>
