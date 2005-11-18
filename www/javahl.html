@@ -65,6 +65,29 @@ JavaHL they can use this as a bit of a to-do list.</p>
 		<td>needed</td>
 		<td>N/A</td>
 	</tr>
+	<tr>
+		<td nowrap>diff --summarize</td>
+		<td>I believe this feature has landed on trunk.  We could possibly use this in 
+		Subclipse.  We have a lot of demand for various compare features, such as comparing
+		two branches, or your working copy with a tag.  The problem is that users expect to view
+		this output graphically.  We could possibly use this API to get a list of differences
+		which we could then use to drive the Eclipse graphical compare engine.  Eclipse would
+		do the final diffs, but the process would be more efficient if we fed it only the files
+		that really are different.</td>
+		<td></td>
+		<td>needed</td>
+		<td>N/A</td>
+	</tr>
+	<tr>
+		<td nowrap>more support for "kind"</td>
+		<td>API's that provide a list of items in the repository should always provide basic 
+		information such as whether it is a folder or a file.  Some API's, such as the log API's
+		do not provide this information.  It would be nice if the diff --summarize API provided it as
+		well.  Subversion 1.3 (and JavaHL) added this for svn st -u which has helped.</td>
+		<td></td>
+		<td>needed</td>
+		<td>N/A</td>
+	</tr>
 </tbody>	
 </table>
 </div>
