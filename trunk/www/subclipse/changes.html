@@ -84,6 +84,13 @@ http://subclipse.tigris.org/svn/subclipse/tags/subclipse/0.9.100</a></p>
  <li>Added option to create branch/tag from Repository Browser.</li>
  <li>Added Copy URL to Clipboard option to Repository Browser.  This is a just convenience item for getting
  a URL on to your clipboard.</li>
+ <li>Added Properties option to Repository Browser.  This lets you see the info in the repository about
+ the selected item, such as any current Lock information as well as any properties that have been set on the item.</li>
+ <li>Added capability to "turn off" Subclipse's automatic handling of deletes.  This is useful when you are using
+ a tool that generates files (such as JSP's) by deleting and re-adding the file.  In this case, ideally you would want
+ Subclipse to ignore the delete and just pretend it did not happen.  This feature is enabled by adding a property named "DeferFileDelete"
+ with a value of "true" to any folder that is a parent of the files being deleted. (<a
+  href="http://subclipse.tigris.org/issues/show_bug.cgi?id=74">74</a>).</li>
 </ul>
 <hr />
 <a name="0.9.37"></a>
