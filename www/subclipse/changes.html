@@ -95,6 +95,9 @@ http://subclipse.tigris.org/svn/subclipse/tags/subclipse/0.9.100</a></p>
  Subclipse to ignore the delete and just pretend it did not happen.  This feature is enabled by adding a property named "DeferFileDelete"
  with a value of "true" to any folder that is a parent of the files being deleted. (<a
   href="http://subclipse.tigris.org/issues/show_bug.cgi?id=74">74</a>).</li>
+ <li>Added support for cancelling operations when using JavaHL or JavaSVN.  Be sure you understand what your
+ adapter is going to do before you click that button.  Generally, atomic operations like commit cancel well.  Things like
+ checkout/update can leave you working copy in an inconsistent state.</li>
 </ul>
 <hr />
 <a name="0.9.37"></a>
