@@ -100,8 +100,16 @@ http://subclipse.tigris.org/svn/subclipse/tags/subclipse/0.9.100</a></p>
  <li>Added support for cancelling operations when using JavaHL or JavaSVN.  Be sure you understand what your
  adapter is going to do before you click that button.  Generally, atomic operations like commit cancel well.  Things like
  checkout/update can leave you working copy in an inconsistent state.</li>
-<li>Fixed an ArrayIndexOutOfBoundsException in Resource History view. (<a
+ <li>Fixed an ArrayIndexOutOfBoundsException in Resource History view. (<a
   href="http://subclipse.tigris.org/issues/show_bug.cgi?id=298">298</a>).</li>
+ <li>When a folder contains unversioned (and unignored) resources, decorate the folder as modified.  This is how
+ the CVS plugin handles it.</li>
+ <li>Enhance the Show Pending Operations view to show missing items and also add an option to mark the items as
+ deleted.  Of course, they can also be restored by using the Revert option.</li>
+ <li>Enhance the Show Resource History view to have a toggle which allows showing the affected paths for a change
+ using a Compressed Folders view, as opposed to the default flat view.</li>
+ <li>Relaxed URL parsing rules to add support for svn+xxx:// URL's, provided that the selected client adapter
+ supports the specified URL.</li>
 </ul>
 <hr />
 <a name="0.9.37"></a>
