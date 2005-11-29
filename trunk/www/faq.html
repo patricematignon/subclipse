@@ -70,7 +70,7 @@ path does not match the filesystem?  Windows does not seem to care.</a></li>
 
 <p>Subclipse exists to provide an outstanding user interface to Subversion from
 within the Eclipse IDE.  We aim to provide a client that is every bit as robust
-and user-friendly as the outstanding CVS client that comes with Eclipse.  That being said,
+and user-friendly as the CVS client that comes with Eclipse.  That being said,
 there are a lot of major technical differences between Subversion and CVS.  Therefore, we
 try to strike a balance between providing a UI that will be familiar to experienced Eclipse
 CVS users, and one that is appropriate for the Subversion action being exposed.  In particular,
@@ -107,14 +107,15 @@ be used in your language of choice.  JavaHL is the name of the Java language bin
 the Subversion project.  JavaHL is an official part of the Subversion project, not the Subclipse project.<br><br>
 svnClientAdapter is a Java project that was developed for Subclipse.  It provides an even higher level
 of abstraction to the Subversion libraries.  It also allows for different ways of accessing Subversion
-functionality.  Historically, these two options were to use the JavaHL library or the Subversion
+functionality.  Historically, the two options were to use the JavaHL library or the Subversion
 command line.  Recently, a third option was added and that is to use the <a href="http://tmate.org/svn/">
 JavaSVN</a> library which is a 100% Pure Java implementation of the protocols used by Subversion.  
 This option has the advantage of not requiring any native libraries installed on the client.  Of course,
 since JavaSVN does not utilize the Subversion libraries it does not have the guaranteed compatability that
 you can expect from JavaHL or the command line adapters.  That being said, JavaSVN is tested against the same
 test suite that tests the Subversion command line, and passes those tests.<br><br>
-JavaSVN does not support the file:/// protocol and isn't likely to in the future.</p>
+JavaSVN does not currently support the file:/// protocol but there are plans to add support for accessing
+fsfs repositories in the future.</p>
 
 </div>
 
@@ -126,7 +127,8 @@ JavaSVN does not support the file:/// protocol and isn't likely to in the future
 <p>If the JavaHL library is available on your system, or easily attainable, then it is
 probably the best choice.  That being said, JavaSVN is a great option.  The command line
 adapter should only be used as a last resort.  Namely, if you cannot get JavaHL installed
-and you absolutely have to have file:// protocol support to your repository.</p>
+and you absolutely have to have file:// protocol support to your repository.  In that scenario
+it would still be better to run a local svnserve instance and use the JavaSVN adapter.</p>
 
 </div>
 
@@ -137,8 +139,9 @@ and you absolutely have to have file:// protocol support to your repository.</p>
 
 <p>When you define a repository connection to Subclipse there is an area to specify your
 username and password.  Since version 0.9.30 of Subclipse the best thing to do is always leave
-these fields empty.  The exception is if you are using the command line adapter.  Yes, we should
-specify this on the dialog!  Why should you leave them blank?  Because the JavaHL and JavaSVN
+these fields empty.  The exception is if you are using the command line adapter.  As of version 0.9.100
+the dialogs will only show the username and password fields for the command line adapter.  
+Why should you leave them blank?  Because the JavaHL and JavaSVN
 adapters are intelligent enough to prompt you for this information when they need to.  You can also
 then allow the adapter to cache this information.  The adapters are also intelligent enough to prompt
 you when the password has changed.  Conversely, if you specify a usernamd and password within Subclipse
@@ -350,7 +353,7 @@ You will typically at least want --enable-ssl.
     says it is not found.  What should I do?</h3>
 
 <p>Starting with Subclipse 0.9.33 we now show the errors that occurred when loading
-the JavaHL library.  To see these errors open the Eclipse preferences and go to Team-&lt;SVN.
+the JavaHL library.  To see these errors open the Eclipse preferences and go to Team -&gt; SVN.
 Then click on JavaHL in the adapter section, the error messages should appear in a dialog.<br><br>
 On *nix systems the problem is almost always that the JavaHL library was not found in the java.library.path.
 The Sun JVM only looks in the value of LD_LIBRARY_PATH, and on many *nix systems this value is not
