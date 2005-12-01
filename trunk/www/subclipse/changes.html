@@ -126,6 +126,10 @@ http://subclipse.tigris.org/svn/subclipse/tags/subclipse/0.9.100</a></p>
  the repository when the imported project is a Subversion 1.3 working copy.</li>
  <li>Added Compare with Branch/Tag option.  This produces a unified diff of your WC and the selected URL using
  the svn diff command.</li>
+ <li>Improved the Set Commit Properties dialog so that only the revision properties you modify are changed. (<a
+  href="http://subclipse.tigris.org/issues/show_bug.cgi?id=405">405</a>).</li>
+ <li>Modified the JavaHL adapter to use the SVNClient class instead of SVNClientSynchronized.  This appears to provide
+ a small performance boost and takes advantage of the improved thread safery in 1.3.</li>
 </ul>
 <hr />
 <a name="0.9.37"></a>
