@@ -52,6 +52,9 @@ http://subclipse.tigris.org/svn/subclipse/tags/subclipse/0.9.101</a></p>
  <li>Removed the command line adapter as an option.  If that was the default in preferences, JavaSVN will be used instead.</li>
  <li>When committing a folder delete, always use the non-recursive option. (<a
   href="http://subclipse.tigris.org/issues/show_bug.cgi?id=402">402</a>).</li>
+ <li>Changed "Fetch Affected Paths on Demand" preference to be off by default.  The History view is a bit smoother on
+ high-latency connections with this off.  And with the page on demand changes to the view there is less of a need for
+ this preference.  It can still be turned on in preferences if needed.</li>
 </ul>
 
 <hr />
