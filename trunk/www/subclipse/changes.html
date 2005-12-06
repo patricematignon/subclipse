@@ -39,6 +39,24 @@ JavaHL adapter then you should obtain the correct binaries before you install th
 Subclipse skipped from release 0.9.37 to 0.9.100 to leave room to potentially produce new
 releases of the older Subversion 1.2.x compatible version.</p>
 <hr />
+<a name="0.9.102"></a>
+<h4>Version 0.9.102<br>
+Not released yet</h4>
+<p>from: /trunk/subclipse<br>
+<a href="http://subclipse.tigris.org/svn/subclipse/tags/subclipse/0.9.102">
+http://subclipse.tigris.org/svn/subclipse/tags/subclipse/0.9.102</a></p>
+<ul>
+ <li>New wizard for performing checkouts, unifies and replaces the three previous options.  Wizard
+ provides most of the same features as CVS checkout wizard.</li>
+ <li>Added New Project from SVN option that runs checkout wizard.</li>
+ <li>Added Import Project from SVN option that run checkout wizard.</li>
+ <li>When doing a checkout and files exist in checkout location, we check to see
+ if these files exist in repository and delete them if they do.  When the files do not
+ exist, an SVN error was being logged in the console.  These errors will now be suppressed
+ so as not to confuse user into thinking it was a problem.</li>
+</ul>
+
+<hr />
 <a name="0.9.101"></a>
 <h4>Version 0.9.101<br>
 5 December 2005</h4>
