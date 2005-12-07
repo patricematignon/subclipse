@@ -413,7 +413,14 @@ this:
  }
 </pre>
 </p>
-
+<p><b>NOTE:</b> We recently discovered that this basic issue was causing another problem users were seeing.  In this case
+it happens when you use File -&gt; Import to import a project and you do not specify the correct case when importing.  This
+leads to the same null resource problem.  In this scenario, we are now logging a very detailed error in the SVN Console and
+Eclipse error log.  It also points to this FAQ.  In recreating the problem it appeared that the JavaSVN adapter did not
+have the problem.  Possibly because it is using the same Java API's as Eclipse the case does not get canonicalized as it does
+when using the JavaHL native C libraries.  Other than switching to JavaSVN, the way to solve the problem in this scenario would
+be to delete the project from the workspace and re-import it.  Use the Eclipse file chooser to select the project so that the
+case matches the OS.</p>
 
 </div>
 </div>
