@@ -40,8 +40,18 @@ revision_number,tag_name,relative_path,branch/tag
 
 <img src="images/branch_tag/property.png" alt="Property" />
 
-<p>A <b>Configure Tags</b> option will be added to the Team menu which will invoke a custom editor
-for maintaining this property.  Once the property has been defined, there are a number of ways that
+<p>The above screenshot shows what the property looks like.  However there is a <b>Configure Branches/Tags</b> option
+on the Team menu that allows you to edit the property using a custom editor.</p>
+
+<img src="images/branch_tag/configure1.png" alt="Configure" />
+
+<p>Besides providing basic editing capabilities, the dialog also includes a built-in repository browser.  This allows
+you to select one or more folders and add them as a branch/tag in one action.  When folders are added in this manner,
+Subclipse automatically fills in the Revision number based on the Last Changed Revision of the selected folder.</p>
+
+<img src="images/branch_tag/configure2.png" alt="Configure" />
+
+<p>Once the property has been defined, there are a number of ways that
 Subclipse takes advantage of it.</p>
 
 <h3>History Browsing</h3>
@@ -75,11 +85,9 @@ the enhanced URL Chooser, it is a very nice option.</p>
 
 <div class="h2" id="remaining" title="remaining">
 <h2>Remaining Work</h2>
-<p>There are two more pieces that are still being developed.  The first is the aforementioned custom editor
-for maintaining this property.  This will just make it easier to configure the information properly and not
-be concerned with how the property needs to be layed out.  The second item is enhancing the Create Branch/Tag
-otion so that it is capable of updating the property.  Of course that can only be done locally and the property
-change would still need to be committed in a second operation.</p>
+<p>There is just one remaining piece to be developed and that is to enhance the Create Branch/Tag
+otion so that it is capable of updating the property automatically when a branch/tag is created.
+Of course that can only be done locally and the property change would still need to be committed in a second operation.</p>
 
 </div>
 </body>
