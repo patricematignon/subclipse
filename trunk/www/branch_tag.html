@@ -73,21 +73,23 @@ that branch/tag will be automaticlly created.</p>
 <img src="images/branch_tag/rep_browser.png" alt="Repository Browser" />
 
 <h3>Compare with Branch/Tag</h3>
-<p>Finally, Subclipse 0.9.100 added a Compare with Branch/Tag option to the menu.  In that release, the
-option only produced a Unified Diff file.  As of the release 0.9.102 you have the option of producing
+<p>Subclipse 0.9.100 added a Compare with Branch/Tag option to the menu.  In that release the
+option only produced a Unified Diff file.  As of release 0.9.102 you have the option of producing
 a unified diff, or an Eclipse graphical compare.  The Eclipse compare option is fairly slow if you do
 not have a fast repository connection.  Also, the Eclipse compare option will show differences in svn keywords
 which the unified diff option will not.  That being said it is still convenient to have and combined with
 the enhanced URL Chooser, it is a very nice option.</p>
 <img src="images/branch_tag/compare_branch.png" alt="Branch Compare" />
 
-</div>
+<h3>Updating the Property</h3>
+<p>In addition to the <b>Configures Branches and Tags</b> option that was discussed earlier, there is also support
+for automatically updating the <tt>subclipse:tags</tt> property when you create a Branch/Tag using Subclipse.  When you take this
+option, if we detect the <tt>subclipse:tags</tt> property on the item you selected, then we pop-up a dialog that lets
+you confirm that you want to add this new information to the subclipse:tags property.  You then just have to
+commit that property change after creating the Branch/Tag.  This feature does not exist when creating the
+Branch/Tag from the repository browser as it is only possible to modify a property value in a working copy.</p>
 
-<div class="h2" id="remaining" title="remaining">
-<h2>Remaining Work</h2>
-<p>There is just one remaining piece to be developed and that is to enhance the Create Branch/Tag
-otion so that it is capable of updating the property automatically when a branch/tag is created.
-Of course that can only be done locally and the property change would still need to be committed in a second operation.</p>
+</div>
 
 </div>
 </body>
