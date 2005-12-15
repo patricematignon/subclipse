@@ -104,7 +104,7 @@ start to be an API.  Subversion is written (in C) as a set of libraries.  Subver
 a default UI, in the form of a command line interface, that uses these libraries.  Subversion
 also provides language bindings for various programing languages so that these same libraries can
 be used in your language of choice.  JavaHL is the name of the Java language binding provided by
-the Subversion project.  JavaHL is an official part of the Subversion project, not the Subclipse project.<br><br>
+the Subversion project.  JavaHL is an official part of the Subversion project, not the Subclipse project.<br /><br />
 svnClientAdapter is a Java project that was developed for Subclipse.  It provides an even higher level
 of abstraction to the Subversion libraries.  It also allows for different ways of accessing Subversion
 functionality.  Historically, the two options were to use the JavaHL library or the Subversion
@@ -113,8 +113,8 @@ JavaSVN</a> library which is a 100% Pure Java implementation of the protocols us
 This option has the advantage of not requiring any native libraries installed on the client.  Of course,
 since JavaSVN does not utilize the Subversion libraries it does not have the guaranteed compatability that
 you can expect from JavaHL or the command line adapters.  That being said, JavaSVN is tested against the same
-test suite that tests the Subversion command line, and passes those tests.<br><br>
-JavaSVN does not currently support the file:/// protocol but there are plans to add support for accessing
+test suite that tests the Subversion command line, and passes those tests.<br /><br />
+JavaSVN does not currently support the file:// protocol but there are plans to add support for accessing
 fsfs repositories in the future.</p>
 
 </div>
@@ -125,10 +125,10 @@ fsfs repositories in the future.</p>
 <h3>Which adapter should I use?</h3>
 
 <p>If the JavaHL library is available on your system, or easily attainable, then it is
-probably the best choice.  That being said, JavaSVN is a great option.  The command line
-adapter should only be used as a last resort.  Namely, if you cannot get JavaHL installed
-and you absolutely have to have file:// protocol support to your repository.  In that scenario
-it would still be better to run a local svnserve instance and use the JavaSVN adapter.</p>
+probably the best choice.  That being said, JavaSVN is a great option and offers a number of
+significant features that JavaHL does not currently offer.  JavaHL is currently your only
+option if you have to use file:// protocol.  In that scenario, you should really consider
+running a local svnserve instance and using the svn:// protocol.</p>
 
 </div>
 
@@ -140,11 +140,11 @@ it would still be better to run a local svnserve instance and use the JavaSVN ad
 <p>When you define a repository connection to Subclipse there is an area to specify your
 username and password.  Since version 0.9.30 of Subclipse the best thing to do is always leave
 these fields empty.  The exception is if you are using the command line adapter.  As of version 0.9.100
-the dialogs will only show the username and password fields for the command line adapter.  
+the dialogs no longer show the username and password fields.  
 Why should you leave them blank?  Because the JavaHL and JavaSVN
 adapters are intelligent enough to prompt you for this information when they need to.  You can also
 then allow the adapter to cache this information.  The adapters are also intelligent enough to prompt
-you when the password has changed.  Conversely, if you specify a usernamd and password within Subclipse
+you when the password has changed.  Conversely, if you specify a username and password within Subclipse
 then we supply that username and password to the adapter.  If the password has changed on the server,
 then the adapter will prompt you for a new one.  Now we get to the problem.  Subclipse does not know
 that this exchange took place so it has no way to update its password.  Consequently you keep getting
@@ -309,11 +309,10 @@ http://metissian.com/projects/macosx/subversion/</a>.</p>
 most distributions do NOT include the JavaHL library in their Subversion package.  In most cases,
 you can download the source package and alter the build spec to build JavaHL.</p>
 <p>There are Debian packages available for Subversion with JavaHL enabled. 
-The packages are provided by http://www.ggtools.net/.  Here is the sources.list entry:
+The packages are provided by http://www.ggtools.net/.  Here is the sources.list entry:</p>
 <pre>
 deb http://www.ggtools.net/files/debian/unstable/ ./
 </pre>
-</p>
 <p>There are also binary RPM packages for SUSE available.  The main Subversion RPM 
 package includes JavaHL by default.  These can be obtained at <a
 href="http://ftp.suse.com/pub/projects/apache/subversion/">http://ftp.suse.com/pub/projects/apache/subversion/</a>. 
@@ -331,7 +330,7 @@ you probably need to build the library from source.</p>
 <p>JavaHL is part of the Subversion project.  So to begin, you probably want to download
 the latest source tarball.  See: <a href="http://subversion.tigris.org/project_packages.html">
 http://subversion.tigris.org/project_packages.html</a>.  You should refer to the Subversion instructions
-for detailed information, but on a *nix system the general procedure is this:
+for detailed information, but on a *nix system the general procedure is this:</p>
 <pre>
 ./configure --your-other-flags=here --enable-javahl --with-jdk=$JAVA_HOME\
      --with-jikes=$JAVA_HOME/bin/javac
@@ -340,7 +339,7 @@ make javahl
 make install
 make install-javahl
 </pre>
-The main part to check before running the above command is "--your-other-flags". 
+<p>The main part to check before running the above command is "--your-other-flags". 
 You will typically at least want --enable-ssl.
 </p>
 
@@ -354,19 +353,19 @@ You will typically at least want --enable-ssl.
 
 <p>Starting with Subclipse 0.9.33 we now show the errors that occurred when loading
 the JavaHL library.  To see these errors open the Eclipse preferences and go to Team -&gt; SVN.
-Then click on JavaHL in the adapter section, the error messages should appear in a dialog.<br><br>
+Then click on JavaHL in the adapter section, the error messages should appear in a dialog.<br /><br />
 On *nix systems the problem is almost always that the JavaHL library was not found in the java.library.path.
 The Sun JVM only looks in the value of LD_LIBRARY_PATH, and on many *nix systems this value is not
-defined.  The easiest workaround is to create a shell script that launches Eclipse:
+defined.  The easiest workaround is to create a shell script that launches Eclipse:</p>
 <pre>
 export LD_LIBRARY_PATH=/usr/local/lib:.
 ./eclipse
 </pre>
-Alternatively, you can also do something like this in your script:
+<p>Alternatively, you can also do something like this in your script:</p>
 <pre>
 ./eclipse -vmargs -Djava.library.path=/usr/local/lib
 </pre>
-</p>
+
 
 </div>
 
@@ -392,7 +391,7 @@ href="http://subclipse.tigris.org/issues/show_bug.cgi?id=285">issue# 285</a>
 and all of the duplicates.  Since we cannot fix the Eclipse problem and this problem
 is so hard for a user to self-diagnose, we added in our own check which displays a
 warning dialog when we detect this situation exists.  The validation code looks like
-this:
+this:</p>
 <pre>
  public static boolean validateWorkspacePath() {
     File file = ResourcesPlugin.getWorkspace().getRoot().getLocation().toFile();
@@ -412,7 +411,6 @@ this:
     return true;
  }
 </pre>
-</p>
 <p><b>NOTE:</b> We recently discovered that this basic issue was causing another problem users were seeing.  In this case
 it happens when you use File -&gt; Import to import a project and you do not specify the correct case when importing.  This
 leads to the same null resource problem.  In this scenario, we are now logging a very detailed error in the SVN Console and
