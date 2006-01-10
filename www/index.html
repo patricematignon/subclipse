@@ -26,24 +26,27 @@
         svnAnt is licensed under the terms of the <a href="http://www.apache.org/licenses/LICENSE-1.1">Apache Software License 1.1</a></li>
 </ul>
 <h2><a name="subclipse">Current Release</a></h2>
-  
+  <p>Subclipse 1.0 Release Candidate 1 is now available. See the <a href="http://subclipse.tigris.org/subclipse/changes.html#0.9.103">changelog</a>
+  for details.</p>
   <p>Be sure to check the <a href="http://subclipse.tigris.org/servlets/ProjectNewsList">announcements</a> for information on the latest release.
   We also maintain a <a href="http://subclipse.tigris.org/subclipse/changes.html">Subclipse changelog</a> that contains information about all changes, including those that have not been released yet.
   Finally, you can also subscribe to the announcements <a href="http://subclipse.tigris.org/servlets/ProjectMailingListList">mailing list</a> to be notified of new releases.</p>
 
-  <p><b>NOTE:</b> Subclipse requires that you have the Subversion JavaHL library installed for it to
-work properly.  For Windows users, we are able to provide a working version of JavaHL as part of Subclipse.
-For other platforms, you have to provide the JavaHL library yourself.  There is more information in
-the <a href="faq.html">FAQ</a>.<br><br>
-There is also a 100% Java alternative to JavaHL named JavaSVN that is in development.  Information
-about JavaSVN can be found at <a href="http://tmate.org/svn/">http://tmate.org/svn/</a>.  As of
-Subclipse release 0.9.33, JavaSVN is included with and supported directly in Subclipse.</p>
+  <p><b>NOTE:</b> Subclipse requires a Subversion client "adapter" to communicate with your repository.  Subclipse includes a 100% pure Java
+  client adapter named JavaSVN.  Information about JavaSVN can be found at <a href="http://tmate.org/svn/">http://tmate.org/svn/</a>. For
+  Windows users, Subclipse also includes the Subversion JavaHL library which communicates with your repository using the standard Subversion
+  libraries and API.  For other platforms, you have to provide the JavaHL library yourself.  There is more information about building or
+  obtaining JavaHL in the <a href="faq.html">FAQ</a>.<br><br>
+  The JavaSVN client adapter should work for most users, the notable exception being users that absolutely have to have support for the
+  file:// protocol, which JavaSVN does not currently support.  JavaSVN offers a few additional features to Subclipse users that JavaHL does
+  not offer, and it probably performs slightly faster than JavaHL.  That being said, JavaHL uses the standard Subversion libraries which insures
+  it will be compatible with other Subversion clients.</p>
 
-  <h4>Eclipse 3.0/3.1</h4>
+  <h4>Eclipse 3.x</h4>
 
   <p>Subclipse releases for Eclipse 3.x are hosted at
       our update site. Add <a href=
-  "http://subclipse.tigris.org/update">http://subclipse.tigris.org/update</a>
+  "http://subclipse.tigris.org/update_1.0.x">http://subclipse.tigris.org/update_1.0.x</a>
   as an update site in Eclipse's update manager (which you can find
   in the Help menu).</p>
 
@@ -66,30 +69,6 @@ Subclipse release 0.9.33, JavaSVN is included with and supported directly in Sub
   "http://subclipse.tigris.org/files/documents/906/22688/org.tigris.subversion.subclipse_0.9.3.3.zip"
   target="new">Download the Eclipse 2.x version</a></p>
 
-  <h2>Links</h2>
-  <p>Most links are also in the navigation bar on the left-hand side of the page.</p>
-
-  <ul>
-      <li><p class="c1"><a href="http://subclipse.tigris.org/source/browse/subclipse/">Subclipse Repository</a></p></li>
-      <li><p class="c1"><a href="screenshots.html">Screenshots</a></p></li>
-      <li><p class="c1"><a href="faq.html">FAQ</a></p></li>
-      <li><p class="c1"><a href="install.html">Installation</a></p></li>
-      <li><p class="c1"><a href="download.html">Download</a></p></li>
-      <li>
-          <p class="c1"><a href=
-      "http://www.eclipse.org/">Eclipse</a></p>
-    </li>
-
-    <li>
-        <p class="c1"><a href=
-      "http://svnup.tigris.org/">SVN-UP</a></p>
-    </li>
-
-    <li>
-        <p><a href=
-      "http://svn.collab.net/repos/svn/trunk/subversion/bindings/java/javahl/">
-      javahl</a></p>
-    </li>
-</ul>
+<img src="images/eclipse_ready.jpg">  
 </body>
 </html>
