@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.tigris.subversion.subclipse.ui;
 
+
+
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Hashtable;
