@@ -52,6 +52,8 @@
     says it is not found.  What should I do?</a></li>
 <li><a href="#path-case">Why am I getting an error dialog telling me the case of my Eclipse workspace
 path does not match the filesystem?  Windows does not seem to care.</a></li>
+<li><a href="#wc-not-locked">I keep getting an error message about my "Working Copy not locked".  Is this a bug?  What
+should I do?</a></li>
 </ul>
 
 </div>
@@ -421,6 +423,34 @@ have the problem.  Possibly because it is using the same Java API's as Eclipse t
 when using the JavaHL native C libraries.  Other than switching to JavaSVN, the way to solve the problem in this scenario would
 be to delete the project from the workspace and re-import it.  Use the Eclipse file chooser to select the project so that the
 case matches the OS.</p>
+
+</div>
+
+<![CDATA[-----------------------------------------------------------]]>
+
+<div class="h3" id="wc-not-locked" title="wc-not-locked">
+<h3>I keep getting an error message about my "Working Copy not locked".  Is this a bug?  What
+should I do?</h3>
+
+<p>You are performing an operation like Update and it fails with an error that look something
+like this:</p>
+<pre>
+ update -r HEAD C:/workspace/project/bin
+    Working copy not locked; this is probably a bug, please report
+ svn: Working copy 'C:\workspace\project\bin' is missing or not locked 
+</pre>
+<p>This message is coming straight out of the Subversion library, so technically it is Subversion asking you to
+report the problem to them.  This error message is kind of their general error message when something really unexpected
+happens.  In the case of Eclipse, the problem is almost always one specific thing.  The problem is that your Eclipse
+build folder was versioned and added to your repository.  What happens is that when Eclipse does a full build it will delete
+everything in this folder, including the ".svn" metadata folder.  When Subversion cannot find this folder it issues
+the above error.</p>
+<p>The solution is to delete this folder from your repository, which you can do from the SVN Repositories view.  Then
+try deleting the folder from your working copy and perforiming an update.  You might need to checkout your project again.
+Once you have a valid project again, be sure to add the build folder to the svn:ignore property of its parent folder so
+that the problem does not happen again.</p>
+<p>If this is not your problem, then as best as you can try to figure out what might have led up to having this problem
+and report it on th Subversion users@subversion.tigris.org mailing list.</p>
 
 </div>
 </div>
