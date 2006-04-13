@@ -58,12 +58,12 @@
          id="org.tigris.subversion.subclipse.ui"
          download-size="3507"
          install-size="4440"
-         version="1.0.0"/>
+         version="1.0.1"/>
 
    <plugin
          id="org.tigris.subversion.subclipse"
          download-size="3"
          install-size="4"
-         version="1.0.0"/>
+         version="1.0.1"/>
 
 </feature>
