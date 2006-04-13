@@ -2,7 +2,7 @@
 <feature
       id="org.tigris.subversion.subclipse"
       label="Subclipse"
-      version="1.0.0"
+      version="1.0.1"
       provider-name="tigris.org"
       colocation-affinity="org.tigris.subversion.subclipse">
 
@@ -52,7 +52,7 @@
          id="org.tigris.subversion.subclipse.core"
          download-size="1206"
          install-size="1370"
-         version="1.0.0"/>
+         version="1.0.1"/>
 
    <plugin
          id="org.tigris.subversion.subclipse.ui"
