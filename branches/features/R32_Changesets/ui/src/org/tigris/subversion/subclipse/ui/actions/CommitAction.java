@@ -54,7 +54,12 @@ public class CommitAction extends WorkspaceAction {
     protected boolean commit;
     protected boolean keepLocks;
     protected IResource[] selectedResources;
+    private String proposedComment;
 	
+	public CommitAction(String proposedComment) {
+		this.proposedComment = proposedComment;
+	}
+
 	/*
      * get non added resources and prompts for resources to be added
      * prompts for comments
@@ -166,6 +171,7 @@ public class CommitAction extends WorkspaceAction {
 	           return false;	       
 	   }
 	   CommitDialog dialog = new CommitDialog(getShell(), modifiedResources, url, hasUnaddedResources, projectProperties);
+	   dialog.setComment(proposedComment);
 	   boolean commitOK = (dialog.open() == Window.OK);
 	   url = null;
 	   commitComment = dialog.getComment();
