@@ -1,0 +1,70 @@
+<html>
+<head>
+<title>Subclipse Changelog</title>
+<style>
+li {
+	margin-top: 6px;
+	margin-bottom: 3px;
+}
+li p {
+	margin-top: 3px;
+	margin-bottom: 3px;
+}
+</style>
+</head>
+<body>
+<h1>Subclipse Changelog</h1>
+<p>This file documents all of the changes that have been made to <a
+ href="http://subclipse.tigris.org/">Subclipse</a> beginning with the 1.1.0 release process.
+Please visit <a href="http://subclipse.tigris.org/">
+http://subclipse.tigris.org/</a> for the latest information on Subclipse.</p>
+<p>The latest version of this file can be viewed directly from our
+website at <a
+ href="http://subclipse.tigris.org/subclipse_1.2.x/changes.html">
+http://subclipse.tigris.org/subclipse_1.2.x/changes.html</a>. Please
+note that the file on the website may contain information about changes
+that have not yet been made available in a release. Generally, these changes
+will be available in the next release but it is also possible that a change
+will be pulled out due to testing problems.</p>
+<p>The log of changes leading up to the 1.1.0 release can be viewed <a
+ href="../subclipse/changes.html">here</a>.</p>
+
+<p><b>NOTE:</b> As of Subclipse 1.1.0, the minimum Eclipse requirement is now 3.2.0.  Subclipse
+1.1.0 was built on Eclipse 3.2 RC6.  Presumably it will work with most earlier releases of 3.2.</p> 
+
+<p><b>NOTE:</b> Subclipse 1.1.0 removed the SVN Resource History view as we now use the common Team
+History view.  You will likely get an Eclipse error message if you use an existing workspace that had
+that view open.  This is normal and is not a problem.  You will get the error the first time you open
+each persepective that had the view open.</p> 
+
+<hr />
+<a name="1.1.0"></a>
+<h4>Version 1.1.0<br>
+Not released yet</h4>
+<p>from: /trunk<br>
+<a href="http://subclipse.tigris.org/svn/subclipse/tags/subclipse/1.1.0">
+http://subclipse.tigris.org/svn/subclipse/tags/subclipse/1.1.0</a></p>
+<ul>
+ <li>JavaHL 1.3.2 Windows binaries.</li>
+ <li>JavaSVN 1.1.0 Beta 2.  Includes support for file:// protocol.</li>
+ <li>Improvements to Console view, taking advantage of new Eclipse features from 3.1.
+ Includes some new preferences.</li>
+ <li>File names that are output to Console are now hyperlinks to the local workspace file</li>
+ <li>Help/documentation packaged in separate plugin from UI.</li>
+ <li>Plugins now install as JAR's instead of being unpacked.  Removed feature plugin as it
+ was not really needed.  Branding was moved to the core plugin.</li>
+ <li>Improve error reporting in Lock/Unlock actions.</li>
+ <li>Show lock info from server on SVN Resource property page.</li>
+ <li>Support for outgoing changesets in Synchronize view.</li>
+ <li>Support for in-line/live annotation feature.</li>
+ <li>Replaced SVN Resource History view with usage of new common Team History view.</li>
+ <li>Removed checks and messages for workspace case.  Eclipse problem was fixed in 3.2.</li>
+ <li>All dialogs now extend new Eclipse 3.2 TrayDialog class.  This better integrates help with dialog.</li>
+ <li>Icons for Show History and Show Annotation changes to match CVS/Team icon.</li>
+ <li>URL's in History view are opened using the Eclipse browser framework.</li>
+ <li>SVN Repositories are included in Eclipse Import/Export Preferences wizard.  However, only repositories
+ created after version 1.1.0 is installed are included.</li>
+</ul>
+
+</body>
+</html>
