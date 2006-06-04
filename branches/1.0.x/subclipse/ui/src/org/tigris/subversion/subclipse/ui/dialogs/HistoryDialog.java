@@ -20,6 +20,7 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Point;
@@ -50,6 +51,7 @@ public class HistoryDialog extends Dialog {
 	private IResource selectedResource;
     private IResource resource;
     private ISVNRemoteResource remoteResource;
+    private SashForm sashForm;
 	private HistoryTableProvider historyTableProvider;
 	private ChangePathsTableProvider changePathsTableProvider;
 	private TableViewer tableHistoryViewer;
@@ -98,10 +100,18 @@ public class HistoryDialog extends Dialog {
 		GridData data = new GridData(GridData.FILL_BOTH);
 		composite.setLayoutData(data);
 		
+        sashForm = new SashForm(composite, SWT.VERTICAL);
+        sashForm.setLayout(new GridLayout());
+        sashForm.setLayoutData(new GridData(GridData.FILL_BOTH));
+
+        Composite historyGroup = new Composite(sashForm, SWT.NULL);
+        historyGroup.setLayout(new GridLayout());
+        historyGroup.setLayoutData(new GridData(GridData.FILL_BOTH));
+		
 		historyTableProvider = new HistoryTableProvider();
 		historyTableProvider.setRemoteResource(remoteResource);
 		historyTableProvider.setResource(selectedResource);
-		tableHistoryViewer = historyTableProvider.createTable(composite);
+		tableHistoryViewer = historyTableProvider.createTable(historyGroup);
 		data = new GridData(GridData.FILL_BOTH);
 		data.widthHint = WIDTH_HINT;
 		data.heightHint = LOG_HEIGHT_HINT;
@@ -142,13 +152,21 @@ public class HistoryDialog extends Dialog {
 		
 		tableHistoryViewer.setInput(remoteResource);
 		
-		textViewer = new TextViewer(composite, SWT.H_SCROLL | SWT.V_SCROLL | SWT.MULTI | SWT.BORDER | SWT.READ_ONLY);
+        Composite commentGroup = new Composite(sashForm, SWT.NULL);
+        commentGroup.setLayout(new GridLayout());
+        commentGroup.setLayoutData(new GridData(GridData.FILL_BOTH));
+		
+		textViewer = new TextViewer(commentGroup, SWT.H_SCROLL | SWT.V_SCROLL | SWT.MULTI | SWT.BORDER | SWT.READ_ONLY);
 		data = new GridData(GridData.FILL_BOTH);
 		data.heightHint = COMMENT_HEIGHT_HINT;
 		data.widthHint = WIDTH_HINT;
 		textViewer.getControl().setLayoutData(data);
 		
-		changePathsTableProvider = new ChangePathsTableProvider(composite);
+        Composite pathGroup = new Composite(sashForm, SWT.NULL);
+        pathGroup.setLayout(new GridLayout());
+        pathGroup.setLayoutData(new GridData(GridData.FILL_BOTH));
+		
+		changePathsTableProvider = new ChangePathsTableProvider(pathGroup);
         changePathsTableProvider.setContentProvider(new IStructuredContentProvider() {
 
 			public Object[] getElements(Object inputElement) {
@@ -177,6 +195,14 @@ public class HistoryDialog extends Dialog {
 				tableHistoryViewer.refresh();
 			}
 		});
+		
+		try {
+			int[] weights = new int[3];
+			weights[0] = settings.getInt("HistoryDialog.weights.0"); //$NON-NLS-1$
+			weights[1] = settings.getInt("HistoryDialog.weights.1"); //$NON-NLS-1$
+			weights[2] = settings.getInt("HistoryDialog.weights.2"); //$NON-NLS-1$
+			sashForm.setWeights(weights);
+		} catch (Exception e) {}
 		
 		// set F1 help
 		WorkbenchHelp.setHelp(composite, IHelpContextIds.HISTORY_DIALOG);	
@@ -366,7 +392,10 @@ public class HistoryDialog extends Dialog {
         x = getShell().getSize().x;
         y = getShell().getSize().y;
         settings.put("HistoryDialog.size.x", x); //$NON-NLS-1$
-        settings.put("HistoryDialog.size.y", y); //$NON-NLS-1$   
+        settings.put("HistoryDialog.size.y", y); //$NON-NLS-1$ 
+        int[] weights = sashForm.getWeights();
+        for (int i = 0; i < weights.length; i++) 
+        	settings.put("HistoryDialog.weights." + i, weights[i]); //$NON-NLS-1$ 
     }
 
     public ILogEntry[] getSelectedLogEntries() {
