@@ -198,9 +198,12 @@ public class ProjectProperties {
         ISVNLocalResource svnResource = SVNWorkspaceRoot.getSVNResourceFor(resource);
         ISVNProperty property = null;
         ISVNProperty labelProperty = null;
-        if (svnResource.isManaged()) {
-            property = svnResource.getSvnProperty("bugtraq:message"); //$NON-NLS-1$
-            labelProperty = svnResource.getSvnProperty("bugtraq:label"); //$NON-NLS-1$
+        if (svnResource != null && svnResource.isManaged()) {
+            try {
+				property = svnResource.getSvnProperty("bugtraq:message"); //$NON-NLS-1$
+	            labelProperty = svnResource.getSvnProperty("bugtraq:label"); //$NON-NLS-1$
+			} catch (SVNException e) {
+			}
         }
         if ((property != null) && (property.getValue() != null) && (property.getValue().trim().length() > 0)) {
             ProjectProperties projectProperties = new ProjectProperties();
