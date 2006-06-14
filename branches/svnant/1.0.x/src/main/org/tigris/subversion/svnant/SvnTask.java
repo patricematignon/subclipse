@@ -92,7 +92,7 @@ public class SvnTask extends Task {
     }
 
     public void setPassword(String password) {
-        this.password = password;
+        this.password = "\"\"".equals(password) ? "" : password;
     }
 
     /**

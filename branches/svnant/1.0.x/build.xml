@@ -91,9 +91,9 @@
   <!-- make distribution                                                 -->
   <!-- ================================================================= -->
   <target name="makeDistrib" depends="clean,svnant.jar" description="make binary distribution">
-	  <mkdir dir="${build.distrib.dir}"/>
-		<mkdir dir="${build.distrib.dir}/lib"/>
-		<mkdir dir="${build.distrib.dir}/doc"/>
+	<mkdir dir="${build.distrib.dir}"/>
+	<mkdir dir="${build.distrib.dir}/lib"/>
+	<mkdir dir="${build.distrib.dir}/doc"/>
 		<copy file="readme.txt" todir="${build.distrib.dir}"/>
 		<copy file="changelog.txt" todir="${build.distrib.dir}"/>
 		<copy file="license.txt" todir="${build.distrib.dir}"/>
@@ -104,24 +104,21 @@
 		<copy file="${build.lib.dir}/svnant.jar" todir="${build.distrib.dir}/lib"/>
 		<copy file="doc/svn.html" todir="${build.distrib.dir}/doc"/>
 		<copy file="${distribfiles.dir}/build.xml" todir="${build.distrib.dir}"/>
-    <copy file="${distribfiles.dir}/build.xml" todir="${build.distrib.dir}">
-      <filterset>
-        <filter token="SVNANTVERSION" value="${svnant.version}"/>
-      </filterset>
-    </copy>
-    <copy file="${distribfiles.dir}/release-announcement-template.txt"
-          todir="${build.dir}">
-      <filterset>
-        <filter token="SVNANTVERSION" value="${svnant.version}"/>
-      </filterset>
-    </copy>
+	    <copy file="${distribfiles.dir}/build.properties" todir="${build.distrib.dir}">
+	      <filterset>
+	        <filter token="SVNANTVERSION" value="${svnant.version}"/>
+	      </filterset>
+	    </copy>
+	    <copy file="${distribfiles.dir}/release-announcement-template.txt" todir="${build.dir}">
+	      <filterset>
+    	    <filter token="SVNANTVERSION" value="${svnant.version}"/>
+	      </filterset>
+	    </copy>
     <zip destfile="${build.dir}/svnant-${svnant.version}.zip">
-      <zipfileset dir="${build.distrib.dir}"
-                  prefix="svnant-${svnant.version}"/>
+      <zipfileset dir="${build.distrib.dir}" prefix="svnant-${svnant.version}"/>
     </zip>
   </target>
  
-
   <!-- create all jar files -->
   <target name="all" depends="svnant.jar">
   </target>
