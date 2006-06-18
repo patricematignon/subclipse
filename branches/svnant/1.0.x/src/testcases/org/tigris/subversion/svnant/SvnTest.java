@@ -4,12 +4,13 @@
  */
 package org.tigris.subversion.svnant;
 
-import java.io.DataInputStream;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.util.HashSet;
 import java.util.Set;
@@ -114,7 +115,7 @@ private static final String WORKINGCOPY_DIR = "test/svn/workingcopy";
 
     public void testLog() throws SVNClientException {
         executeTarget("testLog");
-		String urlRepos = getProject().getProperty("urlRepos");
+//		String urlRepos = getProject().getProperty("urlRepos");
 		ISVNLogMessage[] messages = svnClient.getLogMessages(new File(WORKINGCOPY_DIR+"/logTest/file1.txt"),new SVNRevision.Number(0),SVNRevision.HEAD);
         assertTrue(messages.length > 0);
 		assertEquals("logTest directory added to repository",messages[0].getMessage());
@@ -192,10 +193,11 @@ private static final String WORKINGCOPY_DIR = "test/svn/workingcopy";
     
     public void testKeywords() throws FileNotFoundException, IOException {
         executeTarget("testKeywords");
-        DataInputStream dis = new DataInputStream(new FileInputStream(WORKINGCOPY_DIR+"/keywordsTest/file.txt")); 
-        assertEquals("$LastChangedRevision: 1 $",dis.readLine());
-        assertEquals("$Author: cedric $",dis.readLine());
-        assertEquals("$Id$",dis.readLine());
+        BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(WORKINGCOPY_DIR+"/keywordsTest/file.txt"))); 
+        assertEquals("$LastChangedRevision: 1 $",reader.readLine());
+        assertEquals("$Author: cedric $",reader.readLine());
+        assertEquals("$Id$",reader.readLine());
+        reader.close();
     }
 
     public void testUpdate() {
@@ -204,22 +206,23 @@ private static final String WORKINGCOPY_DIR = "test/svn/workingcopy";
 
     public void testRevert() throws FileNotFoundException, IOException {
         executeTarget("testRevert");
-        DataInputStream dis = new DataInputStream(new FileInputStream(WORKINGCOPY_DIR+"/revertTest/file.txt")); 
-        assertEquals("first version",dis.readLine());
+        BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(WORKINGCOPY_DIR+"/revertTest/file.txt"))); 
+        assertEquals("first version",reader.readLine());
+        reader.close();
     }
 
     public void testCat() throws FileNotFoundException, IOException {
         executeTarget("testCat");
-        DataInputStream dis = new DataInputStream(new FileInputStream(WORKINGCOPY_DIR+"/catTest/filecat.txt")); 
-        assertEquals("first line",dis.readLine());        
-        assertEquals("second line",dis.readLine());
+        BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(WORKINGCOPY_DIR+"/catTest/filecat.txt"))); 
+        assertEquals("first line",reader.readLine());        
+        assertEquals("second line",reader.readLine());
+        reader.close();
     }
 
     public void testListener() throws Exception {
         final Set addSet = new HashSet();
         final Set commitSet = new HashSet();
         final Set[] currentSet = new Set[] { null };
-        final boolean duplicates = false;
 
         ISVNNotifyListener listener = new ISVNNotifyListener() {
             public void setCommand(int command) {
@@ -321,7 +324,7 @@ private static final String WORKINGCOPY_DIR = "test/svn/workingcopy";
         assertTextStatus(svnClient.getSingleStatus(new File(WORKINGCOPY_DIR+"/statusTest/deleted.txt")), SVNStatusKind.DELETED);
 
         assertEquals("added",getProject().getProperty("testStatus.textStatus"));
-        assertEquals("normal",getProject().getProperty("testStatus.propStatus"));
+        assertEquals("non-svn",getProject().getProperty("testStatus.propStatus"));
         SVNRevision.Number lastCommit = (SVNRevision.Number)SVNRevision.getRevision(getProject().getProperty("testStatus.lastCommitRevision"));
         assertEquals(null,lastCommit);
         
