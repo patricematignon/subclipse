@@ -9,7 +9,7 @@
 <style type="text/css">	
 body {
 	font: 80% Verdana, Arial, Helvetica, sans-serif;
-	margin: 0; padding: 0;
+	margin: 12px; padding: 12px;
 /*	background: rgb(95%,95%,80%);  */
 	color: black;
 }
@@ -24,7 +24,7 @@ h2 {
 }
 h3 {
 	border:1px solid rgb(85%,85%,70%);
-	color: rgb(85%,85%,70%);
+	color: rgb(55%,55%,40%);
 	padding: 0.66em 0 0.33em 1em;
 	background-color: #f3f1f4;
 }
@@ -59,19 +59,17 @@ th {
 
 <body lang="en-US" dir="LTR">
 
-<H1><A NAME="svn"></A>Svn</H1>
-by
-<ul>
-	<li><A HREF="mailto:cchab@tigris.org">C&eacute;dric Chabanois</A>
-</ul>
+<H1>&lt;Svn&gt;</H1>
+By <A HREF="mailto:users@subclipse.tigris.org">C&eacute;dric Chabanois et al.</A>
 
 
 <H2>Description</H2>
-<p>This task provide an interface to <A HREF="http://subversion.tigris.org/">Subversion</A> 
+<p>This task provides an interface to <A HREF="http://subversion.tigris.org/">Subversion</A> 
 revision control system that is a compelling replacement for CVS in the open source community.
 <br>
-Svn uses javahl (a java interface for the subversion api) if it
-can find the corresponding library (svnjavahl.dll on windows).
+With the help of the underlying svnClientAdapter, &lt;svn&gt; task uses JavaHL (a 
+native JNI interface to the subversion api) if it
+can find the corresponding library (e.g. svnjavahl.dll on windows).
 Otherwise it uses svn command line interface.</p>
 <H2>Parameters</H2>
 
@@ -93,8 +91,8 @@ Otherwise it uses svn command line interface.</p>
 	</tr>
 	<tr>
 		<td>javahl</td>
-		<td>Set to &ldquo;false&rdquo; to use command line client interface to svn<BR>(<B>experimental</B>). Defaults to true</td>
-		<td>No</td>
+		<td>Set to &ldquo;false&rdquo; to use command line client interface instead of JNI JavaHL binding.</td>
+		<td>No (Defaults to true)</td>
 	</tr>
 </table>
 
@@ -248,6 +246,18 @@ Otherwise it uses svn command line interface.</p>
 </ul>
 </p>
 
+<p>
+<div class="sample">
+<FONT FACE="Courier New"><FONT SIZE=2><FONT COLOR="#000080">&lt;svn</FONT>
+<FONT COLOR="#000080">javahl=</FONT><FONT COLOR="#008000">&quot;${javahl}&quot;</FONT><FONT COLOR="#000080">&gt;</FONT></FONT></FONT><br>
+<FONT FACE="Courier New"><FONT SIZE=2><FONT COLOR="#000080">&lt;checkout</FONT>
+<FONT COLOR="#000080">url=</FONT><FONT COLOR="#008000">&quot;${urlRepos}&quot;</FONT>
+<FONT COLOR="#000080">destPath=</FONT><FONT COLOR="#008000">&quot;workingcopy&quot;</FONT>
+<FONT COLOR="#000080">/&gt;</FONT></FONT></FONT><br>
+<FONT FACE="Courier New"><FONT SIZE=2><FONT COLOR="#000080">&lt;/svn&gt;</FONT></FONT></FONT>
+</div>
+</p>
+
 <H3><a name="commit">commit</a></H3>
 <p>Send changes from your working copy to the repository.</p>
 <table>
@@ -299,6 +309,7 @@ source and destination can each be either a working copy (WC) path or URL:
 	<li>URL-&gt;URL: complete server-side copy;&nbsp; used to branch &amp; tag</li>
 </ul>
 </p>
+<br/>
 
 <table>
 	<tr>
@@ -354,7 +365,7 @@ source and destination can each be either a working copy (WC) path or URL:
 		<td>Yes</td>
 	</tr>
 </table>
-<div class="sample">
+<div class="sample" style="width: 597px; height: 77px">
 <p>Example: <br>
 <FONT FACE="Courier New"><FONT SIZE=2><FONT COLOR="#000080">&lt;svn</FONT>
 <FONT COLOR="#000080">javahl=</FONT><FONT COLOR="#008000">&quot;false&quot;</FONT><FONT COLOR="#000080">&gt;<BR>&lt;createRepository</FONT>
@@ -464,14 +475,13 @@ two urls (oldUrl and newUrl).
 		<td>No</td>
 	</tr>
 </table>
-<div class="sample">
+<div class="sample" style="width: 749px; height: 80px">
 <p>Example : diff between BASE and current working version <br>
-<FONT FACE="Courier New"><FONT SIZE=2><FONT COLOR="#000080">&lt;svn</FONT>
-<FONT COLOR="#000080">javahl=</FONT><FONT COLOR="#008000">&quot;${javahl}&quot;</FONT><FONT COLOR="#000080">&gt;</FONT></FONT></FONT>
-<FONT FACE="Courier New"><FONT SIZE=2><FONT COLOR="#000080">&lt;diff</FONT>
+<FONT SIZE=2 FACE="Courier New"><FONT COLOR="#000080">&lt;svn</FONT>
+<FONT COLOR="#000080">javahl=</FONT><FONT COLOR="#008000">&quot;${javahl}&quot;</FONT><FONT COLOR="#000080">&gt;<BR>&lt;diff</FONT>
 <FONT COLOR="#000080">oldPath=</FONT><FONT COLOR="#008000">&quot;workingcopy/diffTest/file.txt&quot;</FONT>
-<FONT COLOR="#000080">outFile=</FONT><FONT COLOR="#008000">&quot;workingcopy/diffTest/patch.txt&quot;</FONT><FONT COLOR="#000080">/&gt;</FONT></FONT></FONT>
-<FONT COLOR="#000080"><FONT FACE="Courier New"><FONT SIZE=2>&lt;/svn&gt;</FONT></FONT></FONT>
+<FONT COLOR="#000080">outFile=</FONT><FONT COLOR="#008000">&quot;workingcopy/diffTest/patch.txt&quot;</FONT><FONT COLOR="#000080">/&gt;</FONT></FONT>
+<FONT COLOR="#000080"><FONT FACE="Courier New"><FONT SIZE=2><BR>&lt;/svn&gt;</FONT></FONT></FONT>
 </p>
 </div>
 
@@ -484,10 +494,10 @@ two urls (oldUrl and newUrl).
 	</li>
 	<li>Exports a clean directory tree from the working copy specified by
 	<CODE>srcPath</CODE> into <CODE>destPath</CODE>.&nbsp; all local changes will be preserved, 
-	but files not under revision control will not be copied.
-	</li>
+	but files not under revision control will not be copied.</li>
 </ol>
 </p>
+<br/>
 <table>
 	<tr>
 		<td>Attribute</td>
@@ -552,7 +562,7 @@ svn:ignore property)</p>
 		<td>No</td>
 	</tr>
 </table>
-<div class="sample">
+<div class="sample" style="width: 663px; height: 42px">
 <p>Example :<BR>
 <FONT SIZE=2><FONT FACE="Courier New"><FONT COLOR="#000080">&lt;ignore</FONT>
 <FONT COLOR="#000080">dir=</FONT><FONT COLOR="#008000">&quot;workingcopy/ignoreTest/dir1&quot;</FONT>
@@ -613,6 +623,7 @@ given files. Valid keywords are:
 	<li>Id : A compressed summary of the previous</li>
 </ul>
 </p>
+<br/>
 <table>
 	<tr>
 		<td>Attribute</td>
@@ -782,7 +793,7 @@ URL:&nbsp; complete server-side rename.
 		<td>file that will contain the value of the property</td>
 	</tr>
 </table>
-<div class="sample">
+<div class="sample" style="width: 800px; height: 48px">
 <p>
 Example :<br>
 <FONT FACE="Courier New"><FONT SIZE=2><FONT COLOR="#000080">&lt;propget</FONT>
@@ -972,6 +983,7 @@ The value of propStatusProperty can be :
 	<li>modified</li>
 </ul>
 </p>
+<p></p>
 <div class="sample">
 <p>
 Example : <br>
@@ -1020,14 +1032,14 @@ working copy to a branch or tag within the same repository.</p>
 		<td>No</td>
 	</tr>
 </table>
-<div class="sample">
+<div class="sample" style="width: 674px; height: 85px">
 <p>
 Example :
-<FONT FACE="Courier New"><FONT SIZE=2><FONT COLOR="#000080">&lt;svn&gt;</FONT></FONT></FONT>
-<FONT FACE="Courier New"><FONT SIZE=2><FONT COLOR="#000080">&lt;switch</FONT>
+<FONT FACE="Courier New"><FONT SIZE=2><FONT COLOR="#000080"><br>&lt;svn&gt;</FONT></FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=2><FONT COLOR="#000080"><br>&lt;switch</FONT>
 <FONT COLOR="#000080">path=</FONT><FONT COLOR="#008000">&quot;workingcopy/switchTest&quot;</FONT>
 <FONT COLOR="#000080">url=</FONT><FONT COLOR="#008000">&quot;${urlRepos}/switchTestBranch&quot;</FONT><FONT COLOR="#000080">/&gt;</FONT></FONT></FONT>
-<FONT COLOR="#000080"><FONT FACE="Courier New"><FONT SIZE=2>&lt;/svn&gt;</FONT></FONT></FONT>
+<FONT COLOR="#000080"><FONT FACE="Courier New"><FONT SIZE=2><br>&lt;/svn&gt;</FONT></FONT></FONT>
 </p>
 </div>
 
@@ -1076,20 +1088,7 @@ Filesets are used to select sets of files to update.
 <H2>Examples</H2>
 
 <p>
-<div class="sample">
-<FONT FACE="Courier New"><FONT SIZE=2><FONT COLOR="#000080">&lt;svn</FONT>
-<FONT COLOR="#000080">javahl=</FONT><FONT COLOR="#008000">&quot;${javahl}&quot;</FONT><FONT COLOR="#000080">&gt;</FONT></FONT></FONT><br>
-<FONT FACE="Courier New"><FONT SIZE=2><FONT COLOR="#000080">&lt;checkout</FONT>
-<FONT COLOR="#000080">url=</FONT><FONT COLOR="#008000">&quot;${urlRepos}&quot;</FONT>
-<FONT COLOR="#000080">destPath=</FONT><FONT COLOR="#008000">&quot;workingcopy&quot;</FONT>
-<FONT COLOR="#000080">/&gt;</FONT></FONT></FONT><br>
-<FONT FACE="Courier New"><FONT SIZE=2><FONT COLOR="#000080">&lt;/svn&gt;</FONT></FONT></FONT>
-</div>
-checkouts a working copy from repository
-</p>
-
-<p>
-<div class="sample">
+<div class="sample" style="width: 843px; height: 128px">
 <FONT FACE="Courier New"><FONT SIZE=2><FONT COLOR="#000080">&lt;svn</FONT><FONT COLOR="#000080">&gt;</FONT></FONT></FONT><br>
 <FONT COLOR="#000080">  <FONT FACE="Courier New"><FONT SIZE=2>&lt;delete&gt;</FONT></FONT></FONT><br>
 <FONT COLOR="#000080">    <FONT FACE="Courier New"><FONT SIZE=2>&lt;fileset</FONT>
@@ -1107,8 +1106,8 @@ deletes some files from repository (and commit changes)
 </p>
 
 <p>
-<div class="sample">
-<FONT FACE="Courier New"><FONT SIZE=2><FONT COLOR="#000080">&lt;svn&gt;</FONT></FONT></FONT><br>
+<div class="sample" style="width: 842px; height: 117px">
+<FONT FACE="Courier New"><FONT SIZE=2><FONT COLOR="#000080">&lt;svn javahl=&quot;false&quot;&gt;</FONT></FONT></FONT><br>
 <FONT COLOR="#000080">  <FONT FACE="Courier New"><FONT SIZE=2>&lt;add</FONT>
 <FONT COLOR="#000080">dir=</FONT><FONT COLOR="#008000">&quot;workingcopy/propTest&quot;</FONT><FONT COLOR="#000080">/&gt;</FONT></FONT></FONT><br>
 <FONT COLOR="#000080">  <FONT FACE="Courier New"><FONT SIZE=2>&lt;commit</FONT>
@@ -1123,9 +1122,8 @@ added&quot;</FONT> <FONT COLOR="#000080">dir=</FONT><FONT COLOR="#008000">&quot;
 <FONT COLOR="#000080">name=</FONT><FONT COLOR="#008000">&quot;myPicture&quot;</FONT>
 <FONT COLOR="#000080">file=</FONT><FONT COLOR="#008000">&quot;workingcopy/propTest/icon.gif&quot;</FONT><FONT COLOR="#000080">/&gt;</FONT></FONT></FONT><br>
 <FONT FACE="Courier New"><FONT SIZE=2><FONT COLOR="#000080">&lt;/svn&gt;</FONT></FONT></FONT>
-</div>
-add my_repos/propTest to repository and set two properties on file.png <br>
-subversion command line interface is used (javahl=�false�).
+</div>add my_repos/propTest to repository and set two properties on file.png <br>
+subversion command line interface is used (javahl=&quot;false&quot;).
 </p>
 
 <HR>
