@@ -1140,6 +1140,14 @@ public class CmdLineClientAdapter extends AbstractClientAdapter {
 		return getInfo(new SVNUrl[] { url });
 	}
 
+    /* (non-Javadoc)
+     * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#getInfo(org.tigris.subversion.svnclientadapter.SVNUrl, org.tigris.subversion.svnclientadapter.SVNRevision, org.tigris.subversion.svnclientadapter.SVNRevision)
+     */
+    public ISVNInfo getInfo(SVNUrl url, SVNRevision revision, SVNRevision peg)
+            throws SVNClientException {
+        return getInfo(url);
+    }
+    
 	/* (non-Javadoc)
 	 * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#getInfo(org.tigris.subversion.svnclientadapter.SVNUrl[])
 	 */

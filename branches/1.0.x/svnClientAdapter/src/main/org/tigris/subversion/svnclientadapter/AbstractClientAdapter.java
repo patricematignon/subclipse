@@ -198,4 +198,8 @@ public abstract class AbstractClientAdapter implements ISVNClientAdapter {
         }
         this.mkdir(url, message);
     }
+
+	public ISVNInfo getInfo(SVNUrl url) throws SVNClientException {
+		return getInfo(url, SVNRevision.HEAD, SVNRevision.HEAD);
+	}
 }
