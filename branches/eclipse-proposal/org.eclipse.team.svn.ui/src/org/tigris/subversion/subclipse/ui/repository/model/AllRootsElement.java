@@ -17,9 +17,9 @@ import java.util.Arrays;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.team.svn.core.internal.ISVNRepositoryLocation;
+import org.eclipse.team.svn.core.internal.repo.RepositoryComparator;
 import org.eclipse.ui.model.IWorkbenchAdapter;
-import org.tigris.subversion.subclipse.core.ISVNRepositoryLocation;
-import org.tigris.subversion.subclipse.core.repo.RepositoryComparator;
 import org.tigris.subversion.subclipse.ui.SVNUIPlugin;
 
 /**

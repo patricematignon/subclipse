@@ -2,7 +2,7 @@ package org.tigris.subversion.subclipse.ui;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.swt.widgets.Display;
-import org.tigris.subversion.subclipse.core.resources.ISVNFileModificationValidatorPrompt;
+import org.eclipse.team.svn.core.internal.resources.ISVNFileModificationValidatorPrompt;
 import org.tigris.subversion.subclipse.ui.dialogs.LockDialog;
 
 public class SVNFileModificationValidatorPrompt implements ISVNFileModificationValidatorPrompt {

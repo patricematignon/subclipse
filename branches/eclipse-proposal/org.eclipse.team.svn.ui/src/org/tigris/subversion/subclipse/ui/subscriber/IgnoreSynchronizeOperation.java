@@ -17,8 +17,8 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.synchronize.SyncInfoSet;
+import org.eclipse.team.svn.core.internal.SVNTeamProvider;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
-import org.tigris.subversion.subclipse.core.SVNTeamProvider;
 import org.tigris.subversion.subclipse.ui.dialogs.IgnoreResourcesDialog;
 import org.tigris.subversion.subclipse.ui.operations.IgnoreOperation;
 

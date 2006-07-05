@@ -13,10 +13,10 @@ package org.tigris.subversion.subclipse.ui;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.team.svn.core.internal.sync.SVNWorkspaceSubscriber;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.synchronize.ISynchronizeParticipant;
 import org.eclipse.team.ui.synchronize.SubscriberParticipant;
-import org.tigris.subversion.subclipse.core.sync.SVNWorkspaceSubscriber;
 import org.tigris.subversion.subclipse.ui.internal.GlobalRefreshResourceSelectionPage;
 import org.tigris.subversion.subclipse.ui.subscriber.SVNSynchronizeParticipant;
 

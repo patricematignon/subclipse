@@ -7,11 +7,11 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.subversion.client.SVNRevision;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.svn.core.internal.SVNException;
+import org.eclipse.team.svn.core.internal.SVNTeamProvider;
+import org.eclipse.team.svn.core.internal.commands.UpdateResourcesCommand;
+import org.eclipse.team.svn.core.internal.sync.SVNWorkspaceSubscriber;
 import org.eclipse.ui.IWorkbenchPart;
-import org.tigris.subversion.subclipse.core.SVNException;
-import org.tigris.subversion.subclipse.core.SVNTeamProvider;
-import org.tigris.subversion.subclipse.core.commands.UpdateResourcesCommand;
-import org.tigris.subversion.subclipse.core.sync.SVNWorkspaceSubscriber;
 import org.tigris.subversion.subclipse.ui.Policy;
 
 /**
@@ -53,7 +53,7 @@ public class UpdateOperation extends RepositoryProviderOperation {
 
 
     /* (non-Javadoc)
-     * @see org.tigris.subversion.subclipse.ui.operations.RepositoryProviderOperation#execute(org.tigris.subversion.subclipse.core.SVNTeamProvider, org.eclipse.core.resources.IResource[], org.eclipse.core.runtime.IProgressMonitor)
+     * @see org.tigris.subversion.subclipse.ui.operations.RepositoryProviderOperation#execute(org.eclipse.team.svn.core.internal.SVNTeamProvider, org.eclipse.core.resources.IResource[], org.eclipse.core.runtime.IProgressMonitor)
      */
     protected void execute(SVNTeamProvider provider, IResource[] resources, IProgressMonitor monitor) throws SVNException, InterruptedException {
         monitor.beginTask(null, 100);

@@ -11,7 +11,7 @@
 package org.tigris.subversion.subclipse.ui.repository.model;
 
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
-import org.tigris.subversion.subclipse.core.ISVNRepositoryLocation;
+import org.eclipse.team.svn.core.internal.ISVNRepositoryLocation;
 
 /**
  * A simple job scheduling rule for serializing jobs for an ICVSRepositoryLocation

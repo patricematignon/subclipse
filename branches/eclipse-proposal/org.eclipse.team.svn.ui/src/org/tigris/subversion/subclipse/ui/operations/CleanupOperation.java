@@ -2,10 +2,10 @@ package org.tigris.subversion.subclipse.ui.operations;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.team.svn.core.internal.SVNException;
+import org.eclipse.team.svn.core.internal.SVNTeamProvider;
+import org.eclipse.team.svn.core.internal.commands.CleanupResourcesCommand;
 import org.eclipse.ui.IWorkbenchPart;
-import org.tigris.subversion.subclipse.core.SVNException;
-import org.tigris.subversion.subclipse.core.SVNTeamProvider;
-import org.tigris.subversion.subclipse.core.commands.CleanupResourcesCommand;
 import org.tigris.subversion.subclipse.ui.Policy;
 
 public class CleanupOperation extends RepositoryProviderOperation {
@@ -30,7 +30,7 @@ public class CleanupOperation extends RepositoryProviderOperation {
 
 
     /* (non-Javadoc)
-     * @see org.tigris.subversion.subclipse.ui.operations.RepositoryProviderOperation#execute(org.tigris.subversion.subclipse.core.SVNTeamProvider, org.eclipse.core.resources.IResource[], org.eclipse.core.runtime.IProgressMonitor)
+     * @see org.tigris.subversion.subclipse.ui.operations.RepositoryProviderOperation#execute(org.eclipse.team.svn.core.internal.SVNTeamProvider, org.eclipse.core.resources.IResource[], org.eclipse.core.runtime.IProgressMonitor)
      */
     protected void execute(SVNTeamProvider provider, IResource[] resources, IProgressMonitor monitor) throws SVNException, InterruptedException {
         monitor.beginTask(null, 100);

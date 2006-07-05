@@ -8,7 +8,7 @@ import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.team.core.TeamException;
-import org.tigris.subversion.subclipse.core.ISVNRemoteResource;
+import org.eclipse.team.svn.core.internal.ISVNRemoteResource;
 
 public class CopyUrlToClipboardAction extends SVNAction {
 

@@ -16,14 +16,14 @@ import java.util.ArrayList;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.team.svn.core.internal.ISVNRemoteResource;
+import org.eclipse.team.svn.core.internal.ISVNRepositoryLocation;
+import org.eclipse.team.svn.core.internal.history.Alias;
+import org.eclipse.team.svn.core.internal.history.AliasManager;
+import org.eclipse.team.svn.core.internal.history.Branches;
+import org.eclipse.team.svn.core.internal.history.Tags;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.progress.DeferredTreeContentManager;
-import org.tigris.subversion.subclipse.core.ISVNRemoteResource;
-import org.tigris.subversion.subclipse.core.ISVNRepositoryLocation;
-import org.tigris.subversion.subclipse.core.history.Alias;
-import org.tigris.subversion.subclipse.core.history.AliasManager;
-import org.tigris.subversion.subclipse.core.history.Branches;
-import org.tigris.subversion.subclipse.core.history.Tags;
 
 /**
  * Extension to the generic workbench content provider mechanism

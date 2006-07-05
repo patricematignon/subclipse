@@ -23,11 +23,11 @@ import org.eclipse.subversion.client.SVNUrl;
 import org.eclipse.subversion.client.SVNRevision.Number;
 import org.eclipse.swt.dnd.ByteArrayTransfer;
 import org.eclipse.swt.dnd.TransferData;
-import org.tigris.subversion.subclipse.core.ISVNRemoteResource;
-import org.tigris.subversion.subclipse.core.ISVNRepositoryLocation;
-import org.tigris.subversion.subclipse.core.SVNProviderPlugin;
-import org.tigris.subversion.subclipse.core.resources.RemoteFile;
-import org.tigris.subversion.subclipse.core.resources.RemoteFolder;
+import org.eclipse.team.svn.core.internal.ISVNRemoteResource;
+import org.eclipse.team.svn.core.internal.ISVNRepositoryLocation;
+import org.eclipse.team.svn.core.internal.SVNProviderPlugin;
+import org.eclipse.team.svn.core.internal.resources.RemoteFile;
+import org.eclipse.team.svn.core.internal.resources.RemoteFolder;
 
 /**
  * This class is used when copying and pasting remote resources to/from clipboard

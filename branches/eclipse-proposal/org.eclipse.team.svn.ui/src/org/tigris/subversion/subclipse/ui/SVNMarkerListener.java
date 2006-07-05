@@ -14,10 +14,10 @@ package org.tigris.subversion.subclipse.ui;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.tigris.subversion.subclipse.core.IResourceStateChangeListener;
-import org.tigris.subversion.subclipse.core.ISVNLocalResource;
-import org.tigris.subversion.subclipse.core.resources.LocalResourceStatus;
-import org.tigris.subversion.subclipse.core.resources.SVNWorkspaceRoot;
+import org.eclipse.team.svn.core.internal.IResourceStateChangeListener;
+import org.eclipse.team.svn.core.internal.ISVNLocalResource;
+import org.eclipse.team.svn.core.internal.resources.LocalResourceStatus;
+import org.eclipse.team.svn.core.internal.resources.SVNWorkspaceRoot;
 
 public class SVNMarkerListener implements IResourceStateChangeListener {
 
@@ -26,7 +26,7 @@ public class SVNMarkerListener implements IResourceStateChangeListener {
     }
 
     /* (non-Javadoc)
-     * @see org.tigris.subversion.subclipse.core.IResourceStateChangeListener#resourceSyncInfoChanged(org.eclipse.core.resources.IResource[])
+     * @see org.eclipse.team.svn.core.internal.IResourceStateChangeListener#resourceSyncInfoChanged(org.eclipse.core.resources.IResource[])
      */
     public void resourceSyncInfoChanged(IResource[] changedResources) {
         for (int i = 0; i < changedResources.length; i++) {
@@ -54,21 +54,21 @@ public class SVNMarkerListener implements IResourceStateChangeListener {
     }
 
     /* (non-Javadoc)
-     * @see org.tigris.subversion.subclipse.core.IResourceStateChangeListener#resourceModified(org.eclipse.core.resources.IResource[])
+     * @see org.eclipse.team.svn.core.internal.IResourceStateChangeListener#resourceModified(org.eclipse.core.resources.IResource[])
      */
     public void resourceModified(IResource[] changedResources) {
 
     }
 
     /* (non-Javadoc)
-     * @see org.tigris.subversion.subclipse.core.IResourceStateChangeListener#projectConfigured(org.eclipse.core.resources.IProject)
+     * @see org.eclipse.team.svn.core.internal.IResourceStateChangeListener#projectConfigured(org.eclipse.core.resources.IProject)
      */
     public void projectConfigured(IProject project) {
 
     }
 
     /* (non-Javadoc)
-     * @see org.tigris.subversion.subclipse.core.IResourceStateChangeListener#projectDeconfigured(org.eclipse.core.resources.IProject)
+     * @see org.eclipse.team.svn.core.internal.IResourceStateChangeListener#projectDeconfigured(org.eclipse.core.resources.IProject)
      */
     public void projectDeconfigured(IProject project) {
 

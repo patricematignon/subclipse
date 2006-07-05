@@ -12,12 +12,12 @@ package org.tigris.subversion.subclipse.ui.operations;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.svn.core.internal.ISVNRemoteFolder;
+import org.eclipse.team.svn.core.internal.ISVNRemoteResource;
+import org.eclipse.team.svn.core.internal.Policy;
+import org.eclipse.team.svn.core.internal.SVNException;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.progress.IElementCollector;
-import org.tigris.subversion.subclipse.core.ISVNRemoteFolder;
-import org.tigris.subversion.subclipse.core.ISVNRemoteResource;
-import org.tigris.subversion.subclipse.core.Policy;
-import org.tigris.subversion.subclipse.core.SVNException;
 
 /**
  * Fetch the members of a remote folder in the background, passing incremental

@@ -12,8 +12,8 @@ package org.tigris.subversion.subclipse.ui.actions;
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.jface.action.IAction;
-import org.tigris.subversion.subclipse.core.ISVNLocalResource;
-import org.tigris.subversion.subclipse.core.SVNException;
+import org.eclipse.team.svn.core.internal.ISVNLocalResource;
+import org.eclipse.team.svn.core.internal.SVNException;
 import org.tigris.subversion.subclipse.ui.Policy;
 import org.tigris.subversion.subclipse.ui.operations.CleanupOperation;
 
@@ -34,7 +34,7 @@ public class CleanupAction extends WorkspaceAction {
     }
 
     /* (non-Javadoc)
-     * @see org.tigris.subversion.subclipse.ui.actions.WorkspaceAction#isEnabledForSVNResource(org.tigris.subversion.subclipse.core.ISVNLocalResource)
+     * @see org.tigris.subversion.subclipse.ui.actions.WorkspaceAction#isEnabledForSVNResource(org.eclipse.team.svn.core.internal.ISVNLocalResource)
      */
     protected boolean isEnabledForSVNResource(ISVNLocalResource svnResource) throws SVNException {
         return svnResource.isFolder() && super.isEnabledForSVNResource(svnResource);

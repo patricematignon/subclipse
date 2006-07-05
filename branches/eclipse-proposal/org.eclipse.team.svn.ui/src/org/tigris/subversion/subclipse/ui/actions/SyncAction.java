@@ -13,8 +13,8 @@ package org.tigris.subversion.subclipse.ui.actions;
  
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.IAction;
-import org.tigris.subversion.subclipse.core.ISVNLocalResource;
-import org.tigris.subversion.subclipse.core.SVNException;
+import org.eclipse.team.svn.core.internal.ISVNLocalResource;
+import org.eclipse.team.svn.core.internal.SVNException;
 
 /**
  * Action for catchup/release in popup menus.
@@ -36,7 +36,7 @@ public class SyncAction extends WorkspaceAction {
 	 * Enable for resources that are managed (using super) or whose parent is a
 	 * SVN folder.
 	 * 
-	 * @see org.tigris.subversion.subclipse.ui.actions.WorkspaceAction#isEnabledForSVNResource(org.tigris.subversion.subclipse.core.ISVNResource)
+	 * @see org.tigris.subversion.subclipse.ui.actions.WorkspaceAction#isEnabledForSVNResource(org.eclipse.team.svn.core.internal.ISVNResource)
 	 */
 	protected boolean isEnabledForSVNResource(ISVNLocalResource svnResource) throws SVNException {
 		return super.isEnabledForSVNResource(svnResource) || svnResource.getParent().isManaged();

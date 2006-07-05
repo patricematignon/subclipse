@@ -14,7 +14,7 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.jface.action.IAction;
-import org.tigris.subversion.subclipse.core.SVNException;
+import org.eclipse.team.svn.core.internal.SVNException;
 import org.tigris.subversion.subclipse.ui.pending.PendingOperationsView;
 
 

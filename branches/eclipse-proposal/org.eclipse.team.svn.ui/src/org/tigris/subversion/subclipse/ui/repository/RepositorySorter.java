@@ -1,9 +1,9 @@
 package org.tigris.subversion.subclipse.ui.repository;
 
 import org.eclipse.jface.viewers.ViewerSorter;
-import org.tigris.subversion.subclipse.core.ISVNRemoteFile;
-import org.tigris.subversion.subclipse.core.ISVNRemoteFolder;
-import org.tigris.subversion.subclipse.core.ISVNRepositoryLocation;
+import org.eclipse.team.svn.core.internal.ISVNRemoteFile;
+import org.eclipse.team.svn.core.internal.ISVNRemoteFolder;
+import org.eclipse.team.svn.core.internal.ISVNRepositoryLocation;
 
 public class RepositorySorter extends ViewerSorter {
 

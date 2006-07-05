@@ -21,6 +21,13 @@ import org.eclipse.subversion.client.ISVNAnnotations;
 import org.eclipse.subversion.client.SVNRevision;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.team.internal.ui.Utils;
+import org.eclipse.team.svn.core.internal.ISVNRemoteFile;
+import org.eclipse.team.svn.core.internal.SVNException;
+import org.eclipse.team.svn.core.internal.SVNTeamProvider;
+import org.eclipse.team.svn.core.internal.commands.GetAnnotationsCommand;
+import org.eclipse.team.svn.core.internal.commands.GetLogsCommand;
+import org.eclipse.team.svn.core.internal.history.ILogEntry;
+import org.eclipse.team.svn.core.internal.history.LogEntry;
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
@@ -35,13 +42,6 @@ import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditor;
-import org.tigris.subversion.subclipse.core.ISVNRemoteFile;
-import org.tigris.subversion.subclipse.core.SVNException;
-import org.tigris.subversion.subclipse.core.SVNTeamProvider;
-import org.tigris.subversion.subclipse.core.commands.GetAnnotationsCommand;
-import org.tigris.subversion.subclipse.core.commands.GetLogsCommand;
-import org.tigris.subversion.subclipse.core.history.ILogEntry;
-import org.tigris.subversion.subclipse.core.history.LogEntry;
 import org.tigris.subversion.subclipse.ui.ISVNUIConstants;
 import org.tigris.subversion.subclipse.ui.Policy;
 import org.tigris.subversion.subclipse.ui.SVNUIPlugin;
@@ -77,7 +77,7 @@ public class ShowAnnotationOperation extends SVNOperation {
     }
     
     /* (non-Javadoc)
-     * @see org.tigris.subversion.subclipse.ui.operations.RepositoryProviderOperation#getTaskName(org.tigris.subversion.subclipse.core.SVNTeamProvider)
+     * @see org.tigris.subversion.subclipse.ui.operations.RepositoryProviderOperation#getTaskName(org.eclipse.team.svn.core.internal.SVNTeamProvider)
      */
     protected String getTaskName(SVNTeamProvider provider) {
         return Policy.bind("AnnotateOperation.0", provider.getProject().getName()); //$NON-NLS-1$

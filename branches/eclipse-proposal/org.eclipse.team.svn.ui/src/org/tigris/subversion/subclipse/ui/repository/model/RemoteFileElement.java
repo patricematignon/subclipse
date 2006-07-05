@@ -14,8 +14,8 @@ package org.tigris.subversion.subclipse.ui.repository.model;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.team.svn.core.internal.ISVNRemoteFile;
 import org.eclipse.ui.PlatformUI;
-import org.tigris.subversion.subclipse.core.ISVNRemoteFile;
 import org.tigris.subversion.subclipse.ui.Policy;
 
 public class RemoteFileElement extends SVNModelElement {

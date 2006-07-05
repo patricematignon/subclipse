@@ -15,15 +15,15 @@ import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.core.synchronize.SyncInfoSet;
 import org.eclipse.team.core.variants.IResourceVariant;
+import org.eclipse.team.svn.core.internal.ISVNRemoteResource;
+import org.eclipse.team.svn.core.internal.SVNException;
+import org.eclipse.team.svn.core.internal.SVNTeamProvider;
+import org.eclipse.team.svn.core.internal.commands.RevertResourcesCommand;
+import org.eclipse.team.svn.core.internal.commands.UpdateResourcesCommand;
+import org.eclipse.team.svn.core.internal.sync.SVNStatusSyncInfo;
+import org.eclipse.team.svn.core.internal.sync.SVNWorkspaceSubscriber;
+import org.eclipse.team.svn.core.internal.util.Assert;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
-import org.tigris.subversion.subclipse.core.ISVNRemoteResource;
-import org.tigris.subversion.subclipse.core.SVNException;
-import org.tigris.subversion.subclipse.core.SVNTeamProvider;
-import org.tigris.subversion.subclipse.core.commands.RevertResourcesCommand;
-import org.tigris.subversion.subclipse.core.commands.UpdateResourcesCommand;
-import org.tigris.subversion.subclipse.core.sync.SVNStatusSyncInfo;
-import org.tigris.subversion.subclipse.core.sync.SVNWorkspaceSubscriber;
-import org.tigris.subversion.subclipse.core.util.Assert;
 import org.tigris.subversion.subclipse.ui.Policy;
 
 public class OverrideAndUpdateSynchronizeOperation extends SVNSynchronizeOperation {

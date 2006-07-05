@@ -2,7 +2,7 @@ package org.tigris.subversion.subclipse.ui.repository;
 
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
-import org.tigris.subversion.subclipse.core.ISVNRemoteFile;
+import org.eclipse.team.svn.core.internal.ISVNRemoteFile;
 
 public class RepositoryFilters {
 	public static final ViewerFilter FOLDERS_ONLY = new ViewerFilter() {

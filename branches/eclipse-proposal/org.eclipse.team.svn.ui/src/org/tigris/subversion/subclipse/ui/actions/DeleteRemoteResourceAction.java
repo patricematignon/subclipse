@@ -16,7 +16,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.team.core.TeamException;
-import org.tigris.subversion.subclipse.core.SVNProviderPlugin;
+import org.eclipse.team.svn.core.internal.SVNProviderPlugin;
 import org.tigris.subversion.subclipse.ui.SVNUIPlugin;
 import org.tigris.subversion.subclipse.ui.repository.RepositoryManager;
 

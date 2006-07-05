@@ -6,7 +6,7 @@ import java.util.Iterator;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.team.core.TeamException;
-import org.tigris.subversion.subclipse.core.repo.SVNRepositoryLocation;
+import org.eclipse.team.svn.core.internal.repo.SVNRepositoryLocation;
 import org.tigris.subversion.subclipse.ui.wizards.RelocateWizard;
 
 public class RelocateAction extends SVNAction {

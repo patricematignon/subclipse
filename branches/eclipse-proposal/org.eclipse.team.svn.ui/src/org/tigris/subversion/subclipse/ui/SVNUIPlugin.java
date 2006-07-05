@@ -33,15 +33,15 @@ import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.svn.core.internal.ISVNRemoteFile;
+import org.eclipse.team.svn.core.internal.ISVNRemoteFolder;
+import org.eclipse.team.svn.core.internal.ISVNRepositoryLocation;
+import org.eclipse.team.svn.core.internal.SVNProviderPlugin;
+import org.eclipse.team.svn.core.internal.SVNStatus;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
-import org.tigris.subversion.subclipse.core.ISVNRemoteFile;
-import org.tigris.subversion.subclipse.core.ISVNRemoteFolder;
-import org.tigris.subversion.subclipse.core.ISVNRepositoryLocation;
-import org.tigris.subversion.subclipse.core.SVNProviderPlugin;
-import org.tigris.subversion.subclipse.core.SVNStatus;
 import org.tigris.subversion.subclipse.ui.authentication.SVNPromptUserPassword;
 import org.tigris.subversion.subclipse.ui.console.SVNOutputConsole;
 import org.tigris.subversion.subclipse.ui.repository.RepositoryManager;
@@ -56,7 +56,7 @@ public class SVNUIPlugin extends AbstractUIPlugin {
 	 */
 	public static final String ID = "org.tigris.subversion.subclipse.ui"; //$NON-NLS-1$
 	public static final String DECORATOR_ID = "org.tigris.subversion.subclipse.ui.decorator"; //$NON-NLS-1$
-	public static final String PROVIDER_ID="org.tigris.subversion.subclipse.core.svnnature"; //$NON-NLS-1$
+	public static final String PROVIDER_ID="org.eclipse.team.svn.core.internal.svnnature"; //$NON-NLS-1$
 
 	/**
 	 * The singleton plug-in instance

@@ -7,10 +7,10 @@ import org.eclipse.subversion.client.ISVNClientAdapter;
 import org.eclipse.subversion.client.SVNClientException;
 import org.eclipse.subversion.client.SVNRevision;
 import org.eclipse.subversion.client.SVNUrl;
+import org.eclipse.team.svn.core.internal.ISVNRepositoryLocation;
+import org.eclipse.team.svn.core.internal.SVNException;
+import org.eclipse.team.svn.core.internal.SVNProviderPlugin;
 import org.eclipse.ui.IWorkbenchPart;
-import org.tigris.subversion.subclipse.core.ISVNRepositoryLocation;
-import org.tigris.subversion.subclipse.core.SVNException;
-import org.tigris.subversion.subclipse.core.SVNProviderPlugin;
 import org.tigris.subversion.subclipse.ui.Policy;
 
 public class ShowDifferencesAsUnifiedDiffOperation extends SVNOperation {

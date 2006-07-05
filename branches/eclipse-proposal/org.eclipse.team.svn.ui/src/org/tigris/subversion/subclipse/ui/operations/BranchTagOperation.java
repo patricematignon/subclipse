@@ -4,14 +4,14 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.subversion.client.SVNRevision;
 import org.eclipse.subversion.client.SVNUrl;
+import org.eclipse.team.svn.core.internal.ISVNLocalResource;
+import org.eclipse.team.svn.core.internal.SVNException;
+import org.eclipse.team.svn.core.internal.SVNTeamProvider;
+import org.eclipse.team.svn.core.internal.commands.BranchTagCommand;
+import org.eclipse.team.svn.core.internal.history.Alias;
+import org.eclipse.team.svn.core.internal.history.AliasManager;
+import org.eclipse.team.svn.core.internal.resources.SVNWorkspaceRoot;
 import org.eclipse.ui.IWorkbenchPart;
-import org.tigris.subversion.subclipse.core.ISVNLocalResource;
-import org.tigris.subversion.subclipse.core.SVNException;
-import org.tigris.subversion.subclipse.core.SVNTeamProvider;
-import org.tigris.subversion.subclipse.core.commands.BranchTagCommand;
-import org.tigris.subversion.subclipse.core.history.Alias;
-import org.tigris.subversion.subclipse.core.history.AliasManager;
-import org.tigris.subversion.subclipse.core.resources.SVNWorkspaceRoot;
 import org.tigris.subversion.subclipse.ui.Policy;
 
 public class BranchTagOperation extends RepositoryProviderOperation {

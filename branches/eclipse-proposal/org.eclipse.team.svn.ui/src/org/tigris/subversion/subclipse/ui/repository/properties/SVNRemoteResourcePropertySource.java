@@ -12,10 +12,10 @@
 package org.tigris.subversion.subclipse.ui.repository.properties;
 
 
+import org.eclipse.team.svn.core.internal.ISVNRemoteResource;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertySource;
 import org.eclipse.ui.views.properties.PropertyDescriptor;
-import org.tigris.subversion.subclipse.core.ISVNRemoteResource;
 import org.tigris.subversion.subclipse.ui.ISVNUIConstants;
 import org.tigris.subversion.subclipse.ui.Policy;
 

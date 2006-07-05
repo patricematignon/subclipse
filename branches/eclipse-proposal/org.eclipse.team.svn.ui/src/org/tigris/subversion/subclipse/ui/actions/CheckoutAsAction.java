@@ -15,7 +15,7 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.wizard.WizardDialog;
-import org.tigris.subversion.subclipse.core.ISVNRemoteFolder;
+import org.eclipse.team.svn.core.internal.ISVNRemoteFolder;
 import org.tigris.subversion.subclipse.ui.WorkspacePathValidator;
 import org.tigris.subversion.subclipse.ui.wizards.CheckoutWizard;
 

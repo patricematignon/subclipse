@@ -38,9 +38,9 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
-import org.tigris.subversion.subclipse.core.ISVNRemoteResource;
-import org.tigris.subversion.subclipse.core.history.ILogEntry;
-import org.tigris.subversion.subclipse.core.history.AliasManager;
+import org.eclipse.team.svn.core.internal.ISVNRemoteResource;
+import org.eclipse.team.svn.core.internal.history.AliasManager;
+import org.eclipse.team.svn.core.internal.history.ILogEntry;
 import org.tigris.subversion.subclipse.ui.Policy;
 
 /**

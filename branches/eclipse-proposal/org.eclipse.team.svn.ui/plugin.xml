@@ -131,7 +131,7 @@
    <extension
          point="org.eclipse.ui.popupMenus">
       <objectContribution
-            objectClass="org.tigris.subversion.subclipse.core.ISVNRepositoryLocation"
+            objectClass="org.eclipse.team.svn.core.internal.ISVNRepositoryLocation"
             id="org.tigris.subversion.subclipse.ui.RepositoryLocationContributions">
          <action
                label="%CreateRemoteFolderAction.label"
@@ -159,7 +159,7 @@
          </action>                              
       </objectContribution>
       <objectContribution
-            objectClass="org.tigris.subversion.subclipse.core.ISVNRemoteResource"
+            objectClass="org.eclipse.team.svn.core.internal.ISVNRemoteResource"
             id="org.tigris.subversion.subclipse.ui.RemoteResourceContributions">
          <action
                label="%CreateRemoteFolderAction.label"
@@ -242,7 +242,7 @@
          </action>
       </objectContribution>
       <objectContribution
-            objectClass="org.tigris.subversion.subclipse.core.ISVNRemoteFile"
+            objectClass="org.eclipse.team.svn.core.internal.ISVNRemoteFile"
             id="org.tigris.subversion.subclipse.ui.RemoteFileContributions">
          <action
                label="%AnnotateAction.label"
@@ -261,7 +261,7 @@
          </action>
       </objectContribution>
       <objectContribution
-            objectClass="org.tigris.subversion.subclipse.core.ISVNRemoteFolder"
+            objectClass="org.eclipse.team.svn.core.internal.ISVNRemoteFolder"
             id="org.tigris.subversion.subclipse.ui.RemoteFolderContributions">
          <action
                label="%CheckoutAsAction.label"
@@ -288,7 +288,7 @@
          </action>         
       </objectContribution>
       <objectContribution
-            objectClass="org.tigris.subversion.subclipse.core.history.LogEntry"
+            objectClass="org.eclipse.team.svn.core.internal.history.LogEntry"
             id="org.tigris.subversion.subclipse.ui.LogEntryContributions">
          <action
                label="%OpenLogEntryAction.label"
@@ -770,7 +770,7 @@ definitionId="org.tigris.subversion.subclipse.ui.synchronize"
          </filter>
       </page>
       <page
-            objectClass="org.tigris.subversion.subclipse.core.ISVNRepositoryLocation"
+            objectClass="org.eclipse.team.svn.core.internal.ISVNRepositoryLocation"
             name="%SVN"
             class="org.tigris.subversion.subclipse.ui.properties.SVNRepositoryPropertiesPage"
             id="org.tigris.subversion.subclipse.ui.properties.SVNRepositoryPropertiesPage">
@@ -1051,7 +1051,7 @@ For example:
    <extension
          point="org.eclipse.core.runtime.adapters">
 			<factory
-            adaptableType="org.tigris.subversion.subclipse.core.SVNTeamProvider"
+            adaptableType="org.eclipse.team.svn.core.internal.SVNTeamProvider"
             class="org.tigris.subversion.subclipse.ui.repository.model.SVNAdapterFactory">
          <adapter type="org.eclipse.team.ui.history.IHistoryPageSource"/>
       </factory>

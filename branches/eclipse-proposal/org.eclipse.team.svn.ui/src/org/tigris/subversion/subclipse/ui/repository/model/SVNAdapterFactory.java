@@ -13,14 +13,14 @@ package org.tigris.subversion.subclipse.ui.repository.model;
 
 
 import org.eclipse.core.runtime.IAdapterFactory;
+import org.eclipse.team.svn.core.internal.ISVNRemoteFile;
+import org.eclipse.team.svn.core.internal.ISVNRemoteFolder;
+import org.eclipse.team.svn.core.internal.ISVNRemoteResource;
+import org.eclipse.team.svn.core.internal.ISVNRepositoryLocation;
 import org.eclipse.team.ui.history.IHistoryPageSource;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.progress.IDeferredWorkbenchAdapter;
 import org.eclipse.ui.views.properties.IPropertySource;
-import org.tigris.subversion.subclipse.core.ISVNRemoteFile;
-import org.tigris.subversion.subclipse.core.ISVNRemoteFolder;
-import org.tigris.subversion.subclipse.core.ISVNRemoteResource;
-import org.tigris.subversion.subclipse.core.ISVNRepositoryLocation;
 import org.tigris.subversion.subclipse.ui.history.SVNHistoryPageSource;
 import org.tigris.subversion.subclipse.ui.repository.properties.SVNRemoteResourcePropertySource;
 

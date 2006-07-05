@@ -7,8 +7,8 @@
    <extension
          point="org.eclipse.team.core.repository">
       <repository
-            typeClass="org.tigris.subversion.subclipse.core.SVNTeamProviderType"
-            class="org.tigris.subversion.subclipse.core.SVNTeamProvider"
+            typeClass="org.eclipse.team.svn.core.internal.SVNTeamProviderType"
+            class="org.eclipse.team.svn.core.internal.SVNTeamProvider"
             id="org.tigris.subversion.subclipse.core.svnnature"
             metaFilePaths=".svn/entries,.project">
       </repository>
@@ -43,7 +43,7 @@
    </extension>
    
    <extension point="org.eclipse.core.runtime.preferences">
-   		<initializer class="org.tigris.subversion.subclipse.core.PreferenceInitializer"/>
+   		<initializer class="org.eclipse.team.svn.core.internal.PreferenceInitializer"/>
    </extension>   
    
    <extension
