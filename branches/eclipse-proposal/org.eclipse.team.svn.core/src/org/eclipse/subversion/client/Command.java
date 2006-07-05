@@ -18,8 +18,6 @@ package org.eclipse.subversion.client;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import org.tigris.subversion.svnclientadapter.utils.ReaderThread;
-
 /**
  * execute a command. Some parts of this class come from javasvn
  */

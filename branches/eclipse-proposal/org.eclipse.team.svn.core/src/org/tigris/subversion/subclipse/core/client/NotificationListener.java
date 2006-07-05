@@ -15,7 +15,6 @@ import java.io.*;
 import org.eclipse.subversion.client.ISVNNotifyListener;
 import org.eclipse.subversion.client.SVNNodeKind;
 import org.tigris.subversion.subclipse.core.*;
-import org.tigris.subversion.svnclientadapter.*;
 
 /**
  * This class listen to notifications from svnClientAdapter and redirect them to the console listener
