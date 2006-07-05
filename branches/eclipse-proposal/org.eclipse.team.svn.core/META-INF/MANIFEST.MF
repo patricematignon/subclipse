@@ -2,24 +2,17 @@ Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.team.svn.core;singleton:=true
 Bundle-Version: 1.1.2
-Bundle-ClassPath: .,
- lib/svnClientAdapter.jar,
- lib/svnjavahl.jar,
- lib/javasvn.jar,
- lib/ganymed.jar
 Bundle-Activator: org.tigris.subversion.subclipse.core.SVNProviderPlugin
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
-Require-Bundle: org.eclipse.core.resources;bundle-version="3.2.0",
+Require-Bundle: org.eclipse.subversion.client;visibility:=reexport,
+ org.eclipse.core.resources;bundle-version="3.2.0",
  org.eclipse.team.core;bundle-version="3.2.0",
  org.eclipse.core.runtime;bundle-version="3.2.0",
  org.eclipse.osgi,
  org.eclipse.compare
 Eclipse-LazyStart: true
-Export-Package: org.eclipse.subversion.client,
- org.eclipse.subversion.client.javahl,
- org.eclipse.subversion.client.javasvn,
- org.tigris.subversion.subclipse.core,
+Export-Package: org.tigris.subversion.subclipse.core,
  org.tigris.subversion.subclipse.core.client,
  org.tigris.subversion.subclipse.core.commands,
  org.tigris.subversion.subclipse.core.history,
