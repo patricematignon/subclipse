@@ -6,6 +6,7 @@
 			<accessrule kind="accessible" pattern="org/eclipse/team/internal/ui/synchronize/**"/>
 			<accessrule kind="accessible" pattern="org/eclipse/team/internal/core/subscribers/**"/>
 			<accessrule kind="accessible" pattern="org/eclipse/team/internal/ui/*"/>
+			<accessrule kind="accessible" pattern="org/eclipse/ui/internal/**"/>
 		</accessrules>
 	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>

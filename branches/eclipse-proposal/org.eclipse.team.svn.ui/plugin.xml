@@ -316,7 +316,7 @@
          </action>
       </objectContribution>
       <objectContribution
-            objectClass="org.tigris.subversion.svnclientadapter.ISVNProperty"
+            objectClass="org.eclipse.subversion.client.ISVNProperty"
             id="org.tigris.subversion.subclipse.ui.SVNPropertyContributions">
          <action
                label="%ModifySVNPropertyAction.label"
