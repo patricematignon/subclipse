@@ -1,0 +1,124 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<style type="text/css"> /* <![CDATA[ */
+  @import "tigris-branding/css/tigris.css";
+  @import "tigris-branding/css/inst.css";
+  /* ]]> */</style>
+<link rel="stylesheet" type="text/css" media="print"
+  href="tigris-branding/css/print.css"/>
+<script type="text/javascript" src="tigris-branding/scripts/tigris.js"></script>
+<title>SVN Team Provider Project Proposal</title>
+</head>
+
+<body>
+<div class="app">
+
+<h1>SVN Team Provider Project</h1>
+
+<h2>Introduction</h2>
+
+<p>The SVN Team Provider Project is a proposed open source project 
+under the <a href="/technology/">Eclipse Technology Project</a>.</p>
+
+<p>This proposal is in the Project Proposal Phase (as defined in the
+<a href="/projects/dev_process/"> Eclipse Development Process 
+document</a>) and is written to declare its intent and scope. This proposal
+is written to solicit additional participation and  input from the Eclipse
+community. You are invited to comment on and/or join the project. Please 
+send all feedback to the <a href="news://news.eclipse.org/eclipse.technology.svn">
+news://news.eclipse.org/eclipse.technology.svn</a> newsgroup.</p>
+
+<h2>Background</h2>
+
+<p>Subversion (SVN) is very popular and will soon overtake CVS as the most 
+widely used open source version control system. Many hosting services are 
+providing SVN access, and several major open source projects have converted
+their CVS repositories to SVN. Eclipse has great support for CVS, and users
+are looking for similar support for SVN.  Eclipse has no support for SVN out
+of the box, which compares poorly to competitorrs such as Netbeans and IDEA.
+Many new users will not know that they can download a 3rd party plugin to add
+SVN support.</p>
+<p>In addition to adding SVN support to Eclipse, there is the issue of providing
+a solid Team API that can be leveraged by commercial and open source SCM
+providers.  The current Team API is very capable, but at the same time it is 
+also hindered by having only one concrete implementation.  In many instances
+the API has become very CVS centric.</p>
+<p>Finally, there is the issue of providing support for SVN to projects hosted
+by Eclipse.org.  The code for this project should be hosted in an SVN repository
+and it is likely that there are other projects currently hosted at Eclipse.org that
+would like to migrate their repositories from CVS to SVN.  Part of this proposal is
+to provide resources and expertise that will support the Eclipse Foundation in their
+efforts to provide these services to the community.</p>
+
+<h2>Scope</h2>
+<p>The objectives of the SVN Team Provider project are to: </p>
+<ul>
+	<li>Provide support for accessing and manipulating projects that are hosted in
+	a Subversion repository.</li>
+	<li>Provide UI and features that are familiar to existing Eclipse CVS users, while
+	at the same time providing appropriate UI and access to SVN-specific features.</li>
+	<li>Provide accurate and up to date documentation on using the features of the SVN 
+	provider.</li>
+	<li>Support, implement and follow the latest best practices for Eclipse UI development
+	as appropriate for the current Eclipse release.</li>
+    <li>Contribute to the development and refinement of the Eclipse Core Team API.</li>
+	<li>Assist resources at the Eclipse Foundation in offering SVN hosting to projects.</li>
+	<li>Assist the release engineering team to add SVN support to their tools and process.</li>
+</ul>
+	
+<h2>Description</h2>
+
+<h2>Organization</h2>
+	
+<p><b>Initial committers</b></p>
+<p>The initial committers will focus on refactoring the existing Subclipse code base to meet
+the initial objectives of this project.  The initial committers are:</p>
+
+<ul>
+	<li>Mark Phippard</li>
+	<li>Brock Janiczak</li>
+	<li>Stephen Elsemore</li>
+	<li>Paul Thiel</li>
+	<li>Eugene Kuleshov</li>
+	<li>Martin Letenay</li>
+	<li>Daniel Bradby</li>
+	<li>Jesper Steen Møller</li>
+</ul>
+
+<p><b>Interested parties</b></p>
+<p>The following Eclipse projects have previously worked with the Subclipse project and have
+expressed an interest in this proposal.</p>
+<ul>
+	<li>Mylar</li>
+	<li>Buckminster</li>
+	<li>ALF</li>
+</ul>
+
+<p><b>Developer community</b></p>
+<p>The Subclipse project has a proven track record of being able to attract and support contributions
+from the developer community.  The Subclipse 1.0 release listed thirty-seven individuals that made
+code contributions to the project.  We expect to continue this tradition and likely expand it greatly
+as the visibility of the project in the Eclipse community is likely to increase as a result of this
+process.</p>
+
+<p><b>User community</b></p>
+<p>As with the Developer community, Subclipse has a proven track record of having a vibrant user
+community that has always provided valuable assistance to the development process as well as assistance
+in supporting one another in a respectful and professional manner.  The Subversion project itself for
+that matter has set a high standard of excellence in this area, which other projects have followed.</p>
+	
+<h2>Tentative Plan</h2>
+	
+<ul>
+	<li>September 2006: Refactored and relicensed code contribution based on Subclipse</li>
+	<li>December 2006: Initial release as an Eclipse project, supporting Eclipse 3.2.</li>
+	<li>January 2007: Join the release train for Eclipse 3.3</li>
+	<li>July 2007: Possibly move project to Eclipse Plaform</li>
+</ul>
+
+</div>
+</body>
+</html>
