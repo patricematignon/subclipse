@@ -21,13 +21,14 @@
 <h2>Introduction</h2>
 
 <p>The SVN Team Provider Project is a proposed open source project 
-under the <a href="/technology/">Eclipse Technology Project</a>.</p>
+under the <a href="http://www.eclipse.org/technology/">Eclipse Technology
+Project</a>.</p>
 
 <p>This proposal is in the Project Proposal Phase (as defined in the
-<a href="/projects/dev_process/"> Eclipse Development Process 
-document</a>) and is written to declare its intent and scope. This proposal
-is written to solicit additional participation and  input from the Eclipse
-community. You are invited to comment on and/or join the project. Please 
+<a href="http://www.eclipse.org/projects/dev_process/"> Eclipse Development
+Process document</a>) and is written to declare its intent and scope. This 
+proposal is written to solicit additional participation and  input from the 
+Eclipse community. You are invited to comment on and/or join the project. Please 
 send all feedback to the <a 
 href="news://news.eclipse.org/eclipse.technology.svn">
 news://news.eclipse.org/eclipse.technology.svn</a> newsgroup.</p>
@@ -81,17 +82,18 @@ Foundation in their efforts to provide these services to the community.</p>
 <h2>Description</h2>
 
 <p>The initial code for this project will be based on a code contribution from
-the Subclipse project.  Subclipse provides a robust and stable implementation
-of Subversion functionality as an Eclipse Team Provider.  The Subclipse code
+the <a href="http://subclipse.tigris.org/">Subclipse</a> project.  
+Subclipse provides a robust and stable implementation of Subversion 
+functionality as an Eclipse Team Provider.  The Subclipse code 
 and architecture is based on the Eclipse CVS provider, so it should be easy
 for the existing Team and CVS developers to understand, should they decide to
 contribute.</p>
 
 <p>The foundation for this project is a common Subversion API layer called the
-SVN Client Adapter (org.eclipse.subversion.client).  This adapter gives clients
-full access to any SVN repository (even those not under direct control of the
-SVN Team Provider).  The adapter serves to create an abstraction on top of all
-client adapter implementations (JavaHL, JavaSVN and the SVN command line
+SVN Client Adapter (<b>org.eclipse.subversion.client</b>).  This adapter gives
+clients full access to any SVN repository (even those not under direct control
+of the SVN Team Provider).  The adapter serves to create an abstraction on top
+of all client adapter implementations (JavaHL, JavaSVN and the SVN command line
 client).  This adapter defines a standard Eclipse extension point, that 
 provider implementations can contribute to in order to provide an 
 implementation.  The user can then select which provider implementation they
@@ -150,15 +152,15 @@ of Eclipse plug-ins, such as Linux distribtions and/or Yoxos would likely be
 able to include JavaSVN in their distributions as the JavaSVN license would
 be compatible with what they are doing.</p>
 
-<p>The core plugin (org.eclipse.team.svn.core) is the Eclipse Team provider 
-implementation for Subversion.  It provides access to SVN instances that 
-are managed by the current worksapce.  The core plugin allows the team 
+<p>The core plugin (<b>org.eclipse.team.svn.core</b>) is the Eclipse Team 
+provider implementation for Subversion.  It provides access to SVN instances 
+that are managed by the current worksapce.  The core plugin allows the team 
 provider to function in a headless environment.  The Buckminster project
 currently uses Subclipse in this manner, and they are also listed as an
 interested party for this project.</p>
 
-<p>Finally, the ui plugin (org.eclipse.team.svn.ui) provides user interaction
-for the core plugin.</p>
+<p>Finally, the ui plugin (<b>org.eclipse.team.svn.ui</b>) provides user 
+interaction for the core plugin.</p>
 
 <h2>Organization</h2>
 
@@ -170,15 +172,18 @@ base to meet the initial objectives of this project.  The initial committers
 are:</p>
 
 <ul>
-	<li>Mark Phippard (SoftLanding Systems):  Project Lead</li>
+	<li>Mark Phippard (<a href="http://www.softlanding.com/">SoftLanding 
+	Systems</a>):  Project Lead</li>
 	<li>Brock Janiczak</li>
-	<li>Stephen Elsemore (SoftLanding Systems)</li>
-	<li>Paul Thiel (SoftLanding Systems)</li>
+	<li>Stephen Elsemore (<a href="http://www.softlanding.com/">SoftLanding
+	Systems</a>)</li>
+	<li>Paul Thiel (<a href="http://www.softlanding.com/">SoftLanding
+	Systems</a>)</li>
 	<li>Eugene Kuleshov</li>
 	<li>Martin Letenay</li>
 	<li>Daniel Bradby</li>
 	<li>Jesper Steen Møller</li>
-	<li>Alexander Kitaev (TMate)</li>
+	<li>Alexander Kitaev (<a href="http://tmate.org/svn/">TMate</a>)</li>
 </ul>
 
 <p><b>Interested parties</b></p>
