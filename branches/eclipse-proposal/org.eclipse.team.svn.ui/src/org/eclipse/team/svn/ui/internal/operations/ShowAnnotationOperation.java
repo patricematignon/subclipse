@@ -113,7 +113,7 @@ public class ShowAnnotationOperation extends SVNOperation {
 //  				is there an open editor for the given input? If yes, use live annotate
     				final AbstractDecoratedTextEditor editor= getEditor();
     				if (editor != null && promptForQuickDiffAnnotate()){
-    					editor.showRevisionInformation(information, "org.tigris.subversion.subclipse.quickdiff.providers.SVNReferenceProvider"); //$NON-NLS-1$
+    					editor.showRevisionInformation(information, "org.eclipse.team.svn.quickdiff.providers.SVNReferenceProvider"); //$NON-NLS-1$
 
     				} else {
     					try {

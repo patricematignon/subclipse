@@ -9,7 +9,7 @@
       <repository
             typeClass="org.eclipse.team.svn.core.internal.SVNTeamProviderType"
             class="org.eclipse.team.svn.core.internal.SVNTeamProvider"
-            id="org.tigris.subversion.subclipse.core.svnnature"
+            id="org.eclipse.team.svn.core.svnnature"
             metaFilePaths=".svn/entries,.project">
       </repository>
    </extension>
@@ -21,7 +21,7 @@
             type="org.eclipse.core.resources.problemmarker">
       </super>
       <super
-            type="org.tigris.subversion.subclipse.core.svnmarker">
+            type="org.eclipse.team.svn.core.svnmarker">
       </super>
       <attribute
             name="name">
@@ -47,7 +47,7 @@
    </extension>   
    
    <extension
-         point="org.tigris.subversion.subclipse.core.svnPropertyTypes">
+         point="org.eclipse.team.svn.core.svnPropertyTypes">
       <svnPropertyTypes
             type="String"
             fileOrFolder="file"

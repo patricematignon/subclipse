@@ -13,7 +13,7 @@ package org.eclipse.team.svn.core.internal.util;
 /**
  * 
  * @author mag
- * @see org.tigris.subversion.subclipse.ui.util.SimpleDialogsHelper
+ * @see org.eclipse.team.svn.ui.internal.util.SimpleDialogsHelper
  * @see org.eclipse.team.svn.core.internal.SVNProviderPlugin#getSimpleDialogsHelper()
  *
  */
