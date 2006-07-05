@@ -5,7 +5,7 @@ Bundle-Version: 1.1.2
 Bundle-Activator: org.tigris.subversion.subclipse.ui.SVNUIPlugin
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
-Require-Bundle: org.tigris.subversion.subclipse.core,
+Require-Bundle: org.eclipse.team.svn.core,
  org.eclipse.ui.ide,
  org.eclipse.ui.views,
  org.eclipse.jface.text,

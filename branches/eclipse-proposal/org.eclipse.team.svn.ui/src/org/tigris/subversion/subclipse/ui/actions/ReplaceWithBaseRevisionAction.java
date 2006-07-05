@@ -10,7 +10,7 @@
 *******************************************************************************/
 package org.tigris.subversion.subclipse.ui.actions;
 
-import org.tigris.subversion.svnclientadapter.SVNRevision;
+import org.eclipse.subversion.client.SVNRevision;
 
 /**
  */

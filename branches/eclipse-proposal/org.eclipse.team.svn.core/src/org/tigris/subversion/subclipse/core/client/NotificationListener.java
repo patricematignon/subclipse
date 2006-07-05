@@ -12,6 +12,8 @@ package org.tigris.subversion.subclipse.core.client;
 
 import java.io.*;
 
+import org.eclipse.subversion.client.ISVNNotifyListener;
+import org.eclipse.subversion.client.SVNNodeKind;
 import org.tigris.subversion.subclipse.core.*;
 import org.tigris.subversion.svnclientadapter.*;
 

@@ -4,10 +4,10 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.subversion.client.SVNUrl;
 import org.tigris.subversion.subclipse.ui.Policy;
 import org.tigris.subversion.subclipse.ui.dialogs.BranchTagDialog;
 import org.tigris.subversion.subclipse.ui.operations.BranchTagOperation;
-import org.tigris.subversion.svnclientadapter.SVNUrl;
 
 public class BranchTagAction extends WorkspaceAction {
 

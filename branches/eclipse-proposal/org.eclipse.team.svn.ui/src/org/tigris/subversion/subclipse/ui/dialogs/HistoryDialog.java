@@ -18,6 +18,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.subversion.client.SVNRevision;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.custom.SashForm;
@@ -45,7 +46,6 @@ import org.tigris.subversion.subclipse.ui.Policy;
 import org.tigris.subversion.subclipse.ui.SVNUIPlugin;
 import org.tigris.subversion.subclipse.ui.history.ChangePathsTableProvider;
 import org.tigris.subversion.subclipse.ui.history.HistoryTableProvider;
-import org.tigris.subversion.svnclientadapter.SVNRevision;
 
 public class HistoryDialog extends TrayDialog {
     private IResource resource;

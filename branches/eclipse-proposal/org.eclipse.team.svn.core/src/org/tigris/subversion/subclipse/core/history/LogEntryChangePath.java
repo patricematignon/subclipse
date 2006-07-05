@@ -11,13 +11,13 @@
 package org.tigris.subversion.subclipse.core.history;
 
 import org.eclipse.core.runtime.PlatformObject;
+import org.eclipse.subversion.client.ISVNLogMessageChangePath;
+import org.eclipse.subversion.client.SVNRevision;
+import org.eclipse.subversion.client.SVNUrl;
 import org.tigris.subversion.subclipse.core.ISVNRemoteResource;
 import org.tigris.subversion.subclipse.core.ISVNRepositoryLocation;
 import org.tigris.subversion.subclipse.core.SVNException;
 import org.tigris.subversion.subclipse.core.commands.GetRemoteResourceCommand;
-import org.tigris.subversion.svnclientadapter.ISVNLogMessageChangePath;
-import org.tigris.subversion.svnclientadapter.SVNRevision;
-import org.tigris.subversion.svnclientadapter.SVNUrl;
 
 /**
  * A changePath in LogEntry

@@ -14,6 +14,8 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.subversion.client.ISVNClientAdapter;
+import org.eclipse.subversion.client.SVNUrl;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.team.core.TeamException;
@@ -30,8 +32,6 @@ import org.tigris.subversion.subclipse.ui.SVNUIPlugin;
 import org.tigris.subversion.subclipse.ui.actions.CheckoutAsProjectAction;
 import org.tigris.subversion.subclipse.ui.actions.CheckoutIntoAction;
 import org.tigris.subversion.subclipse.ui.actions.CheckoutUsingProjectWizardAction;
-import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
-import org.tigris.subversion.svnclientadapter.SVNUrl;
 
 public class CheckoutWizard extends Wizard implements INewWizard, IImportWizard {
 	private CheckoutWizardLocationPage locationPage;

@@ -2,13 +2,13 @@ package org.tigris.subversion.subclipse.ui.settings;
 
 import java.util.ArrayList;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.subversion.client.ISVNProperty;
 import org.tigris.subversion.subclipse.core.ISVNLocalResource;
 import org.tigris.subversion.subclipse.core.ISVNRemoteResource;
 import org.tigris.subversion.subclipse.core.SVNException;
 import org.tigris.subversion.subclipse.core.resources.SVNWorkspaceRoot;
 import org.tigris.subversion.subclipse.ui.Policy;
 import org.tigris.subversion.subclipse.ui.util.LinkList;
-import org.tigris.subversion.svnclientadapter.ISVNProperty;
 
 public class ProjectProperties {
     protected String label = "Issue Number:"; //$NON-NLS-1$

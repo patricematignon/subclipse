@@ -17,10 +17,10 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.subversion.client.ISVNProperty;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.ui.dialogs.SaveAsDialog;
 import org.tigris.subversion.subclipse.ui.Policy;
-import org.tigris.subversion.svnclientadapter.ISVNProperty;
 
 /**
  * action to save a property

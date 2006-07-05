@@ -18,14 +18,14 @@ import java.io.IOException;
 import java.util.Date;
 
 import org.eclipse.core.resources.IResource;
+import org.eclipse.subversion.client.ISVNInfo;
+import org.eclipse.subversion.client.ISVNStatus;
+import org.eclipse.subversion.client.SVNNodeKind;
+import org.eclipse.subversion.client.SVNRevision;
+import org.eclipse.subversion.client.SVNStatusKind;
+import org.eclipse.subversion.client.SVNUrl;
+import org.eclipse.subversion.client.SVNRevision.Number;
 import org.tigris.subversion.subclipse.core.SVNException;
-import org.tigris.subversion.svnclientadapter.ISVNInfo;
-import org.tigris.subversion.svnclientadapter.ISVNStatus;
-import org.tigris.subversion.svnclientadapter.SVNNodeKind;
-import org.tigris.subversion.svnclientadapter.SVNRevision;
-import org.tigris.subversion.svnclientadapter.SVNStatusKind;
-import org.tigris.subversion.svnclientadapter.SVNUrl;
-import org.tigris.subversion.svnclientadapter.SVNRevision.Number;
 
 /**
  * This class has an interface which is very similar to ISVNStatus but we make

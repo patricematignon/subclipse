@@ -3,6 +3,8 @@ package org.tigris.subversion.subclipse.core.sync;
 import org.eclipse.core.resources.IEncodedStorage;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.subversion.client.SVNRevision;
+import org.eclipse.subversion.client.SVNStatusKind;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.core.variants.IResourceVariant;
@@ -13,8 +15,6 @@ import org.tigris.subversion.subclipse.core.resources.LocalResourceStatus;
 import org.tigris.subversion.subclipse.core.resources.RemoteFile;
 import org.tigris.subversion.subclipse.core.resources.RemoteFolder;
 import org.tigris.subversion.subclipse.core.resources.RemoteResourceStatus;
-import org.tigris.subversion.svnclientadapter.SVNRevision;
-import org.tigris.subversion.svnclientadapter.SVNStatusKind;
 
 /**
  * @author Panagiotis K

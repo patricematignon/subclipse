@@ -12,7 +12,7 @@
 package org.tigris.subversion.subclipse.core;
 
 import org.eclipse.core.resources.IResource;
-import org.tigris.subversion.svnclientadapter.SVNUrl;
+import org.eclipse.subversion.client.SVNUrl;
 
 
 

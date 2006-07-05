@@ -1,6 +1,6 @@
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
-Bundle-SymbolicName: org.tigris.subversion.subclipse.core; singleton:=true
+Bundle-SymbolicName: org.eclipse.team.svn.core;singleton:=true
 Bundle-Version: 1.1.2
 Bundle-ClassPath: .,
  lib/svnClientAdapter.jar,
@@ -16,7 +16,10 @@ Require-Bundle: org.eclipse.core.resources;bundle-version="3.2.0",
  org.eclipse.osgi,
  org.eclipse.compare
 Eclipse-LazyStart: true
-Export-Package: org.tigris.subversion.subclipse.core,
+Export-Package: org.eclipse.subversion.client,
+ org.eclipse.subversion.client.javahl,
+ org.eclipse.subversion.client.javasvn,
+ org.tigris.subversion.subclipse.core,
  org.tigris.subversion.subclipse.core.client,
  org.tigris.subversion.subclipse.core.commands,
  org.tigris.subversion.subclipse.core.history,
@@ -28,10 +31,4 @@ Export-Package: org.tigris.subversion.subclipse.core,
  org.tigris.subversion.subclipse.core.resourcesListeners,
  org.tigris.subversion.subclipse.core.status,
  org.tigris.subversion.subclipse.core.sync,
- org.tigris.subversion.subclipse.core.util,
- org.tigris.subversion.svnclientadapter,
- org.tigris.subversion.svnclientadapter.commandline,
- org.tigris.subversion.svnclientadapter.commandline.parser,
- org.tigris.subversion.svnclientadapter.javahl,
- org.tigris.subversion.svnclientadapter.utils,
- org.tigris.subversion.svnclientadapter.javasvn
+ org.tigris.subversion.subclipse.core.util

@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import org.eclipse.jface.dialogs.TrayDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.resource.JFaceColors;
+import org.eclipse.subversion.client.ISVNProperty;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -43,7 +44,6 @@ import org.tigris.subversion.subclipse.core.properties.SVNPropertyManager;
 import org.tigris.subversion.subclipse.ui.IHelpContextIds;
 import org.tigris.subversion.subclipse.ui.Policy;
 import org.tigris.subversion.subclipse.ui.SVNUIPlugin;
-import org.tigris.subversion.svnclientadapter.ISVNProperty;
 
 /**
  * Dialog to set a svn property 

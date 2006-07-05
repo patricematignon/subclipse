@@ -10,8 +10,8 @@
 package org.tigris.subversion.subclipse.core.status;
 
 import org.eclipse.core.resources.IResource;
+import org.eclipse.subversion.client.ISVNStatus;
 import org.tigris.subversion.subclipse.core.SVNException;
-import org.tigris.subversion.svnclientadapter.ISVNStatus;
 
 /**
  * When the status of a resource is asked, we don't update a resource at once.

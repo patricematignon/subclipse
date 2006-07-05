@@ -10,10 +10,10 @@
 package org.tigris.subversion.subclipse.core.commands;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.subversion.client.ISVNInfo;
+import org.eclipse.subversion.client.SVNClientException;
 import org.tigris.subversion.subclipse.core.ISVNLocalResource;
 import org.tigris.subversion.subclipse.core.SVNException;
-import org.tigris.subversion.svnclientadapter.ISVNInfo;
-import org.tigris.subversion.svnclientadapter.SVNClientException;
 
 /**
  * Get the svn info for the specified resource.

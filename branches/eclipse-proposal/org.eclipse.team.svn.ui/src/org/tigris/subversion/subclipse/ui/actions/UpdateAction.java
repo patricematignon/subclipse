@@ -15,11 +15,11 @@ package org.tigris.subversion.subclipse.ui.actions;
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.jface.action.IAction;
+import org.eclipse.subversion.client.SVNRevision;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.tigris.subversion.subclipse.ui.Policy;
 import org.tigris.subversion.subclipse.ui.operations.UpdateOperation;
-import org.tigris.subversion.svnclientadapter.SVNRevision;
 
 /**
  * UpdateAction performs a 'svn update' command on the selected resources.

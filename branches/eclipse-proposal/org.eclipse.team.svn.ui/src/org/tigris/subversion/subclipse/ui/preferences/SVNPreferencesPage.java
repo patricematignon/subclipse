@@ -18,6 +18,10 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
+import org.eclipse.subversion.client.SVNClientAdapterFactory;
+import org.eclipse.subversion.client.javahl.JhlClientAdapter;
+import org.eclipse.subversion.client.javahl.JhlClientAdapterFactory;
+import org.eclipse.subversion.client.javasvn.JavaSvnClientAdapterFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -40,11 +44,6 @@ import org.tigris.subversion.subclipse.ui.IHelpContextIds;
 import org.tigris.subversion.subclipse.ui.ISVNUIConstants;
 import org.tigris.subversion.subclipse.ui.Policy;
 import org.tigris.subversion.subclipse.ui.SVNUIPlugin;
-import org.tigris.subversion.svnclientadapter.SVNClientAdapterFactory;
-import org.tigris.subversion.svnclientadapter.commandline.CmdLineClientAdapterFactory;
-import org.tigris.subversion.svnclientadapter.javahl.JhlClientAdapter;
-import org.tigris.subversion.svnclientadapter.javahl.JhlClientAdapterFactory;
-import org.tigris.subversion.svnclientadapter.javasvn.JavaSvnClientAdapterFactory;
 
 /**
  * SVN Preference Page
@@ -260,8 +259,6 @@ public class SVNPreferencesPage extends PreferencePage implements IWorkbenchPref
 		quickDiffAnnotatePrompt.setSelection(MessageDialogWithToggle.PROMPT.equals(store.getString(ISVNUIConstants.PREF_USE_QUICKDIFFANNOTATE)));
 		
 		String clientInterface = store.getString(ISVNUIConstants.PREF_SVNINTERFACE);
-		if (CmdLineClientAdapterFactory.COMMANDLINE_CLIENT.equals(clientInterface))
-		    clientInterface = JavaSvnClientAdapterFactory.JAVASVN_CLIENT;
         javahlRadio.setSelection(clientInterface.equals(JhlClientAdapterFactory.JAVAHL_CLIENT));
         javaSvnRadio.setSelection(clientInterface.equals(JavaSvnClientAdapterFactory.JAVASVN_CLIENT));
         

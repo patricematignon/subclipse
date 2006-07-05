@@ -21,6 +21,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.subversion.client.SVNUrl;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -34,8 +35,6 @@ import org.eclipse.ui.PlatformUI;
 import org.tigris.subversion.subclipse.core.SVNProviderPlugin;
 import org.tigris.subversion.subclipse.ui.IHelpContextIds;
 import org.tigris.subversion.subclipse.ui.Policy;
-import org.tigris.subversion.svnclientadapter.SVNUrl;
-import org.tigris.subversion.svnclientadapter.commandline.CmdLineClientAdapterFactory;
 
 /**
  * Wizard page for entering information about a SVN repository location.
@@ -76,7 +75,7 @@ public class ConfigurationWizardMainPage extends SVNWizardPage {
 	 */
 	public ConfigurationWizardMainPage(String pageName, String title, ImageDescriptor titleImage) {
 		super(pageName, title, titleImage);
-		showCredentials = SVNProviderPlugin.getPlugin().getSVNClientManager().getSvnClientInterface().equals(CmdLineClientAdapterFactory.COMMANDLINE_CLIENT);
+		showCredentials = false;
 	}
 	/**
 	 * Adds an entry to a history, while taking care of duplicate history items
