@@ -69,32 +69,7 @@ public class StatusCacheManager implements IResourceChangeListener, Preferences.
         boolean recursiveStatusUpdate = SVNProviderPlugin.getPlugin().getPluginPreferences().getBoolean(ISVNCoreConstants.PREF_RECURSIVE_STATUS_UPDATE);
         statusUpdateStrategy = recursiveStatusUpdate ? (StatusUpdateStrategy)new RecursiveStatusUpdateStrategy(statusCache) : (StatusUpdateStrategy)new NonRecursiveStatusUpdateStrategy(statusCache);
     }
-    
-    /**
-     * A resource which ancestor is not managed is not managed
-     * @param resource
-     * @return true if an ancestor of the resource is not managed and false 
-     *         if we don't know 
-     */
-    private boolean isAncestorNotManaged(IResource resource) {
-        IResource parent = resource.getParent();
-        if (parent == null) {
-            return false;
-        }
-        
-        while (parent != null) {
-            LocalResourceStatus statusParent = statusCache.getStatus(parent);
-            
-            if (statusParent != null) {
-            	if (!statusParent.isManaged()) {
-            		return true;
-            	}
-            }
-            parent = parent.getParent();
-        }
-        return false;
-    }
-    
+     
     /**
      * update the cache using the given statuses
      * @param statuses
