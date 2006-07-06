@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.eclipse.subversion.client.javahl;
+package org.eclipse.subversion.client.javahl.internal;
 
 import java.io.File;
 import java.text.MessageFormat;
@@ -40,6 +40,10 @@ public class JhlClientAdapter extends AbstractJhlClientAdapter {
     private static boolean available;
 	private static StringBuffer javaHLErrors = new StringBuffer("Failed to load JavaHL Library.\nThese are the errors that were encountered:\n");
 
+    public String getAdapterName() {
+    	return "javahl";
+	}
+
     public JhlClientAdapter() {
         svnClient = new SVNClient();
         svnAdmin = new SVNAdmin();
@@ -52,7 +56,7 @@ public class JhlClientAdapter extends AbstractJhlClientAdapter {
      * tells if JhlClientAdapter is usable
      * @return true if Jhl client adapter is available
      */
-    public static boolean isAvailable() {
+    public boolean isAvailable() {
     	if (!availabilityCached) {
 	            // if library is already loaded, it will not be reloaded
 	
@@ -191,7 +195,7 @@ public class JhlClientAdapter extends AbstractJhlClientAdapter {
     	return available;
     }
     
-    public static String getLibraryLoadErrors() {
+    public String getLibraryLoadErrors() {
         if (isAvailable())
             return "";
         else

@@ -14,14 +14,9 @@ package org.eclipse.team.svn.ui.internal.preferences;
 
 import java.io.File;
 
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
-import org.eclipse.subversion.client.SVNClientAdapterFactory;
-import org.eclipse.subversion.client.javahl.JhlClientAdapter;
-import org.eclipse.subversion.client.javahl.JhlClientAdapterFactory;
-import org.eclipse.subversion.client.javasvn.JavaSvnClientAdapterFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -36,7 +31,6 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.team.svn.core.internal.SVNProviderPlugin;
 import org.eclipse.team.svn.ui.internal.IHelpContextIds;
 import org.eclipse.team.svn.ui.internal.ISVNUIConstants;
 import org.eclipse.team.svn.ui.internal.Policy;
@@ -66,7 +60,6 @@ public class SVNPreferencesPage extends PreferencePage implements IWorkbenchPref
     private Text directoryLocationText;
     private Button browseConfigDirButton;
     
-    private boolean javahlErrorShown = false;
 	private Button quickDiffAnnotateYes;
 	private Button quickDiffAnnotateNo;
 	private Button quickDiffAnnotatePrompt;
@@ -74,7 +67,6 @@ public class SVNPreferencesPage extends PreferencePage implements IWorkbenchPref
 	public SVNPreferencesPage() {
 		// sort the options by display text
 		setDescription(Policy.bind("SVNPreferencePage.description")); //$NON-NLS-1$
-		SVNProviderPlugin.getPlugin().getSVNClientManager().loadAdapters();
 	}
 
 	/**
@@ -258,10 +250,6 @@ public class SVNPreferencesPage extends PreferencePage implements IWorkbenchPref
 		quickDiffAnnotateNo.setSelection(MessageDialogWithToggle.NEVER.equals(store.getString(ISVNUIConstants.PREF_USE_QUICKDIFFANNOTATE)));
 		quickDiffAnnotatePrompt.setSelection(MessageDialogWithToggle.PROMPT.equals(store.getString(ISVNUIConstants.PREF_USE_QUICKDIFFANNOTATE)));
 		
-		String clientInterface = store.getString(ISVNUIConstants.PREF_SVNINTERFACE);
-        javahlRadio.setSelection(clientInterface.equals(JhlClientAdapterFactory.JAVAHL_CLIENT));
-        javaSvnRadio.setSelection(clientInterface.equals(JavaSvnClientAdapterFactory.JAVASVN_CLIENT));
-        
         String configLocation = store.getString(ISVNUIConstants.PREF_SVNCONFIGDIR); 
         directoryLocationText.setText(configLocation);
         if (configLocation.equals("")) { //$NON-NLS-1$
@@ -329,13 +317,6 @@ public class SVNPreferencesPage extends PreferencePage implements IWorkbenchPref
 //				}
 //			}
 //		}
-		
-        // save svn interface pref
-        if (javahlRadio.getSelection() ){
-            store.setValue(ISVNUIConstants.PREF_SVNINTERFACE, JhlClientAdapterFactory.JAVAHL_CLIENT);
-        }else{
-            store.setValue(ISVNUIConstants.PREF_SVNINTERFACE, JavaSvnClientAdapterFactory.JAVASVN_CLIENT);
-        }
         
         // save config location pref
         if (defaultConfigLocationRadio.getSelection()) {
@@ -386,23 +367,6 @@ public class SVNPreferencesPage extends PreferencePage implements IWorkbenchPref
             }
         }
         
-        if (javahlRadio.getSelection()) {
-			if (!SVNClientAdapterFactory.isSVNClientAvailable(JhlClientAdapterFactory.JAVAHL_CLIENT)) {
-				setErrorMessage(Policy.bind("SVNPreferencePage.javahlNotAvailable")); //$NON-NLS-1$
-				if (!javahlErrorShown) {
-				    javahlErrorShown = true;
-					MessageDialog.openError(
-							getShell(),
-							"Error Loading JavaHL Library",
-							JhlClientAdapter.getLibraryLoadErrors());
-				}
-			}
-		}
-        if (javaSvnRadio.getSelection()) {
-			if (!SVNClientAdapterFactory.isSVNClientAvailable(JavaSvnClientAdapterFactory.JAVASVN_CLIENT)) {
-				setErrorMessage(Policy.bind("SVNPreferencePage.javaSvnNotAvailable")); //$NON-NLS-1$
-			}
-		}
 		
 		setValid(getErrorMessage() == null);
 	}

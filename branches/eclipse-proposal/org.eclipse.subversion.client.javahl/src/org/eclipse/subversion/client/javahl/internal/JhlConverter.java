@@ -13,14 +13,13 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.eclipse.subversion.client.javahl;
+package org.eclipse.subversion.client.javahl.internal;
 
 import java.util.logging.Logger;
 
 import org.eclipse.subversion.client.ISVNLogMessage;
 import org.eclipse.subversion.client.ISVNLogMessageChangePath;
 import org.eclipse.subversion.client.ISVNStatus;
-import org.eclipse.subversion.client.SVNLogMessageChangePath;
 import org.eclipse.subversion.client.SVNNodeKind;
 import org.eclipse.subversion.client.SVNRevision;
 import org.eclipse.subversion.client.SVNScheduleKind;
@@ -187,10 +186,10 @@ public class JhlConverter {
     
     static ISVNLogMessageChangePath[] convert(ChangePath[] changePaths) {
         if (changePaths == null)
-            return new SVNLogMessageChangePath[0];
-        SVNLogMessageChangePath[] jhlChangePaths = new SVNLogMessageChangePath[changePaths.length];
+            return new JhlLogMessageChangePath[0];
+        JhlLogMessageChangePath[] jhlChangePaths = new JhlLogMessageChangePath[changePaths.length];
         for(int i=0; i < changePaths.length; i++) {
-        	jhlChangePaths[i] = new SVNLogMessageChangePath(changePaths[i]);
+        	jhlChangePaths[i] = new JhlLogMessageChangePath(changePaths[i]);
         }
         return jhlChangePaths;
     }

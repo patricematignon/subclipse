@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.eclipse.subversion.client.javahl;
+package org.eclipse.subversion.client.javahl.internal;
 
 import org.eclipse.subversion.client.ISVNNotifyListener;
 import org.eclipse.subversion.client.Policy;

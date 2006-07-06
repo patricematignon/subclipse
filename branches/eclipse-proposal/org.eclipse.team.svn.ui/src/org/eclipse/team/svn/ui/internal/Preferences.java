@@ -18,7 +18,6 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.subversion.client.javahl.JhlClientAdapterFactory;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.team.svn.core.internal.SVNClientManager;
 import org.eclipse.team.svn.core.internal.SVNProviderPlugin;
@@ -76,7 +75,6 @@ private IPreferenceStore store;
         store.setDefault(ISVNUIConstants.PREF_SELECT_UNADDED_RESOURCES_ON_COMMIT, false);
         store.setDefault(ISVNUIConstants.PREF_COMMIT_SET_DEFAULT_ENABLEMENT, false);
         
-        store.setDefault(ISVNUIConstants.PREF_SVNINTERFACE, JhlClientAdapterFactory.JAVAHL_CLIENT);
         store.setDefault(ISVNUIConstants.PREF_SVNCONFIGDIR, ""); //$NON-NLS-1$
         
         store.setDefault(ISVNUIConstants.PREF_FETCH_CHANGE_PATH_ON_DEMAND, false);
@@ -89,18 +87,9 @@ private IPreferenceStore store;
         
         store.setDefault(ISVNUIConstants.PREF_USE_QUICKDIFFANNOTATE, MessageDialogWithToggle.PROMPT);
         
-        setSvnClientInterface(store.getString(ISVNUIConstants.PREF_SVNINTERFACE));
         setSvnClientConfigDir(store.getString(ISVNUIConstants.PREF_SVNCONFIGDIR));
         
         setSvnChangePathOnDemand((store.getBoolean(ISVNUIConstants.PREF_FETCH_CHANGE_PATH_ON_DEMAND)));
-    }
-
-    /**
-     * set the svn client interface
-     * @param clientInterface
-     */
-    private void setSvnClientInterface(String clientInterface) {
-        SVNProviderPlugin.getPlugin().getSVNClientManager().setSvnClientInterface(clientInterface);
     }
 
     /**
@@ -123,10 +112,6 @@ private IPreferenceStore store;
      */
     public void propertyChange(PropertyChangeEvent event) {
         String property = event.getProperty();
-        if (property == ISVNUIConstants.PREF_SVNINTERFACE) {
-            String newValue = (String)event.getNewValue();
-            setSvnClientInterface(newValue);
-        }
         if (property == ISVNUIConstants.PREF_SVNCONFIGDIR) {
         	String configDir = (String)event.getNewValue();
             setSvnClientConfigDir(configDir);

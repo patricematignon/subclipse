@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.eclipse.subversion.client.javahl;
+package org.eclipse.subversion.client.javahl.internal;
 
 import java.io.File;
 import java.io.IOException;
@@ -27,20 +27,20 @@ import org.eclipse.subversion.client.SVNNodeKind;
 import org.eclipse.subversion.client.SVNScheduleKind;
 import org.eclipse.subversion.client.SVNUrl;
 import org.eclipse.subversion.client.SVNRevision.Number;
-import org.tigris.subversion.javahl.Info2;
+import org.tigris.subversion.javahl.Info;
 
 /**
  * adapter : convert from Info to ISVNInfo
  *  
  * @author Cédric Chabanois
  */
-public class JhlInfo2 implements ISVNInfo {
-	private static final Logger log = Logger.getLogger(JhlInfo2.class.getName());
+public class JhlInfo implements ISVNInfo {
+	private static final Logger log = Logger.getLogger(JhlInfo.class.getName());
 	
-	private Info2 info;
+	private Info info;
 	private File file;
 
-	public JhlInfo2(File file, Info2 info) {
+	public JhlInfo(File file, Info info) {
         super();
         this.file = file;
         this.info = info;
@@ -73,7 +73,7 @@ public class JhlInfo2 implements ISVNInfo {
 	 * @see org.tigris.subversion.svnclientadapter.ISVNInfo#getUuid()
 	 */
 	public String getUuid() {
-		return info.getReposUUID();
+		return info.getUuid();
 	}
 
 	/* (non-Javadoc)
@@ -81,7 +81,7 @@ public class JhlInfo2 implements ISVNInfo {
 	 */
 	public SVNUrl getRepository() {
 		try {
-			return new SVNUrl(info.getReposRootUrl());
+			return new SVNUrl(info.getRepository());
 		} catch (MalformedURLException e) {
 			log.log(Level.SEVERE, e.getMessage(), e);
 			return null;
@@ -99,28 +99,28 @@ public class JhlInfo2 implements ISVNInfo {
 	 * @see org.tigris.subversion.svnclientadapter.ISVNInfo#getNodeKind()
 	 */
 	public SVNNodeKind getNodeKind() {
-		return JhlConverter.convertNodeKind(info.getKind());
+		return JhlConverter.convertNodeKind(info.getNodeKind());
 	}
 
 	/* (non-Javadoc)
 	 * @see org.tigris.subversion.svnclientadapter.ISVNInfo#getAuthor()
 	 */
 	public String getLastCommitAuthor() {
-		return info.getLastChangedAuthor();
+		return info.getAuthor();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.tigris.subversion.svnclientadapter.ISVNInfo#getRevision()
 	 */
 	public Number getRevision() {
-		return JhlConverter.convertRevisionNumber(info.getRev());
+		return JhlConverter.convertRevisionNumber(info.getRevision());
 	}
 
 	/* (non-Javadoc)
 	 * @see org.tigris.subversion.svnclientadapter.ISVNInfo#getLastChangedRevision()
 	 */
 	public Number getLastChangedRevision() {
-		return JhlConverter.convertRevisionNumber(info.getLastChangedRev());
+		return JhlConverter.convertRevisionNumber(info.getLastChangedRevision());
 	}
 
 	/* (non-Javadoc)
@@ -134,28 +134,28 @@ public class JhlInfo2 implements ISVNInfo {
 	 * @see org.tigris.subversion.svnclientadapter.ISVNInfo#getLastDateTextUpdate()
 	 */
 	public Date getLastDateTextUpdate() {
-		return info.getTextTime();
+		return info.getLastDateTextUpdate();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.tigris.subversion.svnclientadapter.ISVNInfo#getLastDatePropsUpdate()
 	 */
 	public Date getLastDatePropsUpdate() {
-		return info.getPropTime();
+		return info.getLastDatePropsUpdate();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.tigris.subversion.svnclientadapter.ISVNInfo#isCopied()
 	 */
 	public boolean isCopied() {
-		return (info.getCopyFromRev() > 0);
+		return (info.getCopyRev() > 0);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.tigris.subversion.svnclientadapter.ISVNInfo#getCopyRev()
 	 */
 	public Number getCopyRev() {
-		return JhlConverter.convertRevisionNumber(info.getCopyFromRev());
+		return JhlConverter.convertRevisionNumber(info.getCopyRev());
 	}
 
 	/* (non-Javadoc)
@@ -163,7 +163,7 @@ public class JhlInfo2 implements ISVNInfo {
 	 */
 	public SVNUrl getCopyUrl() {
 		try {
-			return new SVNUrl(info.getCopyFromUrl());
+			return new SVNUrl(info.getCopyUrl());
 		} catch (MalformedURLException e) {
 			log.log(Level.SEVERE, e.getMessage(), e);
 			return null;
@@ -174,28 +174,20 @@ public class JhlInfo2 implements ISVNInfo {
      * @see org.tigris.subversion.svnclientadapter.ISVNInfo#getLockCreationDate()
      */
     public Date getLockCreationDate() {
-    	if (info.getLock() == null)
-    		return null;
-    	else
-    		return info.getLock().getCreationDate();
+        return null;
     }
 
     /* (non-Javadoc)
      * @see org.tigris.subversion.svnclientadapter.ISVNInfo#getLockOwner()
      */
     public String getLockOwner() {
-    	if (info.getLock() == null)
-    		return null;
-    	else
-    		return info.getLock().getOwner();
+        return null;
     }
+    
     /* (non-Javadoc)
      * @see org.tigris.subversion.svnclientadapter.ISVNInfo#getLockComment()
      */
     public String getLockComment() {
-    	if (info.getLock() == null)
-    		return null;
-    	else
-    		return info.getLock().getComment();
+        return null;
     }
 }

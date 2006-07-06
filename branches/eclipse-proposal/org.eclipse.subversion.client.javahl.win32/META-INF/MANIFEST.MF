@@ -4,5 +4,5 @@ Bundle-Name: JavaHL Win32 Binaries
 Bundle-SymbolicName: org.eclipse.subversion.client.javahl.win32
 Bundle-Version: 1.0.0
 Bundle-Vendor: Eclipse
-Fragment-Host: org.eclipse.subversion.client;bundle-version="1.0.0"
+Fragment-Host: org.eclipse.subversion.client.javahl;bundle-version="1.0.0"
 Bundle-Localization: plugin

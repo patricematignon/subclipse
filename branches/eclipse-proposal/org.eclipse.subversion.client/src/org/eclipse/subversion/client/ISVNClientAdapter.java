@@ -25,6 +25,10 @@ public interface ISVNClientAdapter {
     public final static String REPOSITORY_BDB = "bdb";
     public final static String REPOSITORY_FSFS = "fsfs";
 	
+    public abstract String getAdapterName();
+    public abstract boolean isAvailable();
+    public abstract String getLibraryLoadErrors();
+    
 	/**
 	 * Add a notification listener
 	 * @param listener
