@@ -1,11 +1,10 @@
-package org.eclipse.subversion.client.internal;
+package org.eclipse.subversion.client;
 
 import java.util.ArrayList;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.subversion.client.ISVNClientAdapter;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 

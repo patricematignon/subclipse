@@ -3,12 +3,11 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Subversion Client Adapter
 Bundle-SymbolicName: org.eclipse.subversion.client;singleton:=true
 Bundle-Version: 1.0.0
-Bundle-Activator: org.eclipse.subversion.client.internal.SVNClientPlugin
+Bundle-Activator: org.eclipse.subversion.client.SVNClientPlugin
 Bundle-Vendor: Eclipse.org
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.ui
 Eclipse-LazyStart: true
-Export-Package: org.eclipse.subversion.client,
- org.eclipse.subversion.client.internal
+Export-Package: org.eclipse.subversion.client
 Bundle-ClassPath: .

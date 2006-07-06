@@ -15,7 +15,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.subversion.client.ISVNClientAdapter;
 import org.eclipse.subversion.client.SVNClientException;
-import org.eclipse.subversion.client.internal.SVNClientPlugin;
+import org.eclipse.subversion.client.SVNClientPlugin;
 
 /**
  * Handles the creation of SVNClients
