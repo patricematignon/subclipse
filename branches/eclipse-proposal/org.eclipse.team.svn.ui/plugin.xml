@@ -16,12 +16,6 @@
             id="org.eclipse.team.svn.ui.repository.RepositoriesView">
       </view>
       <view
-            name="%PendingOperationsView.name"
-            category="org.eclipse.team.svn"
-            class="org.eclipse.team.svn.ui.internal.pending.PendingOperationsView"
-            id="org.eclipse.team.svn.ui.pending.PendingOperationsView">
-      </view>
-      <view
             name="%SvnPropertiesView.name"
             icon="icons/full/cview16/props_view.gif"
             category="org.eclipse.team.svn"
@@ -632,14 +626,6 @@
                tooltip="%CleanupAction.tooltip"
                menubarPath="team.main/group6"
                id="org.eclipse.team.svn.ui.cleanup">
-         </action>
-         <action
-               label="%ShowPendingOperationsAction.label"
-               helpContextId="org.eclipse.team.svn.team_show_pending_operations_action_context"
-               class="org.eclipse.team.svn.ui.internal.actions.ShowPendingOperationsAction"
-               tooltip="%ShowPendingOperationsAction.tooltip"
-               menubarPath="team.main/group6"
-               id="org.eclipse.team.svn.ui.showPendingOperations">
          </action>
       </objectContribution>
    </extension>
