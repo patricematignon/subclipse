@@ -17,7 +17,6 @@
       </view>
       <view
             name="%PendingOperationsView.name"
-            icon="icons/full/tortoise/showchanged.gif"
             category="org.eclipse.team.svn"
             class="org.eclipse.team.svn.ui.internal.pending.PendingOperationsView"
             id="org.eclipse.team.svn.ui.pending.PendingOperationsView">
@@ -144,7 +143,6 @@
          </action>
          <action
                label="%CheckoutAsAction.label"
-               icon="icons/full/tortoise/checkout.gif"
                helpContextId="org.eclipse.team.svn.ui.checkout_as_action_context"
                tooltip="%CheckoutAsAction.tooltip"
                class="org.eclipse.team.svn.ui.internal.actions.CheckoutAsAction"
@@ -153,7 +151,6 @@
          </action> 
          <action
                label="%RelocateAction.label"
-               icon="icons/full/tortoise/relocate.gif"
                class="org.eclipse.team.svn.ui.internal.actions.RelocateAction"
                id="org.eclipse.team.svn.ui.relocate">
          </action>                              
@@ -172,7 +169,6 @@
          </action>
          <action
                label="%ShowDifferencesAsUnifiedDiffAction.label"
-               icon="icons/full/tortoise/diff.gif"
                class="org.eclipse.team.svn.ui.internal.actions.ShowDifferencesAsUnifiedDiffAction"
                menubarPath="historyGroup"
                id="org.eclipse.team.svn.ui.showDifferencesAsUnifiedDiff">
@@ -221,14 +217,12 @@
          </action>
          <action
                label="%BranchTagAction.label"
-               icon="icons/full/tortoise/copy.gif"
                class="org.eclipse.team.svn.ui.internal.actions.RepositoryBranchTagAction"
                menubarPath="miscGroup"
                id="org.eclipse.team.svn.ui.repositoryBranchTag">
          </action>                           
          <action
                label="%MoveRemoteAction.label"
-               icon="icons/full/tortoise/rename.gif"
                helpContextId="org.eclipse.team.svn.ui.move_remote_resource_action_context"
                class="org.eclipse.team.svn.ui.internal.actions.MoveRemoteResourceAction"
                menubarPath="miscGroup"
@@ -265,7 +259,6 @@
             id="org.eclipse.team.svn.ui.RemoteFolderContributions">
          <action
                label="%CheckoutAsAction.label"
-               icon="icons/full/tortoise/checkout.gif"
                helpContextId="org.eclipse.team.svn.ui.checkout_as_action_context"
                tooltip="%CheckoutAsAction.tooltip"
                class="org.eclipse.team.svn.ui.internal.actions.CheckoutAsAction"
@@ -274,14 +267,12 @@
          </action>        
          <action
                label="%ImportFolderAction.label"
-               icon="icons/full/tortoise/import.gif"
                class="org.eclipse.team.svn.ui.internal.actions.ImportFolderAction"
                menubarPath="exportImportGroup"
                id="org.eclipse.team.svn.ui.ImportFolder">
          </action>                 
          <action
                label="%ExportRemoteFolderAction.label"
-               icon="icons/full/tortoise/export.gif"
                class="org.eclipse.team.svn.ui.internal.actions.ExportRemoteFolderAction"
                menubarPath="exportImportGroup"
                id="org.eclipse.team.svn.ui.ExportRemoteFolder">
@@ -299,7 +290,6 @@
          </action>
          <action
                label="%CompareRemoteResourcesAction.label"
-               icon="icons/full/tortoise/compare.gif"
                helpContextId="org.eclipse.team.svn.ui.compare_remote_resources_action_context"
                class="org.eclipse.team.svn.ui.internal.actions.CompareRemoteResourcesAction"
                tooltip="%CompareRemoteResourcesAction.tooltip"
@@ -369,7 +359,6 @@
          </filter>
          <action
                label="%IgnoreAction.label"
-               icon="icons/full/tortoise/ignore.gif"
                helpContextId="org.eclipse.team.svn.ui.team_ignore_action_context"
                class="org.eclipse.team.svn.ui.internal.actions.IgnoreAction"
                tooltip="%IgnoreAction.tooltip"
@@ -378,7 +367,6 @@
          </action>
          <action
                label="%AddAction.label"
-               icon="icons/full/tortoise/add.gif"
                helpContextId="org.eclipse.team.svn.ui.team_add_action_context"
                class="org.eclipse.team.svn.ui.internal.actions.AddAction"
                tooltip="%AddAction.tooltip"
@@ -436,7 +424,6 @@
          </action>
          <action
                label="%ExportAction.label"
-               icon="icons/full/tortoise/export.gif"
                class="org.eclipse.team.svn.ui.internal.actions.ExportAction"
                menubarPath="team.main/group5"
                id="org.eclipse.team.svn.ui.export">
@@ -450,7 +437,6 @@
          </action>                         
          <action
                label="%ResolveAction.label"
-               icon="icons/full/tortoise/resolve.gif"
                helpContextId="org.eclipse.team.svn.ui.team_resolve_action_context"
                tooltip="%ResolveAction.tooltip"
                class="org.eclipse.team.svn.ui.internal.actions.ResolveAction"
@@ -459,14 +445,12 @@
          </action>
          <action
                label="%MarkDeletedAction.label"
-               icon="icons/full/tortoise/delete.gif"
                class="org.eclipse.team.svn.ui.internal.actions.MarkDeletedAction"
                menubarPath="team.main/group6"
                id="org.eclipse.team.svn.ui.markDeleted">
          </action>         
          <action
                label="%RevertAction.label"
-               icon="icons/full/tortoise/revert.gif"
                helpContextId="org.eclipse.team.svn.ui.team_revert_action_context"
                class="org.eclipse.team.svn.ui.internal.actions.RevertAction"
                tooltip="%RevertAction.tooltip"
@@ -475,7 +459,6 @@
          </action>
          <action
                label="%MergeAction.label"
-               icon="icons/full/tortoise/merge.gif"
                helpContextId="org.eclipse.team.svn.ui.team_merge_action_context"
                class="org.eclipse.team.svn.ui.internal.actions.MergeAction"
                tooltip="%MergeAction.tooltip"
@@ -485,7 +468,6 @@
          </action>
          <action
                label="%SwitchAction.label"
-               icon="icons/full/tortoise/switch.gif"
                helpContextId="org.eclipse.team.svn.ui.team_switch_action_context"
                class="org.eclipse.team.svn.ui.internal.actions.SwitchAction"
                tooltip="%SwitchAction.tooltip"
@@ -495,7 +477,6 @@
          </action>
          <action
                label="%BranchTagAction.label"
-               icon="icons/full/tortoise/copy.gif"
                helpContextId="org.eclipse.team.svn.ui.team_branchtag_action_context"
                class="org.eclipse.team.svn.ui.internal.actions.BranchTagAction"
                tooltip="%BranchTagAction.tooltip"
@@ -505,7 +486,6 @@
          </action>
          <action
                label="%EditConflictsAction.label"
-               icon="icons/full/tortoise/conflict.gif"
                helpContextId="org.eclipse.team.svn.ui.team_edit_conflicts_action_context"
                class="org.eclipse.team.svn.ui.internal.actions.EditConflictsAction"
                tooltip="%EditConflictsAction.tooltip"
@@ -537,7 +517,6 @@
          </action>
          <action
                label="%generatediff.label"
-               icon="icons/full/tortoise/diff.gif"
                helpContextId="org.eclipse.team.svn.ui.team_create_patch_action_context"
                class="org.eclipse.team.svn.ui.internal.actions.GenerateDiffFileAction"
                tooltip="%generatediff.tooltip"
@@ -546,7 +525,6 @@
          </action>
          <action
                label="%UpdateAction.label"
-               icon="icons/full/tortoise/update.gif"
                helpContextId="org.eclipse.team.svn.ui.team_update_action_context"
                class="org.eclipse.team.svn.ui.internal.actions.UpdateAction"
                tooltip="%UpdateAction.tooltip"
@@ -556,7 +534,6 @@
          </action>
          <action
                label="%CommitAction.label"
-               icon="icons/full/tortoise/commit.gif"
                helpContextId="org.eclipse.team.svn.ui.team_commit_action_context"
                class="org.eclipse.team.svn.ui.internal.actions.CommitAction"
                tooltip="%CommitAction.tooltip"
@@ -566,12 +543,11 @@
          </action>
          <action
                label="%SynchronizeAction.label"
-               icon="icons/full/obj16/synch_synch.gif"
                helpContextId="org.eclipse.team.svn.ui.team_synchronize_action_context"
                class="org.eclipse.team.svn.ui.internal.actions.SynchronizeAction"
                tooltip="%SynchronizeAction.tooltip"
                menubarPath="team.main/group1"
-definitionId="org.eclipse.team.svn.ui.synchronize"
+               definitionId="org.eclipse.team.svn.ui.synchronize"
                id="org.eclipse.team.svn.synchronize">
          </action>
          <action
@@ -594,7 +570,6 @@ definitionId="org.eclipse.team.svn.ui.synchronize"
          </filter>
          <action
                label="%UnlockAction.label"
-               icon="icons/full/tortoise/unlock.gif"
                helpContextId="org.eclipse.team.svn.ui.team_unlock_action_context"
                class="org.eclipse.team.svn.ui.internal.actions.UnlockAction"
                tooltip="%UnlockAction.tooltip"
@@ -603,7 +578,6 @@ definitionId="org.eclipse.team.svn.ui.synchronize"
          </action>                  
          <action
                label="%LockAction.label"
-               icon="icons/full/tortoise/lock.gif"
                helpContextId="org.eclipse.team.svn.ui.team_lock_action_context"
                class="org.eclipse.team.svn.ui.internal.actions.LockAction"
                tooltip="%LockAction.tooltip"
@@ -653,7 +627,6 @@ definitionId="org.eclipse.team.svn.ui.synchronize"
          </action>         
          <action
                label="%CleanupAction.label"
-               icon="icons/full/tortoise/cleanup.gif"
                helpContextId="org.eclipse.team.svn.ui.team_cleanup_action_context"
                class="org.eclipse.team.svn.ui.internal.actions.CleanupAction"
                tooltip="%CleanupAction.tooltip"
@@ -662,7 +635,6 @@ definitionId="org.eclipse.team.svn.ui.synchronize"
          </action>
          <action
                label="%ShowPendingOperationsAction.label"
-               icon="icons/full/tortoise/showchanged.gif"
                helpContextId="org.eclipse.team.svn.team_show_pending_operations_action_context"
                class="org.eclipse.team.svn.ui.internal.actions.ShowPendingOperationsAction"
                tooltip="%ShowPendingOperationsAction.tooltip"
@@ -989,7 +961,7 @@ For example:
 			</menu>
 			<action
 				definitionId="org.eclipse.team.svn.ui.commit"
-				label="%CommitCommand.label" icon="icons/full/tortoise/commit.gif"
+				label="%CommitCommand.label"
 				class="org.eclipse.team.svn.ui.internal.actions.CommitAction"
 				tooltip="%CommitAction.tooltip" toolbarPath="SVNGroupMenu"
 				menubarPath="org.eclipse.team.svn.svnmenu/SVNGroupMenu"
@@ -997,7 +969,7 @@ For example:
 			</action>
 			<action
 				definitionId="org.eclipse.team.svn.ui.update"
-				label="%UpdateCommand.label" icon="icons/full/tortoise/update.gif"
+				label="%UpdateCommand.label"
 				class="org.eclipse.team.svn.ui.internal.actions.UpdateAction"
 				tooltip="%UpdateAction.tooltip" toolbarPath="SVNGroupMenu"
 				menubarPath="org.eclipse.team.svn.svnmenu/SVNGroupMenu"
@@ -1006,7 +978,6 @@ For example:
 			<action
 				definitionId="org.eclipse.team.svn.ui.synchronize"
 				label="%SynchronizeCommand.label"
-				icon="icons/full/obj16/synch_synch.gif"
 				helpContextId="org.eclipse.team.svn.ui.team_synchronize_action_context"
 				class="org.eclipse.team.svn.ui.internal.actions.SynchronizeAction"
 				tooltip="%SynchronizeAction.tooltip" toolbarPath="SVNGroupMenu"
