@@ -368,14 +368,6 @@
                id="org.eclipse.team.svn.ui.add">
          </action>
          <action
-               label="%AddKeywords.label"
-               helpContextId="org.eclipse.team.svn.ui.team_add_keywords_action_context"
-               tooltip="%AddKeywords.tooltip"
-               class="org.eclipse.team.svn.ui.internal.actions.AddKeywordsAction"
-               menubarPath="team.main/group3"
-               id="org.eclipse.team.svn.ui.AddKeywords">
-         </action>
-         <action
                label="%SetSvnProperty.label"
                icon="icons/full/ctool16/svn_prop_add.gif"
                helpContextId="org.eclipse.team.svn.ui.team_set_svnpropery_action_context"
