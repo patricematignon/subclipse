@@ -62,7 +62,6 @@ public class ImageDescriptors {
         createImageDescriptor(ISVNUIConstants.IMG_COLLAPSE_ALL_ENABLED, baseURL);
         createImageDescriptor(ISVNUIConstants.IMG_NEWLOCATION, baseURL);
         createImageDescriptor(ISVNUIConstants.IMG_NEWFOLDER, baseURL);
-        createImageDescriptor(ISVNUIConstants.IMG_TAG, baseURL);
         createImageDescriptor(ISVNUIConstants.IMG_BRANCH, baseURL);
         createImageDescriptor(ISVNUIConstants.IMG_MODULE, baseURL);
         createImageDescriptor(ISVNUIConstants.IMG_CLEAR, baseURL);
@@ -91,16 +90,6 @@ public class ImageDescriptors {
         createImageDescriptor(ISVNUIConstants.IMG_NEEDSLOCK, baseURL);
         createImageDescriptor(ISVNUIConstants.IMG_DELETED, baseURL);
 		createImageDescriptor(ISVNUIConstants.IMG_ADD_PROPERTY, baseURL);
-		createImageDescriptor(ISVNUIConstants.IMG_COMMIT, baseURL);
-		createImageDescriptor(ISVNUIConstants.IMG_UPDATE, baseURL);
-		createImageDescriptor(ISVNUIConstants.IMG_CONFLICT, baseURL);
-		createImageDescriptor(ISVNUIConstants.IMG_REVERT, baseURL);
-		createImageDescriptor(ISVNUIConstants.IMG_RESOLVE, baseURL);
-		createImageDescriptor(ISVNUIConstants.IMG_LOG, baseURL);
-		createImageDescriptor(ISVNUIConstants.IMG_MERGE, baseURL);
-		createImageDescriptor(ISVNUIConstants.IMG_IGNORE, baseURL);
-		createImageDescriptor(ISVNUIConstants.IMG_ADD, baseURL);
-		createImageDescriptor(ISVNUIConstants.IMG_DIFF, baseURL);
         
         // special
         createImageDescriptor("glyphs/glyph1.gif", baseURL);  //$NON-NLS-1$
