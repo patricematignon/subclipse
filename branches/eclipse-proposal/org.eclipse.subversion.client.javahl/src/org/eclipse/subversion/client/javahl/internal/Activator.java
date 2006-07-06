@@ -1,4 +1,4 @@
-package org.eclipse.subversion.client.javahl;
+package org.eclipse.subversion.client.javahl.internal;
 
 import org.eclipse.core.runtime.Plugin;
 import org.osgi.framework.BundleContext;
