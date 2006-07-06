@@ -928,33 +928,40 @@ For example:
 		<actionSet label="%SVNActionSet.label" visible="false"
 			id="org.eclipse.team.svn.actionSet">
 			<menu label="%SVNGroupMenu.label"
-			id="org.eclipse.team.svn.svnmenu"
-			path="window">
-				<separator name="SVNGroupMenu"></separator>
+			id="svn.main"
+			path="additions">
+      <separator name="group2"/>
+      <separator name="group3"/>
+      <separator name="group4"/>
+      <separator name="group5"/>
+      <separator name="group6"/>
+      <separator name="group7"/>
+      <separator name="group8"/>
+      <separator name="group9"/>
+      <separator name="group10"/>
+      <separator name="projectGroup"/>
+    <separator name="group1"/>
 			</menu>
 			<action
-				definitionId="org.eclipse.team.svn.ui.commit"
-				label="%CommitCommand.label"
-				class="org.eclipse.team.svn.ui.internal.actions.CommitAction"
-				tooltip="%CommitAction.tooltip" toolbarPath="SVNGroupMenu"
-				menubarPath="org.eclipse.team.svn.svnmenu/SVNGroupMenu"
-				id="org.eclipse.team.svn.ui.commit">
-			</action>
-			<action
 				definitionId="org.eclipse.team.svn.ui.update"
-				label="%UpdateCommand.label"
+				label="%UpdateAction.label"
 				class="org.eclipse.team.svn.ui.internal.actions.UpdateAction"
-				tooltip="%UpdateAction.tooltip" toolbarPath="SVNGroupMenu"
-				menubarPath="org.eclipse.team.svn.svnmenu/SVNGroupMenu"
+				tooltip="%UpdateAction.tooltip" menubarPath="svn.main/group1"
 				id="org.eclipse.team.svn.ui.update">
 			</action>
 			<action
+				definitionId="org.eclipse.team.svn.ui.commit"
+				label="%CommitAction.label"
+				class="org.eclipse.team.svn.ui.internal.actions.CommitAction"
+				tooltip="%CommitAction.tooltip" menubarPath="svn.main/group1"
+				id="org.eclipse.team.svn.ui.commit">
+			</action>
+			<action
 				definitionId="org.eclipse.team.svn.ui.synchronize"
-				label="%SynchronizeCommand.label"
+				label="%SynchronizeAction.label"
 				helpContextId="org.eclipse.team.svn.ui.team_synchronize_action_context"
 				class="org.eclipse.team.svn.ui.internal.actions.SynchronizeAction"
-				tooltip="%SynchronizeAction.tooltip" toolbarPath="SVNGroupMenu"
-				menubarPath="org.eclipse.team.svn.svnmenu/SVNGroupMenu"
+				tooltip="%SynchronizeAction.tooltip" menubarPath="svn.main/group1"
 				id="org.eclipse.team.svn.ui.synchronize">
 			</action>
 		</actionSet>
