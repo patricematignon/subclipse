@@ -75,7 +75,7 @@ import org.eclipse.ui.part.ViewPart;
  */
 public class SvnPropertiesView extends ViewPart {
 
-	public static final String VIEW_ID = "org.eclipse.team.svn.ui.internal.svnproperties.SvnPropertiesView"; //$NON-NLS-1$
+	public static final String VIEW_ID = "org.eclipse.team.svn.ui.svnproperties.SvnPropertiesView"; //$NON-NLS-1$
 
 	private TableViewer tableViewer;
 	private TextViewer textViewer;

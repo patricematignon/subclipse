@@ -78,7 +78,7 @@ import org.eclipse.ui.part.ViewPart;
  * 
  */
 public class PendingOperationsView extends ViewPart implements IResourceStateChangeListener {
-	public static final String VIEW_ID = "org.eclipse.team.svn.ui.internal.pending.PendingOperationsView"; //$NON-NLS-1$
+	public static final String VIEW_ID = "org.eclipse.team.svn.ui.pending.PendingOperationsView"; //$NON-NLS-1$
 
 	private Table table;
 	private TableViewer tableViewer;

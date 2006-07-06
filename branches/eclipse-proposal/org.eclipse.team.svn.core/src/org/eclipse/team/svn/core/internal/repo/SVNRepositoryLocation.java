@@ -86,8 +86,8 @@ public class SVNRepositoryLocation
 	
 
 	// fields needed for caching the password
-	public static final String INFO_PASSWORD = "org.eclipse.team.svn.core.internal.password"; //$NON-NLS-1$ 
-	public static final String INFO_USERNAME = "org.eclipse.team.svn.core.internal.username"; //$NON-NLS-1$ 
+	public static final String INFO_PASSWORD = "org.eclipse.team.svn.core.password"; //$NON-NLS-1$ 
+	public static final String INFO_USERNAME = "org.eclipse.team.svn.core.username"; //$NON-NLS-1$ 
 	public static final String AUTH_SCHEME = ""; //$NON-NLS-1$ 
 	public static final URL FAKE_URL;
 

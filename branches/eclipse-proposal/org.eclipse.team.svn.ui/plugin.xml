@@ -692,7 +692,7 @@ definitionId="org.eclipse.team.svn.ui.synchronize"
          point="org.eclipse.ui.viewActions">
       <viewContribution
             targetID="org.eclipse.team.svn.ui.repository.RepositoriesView"
-            id="org.eclipse.team.svn.u.repoview_actions">
+            id="org.eclipse.team.svn.ui.repoview_actions">
          <action
                label="%SVNActionSet.newLabel"
                icon="icons/full/wizards/newlocation_wiz.gif"

@@ -12,3 +12,7 @@ Export-Package: org.eclipse.subversion.client,
  org.eclipse.subversion.client.internal,
  org.eclipse.subversion.client.javahl,
  org.eclipse.subversion.client.javasvn
+Bundle-ClassPath: .,
+ lib/svnjavahl.jar,
+ lib/javasvn.jar,
+ lib/ganymed.jar

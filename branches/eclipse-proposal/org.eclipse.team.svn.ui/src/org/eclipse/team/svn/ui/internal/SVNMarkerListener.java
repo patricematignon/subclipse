@@ -33,12 +33,12 @@ public class SVNMarkerListener implements IResourceStateChangeListener {
     	    try {
     	    	if (changedResources[i].exists())
     	    	{
-    	    		changedResources[i].deleteMarkers("org.eclipse.team.svn.ui.internal.conflictMarker", true, IResource.DEPTH_ZERO); //$NON-NLS-1$
+    	    		changedResources[i].deleteMarkers("org.eclipse.team.svn.ui.conflictMarker", true, IResource.DEPTH_ZERO); //$NON-NLS-1$
     	    		ISVNLocalResource svnResource = SVNWorkspaceRoot.getSVNResourceFor(changedResources[i]);
     	    		LocalResourceStatus status = svnResource.getStatus();
     	    		if (status.isTextConflicted()) {
     	    			try {
-    	    				IMarker marker = changedResources[i].createMarker("org.eclipse.team.svn.ui.internal.conflictMarker"); //$NON-NLS-1$
+    	    				IMarker marker = changedResources[i].createMarker("org.eclipse.team.svn.ui.conflictMarker"); //$NON-NLS-1$
     	    				marker.setAttribute(IMarker.MESSAGE, Policy.bind("SVNConflicts")); //$NON-NLS-1$
     	    				marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_WARNING);
     	    			} catch (Exception e) {

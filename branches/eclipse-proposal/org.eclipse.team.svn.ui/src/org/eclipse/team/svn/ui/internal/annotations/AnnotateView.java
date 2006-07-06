@@ -79,7 +79,7 @@ public class AnnotateView extends ViewPart implements ISelectionChangedListener 
 	boolean lastSelectionWasText = false;
 	
 	
-	public static final String VIEW_ID = "org.eclipse.team.svn.ui.internal.annotations.AnnotateView"; //$NON-NLS-1$
+	public static final String VIEW_ID = "org.eclipse.team.svn.ui.annotations.AnnotateView"; //$NON-NLS-1$
 	private Composite top;
 	
 	private IPartListener partListener = new IPartListener() {

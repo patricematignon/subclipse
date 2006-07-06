@@ -121,7 +121,7 @@ public class ShowAnnotationOperation extends SVNOperation {
     						IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
     						if (window != null) {
     							try {
-    								PlatformUI.getWorkbench().showPerspective("org.eclipse.team.svn.ui.internal.svnPerspective", window); //$NON-NLS-1$
+    								PlatformUI.getWorkbench().showPerspective("org.eclipse.team.svn.ui.svnPerspective", window); //$NON-NLS-1$
     							} catch (WorkbenchException e1) {              
     								// If this does not work we will just open the view in the
     								// current perspective.

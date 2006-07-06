@@ -54,9 +54,9 @@ public class SVNUIPlugin extends AbstractUIPlugin {
 	/**
 	 * The id of the SVN plug-in
 	 */
-	public static final String ID = "org.eclipse.team.svn.ui.internal"; //$NON-NLS-1$
-	public static final String DECORATOR_ID = "org.eclipse.team.svn.ui.internal.decorator"; //$NON-NLS-1$
-	public static final String PROVIDER_ID="org.eclipse.team.svn.core.internal.svnnature"; //$NON-NLS-1$
+	public static final String ID = "org.eclipse.team.svn.ui"; //$NON-NLS-1$
+	public static final String DECORATOR_ID = "org.eclipse.team.svn.ui.decorator"; //$NON-NLS-1$
+	public static final String PROVIDER_ID="org.eclipse.team.svn.core.svnnature"; //$NON-NLS-1$
 
 	/**
 	 * The singleton plug-in instance

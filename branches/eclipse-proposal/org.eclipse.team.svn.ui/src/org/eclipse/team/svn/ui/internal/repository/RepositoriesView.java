@@ -82,7 +82,7 @@ import org.eclipse.ui.part.WorkbenchPart;
  * the performing of SVN-specific operations on the repository contents.
  */
 public class RepositoriesView extends ViewPart implements ISelectionListener {
-	public static final String VIEW_ID = "org.eclipse.team.svn.ui.internal.repository.RepositoriesView"; //$NON-NLS-1$
+	public static final String VIEW_ID = "org.eclipse.team.svn.ui.repository.RepositoriesView"; //$NON-NLS-1$
 	
 	// The root
 	private AllRootsElement root;
