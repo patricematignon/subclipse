@@ -5,22 +5,24 @@ import java.util.ArrayList;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.eclipse.core.runtime.Plugin;
 import org.osgi.framework.BundleContext;
 
 /**
  * The activator class controls the plug-in life cycle
  */
-public class SVNClientPlugin extends AbstractUIPlugin {
+public class SVNClientPlugin extends Plugin {
 
 	// The plug-in ID
 	public static final String PLUGIN_ID = "org.eclipse.subversion.client";
 
-	public static final String DEFAULT_ADAPTER = "default_adapter";
-
 	// The shared instance
 	private static SVNClientPlugin plugin;
+	
+	// All available client adapters
 	private static ISVNClientAdapter[] clients;
+	
+	// The default adapter
 	private static ISVNClientAdapter defaultClient;
 	
 	/**
