@@ -100,14 +100,14 @@ public class SVNSynchronizeParticipant extends ScopableSubscriberParticipant imp
 			super.initialize(configuration);
 			UpdateSynchronizeAction updateAction = new UpdateSynchronizeAction(Policy.bind("SyncAction.update"), configuration); //$NON-NLS-1$
 			updateAction.setId("org.eclipse.team.svn.ui.internal.syncViewUpdate");
-			updateAction.setActionDefinitionId("org.eclipse.team.svn.ui.internal.update");
+			updateAction.setActionDefinitionId("org.eclipse.team.svn.ui.update");
 			appendToGroup(
 					ISynchronizePageConfiguration.P_CONTEXT_MENU, 
 					CONTEXT_MENU_CONTRIBUTION_GROUP_1,
 					updateAction);
 			CommitSynchronizeAction commitAction = new CommitSynchronizeAction(Policy.bind("SyncAction.commit"), configuration); //$NON-NLS-1$
 			commitAction.setId("org.eclipse.team.svn.ui.internal.syncViewCommit");
-			commitAction.setActionDefinitionId("org.eclipse.team.svn.ui.internal.commit");
+			commitAction.setActionDefinitionId("org.eclipse.team.svn.ui.commit");
 			appendToGroup(
 					ISynchronizePageConfiguration.P_CONTEXT_MENU, 
 					CONTEXT_MENU_CONTRIBUTION_GROUP_1,
