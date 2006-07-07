@@ -26,6 +26,9 @@ public interface ISVNClientAdapter {
     public final static String REPOSITORY_FSFS = "fsfs";
 	
     public abstract String getAdapterName();
+    public abstract void setDisplayName(String name);
+    public abstract String getDisplayName();
+    public abstract String getVersionString();
     public abstract boolean isAvailable();
     public abstract String getLibraryLoadErrors();
     

@@ -87,9 +87,18 @@ private IPreferenceStore store;
         
         store.setDefault(ISVNUIConstants.PREF_USE_QUICKDIFFANNOTATE, MessageDialogWithToggle.PROMPT);
         
+        setSvnClientInterface(store.getString(ISVNUIConstants.PREF_SVNINTERFACE));
         setSvnClientConfigDir(store.getString(ISVNUIConstants.PREF_SVNCONFIGDIR));
         
         setSvnChangePathOnDemand((store.getBoolean(ISVNUIConstants.PREF_FETCH_CHANGE_PATH_ON_DEMAND)));
+    }
+
+    /**
+     * set the svn client interface
+     * @param clientInterface
+     */
+    private void setSvnClientInterface(String clientInterface) {
+        SVNProviderPlugin.getPlugin().getSVNClientManager().setSvnClientInterface(clientInterface);
     }
 
     /**
@@ -112,6 +121,10 @@ private IPreferenceStore store;
      */
     public void propertyChange(PropertyChangeEvent event) {
         String property = event.getProperty();
+        if (property == ISVNUIConstants.PREF_SVNINTERFACE) {
+            String newValue = (String)event.getNewValue();
+            setSvnClientInterface(newValue);
+        }
         if (property == ISVNUIConstants.PREF_SVNCONFIGDIR) {
         	String configDir = (String)event.getNewValue();
             setSvnClientConfigDir(configDir);

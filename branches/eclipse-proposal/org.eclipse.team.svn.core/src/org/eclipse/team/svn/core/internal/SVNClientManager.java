@@ -57,6 +57,15 @@ public class SVNClientManager {
         	throw SVNException.wrapException(e);
         }
     }    
+    
+    public ISVNClientAdapter[] getSVNClientAdapters() throws SVNException {
+    	try {
+    		ISVNClientAdapter[] clients = SVNClientPlugin.getClientAdapters();
+    		return clients;
+    	} catch (Exception e) {
+        	throw SVNException.wrapException(e);
+    	}
+    }
 
 	/**
 	 * @return Returns the fetchChangePathOnDemand.
@@ -70,6 +79,12 @@ public class SVNClientManager {
 	public void setFetchChangePathOnDemand(
 			boolean fetchChangePathOnDemand) {
 		this.fetchChangePathOnDemand = fetchChangePathOnDemand;
+	}
+
+
+	public void setSvnClientInterface(String clientInterface) {
+		SVNClientPlugin.setDefaultAdapter(clientInterface);
+		
 	}
 	
 }

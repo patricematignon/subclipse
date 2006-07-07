@@ -21,6 +21,7 @@ public class SVNClientPlugin extends AbstractUIPlugin {
 	// The shared instance
 	private static SVNClientPlugin plugin;
 	private static ISVNClientAdapter[] clients;
+	private static ISVNClientAdapter defaultClient;
 	
 	/**
 	 * The constructor
@@ -63,8 +64,10 @@ public class SVNClientPlugin extends AbstractUIPlugin {
 			for (int i = 0; i < configurationElements.length; i++) {
 				IConfigurationElement configurationElement = configurationElements[i];
 				ISVNClientAdapter client = (ISVNClientAdapter)configurationElement.createExecutableExtension("class");
-				if (client.isAvailable())
+				if (client.isAvailable()) {
+					client.setDisplayName(configurationElement.getAttribute("name") + " - " + client.getVersionString());
 					clientList.add(client);
+				}
 			}	
 			clients = new ISVNClientAdapter[clientList.size()];
 			clientList.toArray(clients);
@@ -73,16 +76,30 @@ public class SVNClientPlugin extends AbstractUIPlugin {
 		
 	}
 	
-	public static ISVNClientAdapter getClientAdapter() throws Exception {
-		ISVNClientAdapter[] clientArr = getClientAdapters();
-		if ((clientArr == null) || (clientArr.length == 0)) return null;
-		String defaultClient = getDefault().getPreferenceStore().getString(DEFAULT_ADAPTER);
-		if (defaultClient == null) return clientArr[0];
-		for (int i = 0; i < clientArr.length; i++) {
-			if (clientArr[i].getAdapterName().equals(defaultClient)) return clientArr[i];
+	public static void setDefaultAdapter(String client){
+		ISVNClientAdapter[] clientArr = null;
+		try {
+			clientArr = getClientAdapters();
+		} catch (Exception e) {
+			return;
 		}
-		return clientArr[0];
-		
+		if ((clientArr == null) || (clientArr.length == 0)) return;
+		if (client == null) {
+			defaultClient = clientArr[0];
+			return;
+		}
+		for (int i = 0; i < clientArr.length; i++) {
+			if (clientArr[i].getAdapterName().equals(client)) {
+				defaultClient = clientArr[i];
+				break;
+			}
+		}
+	}
+	
+	public static ISVNClientAdapter getClientAdapter() {
+		if (defaultClient == null)
+			setDefaultAdapter(null);
+		return defaultClient;
 	}
 
 }

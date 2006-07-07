@@ -67,6 +67,10 @@ public abstract class AbstractJhlClientAdapter extends AbstractClientAdapter {
 
     }
 
+	public String getVersionString() {
+		return "1.3.x";
+	}
+
 	/**
 	 * for users who want to directly use underlying javahl SVNClientInterface
 	 * @return the SVNClientInterface instance

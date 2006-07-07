@@ -40,11 +40,21 @@ public class JhlClientAdapter extends AbstractJhlClientAdapter {
     private static boolean available;
 	private static StringBuffer javaHLErrors = new StringBuffer("Failed to load JavaHL Library.\nThese are the errors that were encountered:\n");
 
+	private String name;
+	
     public String getAdapterName() {
     	return "javahl";
 	}
 
-    public JhlClientAdapter() {
+    public String getDisplayName() {
+		return name;
+	}
+
+	public void setDisplayName(String name) {
+		this.name = name;
+	}
+
+	public JhlClientAdapter() {
         svnClient = new SVNClient();
         svnAdmin = new SVNAdmin();
         notificationHandler = new JhlNotificationHandler();
