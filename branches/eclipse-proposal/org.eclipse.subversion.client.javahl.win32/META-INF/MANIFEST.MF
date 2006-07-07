@@ -1,8 +1,9 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: JavaHL Win32 Binaries
+Bundle-Name: SVN Client - JavaHLWin32 Binaries
 Bundle-SymbolicName: org.eclipse.subversion.client.javahl.win32
-Bundle-Version: 1.0.0
-Bundle-Vendor: Eclipse
-Fragment-Host: org.eclipse.subversion.client.javahl;bundle-version="1.0.0"
+Bundle-Version: 1.3.2
+Bundle-Vendor: Subclipse
+Fragment-Host: org.eclipse.subversion.client.javahl;bundle-version="[1.3.2,1.4.0)"
 Bundle-Localization: plugin
+Eclipse-PlatformFilter: (& (osgi.ws=win32) (osgi.os=win32) (osgi.arch=x86))

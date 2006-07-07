@@ -2,11 +2,12 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: SVN Client - JavaHL Implementation
 Bundle-SymbolicName: org.eclipse.subversion.client.javahl;singleton:=true
-Bundle-Version: 1.0.0
+Bundle-Version: 1.3.2.qualifier
 Bundle-Activator: org.eclipse.subversion.client.javahl.internal.Activator
-Bundle-Vendor: Eclipse
+Bundle-Vendor: Subclipse
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.core.runtime,
- org.eclipse.subversion.client
+ org.eclipse.subversion.client;bundle-version="[1.3.0,1.4.0)"
 Eclipse-LazyStart: true
 Export-Package: org.eclipse.subversion.client.javahl.internal
+Bundle-RequiredExecutionEnvironment: J2SE-1.4

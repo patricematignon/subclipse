@@ -1,11 +1,11 @@
 Bundle-ManifestVersion: 2
-Bundle-Name: %pluginName
+Bundle-Name: SVN Team UI
 Bundle-SymbolicName: org.eclipse.team.svn.ui;singleton:=true
-Bundle-Version: 1.1.2
+Bundle-Version: 3.2.0.qualifier
 Bundle-Activator: org.eclipse.team.svn.ui.internal.SVNUIPlugin
-Bundle-Vendor: %providerName
+Bundle-Vendor: Subclipse
 Bundle-Localization: plugin
-Require-Bundle: org.eclipse.team.svn.core,
+Require-Bundle: org.eclipse.team.svn.core;bundle-version="[3.2.0,3.3.0)",
  org.eclipse.ui.ide,
  org.eclipse.ui.views,
  org.eclipse.jface.text,
@@ -51,3 +51,4 @@ Export-Package: org.eclipse.team.svn.ui.internal,
  org.eclipse.team.svn.ui.internal.wizards,
  org.eclipse.team.svn.ui.internal.wizards.generatediff,
  org.eclipse.team.svn.ui.internal.wizards.sharing
+Bundle-RequiredExecutionEnvironment: J2SE-1.4
