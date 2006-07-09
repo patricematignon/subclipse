@@ -172,14 +172,33 @@ the <a href="http://subversion.tigris.org/project_license.html">Subversion
 license.</a></p>
 
 <p>The core plugin (<b>org.eclipse.team.svn.core</b>) is the Eclipse Team 
-provider implementation for Subversion.  It provides managed access to the SVN
+provider implementation for Subversion.  It provides access to the SVN
 instances that are managed by the current worksapce.  The core plugin allows
 the team provider to function in a headless environment.  This headless 
 environment is already being used by the 
 <a href="http://www.eclipse.org/buckminster/">Buckminster</a> project.</p>
 
-<p>Finally, the ui plugin (<b>org.eclipse.team.svn.ui</b>) uses the headless
-team support to provide a friendly interface to the user.</p>
+<p>Finally, the UI plugin (<b>org.eclipse.team.svn.ui</b>) uses the core
+team support to provide a friendly interface to the user.  The existing
+Subclipse UI plugin already implements many of the advanced UI elements that
+have been added to the CVS UI plugin such as: Quick Diff, Live Annotations,
+Common History View, Synchronize View including Change Sets and Console view.
+This is in addition to the more basic use of the Team, Compare and Replace
+menus.  This similarity in the UI makes it easier for existing CVS users to
+make the transition to SVN, and also smooths the path by providing the same
+nice extras that users have become accustomed to.  We would like to explore
+ways to further integrate the UI of these plugins, such as providing a common
+Repository view and perspective that could be used to house CVS, SVN and any
+other repositories in one location.  There is also the possibility to build
+common dialogs for operations like Commit.  Finally, Subclipse has also gone
+to great lengths to make the handling of Branches and Tags as familar as
+possible to CVS users.  See: <a 
+href="http://subclipse.tigris.org/branch_tag.html">
+http://subclipse.tigris.org/branch_tag.html</a>.  Subversion and CVS handle
+branches and tags very differently and the work that has been done by
+Subclipse in this area has been looked at by the Subversion development
+community as a possible way to make the handling of tags in Subversion
+friendlier to CVS users.</p>
 
 <h2>Organization</h2>
 
