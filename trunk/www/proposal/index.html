@@ -48,15 +48,15 @@ widely used open source version control system. Many hosting services are
 providing SVN access, and several major open source projects have converted
 their CVS repositories to SVN. Eclipse has great support for CVS, and users
 are looking for similar support for SVN.  Eclipse has no support for SVN out
-of the box and many new users are unaware that quality third party Subversion
-team providers are available.  This percieved lack of Subversion support makes
-Eclipse look inferior to other IDEs such as Netbeans and IDEA taht ship with
-Subversion support in their base installations.</p>
+of the box and many new users are unaware that quality third party SVN
+team providers are available.  This percieved lack of SVN support makes
+Eclipse look inferior to other IDEs such as Netbeans and IntelliJ that ship with
+SVN support in their base installations.</p>
 <p>In addition to adding SVN support to Eclipse, there is the issue of providing
 a solid Team API that can be leveraged by commercial and open source SCM
 providers.  The current Team API is very capable, but at the same time it is 
 also hindered by having only one concrete implementation.  In many instances
-the API has become very CVS centric.  Having the platform support a second team 
+the API has become very CVS-centric.  Having the platform support a second team 
 provider would provide further validation of Team APIs before they are released
 and consumed by other team providers.</p>
 <p>Finally, there is the issue of providing support for SVN to projects hosted
@@ -99,7 +99,7 @@ Eclipse.</p>
 
 <p>There is also a third party library named JavaSVN that has been developed
 by a company called TMate.  <a href="http://tmate.org/svn/">
-http://tmate.org/svn/</a>.  They have reverse-engineered the Subversion network
+http://tmate.org/svn/</a>.  They have reverse-engineered the SVN network
 protocols and working copy format and have produced a 100% pure Java
 implementation of the JavaHL interface.  Making it a drop in replacement for
 the native library version of JavaHL.  The Subclipse distribution currently
@@ -152,7 +152,7 @@ for the existing Team and CVS developers to understand, should they decide to
 contribute.</p>
 
 <p>
-<img src="architecture.png">
+<img src="architecture.png" />
 </p>
 
 <p>The foundation for this project is a common Subversion API layer called the
@@ -172,10 +172,11 @@ the <a href="http://subversion.tigris.org/project_license.html">Subversion
 license.</a></p>
 
 <p>The core plugin (<b>org.eclipse.team.svn.core</b>) is the Eclipse Team 
-provider implementation for Subversion.  It provides managed access to access to the SVN instances 
-that are managed by the current worksapce.  The core plugin allows the team 
-provider to function in a headless environment.  This headless environment is
-already being used by the <a href="http://www.eclipse.org/buckminster/">Buckminster</a> project.</p>
+provider implementation for Subversion.  It provides managed access to the SVN
+instances that are managed by the current worksapce.  The core plugin allows
+the team provider to function in a headless environment.  This headless 
+environment is already being used by the 
+<a href="http://www.eclipse.org/buckminster/">Buckminster</a> project.</p>
 
 <p>Finally, the ui plugin (<b>org.eclipse.team.svn.ui</b>) uses the headless
 team support to provide a friendly interface to the user.</p>
@@ -222,15 +223,28 @@ visibility of the project in the Eclipse community is likely to increase as a
 result of this process.</p>
 
 <p>
-The Subclipse team has also made several contributions to Platform Team and Mylar
-with the aim of producing a better Team Platform for everyone.  Examples include:</p>
+The Subclipse team has also made several contributions to Platform Team, Mylar
+and ALF with the aim of producing a better Team Platform for everyone.  
+Examples include:</p>
 <ul>
-	<li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=89806">[API] Add a 'Team' quick diff that delegates to team provider's implementation</a></li>
-	<li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=138583">Common Team Repository browser view</a></li>
-	<li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=123867">[History View] Allow GenericHistoryView to show history of non IResources</a></li>
-	<li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=143954">Provide better support for Subversion patch file format</a></li>
-	<li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=142875">Support SVN active changesets</a></li>
-	<li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=148512">Commit support for team providers</a></li>
+	<li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=89806">
+[API] Add a 'Team' quick diff that delegates to team provider's implementation
+	</a></li>
+	<li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=138583">
+Common Team Repository browser view
+	</a></li>
+	<li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=123867">
+[History View] Allow GenericHistoryView to show history of non IResources
+	</a></li>
+	<li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=143954">
+Provide better support for Subversion patch file format
+	</a></li>
+	<li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=142875">
+Support SVN active changesets
+	</a></li>
+	<li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=148512">
+Commit support for team providers
+	</a></li>
 </ul>
 </p>
 
