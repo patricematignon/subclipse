@@ -49,7 +49,7 @@ providing SVN access, and several major open source projects have converted
 their CVS repositories to SVN. Eclipse has great support for CVS, and users
 are looking for similar support for SVN.  Eclipse has no support for SVN out
 of the box and many new users are unaware that quality third party SVN
-team providers are available.  This percieved lack of SVN support makes
+team providers are available.  This perceived lack of SVN support makes
 Eclipse look inferior to other IDEs such as Netbeans and IntelliJ that ship with
 SVN support in their base installations.</p>
 <p>In addition to adding SVN support to Eclipse, there is the issue of providing
@@ -77,9 +77,9 @@ programming languages, as most languages have a facility for accessing C
 libraries.  JavaHL is the name for the Java language bindings to these
 libraries.  JavaHL is similar to SWT.  It accesses the libraries via JNI while
 providing a standardized interface to Java clients.  Since virtually all SVN
-clients use these same libraries, there is great compatability when using
+clients use these same libraries, there is great compatibility when using
 multiple clients on the same local working copy.  The Subversion API also
-has very strictly defined compatability rules and the Subversion client and
+has very strictly defined compatibility rules and the Subversion client and
 server are both forward and backwards compatible with each other.</p>
 
 <p>The Subclipse project has figured out how to deliver the native
@@ -101,7 +101,7 @@ Eclipse.</p>
 by a company called TMate.  <a href="http://tmate.org/svn/">
 http://tmate.org/svn/</a>.  They have reverse-engineered the SVN network
 protocols and working copy format and have produced a 100% pure Java
-implementation of the JavaHL interface.  Making it a drop in replacement for
+implementation of the JavaHL interface; making it a drop in replacement for
 the native library version of JavaHL.  The Subclipse distribution currently
 provides an adapter option for this library.  The JavaSVN library <a
 href="http://tmate.org/svn/licensing/index.html">license</a> is not compatible
@@ -111,9 +111,10 @@ plug-in that is downloadable via their web site that adds JavaSVN as an adapter
 option via our public extension point.  This has always been the option that
 TMate has expressed as their preference, and they have asked to be listed
 as both a supporter and interested party of this project.  External packagers
-of Eclipse plug-ins, such as Linux distribtions and/or Yoxos would likely be
-able to include JavaSVN in their distributions as the JavaSVN license would
-be compatible with what they are doing.</p>
+of Eclipse plug-ins, such as Linux distributions and/or <a 
+href="http://www.yoxos.com/">Yoxos</a> would likely be able to include JavaSVN
+in their distributions as the JavaSVN license would be compatible with what 
+they are doing.</p>
 
 <h2>Scope</h2>
 <p>The objectives of the SVN Team Provider project are to: </p>
@@ -160,20 +161,20 @@ SVN Client Adapter (<b>org.eclipse.subversion.client</b>).  This adapter gives
 clients full access to any SVN repository (even those not under direct control
 of the SVN Team Provider).  The adapter serves to create an abstraction on top
 of all client adapter implementations (JavaHL, JavaSVN and the SVN command line
-client).  This adapter defines a standard Eclipse extension point, that 
+client).  This adapter defines a standard Eclipse extension point that 
 provider implementations can contribute to in order to provide an 
 implementation.  The user can then select which provider implementation they
 wish to use in their client preferences.</p>
 
 <p>The default SVN Client Adapter will be JavaHL, which is the official Java
-language bindings for the Subversion native libraries.  JavaHL is developed,
+language binding for the Subversion native libraries.  JavaHL is developed,
 maintained and provided as part of the Subversion project and is licensed under
 the <a href="http://subversion.tigris.org/project_license.html">Subversion
 license.</a></p>
 
 <p>The core plugin (<b>org.eclipse.team.svn.core</b>) is the Eclipse Team 
 provider implementation for Subversion.  It provides access to the SVN
-instances that are managed by the current worksapce.  The core plugin allows
+instances that are managed by the current workspace.  The core plugin allows
 the team provider to function in a headless environment.  This headless 
 environment is already being used by the 
 <a href="http://www.eclipse.org/buckminster/">Buckminster</a> project.</p>
@@ -185,13 +186,13 @@ have been added to the CVS UI plugin such as: Quick Diff, Live Annotations,
 Common History View, Synchronize View including Change Sets and Console view.
 This is in addition to the more basic use of the Team, Compare and Replace
 menus.  This similarity in the UI makes it easier for existing CVS users to
-make the transition to SVN, and also smooths the path by providing the same
+make the transition to SVN, and also smoothes the path by providing the same
 nice extras that users have become accustomed to.  We would like to explore
 ways to further integrate the UI of these plugins, such as providing a common
 Repository view and perspective that could be used to house CVS, SVN and any
 other repositories in one location.  There is also the possibility to build
 common dialogs for operations like Commit.  Finally, Subclipse has also gone
-to great lengths to make the handling of Branches and Tags as familar as
+to great lengths to make the handling of Branches and Tags as familiar as
 possible to CVS users.  See: <a 
 href="http://subclipse.tigris.org/branch_tag.html">
 http://subclipse.tigris.org/branch_tag.html</a>.  Subversion and CVS handle
@@ -236,16 +237,18 @@ project and have expressed an interest in this proposal.</p>
 </ul>
 
 <p><b>Developer community</b></p>
-<p>The Subclipse project has a proven track record of being able to attract and
+<p>The Subclipse team has a proven track record of operating in an open and
+transparent manner.  Even this proposal has been developed collaboratively
+by the community using the mailing lists and repository to work as a team.
+We also have a proven track record of being able to attract and
 support contributions from the developer community.  The Subclipse 1.0 release
 listed thirty-seven individuals that made code contributions to the project.  
 We expect to continue this tradition and likely expand it greatly as the 
 visibility of the project in the Eclipse community is likely to increase as a 
 result of this process.</p>
 
-<p>
-The Subclipse team has also made several contributions to Platform Team, Mylar
-and ALF with the aim of producing a better Team Platform for everyone.  
+<p>The Subclipse team has also made several contributions to Platform Team, 
+Mylar and ALF with the aim of producing a better Team Platform for everyone.  
 Examples include:</p>
 <ul>
 	<li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=89806">
@@ -290,16 +293,50 @@ the development process as well as assistance in supporting one another in a
 respectful and professional manner.  The Subversion project itself for that 
 matter has set a high standard of excellence in this area, which other projects
 have followed.</p>
-	
+
+<p><b>Subversive Proposal</b></p>
+<p>In March 2006 a second SVN plug-in for Eclipse emerged in the form of
+a product named Subversive from a company named <a 
+href="http://www.polarion.org/">Polarion</a>.  This company has also submitted
+a proposal to the Eclipse Foundation.  See: <a 
+href="http://www.eclipse.org/proposals/subversive/">
+http://www.eclipse.org/proposals/subversive/</a>.</p>
+
+<p>We believe that our proposal represents the better option for the Eclipse
+community.  The Subclipse project has a 3-year history of operating 
+transparently and is well past the "1.0" stage of the development process.  We
+even have an Eclipse 3.2-specific release available for Callisto users --  a
+release that leverages several Eclipse 3.2 features.  This proposal has the 
+backing of two long time Eclipse Foundation members, <a 
+href="http://www.softlanding.com/">SoftLanding Systems</a> and <a 
+href="http://www.collab.net/">CollabNet</a>, both of whom have a proven track
+record of supporting open source development in general, and Subversion in 
+particular.  We have worked with and have the support of several
+existing Eclipse projects and just as importantly, we have the backing
+of the Subversion developer community.  Even the primary developer of the
+JavaSVN library, Alexander Kitaev, has asked to be listed as an interested
+party and potential contributor to our proposal.</p>
+
+<p>We strongly believe that any Eclipse.org provided support for Subversion 
+should work closely with the Subversion development community.  Any proposal
+that is not based on the official Subversion libraries does not do this.</p>
+
+<p>We invite Polarion to join this proposal and devote their resources to
+helping us create a single great option that satisfies the needs of the Eclipse
+and Subversion communities.  They have implemented some good ideas in
+Subversive, and we would encourage them to work with our community to get
+these features incorporated into our code base, and where necessary, into
+the Subversion libraries themselves.</p>
+
 <h2>Tentative Plan</h2>
 	
 <ul>
-	<li>September 2006: Refactored and relicensed code contribution based on
+	<li>September 2006: Refactored and re-licensed code contribution based on
 	Subclipse</li>
 	<li>December 2006: Initial release as an Eclipse project, supporting
 	Eclipse 3.2.</li>
 	<li>January 2007: Join the release train for Eclipse 3.3</li>
-	<li>July 2007: Possibly move project to Eclipse Plaform</li>
+	<li>July 2007: Possibly move project to Eclipse Platform</li>
 </ul>
 
 </div>
