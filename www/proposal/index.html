@@ -43,15 +43,16 @@ news://news.eclipse.org/eclipse.technology.svn</a> newsgroup.</p>
 
 <h2>Background</h2>
 
-<p>Subversion (SVN) is very popular and will soon overtake CVS as the most 
+<p>Subversion (SVN) is very popular and rivals CVS as the most 
 widely used open source version control system. Many hosting services are 
 providing SVN access, and several major open source projects have converted
 their CVS repositories to SVN. Eclipse has great support for CVS, and users
 are looking for similar support for SVN.  Eclipse has no support for SVN out
-of the box and many new users are unaware that quality third party SVN
+of the box and many new users are unaware that quality third-party SVN
 team providers are available.  This perceived lack of SVN support makes
 Eclipse look inferior to other IDEs such as Netbeans and IntelliJ that ship with
 SVN support in their base installations.</p>
+
 <p>In addition to adding SVN support to Eclipse, there is the issue of providing
 a solid Team API that can be leveraged by commercial and open source SCM
 providers.  The current Team API is very capable, but at the same time it is 
@@ -59,12 +60,14 @@ also hindered by having only one concrete implementation.  In many instances
 the API has become very CVS-centric.  Having the platform support a second team 
 provider would provide further validation of Team APIs before they are released
 and consumed by other team providers.</p>
+
 <p>Finally, there is the issue of providing support for SVN to projects hosted
-by Eclipse.org.  The code for this project should be hosted in an SVN repository
-and it is likely that there are other projects currently hosted at Eclipse.org 
-that would like to migrate their repositories from CVS to SVN.  Part of this 
-proposal is to provide resources and expertise that will support the Eclipse 
-Foundation in their efforts to provide these services to the community.</p>
+by Eclipse.org.  The code for this project should be self-hosted in an SVN 
+repository and it is likely that there are other projects currently hosted at
+Eclipse.org that would like to migrate their repositories from CVS to SVN.
+Part of this proposal is to provide resources and expertise that will support
+the Eclipse Foundation in their efforts to provide these services to the
+community.</p>
 
 <h2>History</h2>
 
@@ -74,13 +77,13 @@ libraries with well-defined interfaces, designed to be called by
 other applications.  These libraries are delivered as native C libraries in
 order to achieve the maximum portability across both operating systems and
 programming languages, as most languages have a facility for accessing C
-libraries.  JavaHL is the name for the Java language bindings to these
+libraries.  JavaHL is the name for the Java language binding to these
 libraries.  JavaHL is similar to SWT.  It accesses the libraries via JNI while
 providing a standardized interface to Java clients.  Since virtually all SVN
 clients use these same libraries, there is great compatibility when using
 multiple clients on the same local working copy.  The Subversion API also
 has very strictly defined compatibility rules and the Subversion client and
-server are both forward and backwards compatible with each other.</p>
+server are both forward and backward compatible with each other.</p>
 
 <p>The Subclipse project has figured out how to deliver the native
 libraries for JavaHL for the Windows platform only.  Currently, an Eclipse user
@@ -93,11 +96,11 @@ libraries to be delivered by a plug-in fragment when those libraries have
 dependencies on other libraries.  In the short term, users on non-Windows
 platforms would have to obtain the JavaHL native library for their operating
 system.  All of the major Linux distributions now make this very easy to do
-and really is not much different than how a Linux user that uses KDE has to
+and really it is not much different than how a Linux user that uses KDE has to
 make sure they have the GTK2 libraries installed before they can use SWT and
 Eclipse.</p>
 
-<p>There is also a third party library named JavaSVN that has been developed
+<p>There is also a third-party library named JavaSVN that has been developed
 by a company called TMate.  <a href="http://tmate.org/svn/">
 http://tmate.org/svn/</a>.  They have reverse-engineered the SVN network
 protocols and working copy format and have produced a 100% pure Java
@@ -111,7 +114,7 @@ plug-in that is downloadable via their web site that adds JavaSVN as an adapter
 option via our public extension point.  This has always been the option that
 TMate has expressed as their preference, and they have asked to be listed
 as both a supporter and interested party of this project.  External packagers
-of Eclipse plug-ins, such as Linux distributions and/or <a 
+of Eclipse plug-ins, such as Linux distributions (Fedora, Debian) and/or <a 
 href="http://www.yoxos.com/">Yoxos</a> would likely be able to include JavaSVN
 in their distributions as the JavaSVN license would be compatible with what 
 they are doing.</p>
@@ -134,7 +137,7 @@ they are doing.</p>
 	development	as appropriate for the current Eclipse release.</li>
     <li>Contribute to the development and refinement of the Eclipse Core Team
     API.</li>
-    <li>Provide real world use cases for development of the official Java SVN
+    <li>Provide real world use cases for development of the official JavaHL SVN
     client interface.</li>
 	<li>Assist resources at the Eclipse Foundation in offering SVN hosting to
 	projects.</li>
