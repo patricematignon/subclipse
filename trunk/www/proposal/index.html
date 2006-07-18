@@ -82,13 +82,14 @@ libraries with well-defined interfaces, designed to be called by
 other applications.  These libraries are delivered as native C libraries in
 order to achieve the maximum portability across both operating systems and
 programming languages, as most languages have a facility for accessing C
-libraries.  JavaHL is the name for the Java language binding to these
-libraries.  JavaHL is similar to SWT.  It accesses the libraries via JNI while
-providing a standardized interface to Java clients.  Since virtually all SVN
-clients use these same libraries, there is great compatibility when using
-multiple clients on the same local working copy.  The Subversion API also
-has very strictly defined compatibility rules and the Subversion client and
-server are both forward and backward compatible with each other.</p>
+libraries.  JavaHL is the name for the offical Java language binding to these
+libraries.  JavaHL is similar to SWT in that it accesses the native libraries
+via JNI while providing a standardized interface to Java clients.  Since
+virtually all SVN clients use these same libraries, there is great 
+compatibility when using multiple clients on the same local working copy.  The
+Subversion API also has very strictly defined compatibility rules and the
+Subversion client and server are both forward and backward compatible with
+each other.</p>
 
 <p>The Subclipse project has figured out how to deliver the native
 libraries for JavaHL for the Windows platform only.  Currently, an Eclipse user
@@ -106,7 +107,7 @@ make sure they have the GTK2 libraries installed before they can use SWT and
 Eclipse.</p>
 
 <p>There is also a third-party library named JavaSVN that has been developed
-by a company called TMate.  <a href="http://tmate.org/svn/">
+by a company named TMate.  <a href="http://tmate.org/svn/">
 http://tmate.org/svn/</a>.  They have reverse-engineered the SVN network
 protocols and working copy format and have produced a 100% pure Java
 implementation of the JavaHL interface; making it a drop in replacement for
@@ -123,6 +124,32 @@ of Eclipse plug-ins, such as Linux distributions (Fedora, Debian) and/or <a
 href="http://www.yoxos.com/">Yoxos</a> would likely be able to include JavaSVN
 in their distributions as the JavaSVN license would be compatible with what 
 they are doing.</p>
+
+<p>In the process of putting together this proposal, as well as in prior
+related discussions, we have received a lot of feedback about the issue of
+using native libraries (JavaHL).  It is our position that using the native
+libraries provided by Subversion is the right approach to take.  The existing
+CVS plug-in took the approach of creating a custom pure Java library.  However,
+it needs to be taken into account that:</p>
+
+<ol>
+<li>There really was/is no official CVS "API" that could have been used.</li>
+<li>CVS development was already largely dormant before Eclipse development
+even started.</li>
+</ol>
+
+<p>Despite this second point, even to this day there is still the occasional
+incompatability between the Eclipse CVS client and other CVS clients or
+servers.  Subversion, in constrast to CVS, has an official API that was
+designed to be used by multiple languages, including Java, and more importantly
+Subversion is actively developed and frequently sees major new features being
+added.  It would be a mistake to think that all of the work that has gone into
+Subversion, and continues to go into it to this day could be easily replicated
+and managed.  It would be better for Eclipse, as a platform for application
+development, to put this effort into making it easier to use native libraries
+in Eclipse plug-ins and applications.  Surely any problems in this area are
+solvable, and Eclipse would just be that much better if it did solve those
+problems.</p>
 
 <h2>Scope</h2>
 <p>The objectives of the SVN Team Provider project are to: </p>
@@ -158,7 +185,7 @@ Subclipse provides a robust and stable implementation of Subversion
 functionality as an Eclipse Team Provider.  The Subclipse code 
 and architecture is based on the Eclipse CVS provider, so it should be easy
 for the existing Team and CVS developers to understand, should they decide to
-contribute.</p>
+contribute.  Subclipse was recently relicensed under the terms of the EPL.</p>
 
 <p>
 <img src="architecture.png" />
@@ -221,9 +248,9 @@ are (in alphabetical order):</p>
 
 <ul>
 	<li>Daniel Bradby</li>
-	<li>Paul Burba (<a href="http://www.softlanding.com/">SoftLanding
-	Systems</a>): Subversion Full Committer</li>
 	<li>Cédric Chabanois</li>
+	<li><a href="http://www.collab.net/">CollabNet</a>: Considering providing
+	development resources</li>
 	<li>Stephen Elsemore (<a href="http://www.softlanding.com/">SoftLanding
 	Systems</a>)</li>
 	<li>Brock Janiczak</li>
@@ -231,10 +258,26 @@ are (in alphabetical order):</p>
 	<li>Eugene Kuleshov</li>
 	<li>Martin Letenay</li>
 	<li>Mark Phippard (<a href="http://www.softlanding.com/">SoftLanding 
-	Systems</a>):  Project Lead, Subversion JavaHL Committer</li>
+	Systems</a>):  Project Lead</li>
 	<li>Jesper Steen Møller</li>
 	<li>Paul Thiel (<a href="http://www.softlanding.com/">SoftLanding
-	Systems</a>)</li>
+	Systems</a>): Documentation</li>
+</ul>
+	
+<p><b>Subversion committers</b></p>
+<p>Unlike CVS, Subversion is an actively developed open source project.  It
+is important to participate in and coordinate with the Subversion project to
+help insure that the needs of Eclipse users are taken into consideration as 
+future enhancements are planned and delivered.  This proposal includes the
+following members that have committer access to the Subversion project:</p>
+
+<ul>
+	<li>Paul Burba (<a href="http://www.softlanding.com/">SoftLanding
+	Systems</a>): Subversion Full Committer</li>
+	<li>Mark Phippard (<a href="http://www.softlanding.com/">SoftLanding 
+	Systems</a>):  Subversion JavaHL Committer</li>
+	<li>Daniel Rall (<a href="http://www.collab.net/">CollabNet
+	</a>): Subversion Full Committer</li>
 </ul>
 
 <p><b>Interested parties</b></p>
