@@ -187,12 +187,25 @@ problems.</p>
 <h2>Description</h2>
 
 <p>The initial code for this project will be based on a code contribution from
-the <a href="http://subclipse.tigris.org/">Subclipse</a> project.  
-Subclipse provides a robust and stable implementation of Subversion 
-functionality as an Eclipse Team Provider.  The Subclipse code 
-and architecture is based on the Eclipse CVS provider, so it should be easy
-for the existing Team and CVS developers to understand, should they decide to
-contribute.  Subclipse was recently relicensed under the terms of the EPL.</p>
+the <a href="http://subclipse.tigris.org/">Subclipse</a> project.  Subclipse was
+recently relicensed under the terms of the EPL and provides a robust and stable
+implementation of Subversion functionality as an Eclipse Team Provider.  In
+addition, this project will adhere to common Eclipse development best practices,
+most of which are already in place in the Subclipse code base.</p>
+
+<ul>
+<li>Separation into core and ui plug-ins.</li>
+<li>Internal packages for non-public API.</li>
+<li>Export and use of extension points.</li>
+<li>Separate help plugin for documentation as well as use of context
+sensitive help.</li>
+<li>Localization support.  The Subclipse community has contributed localizations
+for Japanese (ja), Traditional Chinese (zh), and Simplified Chinese (zh_TW).</li>
+</ul>
+
+<p>The Subclipse code and architecture is based on the Eclipse CVS provider, 
+so it should be easy for the existing Team and CVS developers to understand,
+should they decide to contribute.</p>
 
 <p>
 <img src="architecture.png" />
@@ -362,7 +375,7 @@ a proposal to the Eclipse Foundation.  See: <a
 href="http://www.eclipse.org/proposals/subversive/">
 http://www.eclipse.org/proposals/subversive/</a>.</p>
 
-<p>We believe that our proposal represents the better option for the Eclipse
+<p>We believe that our proposal represents the best option for the Eclipse
 community.  The Subclipse project has a 3-year history of operating 
 transparently and is well past the "1.0" stage of the development process.  We
 even have an Eclipse 3.2-specific release available for Callisto users --  a
