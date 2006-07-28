@@ -87,7 +87,7 @@ public class ShowAnnotationOperation extends SVNOperation {
     }
     
     /* (non-Javadoc)
-     * @see org.eclipse.team.svn.ui.internal.operations.RepositoryProviderOperation#getTaskName(org.tigris.subversion.subclipse.core.SVNTeamProvider)
+     * @see org.eclipse.team.svn.ui.internal.operations.RepositoryProviderOperation#getTaskName(org.eclipse.team.svn.core.internal.SVNTeamProvider)
      */
     protected String getTaskName(SVNTeamProvider provider) {
         return Policy.bind("AnnotateOperation.0", provider.getProject().getName()); //$NON-NLS-1$
@@ -123,7 +123,7 @@ public class ShowAnnotationOperation extends SVNOperation {
 //  				is there an open editor for the given input? If yes, use live annotate
     				final AbstractDecoratedTextEditor editor= getEditor();
     				if (editor != null && promptForQuickDiffAnnotate()){
-    					editor.showRevisionInformation(information, "org.tigris.subversion.subclipse.quickdiff.providers.SVNReferenceProvider"); //$NON-NLS-1$
+    					editor.showRevisionInformation(information, "org.eclipse.team.svn.quickdiff.providers.SVNReferenceProvider"); //$NON-NLS-1$
 
     				} else {
     					try {
@@ -131,7 +131,7 @@ public class ShowAnnotationOperation extends SVNOperation {
     						IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
     						if (window != null) {
     							try {
-    								PlatformUI.getWorkbench().showPerspective("org.eclipse.team.svn.ui.internal.svnPerspective", window); //$NON-NLS-1$
+    								PlatformUI.getWorkbench().showPerspective("org.eclipse.team.svn.ui.svnPerspective", window); //$NON-NLS-1$
     							} catch (WorkbenchException e1) {              
     								// If this does not work we will just open the view in the
     								// current perspective.

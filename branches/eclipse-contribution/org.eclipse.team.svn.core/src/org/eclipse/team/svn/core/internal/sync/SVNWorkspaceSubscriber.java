@@ -284,14 +284,14 @@ public class SVNWorkspaceSubscriber extends Subscriber implements IResourceState
     }
     
     /* (non-Javadoc)
-     * @see org.tigris.subversion.subclipse.core.IResourceStateChangeListener#resourceSyncInfoChanged(org.eclipse.core.resources.IResource[])
+     * @see org.eclipse.team.svn.core.internal.IResourceStateChangeListener#resourceSyncInfoChanged(org.eclipse.core.resources.IResource[])
      */
     public void resourceSyncInfoChanged(IResource[] changedResources) {
         internalResourceChanged(changedResources);
     }
 
     /* (non-Javadoc)
-     * @see org.tigris.subversion.subclipse.core.IResourceStateChangeListener#resourceModified(org.eclipse.core.resources.IResource[])
+     * @see org.eclipse.team.svn.core.internal.IResourceStateChangeListener#resourceModified(org.eclipse.core.resources.IResource[])
      */
     public void resourceModified(IResource[] changedResources) {
         internalResourceChanged(changedResources);
@@ -305,7 +305,7 @@ public class SVNWorkspaceSubscriber extends Subscriber implements IResourceState
     }
 
     /* (non-Javadoc)
-	 * @see org.tigris.subversion.subclipse.core.IResourceStateChangeListener#projectConfigured(org.eclipse.core.resources.IProject)
+	 * @see org.eclipse.team.svn.core.internal.IResourceStateChangeListener#projectConfigured(org.eclipse.core.resources.IProject)
 	 */
 	public void projectConfigured(IProject project) {
 		SubscriberChangeEvent delta = new SubscriberChangeEvent(this, ISubscriberChangeEvent.ROOT_ADDED, project);
@@ -313,7 +313,7 @@ public class SVNWorkspaceSubscriber extends Subscriber implements IResourceState
 	}
 
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.subclipse.core.IResourceStateChangeListener#projectDeconfigured(org.eclipse.core.resources.IProject)
+	 * @see org.eclipse.team.svn.core.internal.IResourceStateChangeListener#projectDeconfigured(org.eclipse.core.resources.IProject)
 	 */
 	public void projectDeconfigured(IProject project) {
 		SubscriberChangeEvent delta = new SubscriberChangeEvent(this, ISubscriberChangeEvent.ROOT_REMOVED, project);

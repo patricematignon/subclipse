@@ -200,7 +200,7 @@ public class JhlClientAdapter extends AbstractJhlClientAdapter {
     }
 
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#createRepository(java.io.File)
+	 * @see org.eclipse.subversion.client.ISVNClientAdapter#createRepository(java.io.File)
 	 */
 	public void createRepository(File path, String repositoryType) throws SVNClientException {
 		try {

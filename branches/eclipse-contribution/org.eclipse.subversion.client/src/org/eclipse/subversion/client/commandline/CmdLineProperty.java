@@ -43,35 +43,35 @@ class CmdLineProperty implements ISVNProperty {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.ISVNProperty#getName()
+	 * @see org.eclipse.subversion.client.ISVNProperty#getName()
 	 */
 	public String getName() {
 		return propName;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.ISVNProperty#getValue()
+	 * @see org.eclipse.subversion.client.ISVNProperty#getValue()
 	 */
 	public String getValue() {
 		return propValue;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.ISVNProperty#getFile()
+	 * @see org.eclipse.subversion.client.ISVNProperty#getFile()
 	 */
 	public File getFile() {
 		return file;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.ISVNProperty#getUrl()
+	 * @see org.eclipse.subversion.client.ISVNProperty#getUrl()
 	 */
 	public SVNUrl getUrl() {
 		return url;
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.ISVNProperty#getData()
+	 * @see org.eclipse.subversion.client.ISVNProperty#getData()
 	 */
 	public byte[] getData() {
 		return data;

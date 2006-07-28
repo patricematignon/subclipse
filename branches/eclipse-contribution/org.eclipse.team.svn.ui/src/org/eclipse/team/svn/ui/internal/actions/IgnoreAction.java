@@ -46,7 +46,7 @@ public class IgnoreAction extends WorkspaceAction {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.team.svn.ui.internal.actions.WorkspaceAction#isEnabledForSVNResource(org.tigris.subversion.subclipse.core.ISVNLocalResource)
+	 * @see org.eclipse.team.svn.ui.internal.actions.WorkspaceAction#isEnabledForSVNResource(org.eclipse.team.svn.core.internal.ISVNLocalResource)
 	 */
 	protected boolean isEnabledForSVNResource(ISVNLocalResource svnResource) throws SVNException {
 	    //If the resource is a IProject then the action should not be enabled.

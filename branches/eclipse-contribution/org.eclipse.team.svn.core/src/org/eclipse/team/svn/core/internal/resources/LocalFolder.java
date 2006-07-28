@@ -50,7 +50,7 @@ public class LocalFolder extends LocalResource implements ISVNLocalFolder {
     }
 
     /* (non-Javadoc)
-     * @see org.tigris.subversion.subclipse.core.ISVNLocalResource#getBaseResource()
+     * @see org.eclipse.team.svn.core.internal.ISVNLocalResource#getBaseResource()
      */
     public ISVNRemoteResource getBaseResource() throws SVNException {
         if (!isManaged()) {// no base if no remote
@@ -60,7 +60,7 @@ public class LocalFolder extends LocalResource implements ISVNLocalFolder {
     }
 
     /* (non-Javadoc)
-     * @see org.tigris.subversion.subclipse.core.ISVNFolder#members(org.eclipse.core.runtime.IProgressMonitor, int)
+     * @see org.eclipse.team.svn.core.internal.ISVNFolder#members(org.eclipse.core.runtime.IProgressMonitor, int)
      */
     public ISVNResource[] members(IProgressMonitor monitor, int flags) throws SVNException {
         if (!resource.exists()) return new ISVNLocalResource[0];
@@ -105,21 +105,21 @@ public class LocalFolder extends LocalResource implements ISVNLocalFolder {
     }
 
     /* (non-Javadoc)
-     * @see org.tigris.subversion.subclipse.core.ISVNResource#isFolder()
+     * @see org.eclipse.team.svn.core.internal.ISVNResource#isFolder()
      */
     public boolean isFolder() {
         return true;
     }
 
     /* (non-Javadoc)
-     * @see org.tigris.subversion.subclipse.core.ISVNLocalResource#refreshStatus()
+     * @see org.eclipse.team.svn.core.internal.ISVNLocalResource#refreshStatus()
      */
     public void refreshStatus() throws SVNException {
         refreshStatus(IResource.DEPTH_ZERO);
     }
 
     /* (non-Javadoc)
-     * @see org.tigris.subversion.subclipse.core.ISVNLocalFolder#refreshStatus(int)
+     * @see org.eclipse.team.svn.core.internal.ISVNLocalFolder#refreshStatus(int)
      */
     public void refreshStatus(int depth) throws SVNException {
         SVNProviderPlugin.getPlugin().getStatusCacheManager().refreshStatus(
@@ -149,7 +149,7 @@ public class LocalFolder extends LocalResource implements ISVNLocalFolder {
     }
 
     /* (non-Javadoc)
-     * @see org.tigris.subversion.subclipse.core.ISVNLocalFolder#acceptChildren(org.tigris.subversion.subclipse.core.ISVNResourceVisitor)
+     * @see org.eclipse.team.svn.core.internal.ISVNLocalFolder#acceptChildren(org.eclipse.team.svn.core.internal.ISVNResourceVisitor)
      */
     public void acceptChildren(ISVNResourceVisitor visitor) throws SVNException {
 
@@ -167,14 +167,14 @@ public class LocalFolder extends LocalResource implements ISVNLocalFolder {
     }
 
     /* (non-Javadoc)
-     * @see org.tigris.subversion.subclipse.core.ISVNLocalResource#accept(org.tigris.subversion.subclipse.core.ISVNResourceVisitor)
+     * @see org.eclipse.team.svn.core.internal.ISVNLocalResource#accept(org.eclipse.team.svn.core.internal.ISVNResourceVisitor)
      */
     public void accept(ISVNResourceVisitor visitor) throws SVNException {
         visitor.visitFolder(this);
     }
 
     /* (non-Javadoc)
-     * @see org.tigris.subversion.subclipse.core.ISVNLocalFolder#unmanage(org.eclipse.core.runtime.IProgressMonitor)
+     * @see org.eclipse.team.svn.core.internal.ISVNLocalFolder#unmanage(org.eclipse.core.runtime.IProgressMonitor)
      */
     public void unmanage(IProgressMonitor monitor) throws SVNException {
         SVNProviderPlugin.run(new ISVNRunnable() {
@@ -238,7 +238,7 @@ public class LocalFolder extends LocalResource implements ISVNLocalFolder {
     }
 
     /* (non-Javadoc)
-     * @see org.tigris.subversion.subclipse.core.ISVNLocalFolder#setIgnoredAs(java.lang.String)
+     * @see org.eclipse.team.svn.core.internal.ISVNLocalFolder#setIgnoredAs(java.lang.String)
      */
     public void setIgnoredAs(final String pattern) throws SVNException {
         AddIgnoredPatternCommand command = new AddIgnoredPatternCommand(this, pattern);
@@ -246,21 +246,21 @@ public class LocalFolder extends LocalResource implements ISVNLocalFolder {
     }
 
     /* (non-Javadoc)
-     * @see org.tigris.subversion.subclipse.core.ISVNLocalResource#revert()
+     * @see org.eclipse.team.svn.core.internal.ISVNLocalResource#revert()
      */
     public void revert() throws SVNException {
         super.revert(true);
     }
 
     /* (non-Javadoc)
-     * @see org.tigris.subversion.subclipse.core.ISVNLocalResource#resolve()
+     * @see org.eclipse.team.svn.core.internal.ISVNLocalResource#resolve()
      */
     public void resolve() {
     	//Directories could not be resolved.
     }
 
     /* (non-Javadoc)
-     * @see org.tigris.subversion.subclipse.core.ISVNLocalResource#getStatus()
+     * @see org.eclipse.team.svn.core.internal.ISVNLocalResource#getStatus()
      */
     public LocalResourceStatus getStatus() throws SVNException {
     	if (getIResource().isTeamPrivateMember() && (SVNProviderPlugin.getPlugin().isAdminDirectory(getIResource().getName())))

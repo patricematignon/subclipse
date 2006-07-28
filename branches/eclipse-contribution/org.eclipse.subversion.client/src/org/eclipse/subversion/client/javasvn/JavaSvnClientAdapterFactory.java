@@ -33,14 +33,14 @@ public class JavaSvnClientAdapterFactory extends SVNClientAdapterFactory {
     }
 
     /* (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.SVNClientAdapterFactory#createSVNClientImpl()
+	 * @see org.eclipse.subversion.client.SVNClientAdapterFactory#createSVNClientImpl()
 	 */
 	protected ISVNClientAdapter createSVNClientImpl() {
 		return new JavaSvnClientAdapter();
 	}
 
     /* (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.SVNClientAdapterFactory#getClientType()
+     * @see org.eclipse.subversion.client.SVNClientAdapterFactory#getClientType()
      */
     protected String getClientType() {
         return JAVASVN_CLIENT;

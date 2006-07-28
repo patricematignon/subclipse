@@ -52,9 +52,9 @@ import org.osgi.framework.BundleContext;
 public class SVNProviderPlugin extends Plugin {
 
     // svn plugin id
-	public static final String ID = "org.tigris.subversion.subclipse.core"; //$NON-NLS-1$
+	public static final String ID = "org.eclipse.team.svn.core"; //$NON-NLS-1$
 
-	public static final String PROVIDER_ID="org.tigris.subversion.subclipse.core.svnnature"; //$NON-NLS-1$
+	public static final String PROVIDER_ID="org.eclipse.team.svn.core.svnnature"; //$NON-NLS-1$
     
     public static final String SVN_PROPERTY_TYPES_EXTENSION = "svnPropertyTypes";
     public static final String SVN_PROPERTY_GROUPS_EXTENSION = "svnPropertyGroups";

@@ -85,8 +85,8 @@ public class SVNRepositoryLocation
 	
 
 	// fields needed for caching the password
-	public static final String INFO_PASSWORD = "org.tigris.subversion.subclipse.core.password"; //$NON-NLS-1$ 
-	public static final String INFO_USERNAME = "org.tigris.subversion.subclipse.core.username"; //$NON-NLS-1$ 
+	public static final String INFO_PASSWORD = "org.eclipse.team.svn.core.password"; //$NON-NLS-1$ 
+	public static final String INFO_USERNAME = "org.eclipse.team.svn.core.username"; //$NON-NLS-1$ 
 	public static final String AUTH_SCHEME = ""; //$NON-NLS-1$ 
 	public static final URL FAKE_URL;
 
@@ -100,7 +100,7 @@ public class SVNRepositoryLocation
 	static {
 		URL temp = null;
 		try {
-			temp = new URL("http://org.tigris.subversion.subclipse.core"); //$NON-NLS-1$ 
+			temp = new URL("http://www.eclipse.org"); //$NON-NLS-1$ 
 		} catch (MalformedURLException e) {
 		}
 		// The protection space is defined by this url and realm (AUTH_SCHEME)
@@ -210,7 +210,7 @@ public class SVNRepositoryLocation
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.tigris.subversion.subclipse.core.ISVNRepositoryLocation#getRemoteFolder(java.lang.String)
+	 * @see org.eclipse.team.svn.core.internal.ISVNRepositoryLocation#getRemoteFolder(java.lang.String)
 	 */
 	public ISVNRemoteFolder getRemoteFolder(String remotePath) {
 		return new RemoteFolder(
@@ -221,7 +221,7 @@ public class SVNRepositoryLocation
 	
 	/*
 	 * (non-Javadoc)
-	 * @see org.tigris.subversion.subclipse.core.ISVNRepositoryLocation#getRemoteFile(org.tigris.subversion.svnclientadapter.SVNUrl)
+	 * @see org.eclipse.team.svn.core.internal.ISVNRepositoryLocation#getRemoteFile(org.eclipse.subversion.client.SVNUrl)
 	 */
 	public ISVNRemoteFile getRemoteFile(SVNUrl url) throws SVNException{
 		ISVNClientAdapter svnClient = getSVNClient();
@@ -415,7 +415,7 @@ public class SVNRepositoryLocation
 
     /*
      *  this should be made more robust --mml 11/27/03
-     * @see org.tigris.subversion.subclipse.core.ISVNRepositoryLocation#pathExists()
+     * @see org.eclipse.team.svn.core.internal.ISVNRepositoryLocation#pathExists()
      */
     public boolean pathExists() throws SVNException{
     	ISVNClientAdapter svnClient = getSVNClient();
@@ -588,7 +588,7 @@ public class SVNRepositoryLocation
     }
 
     /* (non-Javadoc)
-     * @see org.tigris.subversion.subclipse.core.ISVNRepositoryLocation#setRepositoryRoot(org.tigris.subversion.svnclientadapter.SVNUrl)
+     * @see org.eclipse.team.svn.core.internal.ISVNRepositoryLocation#setRepositoryRoot(org.eclipse.subversion.client.SVNUrl)
      */
     public void setRepositoryRoot(SVNUrl url) {
         repositoryRootUrl = url;

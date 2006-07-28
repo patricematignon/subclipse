@@ -45,7 +45,7 @@ class CmdLineStatusComposite  implements ISVNStatus {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.subclipse.client.ISVNClientStatus#getTextStatus()
+	 * @see org.eclipse.subversion.client.ISVNClientStatus#getTextStatus()
 	 */
 	public SVNStatusKind getTextStatus() {
         return statusPart.getTextStatus();
@@ -53,49 +53,49 @@ class CmdLineStatusComposite  implements ISVNStatus {
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.ISVNStatus#getPropStatus()
+	 * @see org.eclipse.subversion.client.ISVNStatus#getPropStatus()
 	 */
 	public SVNStatusKind getPropStatus() {
 		return statusPart.getPropStatus();
 	}
 
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.subclipse.client.ISVNClientStatus#getUrlCopiedFrom()
+	 * @see org.eclipse.subversion.client.ISVNClientStatus#getUrlCopiedFrom()
 	 */
 	public SVNUrl getUrlCopiedFrom() {
 		return infoPart.getCopyUrl();
 	}
 
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.ISVNStatus#getLastChangedDate()
+	 * @see org.eclipse.subversion.client.ISVNStatus#getLastChangedDate()
 	 */
 	public Date getLastChangedDate() {
 		return infoPart.getLastChangedDate();
 	}
 
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.ISVNStatus#getLastChangedRevision()
+	 * @see org.eclipse.subversion.client.ISVNStatus#getLastChangedRevision()
 	 */
 	public Number getLastChangedRevision() {
 		return infoPart.getLastChangedRevision();
 	}
 
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.ISVNStatus#getLastCommitAuthor()
+	 * @see org.eclipse.subversion.client.ISVNStatus#getLastCommitAuthor()
 	 */
 	public String getLastCommitAuthor() {
 		return infoPart.getLastCommitAuthor();
 	}
 
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.ISVNStatus#getNodeKind()
+	 * @see org.eclipse.subversion.client.ISVNStatus#getNodeKind()
 	 */
 	public SVNNodeKind getNodeKind() {
 		return infoPart.getNodeKind();
 	}
 
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.ISVNStatus#getPath()
+	 * @see org.eclipse.subversion.client.ISVNStatus#getPath()
 	 */
 	public String getPath() {
 		return (infoPart != null) ? infoPart.getPath() : statusPart.getPath();
@@ -109,14 +109,14 @@ class CmdLineStatusComposite  implements ISVNStatus {
     }
     
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.ISVNStatus#getRevision()
+	 * @see org.eclipse.subversion.client.ISVNStatus#getRevision()
 	 */
 	public Number getRevision() {
 		return infoPart.getRevision();
 	}
 
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.ISVNStatus#getUrl()
+	 * @see org.eclipse.subversion.client.ISVNStatus#getUrl()
 	 */
 	public SVNUrl getUrl() {
 		return infoPart.getUrl();
@@ -124,7 +124,7 @@ class CmdLineStatusComposite  implements ISVNStatus {
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.ISVNStatus#getRepositoryTextStatus()
+	 * @see org.eclipse.subversion.client.ISVNStatus#getRepositoryTextStatus()
 	 */
     public SVNStatusKind getRepositoryTextStatus() {
         return statusPart.getRepositoryTextStatus();
@@ -132,49 +132,49 @@ class CmdLineStatusComposite  implements ISVNStatus {
 
     /*
      * (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNStatus#getRepositoryPropStatus()
+     * @see org.eclipse.subversion.client.ISVNStatus#getRepositoryPropStatus()
      */
     public SVNStatusKind getRepositoryPropStatus() {
         return statusPart.getRepositoryPropStatus();
     }
 
     /* (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNStatus#getConflictNew()
+     * @see org.eclipse.subversion.client.ISVNStatus#getConflictNew()
      */
     public File getConflictNew() {
         return infoPart.getConflictNew();
     }
 
     /* (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNStatus#getConflictOld()
+     * @see org.eclipse.subversion.client.ISVNStatus#getConflictOld()
      */
     public File getConflictOld() {
         return infoPart.getConflictOld();
     }
 
     /* (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNStatus#getConflictWorking()
+     * @see org.eclipse.subversion.client.ISVNStatus#getConflictWorking()
      */
     public File getConflictWorking() {
         return infoPart.getConflictWorking();
     }
 
     /* (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNStatus#isCopied()
+     * @see org.eclipse.subversion.client.ISVNStatus#isCopied()
      */
     public boolean isCopied() {
         return statusPart.isCopied();
     }
 
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.ISVNStatus#isWcLocked()
+	 * @see org.eclipse.subversion.client.ISVNStatus#isWcLocked()
 	 */
 	public boolean isWcLocked() {
 		return statusPart.isWcLocked();
 	}
 
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.ISVNStatus#isSwitched()
+	 * @see org.eclipse.subversion.client.ISVNStatus#isSwitched()
 	 */
 	public boolean isSwitched() {
 		return statusPart.isSwitched();
@@ -183,21 +183,21 @@ class CmdLineStatusComposite  implements ISVNStatus {
     /*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.tigris.subversion.svnclientadapter.ISVNStatus#getLockCreationDate()
+	 * @see org.eclipse.subversion.client.ISVNStatus#getLockCreationDate()
 	 */
     public Date getLockCreationDate() {
         return infoPart.getLockCreationDate();
     }
     
     /* (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNStatus#getLockOwner()
+     * @see org.eclipse.subversion.client.ISVNStatus#getLockOwner()
      */
     public String getLockOwner() {
         return infoPart.getLockOwner();
     }
  
     /* (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNStatus#getLockComment()
+     * @see org.eclipse.subversion.client.ISVNStatus#getLockComment()
      */
     public String getLockComment() {
         return infoPart.getLockComment();

@@ -34,8 +34,8 @@ import org.eclipse.team.svn.core.internal.SVNException;
  * (However, the bytes are not complete representation of this status, just subset of interesting attributes) 
  * 
  * Since we want to add/modify the nodeKind the setter is also there
- * @see org.tigris.subversion.svnclientadapter.ISVNStatus
- * @see org.tigris.subversion.subclipse.core.resources.ResourceStatus
+ * @see org.eclipse.subversion.client.ISVNStatus
+ * @see org.eclipse.team.svn.core.internal.resources.ResourceStatus
  */
 /**
  * @author Martin
@@ -142,7 +142,7 @@ public class RemoteResourceStatus extends ResourceStatus {
 	}
 	
     /* (non-Javadoc)
-     * @see org.tigris.subversion.subclipse.core.resources.ResourceStatus#getBytes()
+     * @see org.eclipse.team.svn.core.internal.resources.ResourceStatus#getBytes()
      */
     public byte[] getBytes() {    	
         ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -151,7 +151,7 @@ public class RemoteResourceStatus extends ResourceStatus {
     }
 
     /* (non-Javadoc)
-     * @see org.tigris.subversion.subclipse.core.resources.ResourceStatus#getBytesInto(java.io.DataOutputStream)
+     * @see org.eclipse.team.svn.core.internal.resources.ResourceStatus#getBytesInto(java.io.DataOutputStream)
      */
     protected DataOutputStream getBytesInto(DataOutputStream dos) {
     	super.getBytesInto(dos);
@@ -178,7 +178,7 @@ public class RemoteResourceStatus extends ResourceStatus {
     }
     
     /* (non-Javadoc)
-     * @see org.tigris.subversion.subclipse.core.resources.ResourceStatus#initFromBytes(java.io.DataInputStream)
+     * @see org.eclipse.team.svn.core.internal.resources.ResourceStatus#initFromBytes(java.io.DataInputStream)
      */
     protected int initFromBytes(DataInputStream dis) throws SVNException {
     	int version = super.initFromBytes(dis);

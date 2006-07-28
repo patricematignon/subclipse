@@ -35,7 +35,7 @@ public class CleanupAction extends WorkspaceAction {
     }
 
     /* (non-Javadoc)
-     * @see org.eclipse.team.svn.ui.internal.actions.WorkspaceAction#isEnabledForSVNResource(org.tigris.subversion.subclipse.core.ISVNLocalResource)
+     * @see org.eclipse.team.svn.ui.internal.actions.WorkspaceAction#isEnabledForSVNResource(org.eclipse.team.svm.core.internal.ISVNLocalResource)
      */
     protected boolean isEnabledForSVNResource(ISVNLocalResource svnResource) throws SVNException {
         return svnResource.isFolder() && super.isEnabledForSVNResource(svnResource);

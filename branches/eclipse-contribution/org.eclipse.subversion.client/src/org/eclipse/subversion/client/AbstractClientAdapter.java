@@ -25,14 +25,14 @@ import java.util.StringTokenizer;
 public abstract class AbstractClientAdapter implements ISVNClientAdapter {
 
     /* (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#setKeywords(java.io.File, org.tigris.subversion.svnclientadapter.SVNKeywords, boolean)
+     * @see org.eclipse.subversion.client.ISVNClientAdapter#setKeywords(java.io.File, org.eclipse.subversion.client.SVNKeywords, boolean)
      */
     public void setKeywords(File path, SVNKeywords keywords, boolean recurse) throws SVNClientException {
         propertySet(path, ISVNProperty.KEYWORDS, keywords.toString(), recurse);
     }
 
     /* (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#addKeywords(java.io.File, org.tigris.subversion.svnclientadapter.SVNKeywords)
+     * @see org.eclipse.subversion.client.ISVNClientAdapter#addKeywords(java.io.File, org.eclipse.subversion.client.SVNKeywords)
      */
     public SVNKeywords addKeywords(File path, SVNKeywords keywords) throws SVNClientException {
         SVNKeywords currentKeywords = getKeywords(path);
@@ -52,7 +52,7 @@ public abstract class AbstractClientAdapter implements ISVNClientAdapter {
     }    
 
     /* (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#removeKeywords(java.io.File, org.tigris.subversion.svnclientadapter.SVNKeywords)
+     * @see org.eclipse.subversion.client.ISVNClientAdapter#removeKeywords(java.io.File, org.eclipse.subversion.client.SVNKeywords)
      */
     public SVNKeywords removeKeywords(File path, SVNKeywords keywords) throws SVNClientException {
         SVNKeywords currentKeywords = getKeywords(path);
@@ -72,7 +72,7 @@ public abstract class AbstractClientAdapter implements ISVNClientAdapter {
     }    
 
     /* (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#getIgnoredPatterns(java.io.File)
+     * @see org.eclipse.subversion.client.ISVNClientAdapter#getIgnoredPatterns(java.io.File)
      */
     public List getIgnoredPatterns(File path) throws SVNClientException {
         if (!path.isDirectory())
@@ -93,7 +93,7 @@ public abstract class AbstractClientAdapter implements ISVNClientAdapter {
     }
     
     /* (non-Javadoc)
-	 * @see org.tigris.subversion.subclipse.client.ISVNClientAdapter#getLogMessages(java.io.File, org.tigris.subversion.subclipse.client.ISVNRevision, org.tigris.subversion.subclipse.client.ISVNRevision)
+	 * @see org.eclipse.subversion.client.ISVNClientAdapter#getLogMessages(java.io.File, org.eclipse.subversion.client.ISVNRevision, org.eclipse.subversion.client.ISVNRevision)
 	 */
 	public ISVNLogMessage[] getLogMessages(File arg0, SVNRevision arg1, SVNRevision arg2)
 		throws SVNClientException {
@@ -101,7 +101,7 @@ public abstract class AbstractClientAdapter implements ISVNClientAdapter {
 	}
     
     /* (non-Javadoc)
-	 * @see org.tigris.subversion.subclipse.client.ISVNClientAdapter#getLogMessages(java.net.URL, org.tigris.subversion.subclipse.client.ISVNRevision, org.tigris.subversion.subclipse.client.ISVNRevision)
+	 * @see org.eclipse.subversion.client.ISVNClientAdapter#getLogMessages(java.net.URL, org.eclipse.subversion.client.ISVNRevision, org.eclipse.subversion.client.ISVNRevision)
 	 */
 	public ISVNLogMessage[] getLogMessages(SVNUrl arg0, SVNRevision arg1, SVNRevision arg2)
 		throws SVNClientException {
@@ -109,7 +109,7 @@ public abstract class AbstractClientAdapter implements ISVNClientAdapter {
 	}
     
     /* (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#setIgnoredPatterns(java.io.File, java.util.List)
+     * @see org.eclipse.subversion.client.ISVNClientAdapter#setIgnoredPatterns(java.io.File, java.util.List)
      */
     public void setIgnoredPatterns(File path, List patterns) throws SVNClientException {
         if (!path.isDirectory())
@@ -124,7 +124,7 @@ public abstract class AbstractClientAdapter implements ISVNClientAdapter {
     }    
 
     /* (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#addToIgnoredPatterns(java.io.File, java.lang.String)
+     * @see org.eclipse.subversion.client.ISVNClientAdapter#addToIgnoredPatterns(java.io.File, java.lang.String)
      */
     public void addToIgnoredPatterns(File path, String pattern)  throws SVNClientException {
         List patterns = getIgnoredPatterns(path);
@@ -142,7 +142,7 @@ public abstract class AbstractClientAdapter implements ISVNClientAdapter {
     }    
 
     /* (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#getKeywords(java.io.File)
+     * @see org.eclipse.subversion.client.ISVNClientAdapter#getKeywords(java.io.File)
      */
     public SVNKeywords getKeywords(File path) throws SVNClientException {
         ISVNProperty prop = propertyGet(path, ISVNProperty.KEYWORDS);
@@ -156,7 +156,7 @@ public abstract class AbstractClientAdapter implements ISVNClientAdapter {
     }    
     
     /* (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#addPasswordCallback(org.tigris.subversion.svnclientadapter.ISVNPromptUserPassword)
+     * @see org.eclipse.subversion.client.ISVNClientAdapter#addPasswordCallback(org.eclipse.subversion.client.ISVNPromptUserPassword)
      */
     public void addPasswordCallback(ISVNPromptUserPassword callback) {
         // Default implementation does nothing

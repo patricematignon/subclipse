@@ -33,124 +33,124 @@ public class SVNInfoUnversioned implements ISVNInfo {
     
     
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.ISVNInfo#getFile()
+	 * @see org.eclipse.subversion.client.ISVNInfo#getFile()
 	 */
 	public File getFile() {
 		return file;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.ISVNInfo#getUrl()
+	 * @see org.eclipse.subversion.client.ISVNInfo#getUrl()
 	 */
 	public SVNUrl getUrl() {
 		return null;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.ISVNInfo#getUuid()
+	 * @see org.eclipse.subversion.client.ISVNInfo#getUuid()
 	 */
 	public String getUuid() {
 		return null;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.ISVNInfo#getRepository()
+	 * @see org.eclipse.subversion.client.ISVNInfo#getRepository()
 	 */
 	public SVNUrl getRepository() {
 		return null;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.ISVNInfo#getSchedule()
+	 * @see org.eclipse.subversion.client.ISVNInfo#getSchedule()
 	 */
 	public SVNScheduleKind getSchedule() {
 		return null;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.ISVNInfo#getNodeKind()
+	 * @see org.eclipse.subversion.client.ISVNInfo#getNodeKind()
 	 */
 	public SVNNodeKind getNodeKind() {
 		return null;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.ISVNInfo#getLastCommitAuthor()
+	 * @see org.eclipse.subversion.client.ISVNInfo#getLastCommitAuthor()
 	 */
 	public String getLastCommitAuthor() {
 		return null;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.ISVNInfo#getRevision()
+	 * @see org.eclipse.subversion.client.ISVNInfo#getRevision()
 	 */
 	public Number getRevision() {
 		return null;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.ISVNInfo#getLastChangedRevision()
+	 * @see org.eclipse.subversion.client.ISVNInfo#getLastChangedRevision()
 	 */
 	public Number getLastChangedRevision() {
 		return null;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.ISVNInfo#getLastChangedDate()
+	 * @see org.eclipse.subversion.client.ISVNInfo#getLastChangedDate()
 	 */
 	public Date getLastChangedDate() {
 		return null;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.ISVNInfo#getLastDateTextUpdate()
+	 * @see org.eclipse.subversion.client.ISVNInfo#getLastDateTextUpdate()
 	 */
 	public Date getLastDateTextUpdate() {
 		return null;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.ISVNInfo#getLastDatePropsUpdate()
+	 * @see org.eclipse.subversion.client.ISVNInfo#getLastDatePropsUpdate()
 	 */
 	public Date getLastDatePropsUpdate() {
 		return null;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.ISVNInfo#isCopied()
+	 * @see org.eclipse.subversion.client.ISVNInfo#isCopied()
 	 */
 	public boolean isCopied() {
 		return false;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.ISVNInfo#getCopyRev()
+	 * @see org.eclipse.subversion.client.ISVNInfo#getCopyRev()
 	 */
 	public Number getCopyRev() {
 		return null;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.ISVNInfo#getCopyUrl()
+	 * @see org.eclipse.subversion.client.ISVNInfo#getCopyUrl()
 	 */
 	public SVNUrl getCopyUrl() {
 		return null;
 	}
 
     /* (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNInfo#getLockCreationDate()
+     * @see org.eclipse.subversion.client.ISVNInfo#getLockCreationDate()
      */
     public Date getLockCreationDate() {
         return null;
     }
     /* (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNInfo#getLockOwner()
+     * @see org.eclipse.subversion.client.ISVNInfo#getLockOwner()
      */
     public String getLockOwner() {
         return null;
     }
     /* (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNInfo#getLockComment()
+     * @see org.eclipse.subversion.client.ISVNInfo#getLockComment()
      */
     public String getLockComment() {
         return null;

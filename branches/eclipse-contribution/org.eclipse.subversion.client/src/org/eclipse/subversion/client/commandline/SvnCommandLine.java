@@ -79,7 +79,7 @@ public class SvnCommandLine extends CommandLine {
     
 	
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.commandline.CommandLine#version()
+	 * @see org.eclipse.subversion.client.commandline.CommandLine#version()
 	 */
 	String version() throws CmdLineException {
 		setCommand(ISVNNotifyListener.Command.UNDEFINED, false);
@@ -983,7 +983,7 @@ public class SvnCommandLine extends CommandLine {
 
     /*
 	 * (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.commandline.CommandLine#notifyFromSvnOutput(java.lang.String)
+	 * @see org.eclipse.subversion.client.commandline.CommandLine#notifyFromSvnOutput(java.lang.String)
 	 */
 	protected void notifyFromSvnOutput(String svnOutput) {
 		this.rev = SVNRevision.SVN_INVALID_REVNUM;

@@ -55,7 +55,7 @@ public class LogEntry extends PlatformObject implements ILogEntry {
 
     /*
      * (non-Javadoc)
-     * @see org.tigris.subversion.subclipse.core.history.ILogEntry#getRevision()
+     * @see org.eclipse.team.svn.core.internal.history.ILogEntry#getRevision()
      */
 	public SVNRevision.Number getRevision() {
 		return logMessage.getRevision();
@@ -63,7 +63,7 @@ public class LogEntry extends PlatformObject implements ILogEntry {
 
     /*
      * (non-Javadoc)
-     * @see org.tigris.subversion.subclipse.core.history.ILogEntry#getAuthor()
+     * @see org.eclipse.team.svn.core.internal.history.ILogEntry#getAuthor()
      */
 	public String getAuthor() {
 		if (authorOverride != null) {
@@ -74,7 +74,7 @@ public class LogEntry extends PlatformObject implements ILogEntry {
 
     /*
      * (non-Javadoc)
-     * @see org.tigris.subversion.subclipse.core.history.ILogEntry#getDate()
+     * @see org.eclipse.team.svn.core.internal.history.ILogEntry#getDate()
      */
 	public Date getDate() {
 		return logMessage.getDate();
@@ -82,7 +82,7 @@ public class LogEntry extends PlatformObject implements ILogEntry {
 
     /*
      * (non-Javadoc)
-     * @see org.tigris.subversion.subclipse.core.history.ILogEntry#getComment()
+     * @see org.eclipse.team.svn.core.internal.history.ILogEntry#getComment()
      */
 	public String getComment() {
 		if (messageOverride != null) {
@@ -95,7 +95,7 @@ public class LogEntry extends PlatformObject implements ILogEntry {
 
     /*
      * (non-Javadoc)
-     * @see org.tigris.subversion.subclipse.core.history.ILogEntry#getResource()
+     * @see org.eclipse.team.svn.core.internal.history.ILogEntry#getResource()
      */
     public ISVNResource getResource() {
     	return resource;
@@ -103,7 +103,7 @@ public class LogEntry extends PlatformObject implements ILogEntry {
 
     /*
      * (non-Javadoc)
-     * @see org.tigris.subversion.subclipse.core.history.ILogEntry#getRemoteResource()
+     * @see org.eclipse.team.svn.core.internal.history.ILogEntry#getRemoteResource()
      */
 	public ISVNRemoteResource getRemoteResource() {
 		return remoteResource;
@@ -111,7 +111,7 @@ public class LogEntry extends PlatformObject implements ILogEntry {
 
     /*
      * (non-Javadoc)
-     * @see org.tigris.subversion.subclipse.core.history.ILogEntry#getLogEntryChangePaths()
+     * @see org.eclipse.team.svn.core.internal.history.ILogEntry#getLogEntryChangePaths()
      */
     public LogEntryChangePath[] getLogEntryChangePaths() {
     	ISVNLogMessageChangePath[] changePaths = null;

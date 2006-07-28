@@ -644,7 +644,7 @@
                class="org.eclipse.team.svn.ui.internal.actions.NewRepositoryAction"
                tooltip="%SVNActionSet.newTooltip"
                toolbarPath="actions"
-               id="org.tigris.subversion.ui.actions.NewRepositoryAction">
+               id="org.eclipse.team.svn.ui.actions.NewRepositoryAction">
          </action>
       </viewContribution>
    </extension>

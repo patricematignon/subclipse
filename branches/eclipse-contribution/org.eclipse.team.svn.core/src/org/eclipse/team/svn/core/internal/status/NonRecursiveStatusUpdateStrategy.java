@@ -32,7 +32,7 @@ public class NonRecursiveStatusUpdateStrategy extends StatusUpdateStrategy {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.subclipse.core.status.StatusUpdateStrategy#statusesToUpdate(org.eclipse.core.resources.IResource)
+	 * @see org.eclipse.team.svn.core.internal.status.StatusUpdateStrategy#statusesToUpdate(org.eclipse.core.resources.IResource)
 	 */
 	protected ISVNStatus[] statusesToUpdate(IResource resource) throws SVNException {
         // we update the parent and its immediate children 

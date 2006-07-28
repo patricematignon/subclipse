@@ -35,7 +35,7 @@ public class LocalFile extends LocalResource implements ISVNLocalFile {
 	}
 
     /* (non-Javadoc)
-     * @see org.tigris.subversion.subclipse.core.ISVNLocalResource#getBaseResource()
+     * @see org.eclipse.team.svn.core.internal.ISVNLocalResource#getBaseResource()
      */
     public ISVNRemoteResource getBaseResource() throws SVNException {   	
 		if (!hasRemote()) {// no base if no remote
@@ -45,35 +45,35 @@ public class LocalFile extends LocalResource implements ISVNLocalFile {
     }	
 	
     /* (non-Javadoc)
-     * @see org.tigris.subversion.subclipse.core.ISVNLocalResource#refreshStatus()
+     * @see org.eclipse.team.svn.core.internal.ISVNLocalResource#refreshStatus()
      */
     public void refreshStatus() throws SVNException {
     	SVNProviderPlugin.getPlugin().getStatusCacheManager().refreshStatus(resource, IResource.DEPTH_ZERO);
     }
 	
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.subclipse.core.ISVNResource#isFolder()
+	 * @see org.eclipse.team.svn.core.internal.ISVNResource#isFolder()
 	 */
 	public boolean isFolder() {
 		return false;
 	}
 
     /* (non-Javadoc)
-     * @see org.tigris.subversion.subclipse.core.ISVNLocalResource#isDirty()
+     * @see org.eclipse.team.svn.core.internal.ISVNLocalResource#isDirty()
      */
     public boolean isDirty() throws SVNException {
         return getStatus().isDirty();
     }
     
     /* (non-Javadoc)
-     * @see org.tigris.subversion.subclipse.core.ISVNLocalResource#accept(org.tigris.subversion.subclipse.core.ISVNResourceVisitor)
+     * @see org.eclipse.team.svn.core.internal.ISVNLocalResource#accept(org.eclipse.team.svn.core.internal.ISVNResourceVisitor)
      */
     public void accept(ISVNResourceVisitor visitor) throws SVNException {
         visitor.visitFile(this);
     }
     
     /* (non-Javadoc)
-     * @see org.tigris.subversion.subclipse.core.ISVNLocalFile#setKeywords(org.tigris.subversion.svnclientadapter.SVNKeywords)
+     * @see org.eclipse.team.svn.core.internal.ISVNLocalFile#setKeywords(org.eclipse.subversion.client.SVNKeywords)
      */
     public void setKeywords(SVNKeywords svnKeywords) throws SVNException {
         try {
@@ -88,7 +88,7 @@ public class LocalFile extends LocalResource implements ISVNLocalFile {
     }
     
     /* (non-Javadoc)
-     * @see org.tigris.subversion.subclipse.core.ISVNLocalFile#addKeywords(org.tigris.subversion.svnclientadapter.SVNKeywords)
+     * @see org.eclipse.team.svn.core.internal.ISVNLocalFile#addKeywords(org.eclipse.subversion.client.SVNKeywords)
      */
     public void addKeywords(SVNKeywords svnKeywords) throws SVNException {
         try {
@@ -103,7 +103,7 @@ public class LocalFile extends LocalResource implements ISVNLocalFile {
     }
     
     /* (non-Javadoc)
-     * @see org.tigris.subversion.subclipse.core.ISVNLocalFile#removeKeywords(org.tigris.subversion.svnclientadapter.SVNKeywords)
+     * @see org.eclipse.team.svn.core.internal.ISVNLocalFile#removeKeywords(org.eclipse.subversion.client.SVNKeywords)
      */
     public void removeKeywords(SVNKeywords svnKeywords) throws SVNException {
         try {
@@ -118,7 +118,7 @@ public class LocalFile extends LocalResource implements ISVNLocalFile {
     }
     
     /* (non-Javadoc)
-     * @see org.tigris.subversion.subclipse.core.ISVNLocalFile#getKeywords()
+     * @see org.eclipse.team.svn.core.internal.ISVNLocalFile#getKeywords()
      */
     public SVNKeywords getKeywords() throws SVNException {
 		try {
@@ -130,7 +130,7 @@ public class LocalFile extends LocalResource implements ISVNLocalFile {
 	}
     
     /* (non-Javadoc)
-     * @see org.tigris.subversion.subclipse.core.ISVNLocalResource#revert()
+     * @see org.eclipse.team.svn.core.internal.ISVNLocalResource#revert()
      */
     public void revert() throws SVNException {
        super.revert(false);

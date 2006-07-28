@@ -35,7 +35,7 @@ public class CmdLineClientAdapterFactory extends SVNClientAdapterFactory {
     }
 
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.SVNClientAdapterFactory#createSVNClientImpl()
+	 * @see org.eclipse.subversion.client.SVNClientAdapterFactory#createSVNClientImpl()
 	 */
 	protected ISVNClientAdapter createSVNClientImpl() {
 		if (is13ClientAvailable) {
@@ -46,7 +46,7 @@ public class CmdLineClientAdapterFactory extends SVNClientAdapterFactory {
 	}
 
     /* (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.SVNClientAdapterFactory#getClientType()
+     * @see org.eclipse.subversion.client.SVNClientAdapterFactory#getClientType()
      */
     protected String getClientType() {
         return COMMANDLINE_CLIENT;

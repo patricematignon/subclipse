@@ -58,7 +58,7 @@ public class AddResourcesCommand implements ISVNCommand {
     
     
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.subclipse.core.commands.ISVNCommand#run(org.eclipse.core.runtime.IProgressMonitor)
+	 * @see org.eclipse.team.svn.core.internal.commands.ISVNCommand#run(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public void run(IProgressMonitor monitor) throws SVNException {
         monitor = Policy.monitorFor(monitor);

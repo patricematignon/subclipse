@@ -58,7 +58,7 @@ public class CmdLineClientAdapter12 extends CmdLineClientAdapter {
 	}
 	
     /* (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#getStatus(java.io.File, boolean, boolean, boolean)
+     * @see org.eclipse.subversion.client.ISVNClientAdapter#getStatus(java.io.File, boolean, boolean, boolean)
      */
     public ISVNStatus[] getStatus(File path, boolean descend, boolean getAll, boolean contactServer) throws SVNClientException {
         notImplementedYet();
@@ -66,7 +66,7 @@ public class CmdLineClientAdapter12 extends CmdLineClientAdapter {
     }
 
     /* (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.commandline.CmdLineClientAdapter#getStatus(java.io.File, boolean, boolean)
+     * @see org.eclipse.subversion.client.commandline.CmdLineClientAdapter#getStatus(java.io.File, boolean, boolean)
      */
     public ISVNStatus[] getStatus(File path, boolean descend, boolean getAll) throws SVNClientException {
     	return super.getStatus(path, descend, getAll, false);

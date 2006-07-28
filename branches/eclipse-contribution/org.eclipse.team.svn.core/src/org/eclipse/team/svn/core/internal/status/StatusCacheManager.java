@@ -46,9 +46,9 @@ import org.eclipse.team.svn.core.internal.resources.SVNWorkspaceRoot;
 /**
  * Provides a method to get the status of a resource. <br>   
  * It is much more efficient to get the status of a set a resources than only
- * one resource at a time. For that we use a @link org.tigris.subversion.subclipse.core.status.StatusUpdateStrategy<br>
+ * one resource at a time. For that we use a @link org.eclipse.team.svn.core.internal.status.StatusUpdateStrategy<br>
  * 
- * We use a tree (@link org.tigris.subversion.subclipse.core.status.StatusCacheComposite) to keep the status of the resources  
+ * We use a tree (@link org.eclipse.team.svn.core.internal.status.StatusCacheComposite) to keep the status of the resources  
  * 
  * @author cedric chabanois (cchab at tigris.org)
  */

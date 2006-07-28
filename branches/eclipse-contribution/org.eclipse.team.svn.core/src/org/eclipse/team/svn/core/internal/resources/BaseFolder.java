@@ -45,7 +45,7 @@ public class BaseFolder extends BaseResource implements ISVNRemoteFolder {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.subclipse.core.ISVNResource#isFolder()
+	 * @see org.eclipse.team.svn.core.internal.ISVNResource#isFolder()
 	 */
 	public boolean isFolder() {
 		return true;
@@ -61,14 +61,14 @@ public class BaseFolder extends BaseResource implements ISVNRemoteFolder {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.subclipse.core.ISVNRemoteResource#members(org.eclipse.core.runtime.IProgressMonitor)
+	 * @see org.eclipse.team.svn.core.internal.ISVNRemoteResource#members(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public ISVNRemoteResource[] members(IProgressMonitor progress) throws TeamException {
 		return getMembers(progress);
 	}
 
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.subclipse.core.ISVNFolder#members(org.eclipse.core.runtime.IProgressMonitor, int)
+	 * @see org.eclipse.team.svn.core.internal.ISVNFolder#members(org.eclipse.core.runtime.IProgressMonitor, int)
 	 */
 	public ISVNResource[] members(IProgressMonitor monitor, int flags) throws SVNException {		
 		final List result = new ArrayList();
@@ -96,7 +96,7 @@ public class BaseFolder extends BaseResource implements ISVNRemoteFolder {
 
 	/* (non-Javadoc)
      * TODO This should use the synchronization information instead of hitting the WC
-	 * @see org.tigris.subversion.subclipse.core.resources.RemoteFolder#getMembers(org.eclipse.core.runtime.IProgressMonitor)
+	 * @see org.eclipse.team.svn.core.internal.resources.RemoteFolder#getMembers(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	protected ISVNRemoteResource[] getMembers(IProgressMonitor monitor)
 			throws SVNException {
@@ -144,7 +144,7 @@ public class BaseFolder extends BaseResource implements ISVNRemoteFolder {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.subclipse.core.ISVNRemoteFolder#refresh()
+	 * @see org.eclipse.team.svn.core.internal.ISVNRemoteFolder#refresh()
 	 */
 	public void refresh() {
 		//Do nothing. Base folder does NOT caches anything.

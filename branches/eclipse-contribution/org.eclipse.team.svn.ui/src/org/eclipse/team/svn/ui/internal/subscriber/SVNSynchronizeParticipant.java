@@ -46,7 +46,7 @@ public class SVNSynchronizeParticipant extends ScopableSubscriberParticipant imp
 	/**
 	 * The particpant ID as defined in the plugin manifest
 	 */
-	public static final String ID = "org.tigris.subversion.subclipse.participant"; //$NON-NLS-1$
+	public static final String ID = "org.eclipse.team.svn.participant"; //$NON-NLS-1$
 	
 	/**
 	 * Contxt menu action group for synchronize view actions

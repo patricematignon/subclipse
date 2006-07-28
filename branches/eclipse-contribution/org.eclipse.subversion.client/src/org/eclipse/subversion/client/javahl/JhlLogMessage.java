@@ -37,35 +37,35 @@ public class JhlLogMessage implements ISVNLogMessage {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.ISVNLogMessage#getRevision()
+	 * @see org.eclipse.subversion.client.ISVNLogMessage#getRevision()
 	 */
 	public SVNRevision.Number getRevision() {
 		return (SVNRevision.Number)JhlConverter.convert(_m.getRevision());
 	}
 
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.ISVNLogMessage#getAuthor()
+	 * @see org.eclipse.subversion.client.ISVNLogMessage#getAuthor()
 	 */
 	public String getAuthor() {
 		return _m.getAuthor();
 	}
 
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.ISVNLogMessage#getDate()
+	 * @see org.eclipse.subversion.client.ISVNLogMessage#getDate()
 	 */
 	public Date getDate() {
 		return _m.getDate();
 	}
 
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.ISVNLogMessage#getMessage()
+	 * @see org.eclipse.subversion.client.ISVNLogMessage#getMessage()
 	 */
 	public String getMessage() {
 		return _m.getMessage();
 	}
 
     /* (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNLogMessage#getChangedPaths()
+     * @see org.eclipse.subversion.client.ISVNLogMessage#getChangedPaths()
      */
     public ISVNLogMessageChangePath[] getChangedPaths() {
     	return JhlConverter.convert(_m.getChangedPaths());

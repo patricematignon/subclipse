@@ -91,7 +91,7 @@ class CmdLineInfoPart implements ISVNInfo {
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.ISVNInfo#getLastChangedDate()
+	 * @see org.eclipse.subversion.client.ISVNInfo#getLastChangedDate()
 	 */
 	public Date getLastChangedDate() {
 		return (unversioned) ? null : Helper.toDate(get(KEY_LASTCHANGEDDATE));
@@ -99,7 +99,7 @@ class CmdLineInfoPart implements ISVNInfo {
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.ISVNInfo#getLastChangedRevision()
+	 * @see org.eclipse.subversion.client.ISVNInfo#getLastChangedRevision()
 	 */
 	public SVNRevision.Number getLastChangedRevision() {
 		return (unversioned) ? null : Helper.toRevNum(get(KEY_LASTCHANGEDREV));
@@ -107,7 +107,7 @@ class CmdLineInfoPart implements ISVNInfo {
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.ISVNInfo#getLastCommitAuthor()
+	 * @see org.eclipse.subversion.client.ISVNInfo#getLastCommitAuthor()
 	 */
 	public String getLastCommitAuthor() {
 		return (unversioned) ? null : get(KEY_LASTCHANGEDAUTHOR);
@@ -134,7 +134,7 @@ class CmdLineInfoPart implements ISVNInfo {
 
     /*
      * (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNInfo#getRevision()
+     * @see org.eclipse.subversion.client.ISVNInfo#getRevision()
      */
 	public SVNRevision.Number getRevision() {
 		return (unversioned) ? SVNRevision.INVALID_REVISION : Helper.toRevNum(get(KEY_REVISION));
@@ -142,7 +142,7 @@ class CmdLineInfoPart implements ISVNInfo {
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.ISVNInfo#getUrl()
+	 * @see org.eclipse.subversion.client.ISVNInfo#getUrl()
 	 */
 	public SVNUrl getUrl() {
 		return (unversioned) ? null : Helper.toSVNUrl(get(KEY_URL));
@@ -205,7 +205,7 @@ class CmdLineInfoPart implements ISVNInfo {
 
     
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.ISVNInfo#getLastDateTextUpdate()
+	 * @see org.eclipse.subversion.client.ISVNInfo#getLastDateTextUpdate()
 	 */
 	public Date getLastDateTextUpdate() {
 		return (unversioned) ? null : Helper.toDate(get(KEY_TEXTLASTUPDATED));	
@@ -213,7 +213,7 @@ class CmdLineInfoPart implements ISVNInfo {
 
 
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.ISVNInfo#getUuid()
+	 * @see org.eclipse.subversion.client.ISVNInfo#getUuid()
 	 */
 	public String getUuid() {
 		return (unversioned) ? null : get(KEY_REPOSITORYUUID);
@@ -221,7 +221,7 @@ class CmdLineInfoPart implements ISVNInfo {
 
 
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.ISVNInfo#getRepository()
+	 * @see org.eclipse.subversion.client.ISVNInfo#getRepository()
 	 */
 	public SVNUrl getRepository() {
 		return (unversioned) ? null : Helper.toSVNUrl(get(KEY_REPOSITORY));
@@ -229,7 +229,7 @@ class CmdLineInfoPart implements ISVNInfo {
 
 
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.ISVNInfo#getSchedule()
+	 * @see org.eclipse.subversion.client.ISVNInfo#getSchedule()
 	 */
 	public SVNScheduleKind getSchedule() {
 		return SVNScheduleKind.fromString(get(KEY_SCHEDULE));
@@ -237,7 +237,7 @@ class CmdLineInfoPart implements ISVNInfo {
 
 
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.ISVNInfo#getLastDatePropsUpdate()
+	 * @see org.eclipse.subversion.client.ISVNInfo#getLastDatePropsUpdate()
 	 */
 	public Date getLastDatePropsUpdate() {
 		return (unversioned) ? null : Helper.toDate(get(KEY_PROPSLASTUPDATED));
@@ -245,14 +245,14 @@ class CmdLineInfoPart implements ISVNInfo {
 
 
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.ISVNInfo#isCopied()
+	 * @see org.eclipse.subversion.client.ISVNInfo#isCopied()
 	 */
 	public boolean isCopied() {
 		return (getCopyRev() != null) || (getCopyUrl() != null);
 	}
 
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.ISVNInfo#getCopyRev()
+	 * @see org.eclipse.subversion.client.ISVNInfo#getCopyRev()
 	 */
 	public Number getCopyRev() {
 		return (unversioned) ? null : Helper.toRevNum(get(KEY_COPIEDFROMREV));
@@ -260,27 +260,27 @@ class CmdLineInfoPart implements ISVNInfo {
 
 
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.ISVNInfo#getCopyUrl()
+	 * @see org.eclipse.subversion.client.ISVNInfo#getCopyUrl()
 	 */
 	public SVNUrl getCopyUrl() {
 		return (unversioned) ? null : Helper.toSVNUrl(get(KEY_COPIEDFROMURL));
 	}
 
     /* (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNInfo#getLockCreationDate()
+     * @see org.eclipse.subversion.client.ISVNInfo#getLockCreationDate()
      */
     public Date getLockCreationDate() {
  		return (unversioned) ? null : Helper.toDate(get(KEY_LOCKCREATIONDATE));
     }
     
     /* (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNInfo#getLockOwner()
+     * @see org.eclipse.subversion.client.ISVNInfo#getLockOwner()
      */
     public String getLockOwner() {
 		return (unversioned) ? null : get(KEY_LOCKOWNER);
     }
     /* (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNInfo#getLockComment()
+     * @see org.eclipse.subversion.client.ISVNInfo#getLockComment()
      */
     public String getLockComment() {
 		return (unversioned) ? null : get(KEY_LOCKCOMMENT);

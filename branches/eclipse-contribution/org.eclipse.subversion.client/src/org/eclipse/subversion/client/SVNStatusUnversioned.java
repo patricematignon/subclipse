@@ -44,49 +44,49 @@ public class SVNStatusUnversioned implements ISVNStatus {
 	}
     
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.ISVNStatus#getPath()
+	 * @see org.eclipse.subversion.client.ISVNStatus#getPath()
 	 */
 	public String getPath() {
 		return file.getPath();
 	}
 
     /* (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNStatus#getFile()
+     * @see org.eclipse.subversion.client.ISVNStatus#getFile()
      */
     public File getFile() {
         return file.getAbsoluteFile();
     }
     
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.ISVNStatus#getUrl()
+	 * @see org.eclipse.subversion.client.ISVNStatus#getUrl()
 	 */
 	public SVNUrl getUrl() {
 		return null;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.ISVNStatus#getLastChangedRevision()
+	 * @see org.eclipse.subversion.client.ISVNStatus#getLastChangedRevision()
 	 */
 	public SVNRevision.Number getLastChangedRevision() {
 		return null;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.ISVNStatus#getLastChangedDate()
+	 * @see org.eclipse.subversion.client.ISVNStatus#getLastChangedDate()
 	 */
 	public Date getLastChangedDate() {
 		return null;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.ISVNStatus#getLastCommitAuthor()
+	 * @see org.eclipse.subversion.client.ISVNStatus#getLastCommitAuthor()
 	 */
 	public String getLastCommitAuthor() {
 		return null;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.ISVNStatus#getTextStatus()
+	 * @see org.eclipse.subversion.client.ISVNStatus#getTextStatus()
 	 */
 	public SVNStatusKind getTextStatus() {
         if (isIgnored) {
@@ -96,7 +96,7 @@ public class SVNStatusUnversioned implements ISVNStatus {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.ISVNStatus#getPropStatus()
+	 * @see org.eclipse.subversion.client.ISVNStatus#getPropStatus()
 	 */
 	public SVNStatusKind getPropStatus() {
 	     //As this status does not describe a managed resource, we
@@ -106,42 +106,42 @@ public class SVNStatusUnversioned implements ISVNStatus {
 	}
 	
     /* (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNStatus#getRepositoryTextStatus()
+     * @see org.eclipse.subversion.client.ISVNStatus#getRepositoryTextStatus()
      */
     public SVNStatusKind getRepositoryTextStatus() {
         return SVNStatusKind.UNVERSIONED;
     }
 
     /* (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNStatus#getRepositoryPropStatus()
+     * @see org.eclipse.subversion.client.ISVNStatus#getRepositoryPropStatus()
      */
     public SVNStatusKind getRepositoryPropStatus() {
         return SVNStatusKind.UNVERSIONED;
     }
 
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.ISVNStatus#getRevision()
+	 * @see org.eclipse.subversion.client.ISVNStatus#getRevision()
 	 */
 	public SVNRevision.Number getRevision() {
 		return null;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.ISVNStatus#isCopied()
+	 * @see org.eclipse.subversion.client.ISVNStatus#isCopied()
 	 */
 	public boolean isCopied() {
 		return false;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.ISVNStatus#isWcLocked()
+	 * @see org.eclipse.subversion.client.ISVNStatus#isWcLocked()
 	 */
 	public boolean isWcLocked() {
 		return false;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.ISVNStatus#isSwitched()
+	 * @see org.eclipse.subversion.client.ISVNStatus#isSwitched()
 	 */
 	public boolean isSwitched() {
 		return false;
@@ -149,7 +149,7 @@ public class SVNStatusUnversioned implements ISVNStatus {
 
 	/* (non-Javadoc)
 	 * @see
-	 * @see org.tigris.subversion.svnclientadapter.ISVNStatus#getNodeKind()
+	 * @see org.eclipse.subversion.client.ISVNStatus#getNodeKind()
 	 */
 	public SVNNodeKind getNodeKind() {
 		//As this status does not describe a managed resource, we
@@ -159,49 +159,49 @@ public class SVNStatusUnversioned implements ISVNStatus {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.ISVNStatus#getUrlCopiedFrom()
+	 * @see org.eclipse.subversion.client.ISVNStatus#getUrlCopiedFrom()
 	 */
 	public SVNUrl getUrlCopiedFrom() {
 		return null;
 	}
 
     /* (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNStatus#getConflictNew()
+     * @see org.eclipse.subversion.client.ISVNStatus#getConflictNew()
      */
     public File getConflictNew() {
         return null;
     }
 
     /* (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNStatus#getConflictOld()
+     * @see org.eclipse.subversion.client.ISVNStatus#getConflictOld()
      */
     public File getConflictOld() {
         return null;
     }
 
     /* (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNStatus#getConflictWorking()
+     * @see org.eclipse.subversion.client.ISVNStatus#getConflictWorking()
      */
     public File getConflictWorking() {
         return null;
     }
 
     /* (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNStatus#getLockComment()
+     * @see org.eclipse.subversion.client.ISVNStatus#getLockComment()
      */
     public String getLockComment() {
         return null;
     }
 
     /* (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNStatus#getLockCreationDate()
+     * @see org.eclipse.subversion.client.ISVNStatus#getLockCreationDate()
      */
     public Date getLockCreationDate() {
         return null;
     }
 
     /* (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNStatus#getLockOwner()
+     * @see org.eclipse.subversion.client.ISVNStatus#getLockOwner()
      */
     public String getLockOwner() {
         return null;

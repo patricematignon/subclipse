@@ -44,7 +44,7 @@ public class Annotations implements ISVNAnnotations {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.ISVNAnnotations#getRevision(int)
+	 * @see org.eclipse.subversion.client.ISVNAnnotations#getRevision(int)
 	 */
 	public long getRevision(int lineNumber) {
 		Annotation annotation = getAnnotation(lineNumber);
@@ -56,7 +56,7 @@ public class Annotations implements ISVNAnnotations {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.ISVNAnnotations#getAuthor(int)
+	 * @see org.eclipse.subversion.client.ISVNAnnotations#getAuthor(int)
 	 */
 	public String getAuthor(int lineNumber) {
 		Annotation annotation = getAnnotation(lineNumber);
@@ -68,7 +68,7 @@ public class Annotations implements ISVNAnnotations {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.ISVNAnnotations#getChanged(int)
+	 * @see org.eclipse.subversion.client.ISVNAnnotations#getChanged(int)
 	 */
 	public Date getChanged(int lineNumber) {
 		Annotation annotation = getAnnotation(lineNumber);
@@ -80,7 +80,7 @@ public class Annotations implements ISVNAnnotations {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.ISVNAnnotations#getLine(int)
+	 * @see org.eclipse.subversion.client.ISVNAnnotations#getLine(int)
 	 */
 	public String getLine(int lineNumber) {
 		Annotation annotation = getAnnotation(lineNumber);
@@ -92,14 +92,14 @@ public class Annotations implements ISVNAnnotations {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.ISVNAnnotations#getInputStream()
+	 * @see org.eclipse.subversion.client.ISVNAnnotations#getInputStream()
 	 */
 	public InputStream getInputStream() {
 		return new AnnotateInputStream(this);
 	}
 
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.ISVNAnnotations#numberOfLines()
+	 * @see org.eclipse.subversion.client.ISVNAnnotations#numberOfLines()
 	 */
 	public int numberOfLines() {
 		return this.annotations.size();

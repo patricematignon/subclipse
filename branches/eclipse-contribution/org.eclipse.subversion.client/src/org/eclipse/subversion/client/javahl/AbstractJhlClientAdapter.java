@@ -97,28 +97,28 @@ public abstract class AbstractJhlClientAdapter extends AbstractClientAdapter {
     }
 
     /* (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#addNotifyListener(org.tigris.subversion.svnclientadapter.ISVNNotifyListener)
+     * @see org.eclipse.subversion.client.ISVNClientAdapter#addNotifyListener(org.eclipse.subversion.client.ISVNNotifyListener)
      */
     public void addNotifyListener(ISVNNotifyListener listener) {
         notificationHandler.add(listener);
     }
 
     /* (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#removeNotifyListener(org.tigris.subversion.svnclientadapter.ISVNNotifyListener)
+     * @see org.eclipse.subversion.client.ISVNClientAdapter#removeNotifyListener(org.eclipse.subversion.client.ISVNNotifyListener)
      */
     public void removeNotifyListener(ISVNNotifyListener listener) {
         notificationHandler.remove(listener);
     }
 
     /* (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#setUsername(java.lang.String)
+     * @see org.eclipse.subversion.client.ISVNClientAdapter#setUsername(java.lang.String)
      */
     public void setUsername(String username) {
         svnClient.username(username);
     }
 
     /* (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#setPassword(java.lang.String)
+     * @see org.eclipse.subversion.client.ISVNClientAdapter#setPassword(java.lang.String)
      */
     public void setPassword(String password) {
         notificationHandler.setCommand(ISVNNotifyListener.Command.UNDEFINED);
@@ -147,7 +147,7 @@ public abstract class AbstractJhlClientAdapter extends AbstractClientAdapter {
     }
     
     /* (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#addFile(java.io.File)
+     * @see org.eclipse.subversion.client.ISVNClientAdapter#addFile(java.io.File)
      */
     public void addFile(File file) throws SVNClientException {
         try{
@@ -162,7 +162,7 @@ public abstract class AbstractJhlClientAdapter extends AbstractClientAdapter {
     }
 
     /* (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#addDirectory(java.io.File, boolean)
+     * @see org.eclipse.subversion.client.ISVNClientAdapter#addDirectory(java.io.File, boolean)
      */
     public void addDirectory(File dir, boolean recurse)
         throws SVNClientException {
@@ -181,7 +181,7 @@ public abstract class AbstractJhlClientAdapter extends AbstractClientAdapter {
     }
 
     /* (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#checkout(org.tigris.subversion.svnclientadapter.SVNUrl, java.io.File, org.tigris.subversion.svnclientadapter.SVNRevision, boolean)
+     * @see org.eclipse.subversion.client.ISVNClientAdapter#checkout(org.eclipse.subversion.client.SVNUrl, java.io.File, org.eclipse.subversion.client.SVNRevision, boolean)
      */
     public void checkout(
         SVNUrl moduleName,
@@ -212,7 +212,7 @@ public abstract class AbstractJhlClientAdapter extends AbstractClientAdapter {
     }
 
     /* (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#commit(java.io.File[], java.lang.String, boolean)
+     * @see org.eclipse.subversion.client.ISVNClientAdapter#commit(java.io.File[], java.lang.String, boolean)
      */
     public long commit(File[] paths, String message, boolean recurse)
         throws SVNClientException {
@@ -220,7 +220,7 @@ public abstract class AbstractJhlClientAdapter extends AbstractClientAdapter {
     }
 
     /* (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#commit(java.io.File[], java.lang.String, boolean, boolean)
+     * @see org.eclipse.subversion.client.ISVNClientAdapter#commit(java.io.File[], java.lang.String, boolean, boolean)
      */
     public long commit(File[] paths, String message, boolean recurse, boolean keepLocks)
         throws SVNClientException {
@@ -254,7 +254,7 @@ public abstract class AbstractJhlClientAdapter extends AbstractClientAdapter {
     }
 
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#getList(org.tigris.subversion.svnclientadapter.SVNUrl, org.tigris.subversion.svnclientadapter.SVNRevision, boolean)
+	 * @see org.eclipse.subversion.client.ISVNClientAdapter#getList(org.eclipse.subversion.client.SVNUrl, org.eclipse.subversion.client.SVNRevision, boolean)
 	 */
 	public ISVNDirEntry[] getList(SVNUrl url, SVNRevision revision, boolean recurse) 
             throws SVNClientException {
@@ -271,7 +271,7 @@ public abstract class AbstractJhlClientAdapter extends AbstractClientAdapter {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#getList(java.io.File, org.tigris.subversion.svnclientadapter.SVNRevision, boolean)
+	 * @see org.eclipse.subversion.client.ISVNClientAdapter#getList(java.io.File, org.eclipse.subversion.client.SVNRevision, boolean)
 	 */
 	public ISVNDirEntry[] getList(File path, SVNRevision revision, boolean recurse) 
             throws SVNClientException {
@@ -291,7 +291,7 @@ public abstract class AbstractJhlClientAdapter extends AbstractClientAdapter {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#getDirEntry(org.tigris.subversion.svnclientadapter.SVNUrl, org.tigris.subversion.svnclientadapter.SVNRevision)
+	 * @see org.eclipse.subversion.client.ISVNClientAdapter#getDirEntry(org.eclipse.subversion.client.SVNUrl, org.eclipse.subversion.client.SVNRevision)
 	 */
 	public ISVNDirEntry getDirEntry(SVNUrl url, SVNRevision revision)
 		throws SVNClientException {
@@ -310,7 +310,7 @@ public abstract class AbstractJhlClientAdapter extends AbstractClientAdapter {
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#getDirEntry(java.io.File, org.tigris.subversion.svnclientadapter.SVNRevision)
+	 * @see org.eclipse.subversion.client.ISVNClientAdapter#getDirEntry(java.io.File, org.eclipse.subversion.client.SVNRevision)
 	 */
 	public ISVNDirEntry getDirEntry(File path, SVNRevision revision) 
 		throws SVNClientException {
@@ -328,7 +328,7 @@ public abstract class AbstractJhlClientAdapter extends AbstractClientAdapter {
 	}
 	
     /* (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#getSingleStatus(java.io.File)
+     * @see org.eclipse.subversion.client.ISVNClientAdapter#getSingleStatus(java.io.File)
      */
     public ISVNStatus getSingleStatus(File path) 
             throws SVNClientException {
@@ -336,7 +336,7 @@ public abstract class AbstractJhlClientAdapter extends AbstractClientAdapter {
     }
     
     /* (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#getStatus(java.io.File[])
+     * @see org.eclipse.subversion.client.ISVNClientAdapter#getStatus(java.io.File[])
      */
     public ISVNStatus[] getStatus(File[] path) 
             throws SVNClientException {
@@ -374,7 +374,7 @@ public abstract class AbstractJhlClientAdapter extends AbstractClientAdapter {
     }
 
     /* (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#getStatus(java.io.File, boolean, boolean)
+     * @see org.eclipse.subversion.client.ISVNClientAdapter#getStatus(java.io.File, boolean, boolean)
      */
     public ISVNStatus[] getStatus(File path, boolean descend, boolean getAll)
 		throws SVNClientException {
@@ -383,7 +383,7 @@ public abstract class AbstractJhlClientAdapter extends AbstractClientAdapter {
 	
 
     /* (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#getStatus(java.io.File, boolean, boolean, boolean)
+     * @see org.eclipse.subversion.client.ISVNClientAdapter#getStatus(java.io.File, boolean, boolean, boolean)
      */
     public ISVNStatus[] getStatus(File path, boolean descend, boolean getAll, boolean contactServer) throws SVNClientException {
 		notificationHandler.setCommand(ISVNNotifyListener.Command.STATUS);
@@ -409,7 +409,7 @@ public abstract class AbstractJhlClientAdapter extends AbstractClientAdapter {
     }
 
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#copy(java.io.File, java.io.File)
+	 * @see org.eclipse.subversion.client.ISVNClientAdapter#copy(java.io.File, java.io.File)
 	 */
 	public void copy(File srcPath, File destPath) throws SVNClientException {
 		try {
@@ -428,7 +428,7 @@ public abstract class AbstractJhlClientAdapter extends AbstractClientAdapter {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#copy(java.io.File, org.tigris.subversion.svnclientadapter.SVNUrl, java.lang.String)
+	 * @see org.eclipse.subversion.client.ISVNClientAdapter#copy(java.io.File, org.eclipse.subversion.client.SVNUrl, java.lang.String)
 	 */
 	public void copy(File srcPath, SVNUrl destUrl, String message)
 		throws SVNClientException {
@@ -449,7 +449,7 @@ public abstract class AbstractJhlClientAdapter extends AbstractClientAdapter {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#copy(org.tigris.subversion.svnclientadapter.SVNUrl, java.io.File, org.tigris.subversion.svnclientadapter.SVNRevision)
+	 * @see org.eclipse.subversion.client.ISVNClientAdapter#copy(org.eclipse.subversion.client.SVNUrl, java.io.File, org.eclipse.subversion.client.SVNRevision)
 	 */
 	public void copy(SVNUrl srcUrl, File destPath, SVNRevision revision)
 		throws SVNClientException {
@@ -467,7 +467,7 @@ public abstract class AbstractJhlClientAdapter extends AbstractClientAdapter {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#copy(org.tigris.subversion.svnclientadapter.SVNUrl, org.tigris.subversion.svnclientadapter.SVNUrl, java.lang.String, org.tigris.subversion.svnclientadapter.SVNRevision)
+	 * @see org.eclipse.subversion.client.ISVNClientAdapter#copy(org.eclipse.subversion.client.SVNUrl, org.eclipse.subversion.client.SVNUrl, java.lang.String, org.eclipse.subversion.client.SVNRevision)
 	 */
 	public void copy(
 		SVNUrl srcUrl,
@@ -491,7 +491,7 @@ public abstract class AbstractJhlClientAdapter extends AbstractClientAdapter {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#remove(org.tigris.subversion.svnclientadapter.SVNUrl[], java.lang.String)
+	 * @see org.eclipse.subversion.client.ISVNClientAdapter#remove(org.eclipse.subversion.client.SVNUrl[], java.lang.String)
 	 */
 	public void remove(SVNUrl url[], String message) throws SVNClientException {
         try {
@@ -517,7 +517,7 @@ public abstract class AbstractJhlClientAdapter extends AbstractClientAdapter {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#remove(java.io.File[], boolean)
+	 * @see org.eclipse.subversion.client.ISVNClientAdapter#remove(java.io.File[], boolean)
 	 */
 	public void remove(File file[], boolean force) throws SVNClientException {
         try {
@@ -542,7 +542,7 @@ public abstract class AbstractJhlClientAdapter extends AbstractClientAdapter {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#doExport(org.tigris.subversion.svnclientadapter.SVNUrl, java.io.File, org.tigris.subversion.svnclientadapter.SVNRevision, boolean)
+	 * @see org.eclipse.subversion.client.ISVNClientAdapter#doExport(org.eclipse.subversion.client.SVNUrl, java.io.File, org.eclipse.subversion.client.SVNRevision, boolean)
 	 */
 	public void doExport(
 		SVNUrl srcUrl,
@@ -565,7 +565,7 @@ public abstract class AbstractJhlClientAdapter extends AbstractClientAdapter {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#doExport(java.io.File, java.io.File, boolean)
+	 * @see org.eclipse.subversion.client.ISVNClientAdapter#doExport(java.io.File, java.io.File, boolean)
 	 */
 	public void doExport(File srcPath, File destPath, boolean force)
 		throws SVNClientException {
@@ -584,7 +584,7 @@ public abstract class AbstractJhlClientAdapter extends AbstractClientAdapter {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#doImport(java.io.File, org.tigris.subversion.svnclientadapter.SVNUrl, java.lang.String, boolean)
+	 * @see org.eclipse.subversion.client.ISVNClientAdapter#doImport(java.io.File, org.eclipse.subversion.client.SVNUrl, java.lang.String, boolean)
 	 */
 	public void doImport(
 		File path,
@@ -616,7 +616,7 @@ public abstract class AbstractJhlClientAdapter extends AbstractClientAdapter {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#mkdir(org.tigris.subversion.svnclientadapter.SVNUrl, java.lang.String)
+	 * @see org.eclipse.subversion.client.ISVNClientAdapter#mkdir(org.eclipse.subversion.client.SVNUrl, java.lang.String)
 	 */
 	public void mkdir(SVNUrl url, String message) throws SVNClientException {
         try {
@@ -635,7 +635,7 @@ public abstract class AbstractJhlClientAdapter extends AbstractClientAdapter {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#mkdir(java.io.File)
+	 * @see org.eclipse.subversion.client.ISVNClientAdapter#mkdir(java.io.File)
 	 */
 	public void mkdir(File file) throws SVNClientException {
         try {
@@ -652,7 +652,7 @@ public abstract class AbstractJhlClientAdapter extends AbstractClientAdapter {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#move(java.io.File, java.io.File, boolean)
+	 * @see org.eclipse.subversion.client.ISVNClientAdapter#move(java.io.File, java.io.File, boolean)
 	 */
 	public void move(File srcPath, File destPath, boolean force) throws SVNClientException {
         // use force when you want to move file even if there are local modifications
@@ -671,7 +671,7 @@ public abstract class AbstractJhlClientAdapter extends AbstractClientAdapter {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#move(org.tigris.subversion.svnclientadapter.SVNUrl, org.tigris.subversion.svnclientadapter.SVNUrl, java.lang.String, org.tigris.subversion.svnclientadapter.SVNRevision)
+	 * @see org.eclipse.subversion.client.ISVNClientAdapter#move(org.eclipse.subversion.client.SVNUrl, org.eclipse.subversion.client.SVNUrl, java.lang.String, org.eclipse.subversion.client.SVNRevision)
 	 */
 	public void move(
 		SVNUrl srcUrl,
@@ -703,7 +703,7 @@ public abstract class AbstractJhlClientAdapter extends AbstractClientAdapter {
 	}	
 
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#update(java.io.File, org.tigris.subversion.svnclientadapter.SVNRevision, boolean)
+	 * @see org.eclipse.subversion.client.ISVNClientAdapter#update(java.io.File, org.eclipse.subversion.client.SVNRevision, boolean)
 	 */
 	public long update(File path, SVNRevision revision, boolean recurse)
 		throws SVNClientException {
@@ -725,7 +725,7 @@ public abstract class AbstractJhlClientAdapter extends AbstractClientAdapter {
 	}
 
     /* (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#update(java.io.File[], org.tigris.subversion.svnclientadapter.SVNRevision, boolean, boolean)
+     * @see org.eclipse.subversion.client.ISVNClientAdapter#update(java.io.File[], org.eclipse.subversion.client.SVNRevision, boolean, boolean)
      */
     public long[] update(File[] path, SVNRevision revision, boolean recurse, boolean ignoreExternals) 
         throws SVNClientException
@@ -758,7 +758,7 @@ public abstract class AbstractJhlClientAdapter extends AbstractClientAdapter {
 	}
 	
     /* (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#revert(java.io.File, boolean)
+     * @see org.eclipse.subversion.client.ISVNClientAdapter#revert(java.io.File, boolean)
      */
     public void revert(File path, boolean recurse) throws SVNClientException {
         try {
@@ -785,7 +785,7 @@ public abstract class AbstractJhlClientAdapter extends AbstractClientAdapter {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#getContent(org.tigris.subversion.svnclientadapter.SVNUrl, org.tigris.subversion.svnclientadapter.SVNRevision)
+	 * @see org.eclipse.subversion.client.ISVNClientAdapter#getContent(org.eclipse.subversion.client.SVNUrl, org.eclipse.subversion.client.SVNRevision)
 	 */
 	public InputStream getContent(SVNUrl url, SVNRevision revision)
 		throws SVNClientException {
@@ -811,7 +811,7 @@ public abstract class AbstractJhlClientAdapter extends AbstractClientAdapter {
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#getContent(java.io.File, org.tigris.subversion.svnclientadapter.SVNRevision)
+	 * @see org.eclipse.subversion.client.ISVNClientAdapter#getContent(java.io.File, org.eclipse.subversion.client.SVNRevision)
 	 */
 	public InputStream getContent(File path, SVNRevision revision)
 		throws SVNClientException {
@@ -844,7 +844,7 @@ public abstract class AbstractJhlClientAdapter extends AbstractClientAdapter {
 
 
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#getProperties(java.io.File)
+	 * @see org.eclipse.subversion.client.ISVNClientAdapter#getProperties(java.io.File)
 	 */
 	public ISVNProperty[] getProperties(File path) throws SVNClientException {
 		try {
@@ -870,7 +870,7 @@ public abstract class AbstractJhlClientAdapter extends AbstractClientAdapter {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#getProperties(org.tigris.subversion.svnclientadapter.SVNUrl)
+	 * @see org.eclipse.subversion.client.ISVNClientAdapter#getProperties(org.eclipse.subversion.client.SVNUrl)
 	 */
 	public ISVNProperty[] getProperties(SVNUrl url) throws SVNClientException {
 		try {
@@ -896,7 +896,7 @@ public abstract class AbstractJhlClientAdapter extends AbstractClientAdapter {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#propertySet(java.io.File, java.lang.String, java.lang.String, boolean)
+	 * @see org.eclipse.subversion.client.ISVNClientAdapter#propertySet(java.io.File, java.lang.String, java.lang.String, boolean)
 	 */
 	public void propertySet(
 		File path,
@@ -933,7 +933,7 @@ public abstract class AbstractJhlClientAdapter extends AbstractClientAdapter {
 	}
     
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#propertySet(java.io.File, java.lang.String, java.io.File, boolean)
+	 * @see org.eclipse.subversion.client.ISVNClientAdapter#propertySet(java.io.File, java.lang.String, java.io.File, boolean)
 	 */
 	public void propertySet(
 		File path,
@@ -991,7 +991,7 @@ public abstract class AbstractJhlClientAdapter extends AbstractClientAdapter {
 	}
     
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#propertyGet(java.io.File, java.lang.String)
+	 * @see org.eclipse.subversion.client.ISVNClientAdapter#propertyGet(java.io.File, java.lang.String)
 	 */
 	public ISVNProperty propertyGet(File path, String propertyName)
 		throws SVNClientException {
@@ -1015,7 +1015,7 @@ public abstract class AbstractJhlClientAdapter extends AbstractClientAdapter {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#propertyGet(org.tigris.subversion.svnclientadapter.SVNUrl, java.lang.String)
+	 * @see org.eclipse.subversion.client.ISVNClientAdapter#propertyGet(org.eclipse.subversion.client.SVNUrl, java.lang.String)
 	 */
 	public ISVNProperty propertyGet(SVNUrl url, String propertyName)
 		throws SVNClientException {
@@ -1039,7 +1039,7 @@ public abstract class AbstractJhlClientAdapter extends AbstractClientAdapter {
 	}
 
     /* (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#propertyDel(java.io.File, java.lang.String, boolean)
+     * @see org.eclipse.subversion.client.ISVNClientAdapter#propertyDel(java.io.File, java.lang.String, boolean)
      */
     public void propertyDel(File path, String propertyName,boolean recurse) throws SVNClientException {
         try {
@@ -1071,7 +1071,7 @@ public abstract class AbstractJhlClientAdapter extends AbstractClientAdapter {
     }
     
     /* (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#diff(java.io.File, org.tigris.subversion.svnclientadapter.SVNRevision, java.io.File, org.tigris.subversion.svnclientadapter.SVNRevision, java.io.File, boolean)
+     * @see org.eclipse.subversion.client.ISVNClientAdapter#diff(java.io.File, org.eclipse.subversion.client.SVNRevision, java.io.File, org.eclipse.subversion.client.SVNRevision, java.io.File, boolean)
      */
     public void diff(File oldPath, SVNRevision oldPathRevision,
                      File newPath, SVNRevision newPathRevision,
@@ -1119,14 +1119,14 @@ public abstract class AbstractJhlClientAdapter extends AbstractClientAdapter {
     }
 
     /* (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#diff(java.io.File, java.io.File, boolean)
+     * @see org.eclipse.subversion.client.ISVNClientAdapter#diff(java.io.File, java.io.File, boolean)
      */
     public void diff(File path, File outFile, boolean recurse) throws SVNClientException {
         diff(path, null,null,null,outFile,recurse);
     }
 
     /* (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#diff(org.tigris.subversion.svnclientadapter.SVNUrl, org.tigris.subversion.svnclientadapter.SVNRevision, org.tigris.subversion.svnclientadapter.SVNUrl, org.tigris.subversion.svnclientadapter.SVNRevision, java.io.File, boolean)
+     * @see org.eclipse.subversion.client.ISVNClientAdapter#diff(org.eclipse.subversion.client.SVNUrl, org.eclipse.subversion.client.SVNRevision, org.eclipse.subversion.client.SVNUrl, org.eclipse.subversion.client.SVNRevision, java.io.File, boolean)
      */
     public void diff(SVNUrl oldUrl, SVNRevision oldUrlRevision,
                      SVNUrl newUrl, SVNRevision newUrlRevision,
@@ -1166,7 +1166,7 @@ public abstract class AbstractJhlClientAdapter extends AbstractClientAdapter {
     }
 
     /* (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#diff(org.tigris.subversion.svnclientadapter.SVNUrl, org.tigris.subversion.svnclientadapter.SVNRevision, org.tigris.subversion.svnclientadapter.SVNRevision, java.io.File, boolean)
+     * @see org.eclipse.subversion.client.ISVNClientAdapter#diff(org.eclipse.subversion.client.SVNUrl, org.eclipse.subversion.client.SVNRevision, org.eclipse.subversion.client.SVNRevision, java.io.File, boolean)
      */
     public void diff(SVNUrl url, SVNRevision oldUrlRevision, SVNRevision newUrlRevision,
                      File outFile, boolean recurse) throws SVNClientException {
@@ -1199,7 +1199,7 @@ public abstract class AbstractJhlClientAdapter extends AbstractClientAdapter {
 	}
     
     /* (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#annotate(org.tigris.subversion.svnclientadapter.SVNUrl, org.tigris.subversion.svnclientadapter.SVNRevision, org.tigris.subversion.svnclientadapter.SVNRevision)
+     * @see org.eclipse.subversion.client.ISVNClientAdapter#annotate(org.eclipse.subversion.client.SVNUrl, org.eclipse.subversion.client.SVNRevision, org.eclipse.subversion.client.SVNRevision)
      */
     public ISVNAnnotations annotate(SVNUrl url, SVNRevision revisionStart, SVNRevision revisionEnd)
         throws SVNClientException
@@ -1208,7 +1208,7 @@ public abstract class AbstractJhlClientAdapter extends AbstractClientAdapter {
     }
 
     /* (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#annotate(java.io.File, org.tigris.subversion.svnclientadapter.SVNRevision, org.tigris.subversion.svnclientadapter.SVNRevision)
+     * @see org.eclipse.subversion.client.ISVNClientAdapter#annotate(java.io.File, org.eclipse.subversion.client.SVNRevision, org.eclipse.subversion.client.SVNRevision)
      */
     public ISVNAnnotations annotate(File file, SVNRevision revisionStart, SVNRevision revisionEnd)
         throws SVNClientException
@@ -1218,7 +1218,7 @@ public abstract class AbstractJhlClientAdapter extends AbstractClientAdapter {
     
     
     /* (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#resolved(java.io.File)
+     * @see org.eclipse.subversion.client.ISVNClientAdapter#resolved(java.io.File)
      */
     public void resolved(File path) 
     	throws SVNClientException
@@ -1239,7 +1239,7 @@ public abstract class AbstractJhlClientAdapter extends AbstractClientAdapter {
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#cancelOperation()
+	 * @see org.eclipse.subversion.client.ISVNClientAdapter#cancelOperation()
 	 */
 	public void cancelOperation() throws SVNClientException {
 		try {
@@ -1251,7 +1251,7 @@ public abstract class AbstractJhlClientAdapter extends AbstractClientAdapter {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#getInfoFromWorkingCopy(java.io.File)
+	 * @see org.eclipse.subversion.client.ISVNClientAdapter#getInfoFromWorkingCopy(java.io.File)
 	 */
 	public ISVNInfo getInfoFromWorkingCopy(File path) throws SVNClientException {
 		try {
@@ -1273,7 +1273,7 @@ public abstract class AbstractJhlClientAdapter extends AbstractClientAdapter {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#getInfo(java.io.File)
+	 * @see org.eclipse.subversion.client.ISVNClientAdapter#getInfo(java.io.File)
 	 */
 	public ISVNInfo getInfo(File path) throws SVNClientException {
 		try {
@@ -1308,7 +1308,7 @@ public abstract class AbstractJhlClientAdapter extends AbstractClientAdapter {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#getInfo(org.tigris.subversion.svnclientadapter.SVNUrl)
+	 * @see org.eclipse.subversion.client.ISVNClientAdapter#getInfo(org.eclipse.subversion.client.SVNUrl)
 	 */
 	public ISVNInfo getInfo(SVNUrl url, SVNRevision revision, SVNRevision peg) throws SVNClientException {
 		try {
@@ -1332,7 +1332,7 @@ public abstract class AbstractJhlClientAdapter extends AbstractClientAdapter {
 
     /*
      * (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#switchUrl(org.tigris.subversion.svnclientadapter.SVNUrl, java.io.File, org.tigris.subversion.svnclientadapter.SVNRevision, boolean)
+     * @see org.eclipse.subversion.client.ISVNClientAdapter#switchUrl(org.eclipse.subversion.client.SVNUrl, java.io.File, org.eclipse.subversion.client.SVNRevision, boolean)
      */
     public void switchToUrl(File path, SVNUrl url, SVNRevision revision, boolean recurse) throws SVNClientException {
         try {
@@ -1357,7 +1357,7 @@ public abstract class AbstractJhlClientAdapter extends AbstractClientAdapter {
     }
 
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#setConfigDirectory(java.io.File)
+	 * @see org.eclipse.subversion.client.ISVNClientAdapter#setConfigDirectory(java.io.File)
 	 */
 	public void setConfigDirectory(File dir) throws SVNClientException {
         try {
@@ -1369,7 +1369,7 @@ public abstract class AbstractJhlClientAdapter extends AbstractClientAdapter {
 	}
 
     /* (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#cleanup(java.io.File)
+     * @see org.eclipse.subversion.client.ISVNClientAdapter#cleanup(java.io.File)
      */
     public void cleanup(File path) throws SVNClientException {
         try {
@@ -1385,7 +1385,7 @@ public abstract class AbstractJhlClientAdapter extends AbstractClientAdapter {
     }
     
 	/* (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#merge(java.lang.String, org.tigris.subversion.svnclientadapter.SVNRevision, java.lang.String, org.tigris.subversion.svnclientadapter.SVNRevision, java.lang.String, boolean, boolean)
+     * @see org.eclipse.subversion.client.ISVNClientAdapter#merge(java.lang.String, org.eclipse.subversion.client.SVNRevision, java.lang.String, org.eclipse.subversion.client.SVNRevision, java.lang.String, boolean, boolean)
      */
     public void merge(SVNUrl path1, SVNRevision revision1, SVNUrl path2,
     		SVNRevision revision2, File localPath, boolean force,
@@ -1394,7 +1394,7 @@ public abstract class AbstractJhlClientAdapter extends AbstractClientAdapter {
     }
 
     /* (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#merge(org.tigris.subversion.svnclientadapter.SVNUrl, org.tigris.subversion.svnclientadapter.SVNRevision, org.tigris.subversion.svnclientadapter.SVNUrl, org.tigris.subversion.svnclientadapter.SVNRevision, java.io.File, boolean, boolean, boolean)
+     * @see org.eclipse.subversion.client.ISVNClientAdapter#merge(org.eclipse.subversion.client.SVNUrl, org.eclipse.subversion.client.SVNRevision, org.eclipse.subversion.client.SVNUrl, org.eclipse.subversion.client.SVNRevision, java.io.File, boolean, boolean, boolean)
      */
     public void merge(SVNUrl path1, SVNRevision revision1, SVNUrl path2,
             SVNRevision revision2, File localPath, boolean force,
@@ -1435,7 +1435,7 @@ public abstract class AbstractJhlClientAdapter extends AbstractClientAdapter {
     }
     
     /* (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#addPasswordCallback(org.tigris.subversion.svnclientadapter.ISVNPromptUserPassword)
+     * @see org.eclipse.subversion.client.ISVNClientAdapter#addPasswordCallback(org.eclipse.subversion.client.ISVNPromptUserPassword)
      */
     public void addPasswordCallback(ISVNPromptUserPassword callback) {
         if (callback != null) {
@@ -1445,7 +1445,7 @@ public abstract class AbstractJhlClientAdapter extends AbstractClientAdapter {
     }
     
     /* (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#lock(org.tigris.subversion.svnclientadapter.SVNUrl[], java.lang.String, boolean)
+     * @see org.eclipse.subversion.client.ISVNClientAdapter#lock(org.eclipse.subversion.client.SVNUrl[], java.lang.String, boolean)
      */
     public void lock(SVNUrl[] uris, String comment, boolean force)
             throws SVNClientException {
@@ -1453,7 +1453,7 @@ public abstract class AbstractJhlClientAdapter extends AbstractClientAdapter {
     }
 
     /* (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#unlock(org.tigris.subversion.svnclientadapter.SVNUrl[], boolean)
+     * @see org.eclipse.subversion.client.ISVNClientAdapter#unlock(org.eclipse.subversion.client.SVNUrl[], boolean)
      */
     public void unlock(SVNUrl[] uris, boolean force)
         throws SVNClientException {
@@ -1462,7 +1462,7 @@ public abstract class AbstractJhlClientAdapter extends AbstractClientAdapter {
     }
 
     /* (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#lock(java.lang.String[], java.lang.String, boolean)
+     * @see org.eclipse.subversion.client.ISVNClientAdapter#lock(java.lang.String[], java.lang.String, boolean)
      */
     public void lock(File[] paths, String comment, boolean force)
             throws SVNClientException {
@@ -1492,7 +1492,7 @@ public abstract class AbstractJhlClientAdapter extends AbstractClientAdapter {
     }
     
     /* (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#unlock(java.io.File[], boolean)
+     * @see org.eclipse.subversion.client.ISVNClientAdapter#unlock(java.io.File[], boolean)
      */
     public void unlock(File[] paths, boolean force) throws SVNClientException {
         try {
@@ -1521,7 +1521,7 @@ public abstract class AbstractJhlClientAdapter extends AbstractClientAdapter {
     }
 
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#setRevProperty(org.tigris.subversion.svnclientadapter.SVNUrl, org.tigris.subversion.svnclientadapter.SVNRevision.Number, java.lang.String, java.lang.String, boolean)
+	 * @see org.eclipse.subversion.client.ISVNClientAdapter#setRevProperty(org.eclipse.subversion.client.SVNUrl, org.eclipse.subversion.client.SVNRevision.Number, java.lang.String, java.lang.String, boolean)
 	 */
 	public void setRevProperty(SVNUrl url, SVNRevision.Number revisionNo, String propName, String propertyData, boolean force) throws SVNClientException {
 		try {
@@ -1545,21 +1545,21 @@ public abstract class AbstractJhlClientAdapter extends AbstractClientAdapter {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#getAdminDirectoryName()
+	 * @see org.eclipse.subversion.client.ISVNClientAdapter#getAdminDirectoryName()
 	 */
 	public String getAdminDirectoryName() {
 		return svnClient.getAdminDirectoryName();
 	}
 
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#isAdminDirectory(java.lang.String)
+	 * @see org.eclipse.subversion.client.ISVNClientAdapter#isAdminDirectory(java.lang.String)
 	 */
 	public boolean isAdminDirectory(String name) {
 		return svnClient.isAdminDirectory(name);
 	}
 
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#getLogMessages(java.io.File, org.tigris.subversion.svnclientadapter.SVNRevision, org.tigris.subversion.svnclientadapter.SVNRevision, boolean)
+	 * @see org.eclipse.subversion.client.ISVNClientAdapter#getLogMessages(java.io.File, org.eclipse.subversion.client.SVNRevision, org.eclipse.subversion.client.SVNRevision, boolean)
 	 */
 	public ISVNLogMessage[] getLogMessages(File path,
 			SVNRevision revisionStart, SVNRevision revisionEnd,
@@ -1569,7 +1569,7 @@ public abstract class AbstractJhlClientAdapter extends AbstractClientAdapter {
 	}    
 
     /* (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#getLogMessages(java.io.File, org.tigris.subversion.svnclientadapter.SVNRevision, org.tigris.subversion.svnclientadapter.SVNRevision, boolean, boolean)
+     * @see org.eclipse.subversion.client.ISVNClientAdapter#getLogMessages(java.io.File, org.eclipse.subversion.client.SVNRevision, org.eclipse.subversion.client.SVNRevision, boolean, boolean)
      */
     public ISVNLogMessage[] getLogMessages(File path,
 			SVNRevision revisionStart, SVNRevision revisionEnd,
@@ -1580,7 +1580,7 @@ public abstract class AbstractJhlClientAdapter extends AbstractClientAdapter {
 	}
 
     /* (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#getLogMessages(java.io.File, org.tigris.subversion.svnclientadapter.SVNRevision, org.tigris.subversion.svnclientadapter.SVNRevision, boolean, boolean, long)
+     * @see org.eclipse.subversion.client.ISVNClientAdapter#getLogMessages(java.io.File, org.eclipse.subversion.client.SVNRevision, org.eclipse.subversion.client.SVNRevision, boolean, boolean, long)
      */
     public ISVNLogMessage[] getLogMessages(File path,
 			SVNRevision revisionStart, SVNRevision revisionEnd,
@@ -1593,7 +1593,7 @@ public abstract class AbstractJhlClientAdapter extends AbstractClientAdapter {
 	}
            
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#getLogMessages(org.tigris.subversion.svnclientadapter.SVNUrl, org.tigris.subversion.svnclientadapter.SVNRevision, org.tigris.subversion.svnclientadapter.SVNRevision, boolean)
+	 * @see org.eclipse.subversion.client.ISVNClientAdapter#getLogMessages(org.eclipse.subversion.client.SVNUrl, org.eclipse.subversion.client.SVNRevision, org.eclipse.subversion.client.SVNRevision, boolean)
 	 */
 	public ISVNLogMessage[] getLogMessages(SVNUrl url,
 			SVNRevision revisionStart, SVNRevision revisionEnd,
@@ -1605,7 +1605,7 @@ public abstract class AbstractJhlClientAdapter extends AbstractClientAdapter {
 	} 
 
     /* (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#getLogMessages(org.tigris.subversion.svnclientadapter.SVNUrl, org.tigris.subversion.svnclientadapter.SVNRevision, org.tigris.subversion.svnclientadapter.SVNRevision, org.tigris.subversion.svnclientadapter.SVNRevision, boolean, boolean, long)
+     * @see org.eclipse.subversion.client.ISVNClientAdapter#getLogMessages(org.eclipse.subversion.client.SVNUrl, org.eclipse.subversion.client.SVNRevision, org.eclipse.subversion.client.SVNRevision, org.eclipse.subversion.client.SVNRevision, boolean, boolean, long)
      */
     public ISVNLogMessage[] getLogMessages(SVNUrl url, SVNRevision pegRevision,
             SVNRevision revisionStart, SVNRevision revisionEnd,
@@ -1618,7 +1618,7 @@ public abstract class AbstractJhlClientAdapter extends AbstractClientAdapter {
     }
 
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#getLogMessages(org.tigris.subversion.svnclientadapter.SVNUrl, java.lang.String[], org.tigris.subversion.svnclientadapter.SVNRevision, org.tigris.subversion.svnclientadapter.SVNRevision, boolean, boolean)
+	 * @see org.eclipse.subversion.client.ISVNClientAdapter#getLogMessages(org.eclipse.subversion.client.SVNUrl, java.lang.String[], org.eclipse.subversion.client.SVNRevision, org.eclipse.subversion.client.SVNRevision, boolean, boolean)
 	 */
 	public ISVNLogMessage[] getLogMessages(final SVNUrl url,
 			final String[] paths, SVNRevision revStart, SVNRevision revEnd,
@@ -1664,7 +1664,7 @@ public abstract class AbstractJhlClientAdapter extends AbstractClientAdapter {
 
     
     /* (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#relocate(java.lang.String, java.lang.String, java.lang.String, boolean)
+     * @see org.eclipse.subversion.client.ISVNClientAdapter#relocate(java.lang.String, java.lang.String, java.lang.String, boolean)
      */
     public void relocate(String from, String to, String path, boolean recurse)
             throws SVNClientException {
@@ -1683,7 +1683,7 @@ public abstract class AbstractJhlClientAdapter extends AbstractClientAdapter {
     }
     
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#diff(java.io.File, org.tigris.subversion.svnclientadapter.SVNUrl, org.tigris.subversion.svnclientadapter.SVNRevision, java.io.File, boolean)
+	 * @see org.eclipse.subversion.client.ISVNClientAdapter#diff(java.io.File, org.eclipse.subversion.client.SVNUrl, org.eclipse.subversion.client.SVNRevision, java.io.File, boolean)
 	 */
 	public void diff(File path, SVNUrl url, SVNRevision urlRevision,
 			File outFile, boolean recurse) throws SVNClientException {

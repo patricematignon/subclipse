@@ -110,28 +110,28 @@ class CmdLineLogMessage extends CmdLineXmlCommand implements ISVNLogMessage {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.subclipse.client.ISVNLogMessage#getRevision()
+	 * @see org.eclipse.subversion.client.ISVNLogMessage#getRevision()
 	 */
 	public SVNRevision.Number getRevision() {
 		return rev;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.subclipse.client.ISVNLogMessage#getAuthor()
+	 * @see org.eclipse.subversion.client.ISVNLogMessage#getAuthor()
 	 */
 	public String getAuthor() {
 		return author;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.subclipse.client.ISVNLogMessage#getDate()
+	 * @see org.eclipse.subversion.client.ISVNLogMessage#getDate()
 	 */
 	public Date getDate() {
 		return date;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.subclipse.client.ISVNLogMessage#getMessage()
+	 * @see org.eclipse.subversion.client.ISVNLogMessage#getMessage()
 	 */
 	public String getMessage() {
 		return msg;
@@ -245,7 +245,7 @@ class CmdLineLogMessage extends CmdLineXmlCommand implements ISVNLogMessage {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.ISVNLogMessage#getChangedPaths()
+	 * @see org.eclipse.subversion.client.ISVNLogMessage#getChangedPaths()
 	 */
 	public ISVNLogMessageChangePath[] getChangedPaths() {
 		return logMessageChangePaths;

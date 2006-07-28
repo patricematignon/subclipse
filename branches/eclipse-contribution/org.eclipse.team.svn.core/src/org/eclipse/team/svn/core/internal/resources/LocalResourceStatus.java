@@ -115,7 +115,7 @@ public class LocalResourceStatus extends ResourceStatus {
     }
 
     /* (non-Javadoc)
-     * @see org.tigris.subversion.subclipse.core.resources.ResourceStatus#getBytes()
+     * @see org.eclipse.team.svn.core.internal.resources.ResourceStatus#getBytes()
      */
     public byte[] getBytes() {    	
         ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -124,7 +124,7 @@ public class LocalResourceStatus extends ResourceStatus {
     }
 
     /* (non-Javadoc)
-     * @see org.tigris.subversion.subclipse.core.resources.ResourceStatus#getBytesInto(java.io.DataOutputStream)
+     * @see org.eclipse.team.svn.core.internal.resources.ResourceStatus#getBytesInto(java.io.DataOutputStream)
      */
     protected DataOutputStream getBytesInto(DataOutputStream dos) {
     	super.getBytesInto(dos);
@@ -204,7 +204,7 @@ public class LocalResourceStatus extends ResourceStatus {
     }
     
     /* (non-Javadoc)
-     * @see org.tigris.subversion.subclipse.core.resources.ResourceStatus#initFromBytes(java.io.DataInputStream)
+     * @see org.eclipse.team.svn.core.internal.resources.ResourceStatus#initFromBytes(java.io.DataInputStream)
      */
     protected int initFromBytes(DataInputStream dis) throws SVNException {
     	int version = super.initFromBytes(dis);

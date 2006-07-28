@@ -24,9 +24,9 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.core.synchronize.SyncInfoSet;
+import org.eclipse.team.svn.core.internal.SVNProviderPlugin;
 import org.eclipse.team.svn.core.internal.SVNTeamProvider;
 import org.eclipse.team.svn.ui.internal.Policy;
-import org.eclipse.team.svn.ui.internal.SVNUIPlugin;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.team.ui.synchronize.SynchronizeModelOperation;
 
@@ -56,7 +56,7 @@ public abstract class SVNSynchronizeOperation extends SynchronizeModelOperation 
 
 			// Pass the scheduling rule to the synchronizer so that sync change events
 			// and cache commits to disk are batched
-			SVNTeamProvider provider = (SVNTeamProvider)RepositoryProvider.getProvider(project, SVNUIPlugin.PROVIDER_ID);
+			SVNTeamProvider provider = (SVNTeamProvider)RepositoryProvider.getProvider(project, SVNProviderPlugin.PROVIDER_ID);
 			if (provider != null) {
 				run(provider, (SyncInfoSet)projectSyncInfos.get(project), Policy.subMonitorFor(monitor,100));
 			}

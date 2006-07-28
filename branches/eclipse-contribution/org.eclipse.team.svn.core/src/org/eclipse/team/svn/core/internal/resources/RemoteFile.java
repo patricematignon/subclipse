@@ -105,7 +105,7 @@ public class RemoteFile extends RemoteResource implements ISVNRemoteFile {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.subclipse.core.ISVNRemoteResource#members(org.eclipse.core.runtime.IProgressMonitor)
+	 * @see org.eclipse.team.svn.core.internal.ISVNRemoteResource#members(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public ISVNRemoteResource[] members(IProgressMonitor progress){
 		return new ISVNRemoteResource[0];
@@ -119,7 +119,7 @@ public class RemoteFile extends RemoteResource implements ISVNRemoteFile {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.subclipse.core.ISVNResource#isFolder()
+	 * @see org.eclipse.team.svn.core.internal.ISVNResource#isFolder()
 	 */
 	public boolean isFolder() {
 		return false;
@@ -139,7 +139,7 @@ public class RemoteFile extends RemoteResource implements ISVNRemoteFile {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.subclipse.core.ISVNRemoteFile#getAnnotations(org.eclipse.core.runtime.IProgressMonitor)
+	 * @see org.eclipse.team.svn.core.internal.ISVNRemoteFile#getAnnotations(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public ISVNAnnotations getAnnotations(IProgressMonitor monitor) throws TeamException {
 		monitor = Policy.monitorFor(monitor);

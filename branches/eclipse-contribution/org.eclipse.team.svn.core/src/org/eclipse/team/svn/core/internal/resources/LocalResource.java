@@ -63,14 +63,14 @@ public abstract class LocalResource implements ISVNLocalResource, Comparable {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.subclipse.core.ISVNLocalResource#exists()
+	 * @see org.eclipse.team.svn.core.internal.ISVNLocalResource#exists()
 	 */
 	public boolean exists() {
 		return resource.exists();
 	}
 
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.subclipse.core.ISVNLocalResource#getParent()
+	 * @see org.eclipse.team.svn.core.internal.ISVNLocalResource#getParent()
 	 */
 	public ISVNLocalFolder getParent() {
 		IContainer parent = resource.getParent();
@@ -81,14 +81,14 @@ public abstract class LocalResource implements ISVNLocalResource, Comparable {
 	} 
 
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.subclipse.core.ISVNResource#getName()
+	 * @see org.eclipse.team.svn.core.internal.ISVNResource#getName()
 	 */
 	public String getName() {
 		return resource.getName();
 	}
 
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.subclipse.core.ISVNLocalResource#isIgnored()
+	 * @see org.eclipse.team.svn.core.internal.ISVNLocalResource#isIgnored()
 	 */
 	public boolean isIgnored() throws SVNException {
 		// If the resource is a derived or linked resource, it is ignored
@@ -132,7 +132,7 @@ public abstract class LocalResource implements ISVNLocalResource, Comparable {
 	}
 
     /* (non-Javadoc)
-     * @see org.tigris.subversion.subclipse.core.ISVNLocalResource#setIgnored()
+     * @see org.eclipse.team.svn.core.internal.ISVNLocalResource#setIgnored()
      */
     public void setIgnored() throws SVNException {
         AddIgnoredPatternCommand command = new AddIgnoredPatternCommand(getParent(), resource.getName());
@@ -147,21 +147,21 @@ public abstract class LocalResource implements ISVNLocalResource, Comparable {
 	}
     
     /* (non-Javadoc)
-     * @see org.tigris.subversion.subclipse.core.ISVNLocalResource#hasRemote()
+     * @see org.eclipse.team.svn.core.internal.ISVNLocalResource#hasRemote()
      */
     public boolean hasRemote() throws SVNException {
         return !isLinked() && getStatus().hasRemote();
     }
 
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.subclipse.core.ISVNLocalResource#isLinked()
+	 * @see org.eclipse.team.svn.core.internal.ISVNLocalResource#isLinked()
 	 */
 	public boolean isLinked() {
 		return SVNWorkspaceRoot.isLinkedResource(this.resource);
 	}
     
     /* (non-Javadoc)
-     * @see org.tigris.subversion.subclipse.core.ISVNLocalResource#getStatus()
+     * @see org.eclipse.team.svn.core.internal.ISVNLocalResource#getStatus()
      */
     public LocalResourceStatus getStatus() throws SVNException {
     	if (isLinked()) { return LocalResourceStatus.NONE; }
@@ -170,7 +170,7 @@ public abstract class LocalResource implements ISVNLocalResource, Comparable {
     }
 
     /* (non-Javadoc)
-     * @see org.tigris.subversion.subclipse.core.ISVNLocalResource#getRevision()
+     * @see org.eclipse.team.svn.core.internal.ISVNLocalResource#getRevision()
      */
     public SVNRevision getRevision() throws SVNException {
     	if (isLinked()) { return null; }
@@ -188,21 +188,21 @@ public abstract class LocalResource implements ISVNLocalResource, Comparable {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.subclipse.core.ISVNLocalResource#getIResource()
+	 * @see org.eclipse.team.svn.core.internal.ISVNLocalResource#getIResource()
 	 */
 	public IResource getIResource() {
 		return resource;
 	}
 
     /* (non-Javadoc)
-     * @see org.tigris.subversion.subclipse.core.ISVNLocalResource#getFile()
+     * @see org.eclipse.team.svn.core.internal.ISVNLocalResource#getFile()
      */
     public File getFile() {
         return resource.getLocation().toFile();
     }
 
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.subclipse.core.ISVNLocalResource#getWorkspaceRoot()
+	 * @see org.eclipse.team.svn.core.internal.ISVNLocalResource#getWorkspaceRoot()
 	 */
 	public SVNWorkspaceRoot getWorkspaceRoot() {
 		SVNTeamProvider teamProvider = (SVNTeamProvider)RepositoryProvider.getProvider(resource.getProject(), SVNProviderPlugin.getTypeId());
@@ -211,7 +211,7 @@ public abstract class LocalResource implements ISVNLocalResource, Comparable {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.subclipse.core.ISVNResource#getRepository()
+	 * @see org.eclipse.team.svn.core.internal.ISVNResource#getRepository()
 	 */
 	public ISVNRepositoryLocation getRepository()  {
 		try {
@@ -279,7 +279,7 @@ public abstract class LocalResource implements ISVNLocalResource, Comparable {
     }
     
     /* (non-Javadoc)
-     * @see org.tigris.subversion.subclipse.core.ISVNLocalResource#delete()
+     * @see org.eclipse.team.svn.core.internal.ISVNLocalResource#delete()
      */
     public void delete() throws SVNException {
         try {
@@ -309,7 +309,7 @@ public abstract class LocalResource implements ISVNLocalResource, Comparable {
     }
     
     /* (non-Javadoc)
-     * @see org.tigris.subversion.subclipse.core.ISVNLocalResource#resolve()
+     * @see org.eclipse.team.svn.core.internal.ISVNLocalResource#resolve()
      */
     public void resolve() throws SVNException {
         try {
@@ -324,7 +324,7 @@ public abstract class LocalResource implements ISVNLocalResource, Comparable {
     }
     
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.subclipse.core.ISVNLocalResource#setSvnProperty(java.lang.String, java.lang.String, boolean)
+	 * @see org.eclipse.team.svn.core.internal.ISVNLocalResource#setSvnProperty(java.lang.String, java.lang.String, boolean)
 	 */
 	public void setSvnProperty(String name, String value, boolean recurse) throws SVNException {
 		try {
@@ -339,7 +339,7 @@ public abstract class LocalResource implements ISVNLocalResource, Comparable {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.subclipse.core.ISVNLocalResource#setSvnProperty(java.lang.String, java.io.File, boolean)
+	 * @see org.eclipse.team.svn.core.internal.ISVNLocalResource#setSvnProperty(java.lang.String, java.io.File, boolean)
 	 */
 	public void setSvnProperty(String name, File value, boolean recurse) throws SVNException {
 		try {
@@ -356,7 +356,7 @@ public abstract class LocalResource implements ISVNLocalResource, Comparable {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.subclipse.core.ISVNLocalResource#deleteSvnProperty(java.lang.String, boolean)
+	 * @see org.eclipse.team.svn.core.internal.ISVNLocalResource#deleteSvnProperty(java.lang.String, boolean)
 	 */
 	public void deleteSvnProperty(String name,boolean recurse) throws SVNException {
 		try {
@@ -371,7 +371,7 @@ public abstract class LocalResource implements ISVNLocalResource, Comparable {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.subclipse.core.ISVNLocalResource#getSvnProperty(java.lang.String)
+	 * @see org.eclipse.team.svn.core.internal.ISVNLocalResource#getSvnProperty(java.lang.String)
 	 */
 	public ISVNProperty getSvnProperty(String name) throws SVNException {
 		try {
@@ -383,7 +383,7 @@ public abstract class LocalResource implements ISVNLocalResource, Comparable {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.subclipse.core.ISVNLocalResource#getSvnProperties()
+	 * @see org.eclipse.team.svn.core.internal.ISVNLocalResource#getSvnProperties()
 	 */
 	public ISVNProperty[] getSvnProperties() throws SVNException {
 		try {
@@ -396,7 +396,7 @@ public abstract class LocalResource implements ISVNLocalResource, Comparable {
 	}
 
     /* (non-Javadoc)
-     * @see org.tigris.subversion.subclipse.core.ISVNResource#getResource()
+     * @see org.eclipse.team.svn.core.internal.ISVNResource#getResource()
      */
     public IResource getResource() {
     	return resource;

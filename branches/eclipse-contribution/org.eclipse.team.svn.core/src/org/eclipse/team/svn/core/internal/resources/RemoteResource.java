@@ -245,7 +245,7 @@ public abstract class RemoteResource
 	}
 
     /* (non-Javadoc)
-     * @see org.tigris.subversion.subclipse.core.ISVNResource#getResource()
+     * @see org.eclipse.team.svn.core.internal.ISVNResource#getResource()
      */
     public IResource getResource() {
     	return null;

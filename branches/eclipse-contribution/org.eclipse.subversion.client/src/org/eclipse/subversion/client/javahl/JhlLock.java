@@ -35,42 +35,42 @@ public class JhlLock implements ISVNLock {
 	}
 
 	/* (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNLock#getOwner()
+     * @see org.eclipse.subversion.client.ISVNLock#getOwner()
      */
     public String getOwner() {
         return _l.getOwner();
     }
 
     /* (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNLock#getPath()
+     * @see org.eclipse.subversion.client.ISVNLock#getPath()
      */
     public String getPath() {
         return _l.getPath();
     }
 
     /* (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNLock#getToken()
+     * @see org.eclipse.subversion.client.ISVNLock#getToken()
      */
     public String getToken() {
         return _l.getToken();
     }
 
     /* (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNLock#getComment()
+     * @see org.eclipse.subversion.client.ISVNLock#getComment()
      */
     public String getComment() {
         return _l.getComment();
     }
 
     /* (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNLock#getCreationDate()
+     * @see org.eclipse.subversion.client.ISVNLock#getCreationDate()
      */
     public Date getCreationDate() {
         return _l.getCreationDate();
     }
 
     /* (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNLock#getExpirationDate()
+     * @see org.eclipse.subversion.client.ISVNLock#getExpirationDate()
      */
     public Date getExpirationDate() {
         return _l.getExpirationDate();

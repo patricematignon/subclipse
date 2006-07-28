@@ -128,35 +128,35 @@ public abstract class BaseResource extends PlatformObject implements ISVNRemoteR
 	}
 
     /* (non-Javadoc)
-     * @see org.tigris.subversion.subclipse.core.ISVNResource#getUrl()
+     * @see org.eclipse.team.svn.core.internal.ISVNResource#getUrl()
      */
     public SVNUrl getUrl() {
         return localResourceStatus.getUrl();
     }
 
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.subclipse.core.ISVNRemoteResource#getLastChangedRevision()
+	 * @see org.eclipse.team.svn.core.internal.ISVNRemoteResource#getLastChangedRevision()
 	 */
 	public SVNRevision.Number getLastChangedRevision() {
 		return localResourceStatus.getLastChangedRevision();
 	}
 
     /* (non-Javadoc)
-     * @see org.tigris.subversion.subclipse.core.ISVNRemoteResource#getRevision()
+     * @see org.eclipse.team.svn.core.internal.ISVNRemoteResource#getRevision()
      */
     public SVNRevision getRevision() {
         return SVNRevision.BASE;
     }
 
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.subclipse.core.ISVNRemoteResource#getDate()
+	 * @see org.eclipse.team.svn.core.internal.ISVNRemoteResource#getDate()
 	 */
 	public Date getDate() {
 		return localResourceStatus.getLastChangedDate();
 	}
 
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.subclipse.core.ISVNRemoteResource#getAuthor()
+	 * @see org.eclipse.team.svn.core.internal.ISVNRemoteResource#getAuthor()
 	 */
 	public String getAuthor() {
 		return localResourceStatus.getLastCommitAuthor();
@@ -181,14 +181,14 @@ public abstract class BaseResource extends PlatformObject implements ISVNRemoteR
     }    
     
     /* (non-Javadoc)
-     * @see org.tigris.subversion.subclipse.core.ISVNRemoteResource#getRepositoryRelativePath()
+     * @see org.eclipse.team.svn.core.internal.ISVNRemoteResource#getRepositoryRelativePath()
      */
     public String getRepositoryRelativePath() {
         return SVNUrlUtils.getRelativePath(getRepository().getUrl(), getUrl(), true);
     }    
 
     /* (non-Javadoc)
-     * @see org.tigris.subversion.subclipse.core.ISVNRemoteResource#getLogEntries(org.eclipse.core.runtime.IProgressMonitor)
+     * @see org.eclipse.team.svn.core.internal.ISVNRemoteResource#getLogEntries(org.eclipse.core.runtime.IProgressMonitor)
      */
     public ILogEntry[] getLogEntries(IProgressMonitor monitor) throws SVNException {
         GetLogsCommand command = new GetLogsCommand(this);
@@ -197,7 +197,7 @@ public abstract class BaseResource extends PlatformObject implements ISVNRemoteR
     }
     
     /* (non-Javadoc)
-     * @see org.tigris.subversion.subclipse.core.ISVNRemoteResource#getLogEntries(org.eclipse.core.runtime.IProgressMonitor, , SVNRevision revisionStart, SVNRevision revisionEnd, boolean stopOnCopy, long limit)
+     * @see org.eclipse.team.svn.core.internal.ISVNRemoteResource#getLogEntries(org.eclipse.core.runtime.IProgressMonitor, , SVNRevision revisionStart, SVNRevision revisionEnd, boolean stopOnCopy, long limit)
      */
     public ILogEntry[] getLogEntries(IProgressMonitor monitor, SVNRevision pegRevision, SVNRevision revisionStart, SVNRevision revisionEnd, boolean stopOnCopy, long limit, AliasManager tagManager) throws SVNException {
         GetLogsCommand command = new GetLogsCommand(this);
@@ -212,7 +212,7 @@ public abstract class BaseResource extends PlatformObject implements ISVNRemoteR
     }
 
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.subclipse.core.ISVNRemoteResource#exists(org.eclipse.core.runtime.IProgressMonitor)
+	 * @see org.eclipse.team.svn.core.internal.ISVNRemoteResource#exists(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public boolean exists(IProgressMonitor monitor) throws TeamException
 	{
@@ -220,7 +220,7 @@ public abstract class BaseResource extends PlatformObject implements ISVNRemoteR
 	}
 
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.subclipse.core.ISVNRemoteResource#getParent()
+	 * @see org.eclipse.team.svn.core.internal.ISVNRemoteResource#getParent()
 	 */
 	public ISVNRemoteFolder getParent() {
 		return null;
@@ -243,7 +243,7 @@ public abstract class BaseResource extends PlatformObject implements ISVNRemoteR
 	}
 
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.subclipse.core.ISVNResource#getResource()
+	 * @see org.eclipse.team.svn.core.internal.ISVNResource#getResource()
 	 */
 	public IResource getResource() {
 		try {

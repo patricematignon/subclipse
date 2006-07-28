@@ -308,7 +308,7 @@ public class JhlNotificationHandler extends SVNNotificationHandler implements No
     }
     
     /* (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.SVNNotificationHandler#logCompleted(java.lang.String)
+     * @see org.eclipse.subversion.client.SVNNotificationHandler#logCompleted(java.lang.String)
      */
     public void logCompleted(String message) {
         super.logCompleted(message);

@@ -30,7 +30,7 @@ public class SvnMultiArgCommandLine extends SvnCommandLine {
 
     /*
 	 * (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.commandline.CommandLine#notifyFromSvnOutput(java.lang.String)
+	 * @see org.eclipse.subversion.client.commandline.CommandLine#notifyFromSvnOutput(java.lang.String)
 	 */
 	protected void notifyFromSvnOutput(String svnOutput) {
 		// we call the super implementation : handles logMessage and logCompleted

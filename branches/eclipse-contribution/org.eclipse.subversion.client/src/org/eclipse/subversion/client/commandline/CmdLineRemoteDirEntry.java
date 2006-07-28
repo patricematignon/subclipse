@@ -161,7 +161,7 @@ class CmdLineRemoteDirEntry extends CmdLineXmlCommand implements ISVNDirEntry {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.subclipse.client.ISVNDirEntry#getHasProps()
+	 * @see org.eclipse.subversion.client.ISVNDirEntry#getHasProps()
 	 */
 	public boolean getHasProps() {
 		//TODO unhardcode this
@@ -169,35 +169,35 @@ class CmdLineRemoteDirEntry extends CmdLineXmlCommand implements ISVNDirEntry {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.subclipse.client.ISVNDirEntry#getNodeKind()
+	 * @see org.eclipse.subversion.client.ISVNDirEntry#getNodeKind()
 	 */
 	public SVNNodeKind getNodeKind() {
 		return nodeKind;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.subclipse.client.ISVNDirEntry#getLastChangedRevision()
+	 * @see org.eclipse.subversion.client.ISVNDirEntry#getLastChangedRevision()
 	 */
 	public SVNRevision.Number getLastChangedRevision() {
 		return revision;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.subclipse.client.ISVNDirEntry#getLastChangedDate()
+	 * @see org.eclipse.subversion.client.ISVNDirEntry#getLastChangedDate()
 	 */
 	public Date getLastChangedDate() {
 		return lastChangedDate;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.subclipse.client.ISVNDirEntry#getLastCommitAuthor()
+	 * @see org.eclipse.subversion.client.ISVNDirEntry#getLastCommitAuthor()
 	 */
 	public String getLastCommitAuthor() {
 		return lastCommitAuthor;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.subclipse.client.ISVNDirEntry#getPath()
+	 * @see org.eclipse.subversion.client.ISVNDirEntry#getPath()
 	 */
 	public String getPath() {
 		return path;

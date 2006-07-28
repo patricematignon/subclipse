@@ -44,7 +44,7 @@ public class SVNLogMessageChangePath implements ISVNLogMessageChangePath
     }
 
     /* (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNLogMessageChangePath#getPath()
+     * @see org.eclipse.subversion.client.ISVNLogMessageChangePath#getPath()
      */
     public String getPath()
     {
@@ -52,7 +52,7 @@ public class SVNLogMessageChangePath implements ISVNLogMessageChangePath
     }
 
     /* (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNLogMessageChangePath#getCopySrcRevision()
+     * @see org.eclipse.subversion.client.ISVNLogMessageChangePath#getCopySrcRevision()
      */
     public SVNRevision.Number getCopySrcRevision()
     {
@@ -60,7 +60,7 @@ public class SVNLogMessageChangePath implements ISVNLogMessageChangePath
     }
 
     /* (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNLogMessageChangePath#getCopySrcPath()
+     * @see org.eclipse.subversion.client.ISVNLogMessageChangePath#getCopySrcPath()
      */
     public String getCopySrcPath()
     {
@@ -68,7 +68,7 @@ public class SVNLogMessageChangePath implements ISVNLogMessageChangePath
     }
 
     /* (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNLogMessageChangePath#getAction()
+     * @see org.eclipse.subversion.client.ISVNLogMessageChangePath#getAction()
      */
     public char getAction()
     {

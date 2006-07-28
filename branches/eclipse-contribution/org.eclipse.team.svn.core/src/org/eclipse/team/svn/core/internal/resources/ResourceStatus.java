@@ -200,14 +200,14 @@ public class ResourceStatus implements Serializable {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.ISVNStatus#getNodeKind()
+	 * @see org.eclipse.subversion.client.ISVNStatus#getNodeKind()
 	 */
     public SVNNodeKind getNodeKind() {
         return SVNNodeKind.fromInt(nodeKind);
     }
 
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.ISVNStatus#getUrl()
+	 * @see org.eclipse.subversion.client.ISVNStatus#getUrl()
 	 */
     public SVNUrl getUrl() {
         if (url == null) {
@@ -227,7 +227,7 @@ public class ResourceStatus implements Serializable {
     }
 
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.ISVNStatus#getLastChangedRevision()
+	 * @see org.eclipse.subversion.client.ISVNStatus#getLastChangedRevision()
 	 */
     public Number getLastChangedRevision() {
         if (lastChangedRevision == SVNRevision.SVN_INVALID_REVNUM) {
@@ -238,7 +238,7 @@ public class ResourceStatus implements Serializable {
     }
 
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.ISVNStatus#getLastChangedDate()
+	 * @see org.eclipse.subversion.client.ISVNStatus#getLastChangedDate()
 	 */
     public Date getLastChangedDate() {
         if (lastChangedDate == -1) {
@@ -249,7 +249,7 @@ public class ResourceStatus implements Serializable {
     }
 
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.ISVNStatus#getLastCommitAuthor()
+	 * @see org.eclipse.subversion.client.ISVNStatus#getLastCommitAuthor()
 	 */
     public String getLastCommitAuthor() {
         return lastCommitAuthor;

@@ -29,15 +29,15 @@ public class Policy {
 	/** The initial guess for number of resources(pm ticks) the infinite subPm should start with in case of update/switch */
 	public static final int INFINITE_PM_GUESS_FOR_SWITCH = 100;
 	
-    private static final String BUNDLE_NAME = "org.tigris.subversion.subclipse.core.messages"; //$NON-NLS-1$
+    private static final String BUNDLE_NAME = "org.eclipse.team.svn.messages"; //$NON-NLS-1$
 	protected static ResourceBundle bundle = null;
 	
 	//debug constants
 	// You can enable debugging in the .options file :
-	//   org.tigris.subversion.subclipse.core/debug=true
-	//   org.tigris.subversion.subclipse.core/metafiles=true
-    //   org.tigris.subversion.subclipse.core/threading=true
-	//   org.tigris.subversion.subclipse.core/status=true
+	//   org.eclipse.team.svn.core/debug=true
+	//   org.eclipse.team.svn.core/metafiles=true
+    //   org.eclipse.team.svn.core/threading=true
+	//   org.eclipse.team.svn.core/status=true
     // You can also enable tracing in the PDE target run-time tab 
 	public static boolean DEBUG_METAFILE_CHANGES = false; 
 	public static boolean DEBUG_THREADING = false; // used in ReetrantLock

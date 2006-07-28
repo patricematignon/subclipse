@@ -1612,7 +1612,7 @@ public class SVNHistoryPage extends HistoryPage implements IResourceStateChangeL
   }
 
   /* (non-Javadoc)
-   * @see org.tigris.subversion.subclipse.core.IResourceStateChangeListener#resourceSyncInfoChanged(org.eclipse.core.resources.IResource[])
+   * @see org.eclipse.team.svn.core.internal.IResourceStateChangeListener#resourceSyncInfoChanged(org.eclipse.core.resources.IResource[])
    */
   public void resourceSyncInfoChanged(IResource[] changedResources) {
       for (int i = 0; i < changedResources.length; i++) {
@@ -1647,19 +1647,19 @@ public class SVNHistoryPage extends HistoryPage implements IResourceStateChangeL
   }
 
   /* (non-Javadoc)
-   * @see org.tigris.subversion.subclipse.core.IResourceStateChangeListener#resourceModified(org.eclipse.core.resources.IResource[])
+   * @see org.eclipse.team.svn.core.internal.IResourceStateChangeListener#resourceModified(org.eclipse.core.resources.IResource[])
    */
   public void resourceModified(IResource[] changedResources) {
   }
 
   /* (non-Javadoc)
-   * @see org.tigris.subversion.subclipse.core.IResourceStateChangeListener#projectConfigured(org.eclipse.core.resources.IProject)
+   * @see org.eclipse.team.svn.core.internal.IResourceStateChangeListener#projectConfigured(org.eclipse.core.resources.IProject)
    */
   public void projectConfigured(IProject project) {
   }
 
   /* (non-Javadoc)
-   * @see org.tigris.subversion.subclipse.core.IResourceStateChangeListener#projectDeconfigured(org.eclipse.core.resources.IProject)
+   * @see org.eclipse.team.svn.core.internal.IResourceStateChangeListener#projectDeconfigured(org.eclipse.core.resources.IProject)
    */
   public void projectDeconfigured(IProject project) {
   }

@@ -36,7 +36,7 @@ public class SynchronizerSyncInfoCache implements IStatusCache {
 	protected SyncInfoSynchronizedAccessor accessor = new SyncInfoSynchronizedAccessor();
 
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.subclipse.core.status.IStatusCache#getStatus(org.eclipse.core.resources.IResource)
+	 * @see org.eclipse.team.svn.core.internal.status.IStatusCache#getStatus(org.eclipse.core.resources.IResource)
 	 */
 	public LocalResourceStatus getStatus(IResource resource){
 		try {
@@ -48,7 +48,7 @@ public class SynchronizerSyncInfoCache implements IStatusCache {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.subclipse.core.status.IStatusCache#addStatus(org.tigris.subversion.subclipse.core.resources.LocalResourceStatus)
+	 * @see org.eclipse.team.svn.core.internal.status.IStatusCache#addStatus(org.eclipse.team.svn.core.internal.resources.LocalResourceStatus)
 	 */
 	public IResource addStatus(LocalResourceStatus status) {
 		try {
@@ -68,7 +68,7 @@ public class SynchronizerSyncInfoCache implements IStatusCache {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.subclipse.core.status.IStatusCache#removeStatus(org.eclipse.core.resources.IResource)
+	 * @see org.eclipse.team.svn.core.internal.status.IStatusCache#removeStatus(org.eclipse.core.resources.IResource)
 	 */
 	public IResource removeStatus(IResource resource)
 	{
@@ -147,7 +147,7 @@ public class SynchronizerSyncInfoCache implements IStatusCache {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.subclipse.core.status.IStatusCache#purgeCache(org.eclipse.core.resources.IContainer, boolean)
+	 * @see org.eclipse.team.svn.core.internal.status.IStatusCache#purgeCache(org.eclipse.core.resources.IContainer, boolean)
 	 */
 	public void purgeCache(IContainer root, boolean deep) throws SVNException {
 		int depth = deep ? IResource.DEPTH_INFINITE : IResource.DEPTH_ZERO;
@@ -170,7 +170,7 @@ public class SynchronizerSyncInfoCache implements IStatusCache {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.subclipse.core.status.IStatusCache#flushPendingStatuses()
+	 * @see org.eclipse.team.svn.core.internal.status.IStatusCache#flushPendingStatuses()
 	 */
 	public void flushPendingStatuses()
 	{
