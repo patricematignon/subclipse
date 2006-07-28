@@ -51,10 +51,12 @@ public class JhlClientAdapterFactory extends SVNClientAdapterFactory {
      * @throws SVNClientException
      */
     public static void setup() throws SVNClientException {
-        if (!JhlClientAdapter.isAvailable()) {
+    	JhlClientAdapter adapter = new JhlClientAdapter();
+        if (!adapter.isAvailable()) {
+        	adapter = null;
         	throw new SVNClientException("Javahl client adapter is not available");
         }
-        
+        adapter = null;
     	SVNClientAdapterFactory.registerAdapterFactory(new JhlClientAdapterFactory());
     }
   

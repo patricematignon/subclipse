@@ -11,22 +11,22 @@
 package org.eclipse.team.svn.ui.internal.preferences;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
 
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
-import org.eclipse.subversion.client.SVNClientAdapterFactory;
-import org.eclipse.subversion.client.commandline.CmdLineClientAdapterFactory;
-import org.eclipse.subversion.client.javahl.JhlClientAdapter;
-import org.eclipse.subversion.client.javahl.JhlClientAdapterFactory;
-import org.eclipse.subversion.client.javasvn.JavaSvnClientAdapterFactory;
+import org.eclipse.subversion.client.ISVNClientAdapter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.DirectoryDialog;
@@ -35,6 +35,8 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.team.internal.ui.SWTUtils;
+import org.eclipse.team.svn.core.internal.SVNException;
 import org.eclipse.team.svn.core.internal.SVNProviderPlugin;
 import org.eclipse.team.svn.ui.internal.IHelpContextIds;
 import org.eclipse.team.svn.ui.internal.ISVNUIConstants;
@@ -52,8 +54,6 @@ import org.eclipse.ui.PlatformUI;
  */
 public class SVNPreferencesPage extends PreferencePage implements IWorkbenchPreferencePage {
 
-    private Button javahlRadio;
-    private Button javaSvnRadio;
     private Button showCompareRevisionInDialog;
     private Button fetchChangePathOnDemand;
     private Button showTagsInRemoteHistory;
@@ -65,15 +65,33 @@ public class SVNPreferencesPage extends PreferencePage implements IWorkbenchPref
     private Text directoryLocationText;
     private Button browseConfigDirButton;
     
-    private boolean javahlErrorShown = false;
 	private Button quickDiffAnnotateYes;
 	private Button quickDiffAnnotateNo;
 	private Button quickDiffAnnotatePrompt;
+	protected final ArrayList fFields;
+	private String [] CLIENT_VALUES;
+	private String [] CLIENT_LABELS;
 
 	public SVNPreferencesPage() {
+		fFields = new ArrayList();
 		// sort the options by display text
 		setDescription(Policy.bind("SVNPreferencePage.description")); //$NON-NLS-1$
-		SVNProviderPlugin.getPlugin().getSVNClientManager().loadAdapters();
+		ISVNClientAdapter[] clients = null;
+		try {
+			clients = SVNProviderPlugin.getPlugin().getSVNClientManager().getSVNClientAdapters();
+		} catch (SVNException e) {
+		}
+		if (clients != null) {
+			CLIENT_LABELS = new String[clients.length];
+			CLIENT_VALUES = new String[clients.length];
+			for (int i = 0; i < clients.length; i++) {
+				CLIENT_LABELS[i] = clients[i].getDisplayName();
+				CLIENT_VALUES[i] = clients[i].getAdapterName();
+			}
+		} else {
+			CLIENT_LABELS = new String[0];
+			CLIENT_VALUES = new String[0];
+		}
 	}
 
 	/**
@@ -164,22 +182,20 @@ public class SVNPreferencesPage extends PreferencePage implements IWorkbenchPref
 		createLabel(composite, "", 2); //$NON-NLS-1$
 		
 		// group javahl/command line
-		group = new Group(composite, SWT.NULL);
-		group.setText(Policy.bind("SVNPreferencePage.svnClientInterface")); //$NON-NLS-1$
-		gridData = new GridData(GridData.FILL_HORIZONTAL);
-		gridData.horizontalSpan = 2;
-		group.setLayoutData(gridData);
-		layout = new GridLayout();
-		group.setLayout(layout); 	
-		javahlRadio = createRadio(group, Policy.bind("SVNPreferencePage.svnjavahl"),1); //$NON-NLS-1$
-		javaSvnRadio = createRadio(group, Policy.bind("SVNPreferencePage.javasvn"),1); //$NON-NLS-1$
-        Listener checkInterfaceListener = new Listener() {
-            public void handleEvent(Event event) {
-                verifyValidation();
-            }
-        };
-        javahlRadio.addListener(SWT.Selection,checkInterfaceListener);
-        javaSvnRadio.addListener(SWT.Selection,checkInterfaceListener);
+        group = new Group(composite, SWT.NULL);
+        group.setText(Policy.bind("SVNPreferencePage.svnClientInterface")); //$NON-NLS-1$
+        gridData = new GridData(GridData.FILL_HORIZONTAL);
+        gridData.horizontalSpan = 2;
+        group.setLayoutData(gridData);
+        layout = new GridLayout();
+        layout.numColumns = 2;
+        group.setLayout(layout); 
+		new StringComboBox(
+				group, 
+				ISVNUIConstants.PREF_SVNINTERFACE, 
+				Policy.bind("SVNPreferencePage.client"),  
+				"", 
+				CLIENT_LABELS, CLIENT_VALUES);
 		
         createLabel(composite, "", 2); //$NON-NLS-1$
         
@@ -238,8 +254,11 @@ public class SVNPreferencesPage extends PreferencePage implements IWorkbenchPref
 	 * Initializes states of the controls from the preference store.
 	 */
 	private void initializeValues() {
-		IPreferenceStore store = getPreferenceStore();
-		
+		final IPreferenceStore store = getPreferenceStore();
+		for (Iterator iter = fFields.iterator(); iter.hasNext();) {
+			((Field)iter.next()).initializeValue(store);
+		}
+	
 		showCompareRevisionInDialog.setSelection(store.getBoolean(ISVNUIConstants.PREF_SHOW_COMPARE_REVISION_IN_DIALOG));
 		
 		fetchChangePathOnDemand.setSelection(store.getBoolean(ISVNUIConstants.PREF_FETCH_CHANGE_PATH_ON_DEMAND));
@@ -257,12 +276,6 @@ public class SVNPreferencesPage extends PreferencePage implements IWorkbenchPref
 		quickDiffAnnotateNo.setSelection(MessageDialogWithToggle.NEVER.equals(store.getString(ISVNUIConstants.PREF_USE_QUICKDIFFANNOTATE)));
 		quickDiffAnnotatePrompt.setSelection(MessageDialogWithToggle.PROMPT.equals(store.getString(ISVNUIConstants.PREF_USE_QUICKDIFFANNOTATE)));
 		
-		String clientInterface = store.getString(ISVNUIConstants.PREF_SVNINTERFACE);
-		if (CmdLineClientAdapterFactory.COMMANDLINE_CLIENT.equals(clientInterface))
-		    clientInterface = JavaSvnClientAdapterFactory.JAVASVN_CLIENT;
-        javahlRadio.setSelection(clientInterface.equals(JhlClientAdapterFactory.JAVAHL_CLIENT));
-        javaSvnRadio.setSelection(clientInterface.equals(JavaSvnClientAdapterFactory.JAVASVN_CLIENT));
-        
         String configLocation = store.getString(ISVNUIConstants.PREF_SVNCONFIGDIR); 
         directoryLocationText.setText(configLocation);
         if (configLocation.equals("")) { //$NON-NLS-1$
@@ -289,7 +302,10 @@ public class SVNPreferencesPage extends PreferencePage implements IWorkbenchPref
 	 * @return whether it is okay to close the preference page
 	 */
 	public boolean performOk() {
-		IPreferenceStore store = getPreferenceStore();
+		final IPreferenceStore store = getPreferenceStore();
+		for (Iterator iter = fFields.iterator(); iter.hasNext();) {
+			((Field) iter.next()).performOk(store);
+		}
 
         // save show compare revision in dialog pref
 		store.setValue(ISVNUIConstants.PREF_SHOW_COMPARE_REVISION_IN_DIALOG, showCompareRevisionInDialog.getSelection());
@@ -331,12 +347,6 @@ public class SVNPreferencesPage extends PreferencePage implements IWorkbenchPref
 //			}
 //		}
 		
-        // save svn interface pref
-        if (javahlRadio.getSelection() ){
-            store.setValue(ISVNUIConstants.PREF_SVNINTERFACE, JhlClientAdapterFactory.JAVAHL_CLIENT);
-        }else{
-            store.setValue(ISVNUIConstants.PREF_SVNINTERFACE, JavaSvnClientAdapterFactory.JAVASVN_CLIENT);
-        }
         
         // save config location pref
         if (defaultConfigLocationRadio.getSelection()) {
@@ -387,25 +397,78 @@ public class SVNPreferencesPage extends PreferencePage implements IWorkbenchPref
             }
         }
         
-        if (javahlRadio.getSelection()) {
-			if (!SVNClientAdapterFactory.isSVNClientAvailable(JhlClientAdapterFactory.JAVAHL_CLIENT)) {
-				setErrorMessage(Policy.bind("SVNPreferencePage.javahlNotAvailable")); //$NON-NLS-1$
-				if (!javahlErrorShown) {
-				    javahlErrorShown = true;
-					MessageDialog.openError(
-							getShell(),
-							"Error Loading JavaHL Library",
-							JhlClientAdapter.getLibraryLoadErrors());
-				}
-			}
+	
+		setValid(getErrorMessage() == null);
+	}
+	
+	private abstract class Field {
+		protected final String fKey;
+		public Field(String key) { fFields.add(this); fKey= key; }
+		public abstract void initializeValue(IPreferenceStore store);
+		public abstract void performOk(IPreferenceStore store);
+		public void performDefaults(IPreferenceStore store) {
+			store.setToDefault(fKey);
+			initializeValue(store);
 		}
-        if (javaSvnRadio.getSelection()) {
-			if (!SVNClientAdapterFactory.isSVNClientAvailable(JavaSvnClientAdapterFactory.JAVASVN_CLIENT)) {
-				setErrorMessage(Policy.bind("SVNPreferencePage.javaSvnNotAvailable")); //$NON-NLS-1$
+	}
+	
+	private abstract class ComboBox extends Field {
+		protected final Combo fCombo;
+		private final String [] fLabels;
+		private final List fValues;
+		
+		public ComboBox(Composite composite, String key, String text, String helpID, String [] labels, Object [] values) {
+			super(key);
+			fLabels= labels;
+			fValues= Arrays.asList(values);
+			
+			final Label label= SWTUtils.createLabel(composite, text);
+			fCombo= new Combo(composite, SWT.READ_ONLY);
+			fCombo.setLayoutData(SWTUtils.createHFillGridData());
+			fCombo.setItems(labels);
+			
+			if (((GridLayout)composite.getLayout()).numColumns > 1) {
+				label.setLayoutData(SWTUtils.createGridData(SWT.DEFAULT, SWT.DEFAULT, false, false));
 			}
+			
+			if (helpID != null)
+				PlatformUI.getWorkbench().getHelpSystem().setHelp(fCombo, helpID);
 		}
 		
-		setValid(getErrorMessage() == null);
+		public Combo getCombo() {
+			return fCombo;
+		}
+		
+		public void initializeValue(IPreferenceStore store) {
+			final Object value= getValue(store, fKey);
+			final int index= fValues.indexOf(value); 
+			if (index >= 0 && index < fLabels.length)
+				fCombo.select(index);
+			else 
+				fCombo.select(0);
+		}
+		
+		public void performOk(IPreferenceStore store) {
+			saveValue(store, fKey, fValues.get(fCombo.getSelectionIndex()));
+		}
+		
+		protected abstract void saveValue(IPreferenceStore store, String key, Object object);
+		protected abstract Object getValue(IPreferenceStore store, String key);
+	}
+	
+	private class StringComboBox extends ComboBox {
+		
+		public StringComboBox(Composite composite, String key, String label, String helpID, String [] labels, String [] values) {
+			super(composite, key, label, helpID, labels, values);
+		}
+
+		protected Object getValue(IPreferenceStore store, String key) {
+			return store.getString(key);
+		}
+		
+		protected void saveValue(IPreferenceStore store, String key, Object object) {
+			store.setValue(key, (String)object);
+		}
 	}
     
 }

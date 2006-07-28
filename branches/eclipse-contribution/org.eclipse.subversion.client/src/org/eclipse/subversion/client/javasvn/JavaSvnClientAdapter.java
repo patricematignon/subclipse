@@ -32,8 +32,33 @@ import org.tmatesoft.svn.core.javahl.SVNClientImpl;
  *
  */
 public class JavaSvnClientAdapter extends AbstractJhlClientAdapter {
+    private String name;
+    
+    public String getAdapterName() {
+    	return "javasvn";
+    }
 
-    protected JavaSvnClientAdapter() {
+	public String getDisplayName() {
+		return name;
+	}
+
+	public String getLibraryLoadErrors() {
+		return null;
+	}
+
+	public String getVersionString() {
+		return "1.1.0 Beta4";
+	}
+
+	public boolean isAvailable() {
+		return true;
+	}
+
+	public void setDisplayName(String name) {
+		this.name = name;
+	}
+
+    public JavaSvnClientAdapter() {
         svnClient = SVNClientImpl.newInstance();
         notificationHandler = new JhlNotificationHandler();
         svnClient.notification2(notificationHandler);        

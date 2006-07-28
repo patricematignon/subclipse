@@ -41,7 +41,7 @@ public class CmdLineClientAdapter12 extends CmdLineClientAdapter {
 				new SvnAdminCommandLine("svnadmin", notificationHandler));
     }
 
-	public static boolean isAvailable() {
+	public boolean isAvailable() {
 		// availabilityCached flag must be reset if location of client changes
 		if (!availabilityCached) {
 			// this will need to be fixed when path to svn will be customizable

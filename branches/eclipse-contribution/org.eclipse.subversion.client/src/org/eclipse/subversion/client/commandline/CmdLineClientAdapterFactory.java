@@ -57,12 +57,14 @@ public class CmdLineClientAdapterFactory extends SVNClientAdapterFactory {
      * @throws SVNClientException
      */
     public static void setup() throws SVNClientException {
-        if (!CmdLineClientAdapter12.isAvailable()) {
-            throw new SVNClientException("Command line client adapter is not available");
-        }
-        
-        is13ClientAvailable = CmdLineClientAdapter.isAvailable();
-        
+    	CmdLineClientAdapter adapter = new CmdLineClientAdapter12(new CmdLineNotificationHandler());
+        if (!adapter.isAvailable()) {
+           adapter = null;
+           throw new SVNClientException("Command line client adapter is not available");
+         }
+        adapter = new CmdLineClientAdapter(new CmdLineNotificationHandler());
+        is13ClientAvailable = adapter.isAvailable();
+        adapter = null;
         SVNClientAdapterFactory.registerAdapterFactory(new CmdLineClientAdapterFactory());
     }
 

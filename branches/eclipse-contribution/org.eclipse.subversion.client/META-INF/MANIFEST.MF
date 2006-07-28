@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Subversion Client Adapter
-Bundle-SymbolicName: org.eclipse.subversion.client
+Bundle-SymbolicName: org.eclipse.subversion.client;singleton:=true
 Bundle-Version: 1.3.0.qualifier
 Bundle-Activator: org.eclipse.subversion.client.plugin.SVNClientPlugin
 Bundle-Vendor: Eclipse.org

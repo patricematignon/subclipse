@@ -17,9 +17,6 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.subversion.client.commandline.CmdLineClientAdapterFactory;
-import org.eclipse.subversion.client.javahl.JhlClientAdapterFactory;
-import org.eclipse.subversion.client.javasvn.JavaSvnClientAdapterFactory;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.team.svn.core.internal.SVNClientManager;
 import org.eclipse.team.svn.core.internal.SVNProviderPlugin;
@@ -77,7 +74,6 @@ private IPreferenceStore store;
         store.setDefault(ISVNUIConstants.PREF_SELECT_UNADDED_RESOURCES_ON_COMMIT, false);
         store.setDefault(ISVNUIConstants.PREF_COMMIT_SET_DEFAULT_ENABLEMENT, false);
         
-        store.setDefault(ISVNUIConstants.PREF_SVNINTERFACE, JhlClientAdapterFactory.JAVAHL_CLIENT);
         store.setDefault(ISVNUIConstants.PREF_SVNCONFIGDIR, ""); //$NON-NLS-1$
         
         store.setDefault(ISVNUIConstants.PREF_FETCH_CHANGE_PATH_ON_DEMAND, false);
@@ -101,8 +97,6 @@ private IPreferenceStore store;
      * @param clientInterface
      */
     private void setSvnClientInterface(String clientInterface) {
-        if (CmdLineClientAdapterFactory.COMMANDLINE_CLIENT.equals(clientInterface))
-            clientInterface = JavaSvnClientAdapterFactory.JAVASVN_CLIENT;
         SVNProviderPlugin.getPlugin().getSVNClientManager().setSvnClientInterface(clientInterface);
     }
 

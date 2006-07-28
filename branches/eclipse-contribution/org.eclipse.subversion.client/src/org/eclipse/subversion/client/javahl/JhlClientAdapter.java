@@ -34,6 +34,19 @@ public class JhlClientAdapter extends AbstractJhlClientAdapter {
     private static boolean availabilityCached = false;
     private static boolean available;
 	private static StringBuffer javaHLErrors = new StringBuffer("Failed to load JavaHL Library.\nThese are the errors that were encountered:\n");
+	private String name;
+	
+    public String getAdapterName() {
+    	return "javahl";
+	}
+
+    public String getDisplayName() {
+		return name;
+	}
+
+	public void setDisplayName(String name) {
+		this.name = name;
+	}
 
 	/**
 	 * Default constructor
@@ -50,7 +63,7 @@ public class JhlClientAdapter extends AbstractJhlClientAdapter {
      * tells if JhlClientAdapter is usable
      * @return true if Jhl client adapter is available
      */
-    public static boolean isAvailable() {
+    public boolean isAvailable() {
     	if (!availabilityCached) {
 	            // if library is already loaded, it will not be reloaded
 	
@@ -192,7 +205,7 @@ public class JhlClientAdapter extends AbstractJhlClientAdapter {
     /**
      * @return an error string describing problems during loading platform native libraries (if any)
      */
-    public static String getLibraryLoadErrors() {
+    public String getLibraryLoadErrors() {
         if (isAvailable())
             return "";
         else

@@ -61,8 +61,41 @@ public class CmdLineClientAdapter extends AbstractClientAdapter {
     private static boolean availabilityCached = false;
     private static boolean available;
     private static String dirName;
+    private String name;
 
-    public CmdLineClientAdapter(CmdLineNotificationHandler notificationHandler)
+    public String getAdapterName() {
+		return "cmdline";
+	}
+
+	public String getDisplayName() {
+		return name;
+	}
+	
+	public String getVersionString() {
+		try {
+			return getVersion();
+		} catch (SVNClientException e) {
+			return "unknown";
+		}
+	}
+
+	public String getLibraryLoadErrors() {
+		return null;
+	}
+
+	public void setDisplayName(String name) {
+		this.name = name;
+	}
+
+	public CmdLineClientAdapter()
+    {
+		this.notificationHandler = new CmdLineNotificationHandler();
+		this._cmd = new SvnCommandLine("svn", notificationHandler);
+		this._cmdMulti = new SvnMultiArgCommandLine("svn", notificationHandler);
+		this.svnAdminCmd = new SvnAdminCommandLine("svnadmin", notificationHandler);
+    }
+
+	public CmdLineClientAdapter(CmdLineNotificationHandler notificationHandler)
     {
     	this(notificationHandler,
 				new SvnCommandLine("svn", notificationHandler),
@@ -79,7 +112,7 @@ public class CmdLineClientAdapter extends AbstractClientAdapter {
 	}
     
 	//Methods
-	public static boolean isAvailable() {
+	public boolean isAvailable() {
 		// availabilityCached flag must be reset if location of client changes
 		if (!availabilityCached) {
 			// this will need to be fixed when path to svn will be customizable

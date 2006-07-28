@@ -26,6 +26,13 @@ public interface ISVNClientAdapter {
 	/** constant identifying the "fsfs"  repository type */
     public final static String REPOSITORY_FSTYPE_FSFS = "fsfs";
 	
+    public abstract String getAdapterName();
+    public abstract void setDisplayName(String name);
+    public abstract String getDisplayName();
+    public abstract String getVersionString();
+    public abstract boolean isAvailable();
+    public abstract String getLibraryLoadErrors();
+    
 	/**
 	 * Add a notification listener
 	 * @param listener
