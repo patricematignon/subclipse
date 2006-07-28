@@ -1,15 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.2"?>
 <plugin>
-   <extension-point id="adapter" name="SVN Client Adapter" schema="schema/adapter.exsd"/>
 
-   <extension
-         point="org.eclipse.subversion.client.adapter">
-      <svnclient
-            class="org.eclipse.subversion.client.javahl.JhlClientAdapter"
-            id="org.eclipse.subversion.client.javahl.adapter"
-            name="JavaHL (JNI)"/>
-   </extension>
    
    <extension
          point="org.eclipse.subversion.client.adapter">
@@ -19,12 +11,5 @@
             name="JavaSVN"/>
    </extension>
    
-   <extension
-         point="org.eclipse.subversion.client.adapter">
-      <svnclient
-            class="org.eclipse.subversion.client.commandline.CmdLineClientAdapter"
-            id="org.eclipse.subversion.client.commandline.adapter"
-            name="SVN Command Line"/>
-   </extension>
 
 </plugin>

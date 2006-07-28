@@ -17,8 +17,6 @@ import org.eclipse.subversion.client.ISVNPromptUserPassword;
 import org.eclipse.subversion.client.ISVNStatus;
 import org.eclipse.subversion.client.SVNClientException;
 import org.eclipse.subversion.client.SVNStatusUnversioned;
-import org.eclipse.subversion.client.javahl.AbstractJhlClientAdapter;
-import org.eclipse.subversion.client.javahl.JhlNotificationHandler;
 import org.tigris.subversion.javahl.ClientException;
 import org.tmatesoft.svn.core.SVNException;
 import org.tmatesoft.svn.core.io.SVNRepositoryFactory;
