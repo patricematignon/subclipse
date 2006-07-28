@@ -29,7 +29,7 @@ public class Policy {
 	/** The initial guess for number of resources(pm ticks) the infinite subPm should start with in case of update/switch */
 	public static final int INFINITE_PM_GUESS_FOR_SWITCH = 100;
 	
-    private static final String BUNDLE_NAME = "org.eclipse.team.svn.messages"; //$NON-NLS-1$
+    private static final String BUNDLE_NAME = "org.eclipse.team.svn.core.internal.messages"; //$NON-NLS-1$
 	protected static ResourceBundle bundle = null;
 	
 	//debug constants

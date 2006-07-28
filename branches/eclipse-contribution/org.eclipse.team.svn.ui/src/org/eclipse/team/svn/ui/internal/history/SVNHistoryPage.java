@@ -888,7 +888,7 @@ public class SVNHistoryPage extends HistoryPage implements IResourceStateChangeL
   private IAction getShowDifferencesAsUnifiedDiffAction() {
     if(showDifferencesAsUnifiedDiffAction == null) {
       showDifferencesAsUnifiedDiffAction = new Action(
-          Policy.bind("HistoryView.showDifferences"), SVNUIPlugin.getPlugin().getImageDescriptor(ISVNUIConstants.IMG_DIFF)) { //$NON-NLS-1$
+          Policy.bind("HistoryView.showDifferences")) { //$NON-NLS-1$
         public void run() {
           ISelection selection = getSelection();
           if( !(selection instanceof IStructuredSelection))
@@ -968,7 +968,7 @@ public class SVNHistoryPage extends HistoryPage implements IResourceStateChangeL
   private IAction getCreateTagFromRevisionAction() {
     if(createTagFromRevisionAction == null) {
       createTagFromRevisionAction = new Action(
-          Policy.bind("HistoryView.createTagFromRevision"), SVNUIPlugin.getPlugin().getImageDescriptor(ISVNUIConstants.IMG_TAG)) { //$NON-NLS-1$
+          Policy.bind("HistoryView.createTagFromRevision")) { //$NON-NLS-1$
         public void run() {
           ISelection selection = getSelection();
           if( !(selection instanceof IStructuredSelection))
@@ -1161,7 +1161,6 @@ public class SVNHistoryPage extends HistoryPage implements IResourceStateChangeL
             + lastElement.getRevision().getNumber(), "" + firstElement.getRevision().getNumber()));
       }
     }
-    revertChangesAction.setImageDescriptor(SVNUIPlugin.getPlugin().getImageDescriptor(ISVNUIConstants.IMG_MERGE));
     return revertChangesAction;
   }
 

@@ -30,6 +30,11 @@ import org.eclipse.team.core.TeamException;
  */
 public class SVNException extends TeamException {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	/*
 	 * Helpers for creating SVN exceptions
 	 */

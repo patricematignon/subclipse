@@ -98,28 +98,58 @@ public class SVNSynchronizeParticipant extends ScopableSubscriberParticipant imp
 		 */
 		public void initialize(ISynchronizePageConfiguration configuration) {
 			super.initialize(configuration);
-			CommitSynchronizeAction commitAction = new CommitSynchronizeAction(Policy.bind("SyncAction.commit"), configuration); //$NON-NLS-1$
-			commitAction.setId("org.eclipse.team.svn.ui.internal.syncViewCommit");
-			commitAction.setActionDefinitionId("org.eclipse.team.svn.ui.internal.commit");
-			commitAction.setImageDescriptor(SVNUIPlugin.getPlugin().getImageDescriptor(ISVNUIConstants.IMG_COMMIT));
-			appendToGroup(
-					ISynchronizePageConfiguration.P_CONTEXT_MENU, 
-					CONTEXT_MENU_CONTRIBUTION_GROUP_1,
-					commitAction);
 			UpdateSynchronizeAction updateAction = new UpdateSynchronizeAction(Policy.bind("SyncAction.update"), configuration); //$NON-NLS-1$
 			updateAction.setId("org.eclipse.team.svn.ui.internal.syncViewUpdate");
-			updateAction.setActionDefinitionId("org.eclipse.team.svn.ui.internal.update");
-			updateAction.setImageDescriptor(SVNUIPlugin.getPlugin().getImageDescriptor(ISVNUIConstants.IMG_UPDATE));
+			updateAction.setActionDefinitionId("org.eclipse.team.svn.ui.update");
 			appendToGroup(
 					ISynchronizePageConfiguration.P_CONTEXT_MENU, 
 					CONTEXT_MENU_CONTRIBUTION_GROUP_1,
 					updateAction);
+			CommitSynchronizeAction commitAction = new CommitSynchronizeAction(Policy.bind("SyncAction.commit"), configuration); //$NON-NLS-1$
+			commitAction.setId("org.eclipse.team.svn.ui.internal.syncViewCommit");
+			commitAction.setActionDefinitionId("org.eclipse.team.svn.ui.commit");
+			appendToGroup(
+					ISynchronizePageConfiguration.P_CONTEXT_MENU, 
+					CONTEXT_MENU_CONTRIBUTION_GROUP_1,
+					commitAction);
+
 			appendToGroup(
 					ISynchronizePageConfiguration.P_CONTEXT_MENU, 
 					CONTEXT_MENU_CONTRIBUTION_GROUP_1,
 					new Separator());
+			
+			OverrideAndUpdateSynchronizeAction overrideAction = new OverrideAndUpdateSynchronizeAction(Policy.bind("SyncAction.override"), configuration); //$NON-NLS-1$
+			appendToGroup(
+					ISynchronizePageConfiguration.P_CONTEXT_MENU, 
+					CONTEXT_MENU_CONTRIBUTION_GROUP_1,
+					overrideAction);						
+			MarkMergedSynchronizeAction markMergedAction = new MarkMergedSynchronizeAction(Policy.bind("SyncAction.markMerged"), configuration); //$NON-NLS-1$
+			appendToGroup(
+					ISynchronizePageConfiguration.P_CONTEXT_MENU, 
+					CONTEXT_MENU_CONTRIBUTION_GROUP_1,
+					markMergedAction);	
+
+			appendToGroup(
+					ISynchronizePageConfiguration.P_CONTEXT_MENU, 
+					CONTEXT_MENU_CONTRIBUTION_GROUP_1,
+					new Separator());
+			
+			AddSynchronizeAction addAction = new AddSynchronizeAction(Policy.bind("SyncAction.add"), configuration); //$NON-NLS-1$
+			appendToGroup(
+					ISynchronizePageConfiguration.P_CONTEXT_MENU, 
+					CONTEXT_MENU_CONTRIBUTION_GROUP_1,
+					addAction);				
+			IgnoreSynchronizeAction ignoreAction = new IgnoreSynchronizeAction(Policy.bind("SyncAction.ignore"), configuration); //$NON-NLS-1$
+			appendToGroup(
+					ISynchronizePageConfiguration.P_CONTEXT_MENU, 
+					CONTEXT_MENU_CONTRIBUTION_GROUP_1,
+					ignoreAction);	
+			RevertSynchronizeAction revertAction = new RevertSynchronizeAction(Policy.bind("SyncAction.revert"), configuration); //$NON-NLS-1$
+			appendToGroup(
+					ISynchronizePageConfiguration.P_CONTEXT_MENU, 
+					CONTEXT_MENU_CONTRIBUTION_GROUP_1,
+					revertAction);
 			ShowHistorySynchronizeAction historyAction = new ShowHistorySynchronizeAction(Policy.bind("SyncAction.history"), configuration); //$NON-NLS-1$
-			historyAction.setImageDescriptor(SVNUIPlugin.getPlugin().getImageDescriptor(ISVNUIConstants.IMG_LOG));			
 			appendToGroup(
 					ISynchronizePageConfiguration.P_CONTEXT_MENU, 
 					CONTEXT_MENU_CONTRIBUTION_GROUP_1,
@@ -130,55 +160,16 @@ public class SVNSynchronizeParticipant extends ScopableSubscriberParticipant imp
 					ISynchronizePageConfiguration.P_CONTEXT_MENU, 
 					CONTEXT_MENU_CONTRIBUTION_GROUP_1,
 					propertiesAction);				
-			appendToGroup(
-					ISynchronizePageConfiguration.P_CONTEXT_MENU, 
-					CONTEXT_MENU_CONTRIBUTION_GROUP_1,
-					new Separator());	
-			AddSynchronizeAction addAction = new AddSynchronizeAction(Policy.bind("SyncAction.add"), configuration); //$NON-NLS-1$
-			addAction.setImageDescriptor(SVNUIPlugin.getPlugin().getImageDescriptor(ISVNUIConstants.IMG_ADD));
-			appendToGroup(
-					ISynchronizePageConfiguration.P_CONTEXT_MENU, 
-					CONTEXT_MENU_CONTRIBUTION_GROUP_1,
-					addAction);				
-			IgnoreSynchronizeAction ignoreAction = new IgnoreSynchronizeAction(Policy.bind("SyncAction.ignore"), configuration); //$NON-NLS-1$
-			ignoreAction.setImageDescriptor(SVNUIPlugin.getPlugin().getImageDescriptor(ISVNUIConstants.IMG_IGNORE));			
-			appendToGroup(
-					ISynchronizePageConfiguration.P_CONTEXT_MENU, 
-					CONTEXT_MENU_CONTRIBUTION_GROUP_1,
-					ignoreAction);	
-			appendToGroup(
-					ISynchronizePageConfiguration.P_CONTEXT_MENU, 
-					CONTEXT_MENU_CONTRIBUTION_GROUP_1,
-					new Separator());				
 			EditConflictsSynchronizeAction conflictsAction = new EditConflictsSynchronizeAction(Policy.bind("SyncAction.conflicts"), configuration); //$NON-NLS-1$				
-			conflictsAction.setImageDescriptor(SVNUIPlugin.getPlugin().getImageDescriptor(ISVNUIConstants.IMG_CONFLICT));
 			appendToGroup(
 					ISynchronizePageConfiguration.P_CONTEXT_MENU, 
 					CONTEXT_MENU_CONTRIBUTION_GROUP_1,
 					conflictsAction);
-			RevertSynchronizeAction revertAction = new RevertSynchronizeAction(Policy.bind("SyncAction.revert"), configuration); //$NON-NLS-1$
-			revertAction.setImageDescriptor(SVNUIPlugin.getPlugin().getImageDescriptor(ISVNUIConstants.IMG_REVERT));
-			appendToGroup(
-					ISynchronizePageConfiguration.P_CONTEXT_MENU, 
-					CONTEXT_MENU_CONTRIBUTION_GROUP_1,
-					revertAction);
 			ResolveSynchronizeAction resolveAction = new ResolveSynchronizeAction(Policy.bind("SyncAction.resolve"), configuration); //$NON-NLS-1$
-			resolveAction.setImageDescriptor(SVNUIPlugin.getPlugin().getImageDescriptor(ISVNUIConstants.IMG_RESOLVE));
 			appendToGroup(
 					ISynchronizePageConfiguration.P_CONTEXT_MENU, 
 					CONTEXT_MENU_CONTRIBUTION_GROUP_1,
 					resolveAction);
-			MarkMergedSynchronizeAction markMergedAction = new MarkMergedSynchronizeAction(Policy.bind("SyncAction.markMerged"), configuration); //$NON-NLS-1$
-			markMergedAction.setImageDescriptor(SVNUIPlugin.getPlugin().getImageDescriptor(ISVNUIConstants.IMG_MERGE));
-			appendToGroup(
-					ISynchronizePageConfiguration.P_CONTEXT_MENU, 
-					CONTEXT_MENU_CONTRIBUTION_GROUP_1,
-					markMergedAction);	
-			OverrideAndUpdateSynchronizeAction overrideAction = new OverrideAndUpdateSynchronizeAction(Policy.bind("SyncAction.override"), configuration); //$NON-NLS-1$
-			appendToGroup(
-					ISynchronizePageConfiguration.P_CONTEXT_MENU, 
-					CONTEXT_MENU_CONTRIBUTION_GROUP_1,
-					overrideAction);						
 		}
 
 	}

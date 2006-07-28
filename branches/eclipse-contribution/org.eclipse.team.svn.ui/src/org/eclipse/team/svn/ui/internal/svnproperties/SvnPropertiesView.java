@@ -59,7 +59,6 @@ import org.eclipse.team.svn.ui.internal.Policy;
 import org.eclipse.team.svn.ui.internal.SVNUIPlugin;
 import org.eclipse.team.svn.ui.internal.actions.SVNPropertyDeleteAction;
 import org.eclipse.team.svn.ui.internal.actions.SVNPropertyModifyAction;
-import org.eclipse.team.svn.ui.internal.dialogs.AddKeywordsDialog;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWorkbenchActionConstants;
@@ -75,7 +74,7 @@ import org.eclipse.ui.part.ViewPart;
  */
 public class SvnPropertiesView extends ViewPart {
 
-	public static final String VIEW_ID = "org.eclipse.team.svn.ui.internal.svnproperties.SvnPropertiesView"; //$NON-NLS-1$
+	public static final String VIEW_ID = "org.eclipse.team.svn.ui.svnproperties.SvnPropertiesView"; //$NON-NLS-1$
 
 	private TableViewer tableViewer;
 	private TextViewer textViewer;
@@ -84,7 +83,6 @@ public class SvnPropertiesView extends ViewPart {
 	private Action addPropertyAction;
 	private Action modifyPropertyAction;
 	private Action deletePropertyAction;
-	private Action setKeywordsAction;
 	private Label statusLabel;
 	private ISelectionListener pageSelectionListener;
 	private IResourceStateChangeListener resourceStateChangeListener;
@@ -318,28 +316,6 @@ public class SvnPropertiesView extends ViewPart {
 		return addPropertyAction;
 	}
 
-	private Action getSetKeywordsAction() {
-		if (setKeywordsAction == null) {
-			setKeywordsAction = new Action(Policy.bind("SvnPropertiesView.addKeywordsLabel")) { //$NON-NLS-1$
-				public void run() {
-					try {
-						AddKeywordsDialog dialog = new AddKeywordsDialog(getSite().getShell(),new IResource[] { resource.getIResource() });
-						if (dialog.open() != AddKeywordsDialog.OK) return;
-						dialog.updateKeywords();
-					} catch (SVNException e) {
-						SVNUIPlugin.openError(
-						getSite().getShell(), 
-						Policy.bind("SvnPropertiesView.errorAddKeywordsTitle"), //$NON-NLS-1$
-						Policy.bind("SvnPropertiesView.errorAddKeywordsMessage"),//$NON-NLS-1$ 
-						e);
-					}
-				}
-			};
-			setKeywordsAction.setToolTipText(Policy.bind("SvnPropertiesView.addKeywordsTooltip")); //$NON-NLS-1$
-		}
-		return setKeywordsAction;		
-	}
-
 	private Action getModifyPropertyAction() {
 		if (modifyPropertyAction == null) {
 			modifyPropertyAction = new Action(Policy.bind("SvnPropertiesView.modifyPropertyLabel")) { //$NON-NLS-1$
@@ -444,14 +420,6 @@ public class SvnPropertiesView extends ViewPart {
 		}
 		manager.add(action);
 
-		action = getSetKeywordsAction();
-		try { 		
-			action.setEnabled(resource.isManaged());
-		} catch (SVNException e) {
-			action.setEnabled(false);
-		}
-		manager.add(action);		
-		
 		manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 	}
     

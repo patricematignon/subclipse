@@ -16,7 +16,6 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.window.Window;
 import org.eclipse.subversion.client.SVNUrl;
-import org.eclipse.subversion.client.commandline.CmdLineClientAdapterFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -281,7 +280,7 @@ public class SVNRepositoryPropertiesPage extends PropertyPage {
                 location = (ISVNRepositoryLocation)adapter;
             }
         }
-		showCredentials = SVNProviderPlugin.getPlugin().getSVNClientManager().getSvnClientInterface().equals(CmdLineClientAdapterFactory.COMMANDLINE_CLIENT);
+		showCredentials = false;
 		if (!showCredentials) {
 		    if (location.getUsername() != null && !location.getUsername().trim().equals(""))
 		        showCredentials = true;
