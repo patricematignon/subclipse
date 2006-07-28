@@ -10,7 +10,7 @@
   The space should be adequate, since the pop-up can be as large as required. This is in contrast to the
   TOC files, where context is given already.
   
-  The well-known id's for each context are defined in org.tigris.subversion.subclipse.ui.IHelpContextIds.  
+  The well-known id's for each context are defined in org.eclipse.team.svn.ui.internal.IHelpContextIds.  
 -->
 
 <contexts>
