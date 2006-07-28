@@ -10,8 +10,8 @@
  ******************************************************************************/
 package org.tigris.subversion.subclipse.ui.actions;
 
+import org.eclipse.subversion.client.SVNRevision;
 import org.eclipse.team.core.TeamException;
-import org.tigris.subversion.svnclientadapter.SVNRevision;
 
 public class CompareWithPreviousRevisionAction extends CompareWithRemoteAction {
 

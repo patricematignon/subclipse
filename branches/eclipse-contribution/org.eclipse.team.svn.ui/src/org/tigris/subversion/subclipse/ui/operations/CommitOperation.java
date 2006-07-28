@@ -20,6 +20,8 @@ import java.util.Set;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.subversion.client.ISVNClientAdapter;
+import org.eclipse.subversion.client.SVNClientException;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.ui.IWorkbenchPart;
@@ -29,8 +31,6 @@ import org.tigris.subversion.subclipse.core.SVNProviderPlugin;
 import org.tigris.subversion.subclipse.core.SVNTeamProvider;
 import org.tigris.subversion.subclipse.core.resources.SVNWorkspaceRoot;
 import org.tigris.subversion.subclipse.ui.Policy;
-import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
-import org.tigris.subversion.svnclientadapter.SVNClientException;
 
 public class CommitOperation extends SVNOperation {
 //    private IResource[] selectedResources;

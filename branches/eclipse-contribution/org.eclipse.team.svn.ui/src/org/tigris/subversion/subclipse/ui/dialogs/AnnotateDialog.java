@@ -13,6 +13,7 @@ package org.tigris.subversion.subclipse.ui.dialogs;
 import org.eclipse.jface.dialogs.TrayDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.subversion.client.SVNRevision;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.ModifyEvent;
@@ -37,7 +38,6 @@ import org.tigris.subversion.subclipse.core.history.ILogEntry;
 import org.tigris.subversion.subclipse.ui.IHelpContextIds;
 import org.tigris.subversion.subclipse.ui.Policy;
 import org.tigris.subversion.subclipse.ui.operations.ShowAnnotationOperation;
-import org.tigris.subversion.svnclientadapter.SVNRevision;
 
 public class AnnotateDialog extends TrayDialog {
 	private IWorkbenchPart targetPart;

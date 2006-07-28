@@ -26,6 +26,8 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.window.Window;
+import org.eclipse.subversion.client.ISVNStatus;
+import org.eclipse.subversion.client.utils.SVNStatusUtils;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.core.subscribers.ActiveChangeSet;
 import org.eclipse.team.internal.core.subscribers.ChangeSet;
@@ -41,8 +43,6 @@ import org.tigris.subversion.subclipse.ui.Policy;
 import org.tigris.subversion.subclipse.ui.dialogs.CommitDialog;
 import org.tigris.subversion.subclipse.ui.operations.CommitOperation;
 import org.tigris.subversion.subclipse.ui.settings.ProjectProperties;
-import org.tigris.subversion.svnclientadapter.ISVNStatus;
-import org.tigris.subversion.svnclientadapter.utils.SVNStatusUtils;
 
 /**
  * Action for checking in files to a subversion provider

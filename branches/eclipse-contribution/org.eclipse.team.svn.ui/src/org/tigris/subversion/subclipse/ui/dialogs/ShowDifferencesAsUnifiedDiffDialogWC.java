@@ -18,6 +18,11 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.dialogs.TrayDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.subversion.client.ISVNClientAdapter;
+import org.eclipse.subversion.client.ISVNInfo;
+import org.eclipse.subversion.client.SVNNodeKind;
+import org.eclipse.subversion.client.SVNRevision;
+import org.eclipse.subversion.client.SVNUrl;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.ModifyEvent;
@@ -52,11 +57,6 @@ import org.tigris.subversion.subclipse.ui.SVNUIPlugin;
 import org.tigris.subversion.subclipse.ui.compare.SVNLocalCompareInput;
 import org.tigris.subversion.subclipse.ui.operations.ShowDifferencesAsUnifiedDiffOperationWC;
 import org.tigris.subversion.subclipse.ui.util.UrlCombo;
-import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
-import org.tigris.subversion.svnclientadapter.ISVNInfo;
-import org.tigris.subversion.svnclientadapter.SVNNodeKind;
-import org.tigris.subversion.svnclientadapter.SVNRevision;
-import org.tigris.subversion.svnclientadapter.SVNUrl;
 
 public class ShowDifferencesAsUnifiedDiffDialogWC extends TrayDialog {
 	private IResource resource;

@@ -23,13 +23,13 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.subversion.client.ISVNClientAdapter;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.ui.dialogs.ContainerSelectionDialog;
 import org.tigris.subversion.subclipse.core.resources.SVNWorkspaceRoot;
 import org.tigris.subversion.subclipse.ui.Policy;
-import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 
 public class CopyAction extends WorkspaceAction {
 

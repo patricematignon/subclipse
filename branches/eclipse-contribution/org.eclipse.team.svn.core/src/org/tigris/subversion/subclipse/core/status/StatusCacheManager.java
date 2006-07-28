@@ -27,6 +27,14 @@ import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Preferences.PropertyChangeEvent;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.subversion.client.ISVNClientAdapter;
+import org.eclipse.subversion.client.ISVNInfo;
+import org.eclipse.subversion.client.ISVNStatus;
+import org.eclipse.subversion.client.SVNClientException;
+import org.eclipse.subversion.client.SVNRevision;
+import org.eclipse.subversion.client.SVNStatusKind;
+import org.eclipse.subversion.client.SVNStatusUnversioned;
+import org.eclipse.subversion.client.SVNUrl;
 import org.tigris.subversion.subclipse.core.ISVNCoreConstants;
 import org.tigris.subversion.subclipse.core.ISVNLocalResource;
 import org.tigris.subversion.subclipse.core.SVNException;
@@ -34,14 +42,6 @@ import org.tigris.subversion.subclipse.core.SVNProviderPlugin;
 import org.tigris.subversion.subclipse.core.commands.GetInfoCommand;
 import org.tigris.subversion.subclipse.core.resources.LocalResourceStatus;
 import org.tigris.subversion.subclipse.core.resources.SVNWorkspaceRoot;
-import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
-import org.tigris.subversion.svnclientadapter.ISVNInfo;
-import org.tigris.subversion.svnclientadapter.ISVNStatus;
-import org.tigris.subversion.svnclientadapter.SVNClientException;
-import org.tigris.subversion.svnclientadapter.SVNRevision;
-import org.tigris.subversion.svnclientadapter.SVNStatusKind;
-import org.tigris.subversion.svnclientadapter.SVNStatusUnversioned;
-import org.tigris.subversion.svnclientadapter.SVNUrl;
 
 /**
  * Provides a method to get the status of a resource. <br>   

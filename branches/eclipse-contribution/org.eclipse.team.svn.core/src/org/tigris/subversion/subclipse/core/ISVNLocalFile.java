@@ -10,7 +10,7 @@
  ******************************************************************************/
 package org.tigris.subversion.subclipse.core;
 
-import org.tigris.subversion.svnclientadapter.SVNKeywords;
+import org.eclipse.subversion.client.SVNKeywords;
 
 /**
  * SVN local file. SVN files have access to synchronization information

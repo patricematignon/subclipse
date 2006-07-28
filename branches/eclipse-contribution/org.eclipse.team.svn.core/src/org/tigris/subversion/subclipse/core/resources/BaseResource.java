@@ -17,6 +17,10 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.PlatformObject;
+import org.eclipse.subversion.client.SVNNodeKind;
+import org.eclipse.subversion.client.SVNRevision;
+import org.eclipse.subversion.client.SVNUrl;
+import org.eclipse.subversion.client.utils.SVNUrlUtils;
 import org.eclipse.team.core.TeamException;
 import org.tigris.subversion.subclipse.core.ISVNRemoteFolder;
 import org.tigris.subversion.subclipse.core.ISVNRemoteResource;
@@ -26,10 +30,6 @@ import org.tigris.subversion.subclipse.core.commands.GetLogsCommand;
 import org.tigris.subversion.subclipse.core.history.ILogEntry;
 import org.tigris.subversion.subclipse.core.history.AliasManager;
 import org.tigris.subversion.subclipse.core.util.Assert;
-import org.tigris.subversion.svnclientadapter.SVNNodeKind;
-import org.tigris.subversion.svnclientadapter.SVNRevision;
-import org.tigris.subversion.svnclientadapter.SVNUrl;
-import org.tigris.subversion.svnclientadapter.utils.SVNUrlUtils;
 
 /**
  * Represents handles to SVN resource on the base (pristine copy).

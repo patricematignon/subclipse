@@ -17,13 +17,13 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.subversion.client.commandline.CmdLineClientAdapterFactory;
+import org.eclipse.subversion.client.javahl.JhlClientAdapterFactory;
+import org.eclipse.subversion.client.javasvn.JavaSvnClientAdapterFactory;
 import org.eclipse.swt.graphics.RGB;
 import org.tigris.subversion.subclipse.core.SVNClientManager;
 import org.tigris.subversion.subclipse.core.SVNProviderPlugin;
 import org.tigris.subversion.subclipse.ui.decorator.SVNDecoratorConfiguration;
-import org.tigris.subversion.svnclientadapter.commandline.CmdLineClientAdapterFactory;
-import org.tigris.subversion.svnclientadapter.javahl.JhlClientAdapterFactory;
-import org.tigris.subversion.svnclientadapter.javasvn.JavaSvnClientAdapterFactory;
 
 /**
  * Initializes preferences and updates markers when preferences are changed

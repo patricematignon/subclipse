@@ -20,6 +20,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.subversion.client.SVNUrl;
+import org.eclipse.subversion.client.commandline.CmdLineClientAdapterFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -33,8 +35,6 @@ import org.eclipse.ui.PlatformUI;
 import org.tigris.subversion.subclipse.core.SVNProviderPlugin;
 import org.tigris.subversion.subclipse.ui.IHelpContextIds;
 import org.tigris.subversion.subclipse.ui.Policy;
-import org.tigris.subversion.svnclientadapter.SVNUrl;
-import org.tigris.subversion.svnclientadapter.commandline.CmdLineClientAdapterFactory;
 
 /**
  * Wizard page for entering information about a SVN repository location.

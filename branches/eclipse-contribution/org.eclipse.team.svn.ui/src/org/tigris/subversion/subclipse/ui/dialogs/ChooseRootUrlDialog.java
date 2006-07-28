@@ -14,11 +14,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.subversion.client.SVNUrl;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.dialogs.ListDialog;
 import org.tigris.subversion.subclipse.ui.Policy;
 import org.tigris.subversion.subclipse.ui.util.ListContentProvider;
-import org.tigris.subversion.svnclientadapter.SVNUrl;
 
 /**
  * Dialog that ask the user to give the root repository url of the given url 

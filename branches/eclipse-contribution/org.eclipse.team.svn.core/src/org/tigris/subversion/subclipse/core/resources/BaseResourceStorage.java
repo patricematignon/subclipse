@@ -20,9 +20,9 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.subversion.client.ISVNClientAdapter;
+import org.eclipse.subversion.client.SVNClientException;
 import org.tigris.subversion.subclipse.core.SVNProviderPlugin;
-import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
-import org.tigris.subversion.svnclientadapter.SVNClientException;
 
 /**
  * IStorage implementation for accessing the contents of base resource

@@ -27,6 +27,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.subversion.client.SVNRevision;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.ui.ISaveableWorkbenchPart;
@@ -41,7 +42,6 @@ import org.tigris.subversion.subclipse.ui.Policy;
 import org.tigris.subversion.subclipse.ui.SVNUIPlugin;
 import org.tigris.subversion.subclipse.ui.compare.internal.Utilities;
 import org.tigris.subversion.subclipse.ui.internal.Utils;
-import org.tigris.subversion.svnclientadapter.SVNRevision;
 
 /**
  * A compare input for comparing local resource with its remote revision

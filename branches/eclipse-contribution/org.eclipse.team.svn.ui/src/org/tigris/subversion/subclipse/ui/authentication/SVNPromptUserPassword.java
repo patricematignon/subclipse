@@ -12,10 +12,10 @@ package org.tigris.subversion.subclipse.ui.authentication;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.subversion.client.ISVNPromptUserPassword;
 import org.eclipse.swt.widgets.Display;
 import org.tigris.subversion.subclipse.ui.Policy;
 import org.tigris.subversion.subclipse.ui.SVNUIPlugin;
-import org.tigris.subversion.svnclientadapter.ISVNPromptUserPassword;
 
 public class SVNPromptUserPassword implements ISVNPromptUserPassword {
     private String username;

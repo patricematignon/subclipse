@@ -16,13 +16,13 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.subversion.client.ISVNClientAdapter;
+import org.eclipse.subversion.client.SVNClientAdapterFactory;
+import org.eclipse.subversion.client.SVNClientException;
+import org.eclipse.subversion.client.commandline.CmdLineClientAdapterFactory;
+import org.eclipse.subversion.client.javahl.JhlClientAdapterFactory;
+import org.eclipse.subversion.client.javasvn.JavaSvnClientAdapterFactory;
 import org.eclipse.team.core.TeamException;
-import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
-import org.tigris.subversion.svnclientadapter.SVNClientAdapterFactory;
-import org.tigris.subversion.svnclientadapter.SVNClientException;
-import org.tigris.subversion.svnclientadapter.commandline.CmdLineClientAdapterFactory;
-import org.tigris.subversion.svnclientadapter.javasvn.JavaSvnClientAdapterFactory;
-import org.tigris.subversion.svnclientadapter.javahl.JhlClientAdapterFactory;
 
 /**
  * Handles the creation of SVNClients

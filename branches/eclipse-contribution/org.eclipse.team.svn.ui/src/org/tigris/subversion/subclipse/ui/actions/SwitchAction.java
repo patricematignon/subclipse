@@ -14,11 +14,11 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.subversion.client.SVNRevision;
+import org.eclipse.subversion.client.SVNUrl;
 import org.tigris.subversion.subclipse.ui.Policy;
 import org.tigris.subversion.subclipse.ui.dialogs.SwitchDialog;
 import org.tigris.subversion.subclipse.ui.operations.SwitchOperation;
-import org.tigris.subversion.svnclientadapter.SVNRevision;
-import org.tigris.subversion.svnclientadapter.SVNUrl;
 
 /**
  * Action to switch to branch/tag 

@@ -24,6 +24,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.subversion.client.utils.Command;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -39,7 +40,6 @@ import org.tigris.subversion.subclipse.ui.ISVNUIConstants;
 import org.tigris.subversion.subclipse.ui.Policy;
 import org.tigris.subversion.subclipse.ui.SVNUIPlugin;
 import org.tigris.subversion.subclipse.ui.conflicts.ConflictsCompareInput;
-import org.tigris.subversion.svnclientadapter.utils.Command;
 
 public class EditConflictsSynchronizeOperation extends SVNSynchronizeOperation {
 

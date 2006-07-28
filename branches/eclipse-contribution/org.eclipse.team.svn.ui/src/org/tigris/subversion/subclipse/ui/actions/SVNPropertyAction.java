@@ -22,9 +22,9 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.subversion.client.ISVNProperty;
 import org.tigris.subversion.subclipse.core.ISVNLocalResource;
 import org.tigris.subversion.subclipse.core.resources.SVNWorkspaceRoot;
-import org.tigris.subversion.svnclientadapter.ISVNProperty;
 
 /**
  * ancestor to all actions that work on ISVNProperty objects

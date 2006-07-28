@@ -13,7 +13,7 @@ package org.tigris.subversion.subclipse.core.client;
 import java.io.File;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.tigris.subversion.svnclientadapter.SVNNodeKind;
+import org.eclipse.subversion.client.SVNNodeKind;
 
 /**
  * ISVNNotifyListener implementation which intercepts the some log*() methods

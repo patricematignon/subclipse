@@ -15,6 +15,8 @@ import java.net.MalformedURLException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.window.Window;
+import org.eclipse.subversion.client.SVNUrl;
+import org.eclipse.subversion.client.commandline.CmdLineClientAdapterFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -34,8 +36,6 @@ import org.tigris.subversion.subclipse.ui.Policy;
 import org.tigris.subversion.subclipse.ui.SVNUIPlugin;
 import org.tigris.subversion.subclipse.ui.decorator.SVNLightweightDecorator;
 import org.tigris.subversion.subclipse.ui.dialogs.ChooseRootUrlDialog;
-import org.tigris.subversion.svnclientadapter.SVNUrl;
-import org.tigris.subversion.svnclientadapter.commandline.CmdLineClientAdapterFactory;
 
 /**
  * Property page to modify settings for a given repository

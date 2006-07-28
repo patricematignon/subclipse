@@ -28,6 +28,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.subversion.client.SVNUrl;
 import org.eclipse.team.core.TeamException;
 import org.osgi.service.prefs.BackingStoreException;
 import org.tigris.subversion.subclipse.core.ISVNRepositoryLocation;
@@ -36,7 +37,6 @@ import org.tigris.subversion.subclipse.core.SVNException;
 import org.tigris.subversion.subclipse.core.SVNProviderPlugin;
 import org.tigris.subversion.subclipse.core.SVNStatus;
 import org.tigris.subversion.subclipse.core.util.Util;
-import org.tigris.subversion.svnclientadapter.SVNUrl;
 
 /**
  * The list of known repositories

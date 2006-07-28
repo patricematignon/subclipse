@@ -21,6 +21,9 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.subversion.client.ISVNClientAdapter;
+import org.eclipse.subversion.client.ISVNInfo;
+import org.eclipse.subversion.client.ISVNProperty;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.Image;
@@ -41,9 +44,6 @@ import org.tigris.subversion.subclipse.core.ISVNRemoteResource;
 import org.tigris.subversion.subclipse.core.SVNProviderPlugin;
 import org.tigris.subversion.subclipse.ui.IHelpContextIds;
 import org.tigris.subversion.subclipse.ui.Policy;
-import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
-import org.tigris.subversion.svnclientadapter.ISVNInfo;
-import org.tigris.subversion.svnclientadapter.ISVNProperty;
 
 public class RemoteResourcePropertiesDialog extends TrayDialog {
 	private ISVNRemoteResource remoteResource;

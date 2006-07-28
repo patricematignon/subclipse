@@ -12,6 +12,8 @@ package org.tigris.subversion.subclipse.ui.operations;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.subversion.client.SVNRevision;
+import org.eclipse.subversion.client.SVNUrl;
 import org.eclipse.ui.IWorkbenchPart;
 import org.tigris.subversion.subclipse.core.ISVNLocalResource;
 import org.tigris.subversion.subclipse.core.SVNException;
@@ -21,8 +23,6 @@ import org.tigris.subversion.subclipse.core.history.Alias;
 import org.tigris.subversion.subclipse.core.history.AliasManager;
 import org.tigris.subversion.subclipse.core.resources.SVNWorkspaceRoot;
 import org.tigris.subversion.subclipse.ui.Policy;
-import org.tigris.subversion.svnclientadapter.SVNRevision;
-import org.tigris.subversion.svnclientadapter.SVNUrl;
 
 public class BranchTagOperation extends RepositoryProviderOperation {
     private SVNUrl sourceUrl;

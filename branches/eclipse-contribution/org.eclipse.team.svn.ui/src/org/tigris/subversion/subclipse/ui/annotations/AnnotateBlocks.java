@@ -13,7 +13,7 @@ package org.tigris.subversion.subclipse.ui.annotations;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.tigris.subversion.svnclientadapter.ISVNAnnotations;
+import org.eclipse.subversion.client.ISVNAnnotations;
 
 public class AnnotateBlocks {
 	private List blocks = new LinkedList();

@@ -22,6 +22,9 @@ import org.eclipse.core.resources.team.IResourceTree;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.subversion.client.ISVNClientAdapter;
+import org.eclipse.subversion.client.ISVNProperty;
+import org.eclipse.subversion.client.SVNClientException;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
 import org.tigris.subversion.subclipse.core.ISVNLocalFile;
@@ -31,9 +34,6 @@ import org.tigris.subversion.subclipse.core.Policy;
 import org.tigris.subversion.subclipse.core.SVNException;
 import org.tigris.subversion.subclipse.core.SVNTeamProvider;
 import org.tigris.subversion.subclipse.core.client.OperationManager;
-import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
-import org.tigris.subversion.svnclientadapter.ISVNProperty;
-import org.tigris.subversion.svnclientadapter.SVNClientException;
 
 public class SVNMoveDeleteHook implements IMoveDeleteHook {
 

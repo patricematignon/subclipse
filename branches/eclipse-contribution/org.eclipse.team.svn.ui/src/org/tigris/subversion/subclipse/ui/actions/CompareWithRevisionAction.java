@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.subversion.client.SVNRevision;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.ui.SaveablePartDialog;
@@ -33,7 +34,6 @@ import org.tigris.subversion.subclipse.ui.ISVNUIConstants;
 import org.tigris.subversion.subclipse.ui.Policy;
 import org.tigris.subversion.subclipse.ui.SVNUIPlugin;
 import org.tigris.subversion.subclipse.ui.compare.SVNCompareRevisionsInput;
-import org.tigris.subversion.svnclientadapter.SVNRevision;
 
 /**
  * Used when you want to compare local resource with remote ones 

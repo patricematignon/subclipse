@@ -33,6 +33,8 @@ import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.subversion.client.ISVNProperty;
+import org.eclipse.subversion.client.SVNStatusKind;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.KeyAdapter;
@@ -65,8 +67,6 @@ import org.tigris.subversion.subclipse.ui.SVNUIPlugin;
 import org.tigris.subversion.subclipse.ui.actions.SVNPropertyDeleteAction;
 import org.tigris.subversion.subclipse.ui.actions.SVNPropertyModifyAction;
 import org.tigris.subversion.subclipse.ui.dialogs.AddKeywordsDialog;
-import org.tigris.subversion.svnclientadapter.ISVNProperty;
-import org.tigris.subversion.svnclientadapter.SVNStatusKind;
 
 /**
  * 

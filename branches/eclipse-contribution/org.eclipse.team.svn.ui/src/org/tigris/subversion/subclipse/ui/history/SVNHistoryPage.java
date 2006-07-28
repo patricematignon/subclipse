@@ -54,6 +54,9 @@ import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.window.Window;
+import org.eclipse.subversion.client.ISVNClientAdapter;
+import org.eclipse.subversion.client.SVNRevision;
+import org.eclipse.subversion.client.SVNUrl;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.custom.SashForm;
@@ -115,9 +118,6 @@ import org.tigris.subversion.subclipse.ui.operations.MergeOperation;
 import org.tigris.subversion.subclipse.ui.operations.ReplaceOperation;
 import org.tigris.subversion.subclipse.ui.settings.ProjectProperties;
 import org.tigris.subversion.subclipse.ui.util.LinkList;
-import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
-import org.tigris.subversion.svnclientadapter.SVNRevision;
-import org.tigris.subversion.svnclientadapter.SVNUrl;
 
 /**
  * <code>IHistoryPage</code> for generic history view 

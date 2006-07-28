@@ -14,6 +14,10 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.subversion.client.ISVNClientAdapter;
+import org.eclipse.subversion.client.ISVNInfo;
+import org.eclipse.subversion.client.ISVNProperty;
+import org.eclipse.subversion.client.SVNRevision;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -33,10 +37,6 @@ import org.tigris.subversion.subclipse.core.resources.SVNWorkspaceRoot;
 import org.tigris.subversion.subclipse.ui.IHelpContextIds;
 import org.tigris.subversion.subclipse.ui.Policy;
 import org.tigris.subversion.subclipse.ui.SVNUIPlugin;
-import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
-import org.tigris.subversion.svnclientadapter.ISVNInfo;
-import org.tigris.subversion.svnclientadapter.ISVNProperty;
-import org.tigris.subversion.svnclientadapter.SVNRevision;
 
 public class SVNPropertyPage extends PropertyPage {
 

@@ -22,6 +22,7 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.subversion.client.SVNUrl;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
@@ -39,7 +40,6 @@ import org.tigris.subversion.subclipse.core.history.LogEntryChangePath;
 import org.tigris.subversion.subclipse.ui.ISVNUIConstants;
 import org.tigris.subversion.subclipse.ui.Policy;
 import org.tigris.subversion.subclipse.ui.SVNUIPlugin;
-import org.tigris.subversion.svnclientadapter.SVNUrl;
 
 /**
  * Compressed folder representation of the affected paths panel.

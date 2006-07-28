@@ -20,6 +20,8 @@ import java.util.List;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.subversion.client.ISVNStatus;
+import org.eclipse.subversion.client.utils.SVNStatusUtils;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
 import org.tigris.subversion.subclipse.core.ISVNLocalResource;
@@ -30,8 +32,6 @@ import org.tigris.subversion.subclipse.core.resources.SVNWorkspaceRoot;
 import org.tigris.subversion.subclipse.ui.Policy;
 import org.tigris.subversion.subclipse.ui.util.PromptingDialog;
 import org.tigris.subversion.subclipse.ui.util.IPromptCondition;
-import org.tigris.subversion.svnclientadapter.ISVNStatus;
-import org.tigris.subversion.svnclientadapter.utils.SVNStatusUtils;
 
 /**
  * This class represents an action performed on a local SVN workspace

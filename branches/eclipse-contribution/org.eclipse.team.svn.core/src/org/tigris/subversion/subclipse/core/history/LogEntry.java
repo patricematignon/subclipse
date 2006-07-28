@@ -14,15 +14,15 @@ package org.tigris.subversion.subclipse.core.history;
 import java.util.Date;
 
 import org.eclipse.core.runtime.PlatformObject;
+import org.eclipse.subversion.client.ISVNClientAdapter;
+import org.eclipse.subversion.client.ISVNInfo;
+import org.eclipse.subversion.client.ISVNLogMessage;
+import org.eclipse.subversion.client.ISVNLogMessageChangePath;
+import org.eclipse.subversion.client.SVNRevision;
+import org.eclipse.subversion.client.SVNUrl;
 import org.tigris.subversion.subclipse.core.ISVNRemoteResource;
 import org.tigris.subversion.subclipse.core.ISVNResource;
 import org.tigris.subversion.subclipse.core.SVNProviderPlugin;
-import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
-import org.tigris.subversion.svnclientadapter.ISVNInfo;
-import org.tigris.subversion.svnclientadapter.ISVNLogMessage;
-import org.tigris.subversion.svnclientadapter.ISVNLogMessageChangePath;
-import org.tigris.subversion.svnclientadapter.SVNRevision;
-import org.tigris.subversion.svnclientadapter.SVNUrl;
 
 /**
  * represent an entry for a SVN file that results

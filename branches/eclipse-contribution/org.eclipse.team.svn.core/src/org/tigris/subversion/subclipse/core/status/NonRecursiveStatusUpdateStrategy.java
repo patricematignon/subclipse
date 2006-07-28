@@ -11,12 +11,12 @@
 package org.tigris.subversion.subclipse.core.status;
 
 import org.eclipse.core.resources.IResource;
+import org.eclipse.subversion.client.ISVNClientAdapter;
+import org.eclipse.subversion.client.ISVNStatus;
+import org.eclipse.subversion.client.SVNClientException;
 import org.tigris.subversion.subclipse.core.Policy;
 import org.tigris.subversion.subclipse.core.SVNException;
 import org.tigris.subversion.subclipse.core.SVNProviderPlugin;
-import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
-import org.tigris.subversion.svnclientadapter.ISVNStatus;
-import org.tigris.subversion.svnclientadapter.SVNClientException;
 
 /**
  * A strategy that when asked to get the status of a given resource, 

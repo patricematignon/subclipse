@@ -15,11 +15,11 @@ import java.util.Date;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.subversion.client.SVNRevision;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.variants.IResourceVariant;
 import org.tigris.subversion.subclipse.core.history.ILogEntry;
 import org.tigris.subversion.subclipse.core.history.AliasManager;
-import org.tigris.subversion.svnclientadapter.SVNRevision;
 
 /**
  * The interface represents a resource that exists in a SVN repository.

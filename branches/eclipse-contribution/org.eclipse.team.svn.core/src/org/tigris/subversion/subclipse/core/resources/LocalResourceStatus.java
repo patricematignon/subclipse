@@ -19,11 +19,11 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.Date;
 
+import org.eclipse.subversion.client.ISVNStatus;
+import org.eclipse.subversion.client.SVNNodeKind;
+import org.eclipse.subversion.client.SVNStatusKind;
+import org.eclipse.subversion.client.SVNUrl;
 import org.tigris.subversion.subclipse.core.SVNException;
-import org.tigris.subversion.svnclientadapter.ISVNStatus;
-import org.tigris.subversion.svnclientadapter.SVNNodeKind;
-import org.tigris.subversion.svnclientadapter.SVNStatusKind;
-import org.tigris.subversion.svnclientadapter.SVNUrl;
 
 /**
  * This class has an interface which is very similar to ISVNStatus but we make
@@ -34,7 +34,7 @@ import org.tigris.subversion.svnclientadapter.SVNUrl;
  * The revision numbers changes too frequently and it does not provide too valuable imformation for synchronization
  * needs anyway. The lastChangedRevision() is more important here. 
  * 
- * @see org.tigris.subversion.svnclientadapter.ISVNStatus
+ * @see org.eclipse.subversion.client.ISVNStatus
  */
 public class LocalResourceStatus extends ResourceStatus {
 	public static final LocalResourceStatus NONE = new LocalResourceStatusNone();
@@ -263,7 +263,7 @@ public class LocalResourceStatus extends ResourceStatus {
      * @return if managed by svn
      */
     public boolean isManaged() {
-        return org.tigris.subversion.svnclientadapter.utils.SVNStatusUtils.isManaged(getTextStatus());
+        return org.eclipse.subversion.client.utils.SVNStatusUtils.isManaged(getTextStatus());
     }
 
     /**
@@ -272,7 +272,7 @@ public class LocalResourceStatus extends ResourceStatus {
      * @return has version in repository
      */
     public boolean hasRemote() {
-        return org.tigris.subversion.svnclientadapter.utils.SVNStatusUtils.hasRemote(getTextStatus());
+        return org.eclipse.subversion.client.utils.SVNStatusUtils.hasRemote(getTextStatus());
     }
 
     /**

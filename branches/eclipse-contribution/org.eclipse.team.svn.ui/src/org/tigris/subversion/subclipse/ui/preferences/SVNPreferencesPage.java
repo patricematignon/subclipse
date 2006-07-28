@@ -16,6 +16,11 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
+import org.eclipse.subversion.client.SVNClientAdapterFactory;
+import org.eclipse.subversion.client.commandline.CmdLineClientAdapterFactory;
+import org.eclipse.subversion.client.javahl.JhlClientAdapter;
+import org.eclipse.subversion.client.javahl.JhlClientAdapterFactory;
+import org.eclipse.subversion.client.javasvn.JavaSvnClientAdapterFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -38,11 +43,6 @@ import org.tigris.subversion.subclipse.ui.IHelpContextIds;
 import org.tigris.subversion.subclipse.ui.ISVNUIConstants;
 import org.tigris.subversion.subclipse.ui.Policy;
 import org.tigris.subversion.subclipse.ui.SVNUIPlugin;
-import org.tigris.subversion.svnclientadapter.SVNClientAdapterFactory;
-import org.tigris.subversion.svnclientadapter.commandline.CmdLineClientAdapterFactory;
-import org.tigris.subversion.svnclientadapter.javahl.JhlClientAdapter;
-import org.tigris.subversion.svnclientadapter.javahl.JhlClientAdapterFactory;
-import org.tigris.subversion.svnclientadapter.javasvn.JavaSvnClientAdapterFactory;
 
 /**
  * SVN Preference Page

@@ -23,17 +23,17 @@ import java.util.Date;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.subversion.client.ISVNStatus;
+import org.eclipse.subversion.client.SVNNodeKind;
+import org.eclipse.subversion.client.SVNRevision;
+import org.eclipse.subversion.client.SVNStatusKind;
+import org.eclipse.subversion.client.SVNUrl;
+import org.eclipse.subversion.client.SVNRevision.Number;
 import org.eclipse.team.core.RepositoryProvider;
 import org.tigris.subversion.subclipse.core.ISVNRepositoryLocation;
 import org.tigris.subversion.subclipse.core.SVNException;
 import org.tigris.subversion.subclipse.core.SVNProviderPlugin;
 import org.tigris.subversion.subclipse.core.SVNTeamProvider;
-import org.tigris.subversion.svnclientadapter.ISVNStatus;
-import org.tigris.subversion.svnclientadapter.SVNNodeKind;
-import org.tigris.subversion.svnclientadapter.SVNRevision;
-import org.tigris.subversion.svnclientadapter.SVNStatusKind;
-import org.tigris.subversion.svnclientadapter.SVNUrl;
-import org.tigris.subversion.svnclientadapter.SVNRevision.Number;
 
 /**
  * This class has an interface which is very similar to ISVNStatus but we make
@@ -46,7 +46,7 @@ import org.tigris.subversion.svnclientadapter.SVNRevision.Number;
  * The revision numbers changes too frequently and it does not provide too valuable imformation for synchronization
  * needs anyway. The lastChangedRevision() is more important here. 
  * 
- * @see org.tigris.subversion.svnclientadapter.ISVNStatus
+ * @see org.eclipse.subversion.client.ISVNStatus
  */
 public class ResourceStatus implements Serializable {
 

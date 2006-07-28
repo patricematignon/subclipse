@@ -28,6 +28,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.subversion.client.SVNRevision;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -51,7 +52,6 @@ import org.tigris.subversion.subclipse.ui.Policy;
 import org.tigris.subversion.subclipse.ui.SVNUIPlugin;
 import org.tigris.subversion.subclipse.ui.compare.SVNLocalCompareInput;
 import org.tigris.subversion.subclipse.ui.util.TableSetter;
-import org.tigris.subversion.svnclientadapter.SVNRevision;
 
 public class DiffNewFilesDialog extends TrayDialog {
     

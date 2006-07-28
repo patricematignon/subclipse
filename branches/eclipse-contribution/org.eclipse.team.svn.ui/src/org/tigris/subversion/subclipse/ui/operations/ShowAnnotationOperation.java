@@ -27,6 +27,8 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.revisions.Revision;
 import org.eclipse.jface.text.revisions.RevisionInformation;
 import org.eclipse.jface.text.source.LineRange;
+import org.eclipse.subversion.client.ISVNAnnotations;
+import org.eclipse.subversion.client.SVNRevision;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.ui.IEditorDescriptor;
@@ -56,8 +58,6 @@ import org.tigris.subversion.subclipse.ui.SVNUIPlugin;
 import org.tigris.subversion.subclipse.ui.annotations.AnnotateBlock;
 import org.tigris.subversion.subclipse.ui.annotations.AnnotateBlocks;
 import org.tigris.subversion.subclipse.ui.annotations.AnnotateView;
-import org.tigris.subversion.svnclientadapter.ISVNAnnotations;
-import org.tigris.subversion.svnclientadapter.SVNRevision;
 
 /**
  * @author Brock Janiczak

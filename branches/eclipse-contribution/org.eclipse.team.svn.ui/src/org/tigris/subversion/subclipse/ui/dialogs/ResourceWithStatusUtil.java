@@ -11,12 +11,12 @@
 package org.tigris.subversion.subclipse.ui.dialogs;
 
 import org.eclipse.core.resources.IResource;
+import org.eclipse.subversion.client.SVNStatusKind;
 import org.eclipse.team.core.TeamException;
 import org.tigris.subversion.subclipse.core.ISVNLocalResource;
 import org.tigris.subversion.subclipse.core.resources.LocalResourceStatus;
 import org.tigris.subversion.subclipse.core.resources.SVNWorkspaceRoot;
 import org.tigris.subversion.subclipse.ui.Policy;
-import org.tigris.subversion.svnclientadapter.SVNStatusKind;
 
 public final class ResourceWithStatusUtil {
 	private ResourceWithStatusUtil() {

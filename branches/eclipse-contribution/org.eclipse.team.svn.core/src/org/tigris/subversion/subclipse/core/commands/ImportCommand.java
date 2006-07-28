@@ -13,13 +13,13 @@ package org.tigris.subversion.subclipse.core.commands;
 import java.io.File;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.subversion.client.ISVNClientAdapter;
+import org.eclipse.subversion.client.SVNClientException;
 import org.tigris.subversion.subclipse.core.ISVNRemoteFolder;
 import org.tigris.subversion.subclipse.core.Policy;
 import org.tigris.subversion.subclipse.core.SVNException;
 import org.tigris.subversion.subclipse.core.client.OperationManager;
 import org.tigris.subversion.subclipse.core.client.OperationProgressNotifyListener;
-import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
-import org.tigris.subversion.svnclientadapter.SVNClientException;
 
 /**
  * Import local folder to repository

@@ -11,8 +11,8 @@
 package org.tigris.subversion.subclipse.core;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.subversion.client.ISVNAnnotations;
 import org.eclipse.team.core.TeamException;
-import org.tigris.subversion.svnclientadapter.ISVNAnnotations;
 
  
 

@@ -13,8 +13,8 @@ package org.tigris.subversion.subclipse.ui.history;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.subversion.client.SVNRevision.Number;
 import org.tigris.subversion.subclipse.core.history.LogEntryChangePath;
-import org.tigris.subversion.svnclientadapter.SVNRevision.Number;
 
 
 /**

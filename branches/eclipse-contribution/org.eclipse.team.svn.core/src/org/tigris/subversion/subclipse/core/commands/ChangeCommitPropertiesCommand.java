@@ -11,12 +11,12 @@
 package org.tigris.subversion.subclipse.core.commands;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.subversion.client.ISVNClientAdapter;
+import org.eclipse.subversion.client.SVNClientException;
+import org.eclipse.subversion.client.SVNRevision;
 import org.tigris.subversion.subclipse.core.ISVNRepositoryLocation;
 import org.tigris.subversion.subclipse.core.SVNException;
 import org.tigris.subversion.subclipse.core.client.OperationManager;
-import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
-import org.tigris.subversion.svnclientadapter.SVNClientException;
-import org.tigris.subversion.svnclientadapter.SVNRevision;
 
 /**
  * Changes the commit comment on a previously committed revision

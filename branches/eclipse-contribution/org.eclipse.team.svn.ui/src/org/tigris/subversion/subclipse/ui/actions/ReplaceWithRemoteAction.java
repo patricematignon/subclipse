@@ -14,10 +14,10 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.subversion.client.SVNRevision;
 import org.eclipse.team.core.TeamException;
 import org.tigris.subversion.subclipse.ui.Policy;
 import org.tigris.subversion.subclipse.ui.operations.ReplaceOperation;
-import org.tigris.subversion.svnclientadapter.SVNRevision;
 
 public class ReplaceWithRemoteAction extends WorkspaceAction {
 	

@@ -29,6 +29,8 @@ import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.subversion.client.ISVNClientAdapter;
+import org.eclipse.subversion.client.ISVNPromptUserPassword;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.core.subscribers.ActiveChangeSetManager;
 import org.osgi.framework.BundleContext;
@@ -42,8 +44,6 @@ import org.tigris.subversion.subclipse.core.resourcesListeners.SyncFileChangeLis
 import org.tigris.subversion.subclipse.core.status.StatusCacheManager;
 import org.tigris.subversion.subclipse.core.sync.SVNWorkspaceSubscriber;
 import org.tigris.subversion.subclipse.core.util.ISimpleDialogsHelper;
-import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
-import org.tigris.subversion.svnclientadapter.ISVNPromptUserPassword;
 import org.tigris.subversion.subclipse.core.SVNProviderPlugin;
 
 /**

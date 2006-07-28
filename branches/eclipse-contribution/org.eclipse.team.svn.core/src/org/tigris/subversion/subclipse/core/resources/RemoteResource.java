@@ -14,6 +14,9 @@ import java.util.Date;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.subversion.client.SVNRevision;
+import org.eclipse.subversion.client.SVNUrl;
+import org.eclipse.subversion.client.utils.SVNUrlUtils;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.variants.CachedResourceVariant;
 import org.tigris.subversion.subclipse.core.ISVNLocalResource;
@@ -25,9 +28,6 @@ import org.tigris.subversion.subclipse.core.SVNProviderPlugin;
 import org.tigris.subversion.subclipse.core.commands.GetLogsCommand;
 import org.tigris.subversion.subclipse.core.history.ILogEntry;
 import org.tigris.subversion.subclipse.core.history.AliasManager;
-import org.tigris.subversion.svnclientadapter.SVNRevision;
-import org.tigris.subversion.svnclientadapter.SVNUrl;
-import org.tigris.subversion.svnclientadapter.utils.SVNUrlUtils;
 
 /**
  * The purpose of this class and its subclasses is to implement the corresponding

@@ -18,6 +18,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.subversion.client.ISVNClientAdapter;
 import org.eclipse.team.core.RepositoryProvider;
 import org.tigris.subversion.subclipse.core.SVNProviderPlugin;
 import org.tigris.subversion.subclipse.core.SVNTeamProvider;
@@ -26,7 +27,6 @@ import org.tigris.subversion.subclipse.core.repo.SVNRepositoryLocation;
 import org.tigris.subversion.subclipse.ui.ISVNUIConstants;
 import org.tigris.subversion.subclipse.ui.Policy;
 import org.tigris.subversion.subclipse.ui.SVNUIPlugin;
-import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 
 public class RelocateWizard extends Wizard {
 	private SVNRepositoryLocation repository;

@@ -15,12 +15,12 @@ import java.lang.reflect.InvocationTargetException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.subversion.client.ISVNProperty;
 import org.eclipse.team.core.TeamException;
 import org.tigris.subversion.subclipse.core.ISVNLocalResource;
 import org.tigris.subversion.subclipse.core.SVNException;
 import org.tigris.subversion.subclipse.ui.Policy;
 import org.tigris.subversion.subclipse.ui.svnproperties.SetSvnPropertyDialog;
-import org.tigris.subversion.svnclientadapter.ISVNProperty;
 
 /**
  * action to modify a property
