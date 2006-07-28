@@ -13,3 +13,10 @@ Bundle-ClassPath: .,
  lib/svnjavahl.jar,
  lib/javasvn.jar,
  lib/ganymed.jar
+Export-Package: org.eclipse.subversion.client.plugin,
+ org.tigris.subversion.svnclientadapter,
+ org.tigris.subversion.svnclientadapter.commandline,
+ org.tigris.subversion.svnclientadapter.commandline.parser,
+ org.tigris.subversion.svnclientadapter.javahl,
+ org.tigris.subversion.svnclientadapter.javasvn,
+ org.tigris.subversion.svnclientadapter.utils

@@ -1,11 +1,11 @@
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
-Bundle-SymbolicName: org.tigris.subversion.subclipse.ui; singleton:=true
+Bundle-SymbolicName: org.eclipse.team.svn.ui;singleton:=true
 Bundle-Version: 1.1.4
 Bundle-Activator: org.tigris.subversion.subclipse.ui.SVNUIPlugin
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
-Require-Bundle: org.tigris.subversion.subclipse.core,
+Require-Bundle: org.eclipse.team.svn.core,
  org.eclipse.ui.ide,
  org.eclipse.ui.views,
  org.eclipse.jface.text,
@@ -52,3 +52,4 @@ Export-Package: org.tigris.subversion.subclipse.ui,
  org.tigris.subversion.subclipse.ui.wizards,
  org.tigris.subversion.subclipse.ui.wizards.generatediff,
  org.tigris.subversion.subclipse.ui.wizards.sharing
+Bundle-RequiredExecutionEnvironment: J2SE-1.4
