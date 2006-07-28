@@ -1,0 +1,22 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Subversion Client Adapter
+Bundle-SymbolicName: org.eclipse.subversion.client.javasvn;singleton:=true
+Bundle-Version: 1.3.0.qualifier
+Bundle-Activator: org.eclipse.subversion.client.plugin.SVNClientPlugin
+Bundle-Vendor: Eclipse.org
+Bundle-Localization: plugin
+Require-Bundle: org.eclipse.core.runtime;bundle-version="3.2.0"
+Eclipse-LazyStart: true
+Bundle-RequiredExecutionEnvironment: J2SE-1.4
+Bundle-ClassPath: .,
+ lib/svnjavahl.jar,
+ lib/javasvn.jar,
+ lib/ganymed.jar
+Export-Package: org.eclipse.subversion.client,
+ org.eclipse.subversion.client.commandline,
+ org.eclipse.subversion.client.commandline.parser,
+ org.eclipse.subversion.client.javahl,
+ org.eclipse.subversion.client.javasvn,
+ org.eclipse.subversion.client.plugin,
+ org.eclipse.subversion.client.utils
