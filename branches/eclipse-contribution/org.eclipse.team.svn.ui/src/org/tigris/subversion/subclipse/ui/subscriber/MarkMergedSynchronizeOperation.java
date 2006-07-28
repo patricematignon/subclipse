@@ -27,12 +27,12 @@ import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.synchronize.SyncInfoSet;
+import org.eclipse.team.svn.core.internal.ISVNLocalResource;
+import org.eclipse.team.svn.core.internal.SVNTeamProvider;
+import org.eclipse.team.svn.core.internal.resources.LocalResource;
+import org.eclipse.team.svn.core.internal.resources.SVNWorkspaceRoot;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
-import org.tigris.subversion.subclipse.core.ISVNLocalResource;
-import org.tigris.subversion.subclipse.core.SVNTeamProvider;
-import org.tigris.subversion.subclipse.core.resources.LocalResource;
-import org.tigris.subversion.subclipse.core.resources.SVNWorkspaceRoot;
 import org.tigris.subversion.subclipse.ui.SVNUIPlugin;
 import org.tigris.subversion.subclipse.ui.operations.UpdateOperation;
 

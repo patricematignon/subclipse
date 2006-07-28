@@ -23,7 +23,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.team.core.TeamException;
-import org.tigris.subversion.subclipse.core.ISVNRemoteResource;
+import org.eclipse.team.svn.core.internal.ISVNRemoteResource;
 import org.tigris.subversion.subclipse.ui.SVNUIPlugin;
 import org.tigris.subversion.subclipse.ui.compare.SVNLocalCompareInput.SVNLocalResourceNode;
 /**

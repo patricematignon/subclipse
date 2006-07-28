@@ -13,8 +13,8 @@ package org.tigris.subversion.subclipse.ui.actions;
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.jface.action.IAction;
-import org.tigris.subversion.subclipse.core.ISVNLocalResource;
-import org.tigris.subversion.subclipse.core.SVNException;
+import org.eclipse.team.svn.core.internal.ISVNLocalResource;
+import org.eclipse.team.svn.core.internal.SVNException;
 import org.tigris.subversion.subclipse.ui.Policy;
 import org.tigris.subversion.subclipse.ui.operations.ResolveOperation;
 
@@ -34,7 +34,7 @@ public class ResolveAction extends WorkspaceAction {
 	}
 
     /**
-     * @see org.tigris.subversion.subclipse.ui.actions.WorkspaceAction#isEnabledForSVNResource(org.tigris.subversion.subclipse.core.ISVNResource)
+     * @see org.tigris.subversion.subclipse.ui.actions.WorkspaceAction#isEnabledForSVNResource(org.eclipse.team.svn.core.internal.ISVNResource)
      */
     protected boolean isEnabledForSVNResource(ISVNLocalResource svnResource) {
         try {

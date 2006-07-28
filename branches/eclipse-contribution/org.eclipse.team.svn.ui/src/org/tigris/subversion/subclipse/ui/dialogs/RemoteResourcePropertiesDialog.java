@@ -38,10 +38,10 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.team.svn.core.internal.ISVNRemoteFile;
+import org.eclipse.team.svn.core.internal.ISVNRemoteResource;
+import org.eclipse.team.svn.core.internal.SVNProviderPlugin;
 import org.eclipse.ui.PlatformUI;
-import org.tigris.subversion.subclipse.core.ISVNRemoteFile;
-import org.tigris.subversion.subclipse.core.ISVNRemoteResource;
-import org.tigris.subversion.subclipse.core.SVNProviderPlugin;
 import org.tigris.subversion.subclipse.ui.IHelpContextIds;
 import org.tigris.subversion.subclipse.ui.Policy;
 

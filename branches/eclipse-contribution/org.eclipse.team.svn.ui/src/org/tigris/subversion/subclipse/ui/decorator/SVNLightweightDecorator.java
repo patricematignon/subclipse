@@ -37,15 +37,15 @@ import org.eclipse.subversion.client.SVNUrl;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.team.core.RepositoryProvider;
+import org.eclipse.team.svn.core.internal.IResourceStateChangeListener;
+import org.eclipse.team.svn.core.internal.ISVNLocalResource;
+import org.eclipse.team.svn.core.internal.SVNException;
+import org.eclipse.team.svn.core.internal.SVNProviderPlugin;
+import org.eclipse.team.svn.core.internal.SVNTeamProvider;
+import org.eclipse.team.svn.core.internal.resources.LocalResourceStatus;
+import org.eclipse.team.svn.core.internal.resources.SVNWorkspaceRoot;
 import org.eclipse.team.ui.ISharedImages;
 import org.eclipse.team.ui.TeamImages;
-import org.tigris.subversion.subclipse.core.IResourceStateChangeListener;
-import org.tigris.subversion.subclipse.core.ISVNLocalResource;
-import org.tigris.subversion.subclipse.core.SVNException;
-import org.tigris.subversion.subclipse.core.SVNProviderPlugin;
-import org.tigris.subversion.subclipse.core.SVNTeamProvider;
-import org.tigris.subversion.subclipse.core.resources.LocalResourceStatus;
-import org.tigris.subversion.subclipse.core.resources.SVNWorkspaceRoot;
 import org.tigris.subversion.subclipse.ui.ISVNUIConstants;
 import org.tigris.subversion.subclipse.ui.SVNUIPlugin;
  
@@ -457,21 +457,21 @@ public class SVNLightweightDecorator
 	}
 	
 	/**
-	 * @see org.tigris.subversion.subclipse.core.IResourceStateChangeListener#resourceSyncInfoChanged(org.eclipse.core.resources.IResource[])
+	 * @see org.eclipse.team.svn.core.internal.IResourceStateChangeListener#resourceSyncInfoChanged(org.eclipse.core.resources.IResource[])
 	 */
 	public void resourceSyncInfoChanged(IResource[] changedResources) {
 		resourceStateChanged(changedResources);
 	}
 	
 	/**
-	 * @see org.tigris.subversion.subclipse.core.IResourceStateChangeListener#resourceModificationStateChanged(org.eclipse.core.resources.IResource[])
+	 * @see org.eclipse.team.svn.core.internal.IResourceStateChangeListener#resourceModificationStateChanged(org.eclipse.core.resources.IResource[])
 	 */
 	public void resourceModified(IResource[] changedResources) {
 		resourceStateChanged(changedResources);
 	}
 
 	/**
-	 * @see org.tigris.subversion.subclipse.core.IResourceStateChangeListener#resourceStateChanged(org.eclipse.core.resources.IResource[])
+	 * @see org.eclipse.team.svn.core.internal.IResourceStateChangeListener#resourceStateChanged(org.eclipse.core.resources.IResource[])
 	 */
 	public void resourceStateChanged(IResource[] changedResources) {
 		// add depth first so that update thread processes parents first.
@@ -516,14 +516,14 @@ public class SVNLightweightDecorator
 	}
 	
 	/**
-	 * @see org.tigris.subversion.subclipse.core.IResourceStateChangeListener#projectConfigured(org.eclipse.core.resources.IProject)
+	 * @see org.eclipse.team.svn.core.internal.IResourceStateChangeListener#projectConfigured(org.eclipse.core.resources.IProject)
 	 */
 	public void projectConfigured(IProject project) {
 		refresh(project);
 	}
 
 	/**
-	 * @see org.tigris.subversion.subclipse.core.IResourceStateChangeListener#projectDeconfigured(org.eclipse.core.resources.IProject)
+	 * @see org.eclipse.team.svn.core.internal.IResourceStateChangeListener#projectDeconfigured(org.eclipse.core.resources.IProject)
 	 */
 	public void projectDeconfigured(IProject project) {
 		refresh(project);

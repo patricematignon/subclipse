@@ -21,11 +21,11 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.svn.core.internal.ISVNLocalResource;
+import org.eclipse.team.svn.core.internal.SVNException;
+import org.eclipse.team.svn.core.internal.SVNTeamProvider;
+import org.eclipse.team.svn.core.internal.resources.SVNWorkspaceRoot;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
-import org.tigris.subversion.subclipse.core.ISVNLocalResource;
-import org.tigris.subversion.subclipse.core.SVNException;
-import org.tigris.subversion.subclipse.core.SVNTeamProvider;
-import org.tigris.subversion.subclipse.core.resources.SVNWorkspaceRoot;
 import org.tigris.subversion.subclipse.ui.Policy;
 
 /**
@@ -121,7 +121,7 @@ public class AddAction extends WorkspaceAction {
 	}
 
 	/**
-	 * @see org.tigris.subversion.subclipse.ui.actions.WorkspaceAction#isEnabledForSVNResource(org.tigris.subversion.subclipse.core.ISVNResource)
+	 * @see org.tigris.subversion.subclipse.ui.actions.WorkspaceAction#isEnabledForSVNResource(org.eclipse.team.svn.core.internal.ISVNResource)
 	 */
 	protected boolean isEnabledForSVNResource(ISVNLocalResource svnResource) throws SVNException {
 		// Add to version control should never be enabled for linked resources

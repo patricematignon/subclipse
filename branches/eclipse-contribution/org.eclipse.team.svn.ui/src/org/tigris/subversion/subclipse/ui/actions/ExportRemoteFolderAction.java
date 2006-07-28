@@ -14,7 +14,7 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.jface.action.IAction;
 import org.eclipse.team.core.TeamException;
-import org.tigris.subversion.subclipse.core.ISVNRemoteFolder;
+import org.eclipse.team.svn.core.internal.ISVNRemoteFolder;
 import org.tigris.subversion.subclipse.ui.dialogs.ExportRemoteFolderDialog;
 
 public class ExportRemoteFolderAction extends SVNAction {

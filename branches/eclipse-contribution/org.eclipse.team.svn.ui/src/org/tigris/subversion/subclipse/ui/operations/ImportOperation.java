@@ -13,11 +13,11 @@ package org.tigris.subversion.subclipse.ui.operations;
 import java.io.File;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.team.svn.core.internal.ISVNRemoteFolder;
+import org.eclipse.team.svn.core.internal.SVNException;
+import org.eclipse.team.svn.core.internal.SVNTeamProvider;
+import org.eclipse.team.svn.core.internal.commands.ImportCommand;
 import org.eclipse.ui.IWorkbenchPart;
-import org.tigris.subversion.subclipse.core.ISVNRemoteFolder;
-import org.tigris.subversion.subclipse.core.SVNException;
-import org.tigris.subversion.subclipse.core.SVNTeamProvider;
-import org.tigris.subversion.subclipse.core.commands.ImportCommand;
 import org.tigris.subversion.subclipse.ui.Policy;
 
 public class ImportOperation extends SVNOperation {

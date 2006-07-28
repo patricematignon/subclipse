@@ -30,6 +30,11 @@ import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.subscribers.ISubscriberChangeEvent;
 import org.eclipse.team.core.subscribers.ISubscriberChangeListener;
 import org.eclipse.team.core.synchronize.SyncInfo;
+import org.eclipse.team.svn.core.internal.ISVNLocalFile;
+import org.eclipse.team.svn.core.internal.ISVNRemoteFile;
+import org.eclipse.team.svn.core.internal.SVNException;
+import org.eclipse.team.svn.core.internal.resources.SVNWorkspaceRoot;
+import org.eclipse.team.svn.core.internal.sync.SVNWorkspaceSubscriber;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.editors.text.IStorageDocumentProvider;
@@ -37,11 +42,6 @@ import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.IElementStateListener;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.texteditor.quickdiff.IQuickDiffReferenceProvider;
-import org.tigris.subversion.subclipse.core.ISVNLocalFile;
-import org.tigris.subversion.subclipse.core.ISVNRemoteFile;
-import org.tigris.subversion.subclipse.core.SVNException;
-import org.tigris.subversion.subclipse.core.resources.SVNWorkspaceRoot;
-import org.tigris.subversion.subclipse.core.sync.SVNWorkspaceSubscriber;
 
 /**
 

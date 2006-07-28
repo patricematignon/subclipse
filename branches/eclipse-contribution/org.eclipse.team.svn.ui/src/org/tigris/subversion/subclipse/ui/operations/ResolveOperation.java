@@ -12,10 +12,10 @@ package org.tigris.subversion.subclipse.ui.operations;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.team.svn.core.internal.SVNException;
+import org.eclipse.team.svn.core.internal.SVNTeamProvider;
+import org.eclipse.team.svn.core.internal.commands.ResolveResourcesCommand;
 import org.eclipse.ui.IWorkbenchPart;
-import org.tigris.subversion.subclipse.core.SVNException;
-import org.tigris.subversion.subclipse.core.SVNTeamProvider;
-import org.tigris.subversion.subclipse.core.commands.ResolveResourcesCommand;
 import org.tigris.subversion.subclipse.ui.Policy;
 
 public class ResolveOperation extends RepositoryProviderOperation {

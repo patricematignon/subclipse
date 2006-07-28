@@ -15,9 +15,9 @@ import java.io.InputStream;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.svn.core.internal.ISVNRemoteFile;
 import org.eclipse.ui.IStorageEditorInput;
 import org.eclipse.ui.model.IWorkbenchAdapter;
-import org.tigris.subversion.subclipse.core.ISVNRemoteFile;
 import org.tigris.subversion.subclipse.ui.editor.RemoteFileEditorInput;
 
 /**

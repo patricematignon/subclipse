@@ -14,11 +14,11 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.subversion.client.SVNRevision;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.svn.core.internal.SVNException;
+import org.eclipse.team.svn.core.internal.SVNTeamProvider;
+import org.eclipse.team.svn.core.internal.commands.UpdateResourcesCommand;
+import org.eclipse.team.svn.core.internal.sync.SVNWorkspaceSubscriber;
 import org.eclipse.ui.IWorkbenchPart;
-import org.tigris.subversion.subclipse.core.SVNException;
-import org.tigris.subversion.subclipse.core.SVNTeamProvider;
-import org.tigris.subversion.subclipse.core.commands.UpdateResourcesCommand;
-import org.tigris.subversion.subclipse.core.sync.SVNWorkspaceSubscriber;
 import org.tigris.subversion.subclipse.ui.Policy;
 
 /**

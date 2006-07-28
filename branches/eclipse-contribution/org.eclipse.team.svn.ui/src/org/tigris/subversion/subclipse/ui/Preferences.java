@@ -21,8 +21,8 @@ import org.eclipse.subversion.client.commandline.CmdLineClientAdapterFactory;
 import org.eclipse.subversion.client.javahl.JhlClientAdapterFactory;
 import org.eclipse.subversion.client.javasvn.JavaSvnClientAdapterFactory;
 import org.eclipse.swt.graphics.RGB;
-import org.tigris.subversion.subclipse.core.SVNClientManager;
-import org.tigris.subversion.subclipse.core.SVNProviderPlugin;
+import org.eclipse.team.svn.core.internal.SVNClientManager;
+import org.eclipse.team.svn.core.internal.SVNProviderPlugin;
 import org.tigris.subversion.subclipse.ui.decorator.SVNDecoratorConfiguration;
 
 /**

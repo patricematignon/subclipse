@@ -17,13 +17,13 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.svn.core.internal.ISVNRemoteFolder;
+import org.eclipse.team.svn.core.internal.ISVNRepositoryLocation;
+import org.eclipse.team.svn.core.internal.Policy;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.IDeferredWorkbenchAdapter;
 import org.eclipse.ui.progress.IElementCollector;
-import org.tigris.subversion.subclipse.core.ISVNRemoteFolder;
-import org.tigris.subversion.subclipse.core.ISVNRepositoryLocation;
-import org.tigris.subversion.subclipse.core.Policy;
 import org.tigris.subversion.subclipse.ui.SVNUIPlugin;
 import org.tigris.subversion.subclipse.ui.operations.FetchMembersOperation;
 

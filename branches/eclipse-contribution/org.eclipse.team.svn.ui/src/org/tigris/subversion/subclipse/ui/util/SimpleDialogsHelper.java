@@ -14,9 +14,9 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
-import org.tigris.subversion.subclipse.core.util.ISimpleDialogsHelper;
 import org.tigris.subversion.subclipse.ui.SVNUIPlugin;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.team.svn.core.internal.util.ISimpleDialogsHelper;
 
 /**
  *	
@@ -26,8 +26,8 @@ import org.eclipse.swt.graphics.Image;
  *  every new dialog. Remember to update the ISimpleDialogsHelper interface. 
  * 
  * @author Magnus Naeslund (mag@kite.se)
- * @see org.tigris.subversion.subclipse.core.util.ISimpleDialogsHelper 
- * @see org.tigris.subversion.subclipse.core.SVNProviderPlugin#getSimpleDialogsHelper()
+ * @see org.eclipse.team.svn.core.internal.util.ISimpleDialogsHelper 
+ * @see org.eclipse.team.svn.core.internal.SVNProviderPlugin#getSimpleDialogsHelper()
  */
 
 public class SimpleDialogsHelper implements ISimpleDialogsHelper {

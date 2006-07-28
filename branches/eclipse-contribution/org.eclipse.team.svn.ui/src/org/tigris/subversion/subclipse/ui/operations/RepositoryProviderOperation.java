@@ -24,14 +24,14 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.team.core.RepositoryProvider;
+import org.eclipse.team.svn.core.internal.ISVNFolder;
+import org.eclipse.team.svn.core.internal.ISVNRepositoryLocation;
+import org.eclipse.team.svn.core.internal.ISVNResource;
+import org.eclipse.team.svn.core.internal.SVNException;
+import org.eclipse.team.svn.core.internal.SVNProviderPlugin;
+import org.eclipse.team.svn.core.internal.SVNTeamProvider;
+import org.eclipse.team.svn.core.internal.resources.SVNWorkspaceRoot;
 import org.eclipse.ui.IWorkbenchPart;
-import org.tigris.subversion.subclipse.core.ISVNFolder;
-import org.tigris.subversion.subclipse.core.ISVNRepositoryLocation;
-import org.tigris.subversion.subclipse.core.ISVNResource;
-import org.tigris.subversion.subclipse.core.SVNException;
-import org.tigris.subversion.subclipse.core.SVNProviderPlugin;
-import org.tigris.subversion.subclipse.core.SVNTeamProvider;
-import org.tigris.subversion.subclipse.core.resources.SVNWorkspaceRoot;
 
 /**
  * Performs a svn operation on multiple repository providers

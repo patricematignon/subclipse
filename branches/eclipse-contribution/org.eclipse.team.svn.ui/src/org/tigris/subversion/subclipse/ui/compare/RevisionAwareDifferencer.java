@@ -13,10 +13,10 @@ package org.tigris.subversion.subclipse.ui.compare;
 import org.eclipse.compare.ITypedElement;
 import org.eclipse.compare.structuremergeviewer.Differencer;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.tigris.subversion.subclipse.core.ISVNLocalResource;
-import org.tigris.subversion.subclipse.core.ISVNRemoteResource;
-import org.tigris.subversion.subclipse.core.SVNException;
-import org.tigris.subversion.subclipse.core.resources.LocalResourceStatus;
+import org.eclipse.team.svn.core.internal.ISVNLocalResource;
+import org.eclipse.team.svn.core.internal.ISVNRemoteResource;
+import org.eclipse.team.svn.core.internal.SVNException;
+import org.eclipse.team.svn.core.internal.resources.LocalResourceStatus;
 import org.tigris.subversion.subclipse.ui.Policy;
 
 public final class RevisionAwareDifferencer extends Differencer {

@@ -27,8 +27,8 @@ import org.eclipse.subversion.client.ISVNClientAdapter;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.svn.core.internal.resources.SVNWorkspaceRoot;
 import org.eclipse.ui.dialogs.ContainerSelectionDialog;
-import org.tigris.subversion.subclipse.core.resources.SVNWorkspaceRoot;
 import org.tigris.subversion.subclipse.ui.Policy;
 
 public class CopyAction extends WorkspaceAction {

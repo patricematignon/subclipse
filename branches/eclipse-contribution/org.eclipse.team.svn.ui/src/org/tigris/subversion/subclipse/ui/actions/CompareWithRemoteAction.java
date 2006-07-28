@@ -16,9 +16,9 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.subversion.client.SVNRevision;
-import org.tigris.subversion.subclipse.core.ISVNLocalResource;
-import org.tigris.subversion.subclipse.core.SVNException;
-import org.tigris.subversion.subclipse.core.resources.SVNWorkspaceRoot;
+import org.eclipse.team.svn.core.internal.ISVNLocalResource;
+import org.eclipse.team.svn.core.internal.SVNException;
+import org.eclipse.team.svn.core.internal.resources.SVNWorkspaceRoot;
 import org.tigris.subversion.subclipse.ui.compare.SVNLocalCompareInput;
 
 public abstract class CompareWithRemoteAction extends WorkspaceAction {

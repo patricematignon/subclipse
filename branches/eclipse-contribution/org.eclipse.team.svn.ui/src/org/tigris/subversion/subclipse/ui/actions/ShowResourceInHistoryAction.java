@@ -16,9 +16,9 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.team.svn.core.internal.ISVNLocalResource;
+import org.eclipse.team.svn.core.internal.SVNException;
 import org.eclipse.team.ui.history.IHistoryView;
-import org.tigris.subversion.subclipse.core.ISVNLocalResource;
-import org.tigris.subversion.subclipse.core.SVNException;
 import org.tigris.subversion.subclipse.ui.ISVNUIConstants;
 import org.tigris.subversion.subclipse.ui.Policy;
 
@@ -64,7 +64,7 @@ public class ShowResourceInHistoryAction extends WorkspaceAction {
 	}
 
 	/**
-	 * @see org.tigris.subversion.subclipse.ui.actions.WorkspaceAction#isEnabledForSVNResource(org.tigris.subversion.subclipse.core.ISVNResource)
+	 * @see org.tigris.subversion.subclipse.ui.actions.WorkspaceAction#isEnabledForSVNResource(org.eclipse.team.svn.core.internal.ISVNResource)
 	 */
 	protected boolean isEnabledForSVNResource(ISVNLocalResource svnResource) throws SVNException {
 		return /* (!svnResource.isFolder() && */ super.isEnabledForSVNResource(svnResource);

@@ -13,9 +13,9 @@ package org.tigris.subversion.subclipse.ui.settings;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.subversion.client.ISVNProperty;
-import org.tigris.subversion.subclipse.core.ISVNLocalResource;
-import org.tigris.subversion.subclipse.core.SVNException;
-import org.tigris.subversion.subclipse.core.resources.SVNWorkspaceRoot;
+import org.eclipse.team.svn.core.internal.ISVNLocalResource;
+import org.eclipse.team.svn.core.internal.SVNException;
+import org.eclipse.team.svn.core.internal.resources.SVNWorkspaceRoot;
 
 public class CommentProperties {
     private int minimumLogMessageSize;

@@ -18,8 +18,8 @@ import org.eclipse.jface.viewers.ViewerDropAdapter;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DropTargetEvent;
 import org.eclipse.swt.dnd.TransferData;
+import org.eclipse.team.svn.core.internal.SVNException;
 import org.eclipse.ui.part.ResourceTransfer;
-import org.tigris.subversion.subclipse.core.SVNException;
 
 /**
  * Used to perform a drop of a file to HistoryView 

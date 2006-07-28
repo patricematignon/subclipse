@@ -10,9 +10,9 @@
  ******************************************************************************/
 package org.tigris.subversion.subclipse.ui.repository;
 
-import org.tigris.subversion.subclipse.core.ISVNRemoteFolder;
-import org.tigris.subversion.subclipse.core.ISVNRemoteResource;
-import org.tigris.subversion.subclipse.core.ISVNRepositoryLocation;
+import org.eclipse.team.svn.core.internal.ISVNRemoteFolder;
+import org.eclipse.team.svn.core.internal.ISVNRemoteResource;
+import org.eclipse.team.svn.core.internal.ISVNRepositoryLocation;
 
 /**
  * Listener for repositories. events fired when repository added, removed or changed 

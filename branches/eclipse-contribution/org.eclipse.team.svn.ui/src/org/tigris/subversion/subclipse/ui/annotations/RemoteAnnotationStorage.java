@@ -22,9 +22,9 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.subversion.client.SVNUrl;
-import org.tigris.subversion.subclipse.core.ISVNRemoteFile;
-import org.tigris.subversion.subclipse.core.ISVNRepositoryLocation;
-import org.tigris.subversion.subclipse.core.SVNException;
+import org.eclipse.team.svn.core.internal.ISVNRemoteFile;
+import org.eclipse.team.svn.core.internal.ISVNRepositoryLocation;
+import org.eclipse.team.svn.core.internal.SVNException;
 import org.tigris.subversion.subclipse.ui.Policy;
 import org.tigris.subversion.subclipse.ui.SVNUIPlugin;
 

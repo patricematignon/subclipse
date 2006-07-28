@@ -12,7 +12,7 @@ package org.tigris.subversion.subclipse.ui.actions;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.Transfer;
-import org.tigris.subversion.subclipse.core.ISVNRemoteResource;
+import org.eclipse.team.svn.core.internal.ISVNRemoteResource;
 
 /**
  * Copy selected remote resources to clipboard

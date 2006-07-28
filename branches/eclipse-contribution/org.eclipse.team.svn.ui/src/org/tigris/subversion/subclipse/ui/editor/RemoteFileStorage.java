@@ -23,7 +23,7 @@ import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.variants.IResourceVariant;
-import org.tigris.subversion.subclipse.core.ISVNRemoteFile;
+import org.eclipse.team.svn.core.internal.ISVNRemoteFile;
 import org.tigris.subversion.subclipse.ui.SVNUIPlugin;
 
 public class RemoteFileStorage extends PlatformObject implements IStorage {

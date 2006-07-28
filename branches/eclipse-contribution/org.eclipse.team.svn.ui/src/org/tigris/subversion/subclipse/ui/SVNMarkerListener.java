@@ -13,10 +13,10 @@ package org.tigris.subversion.subclipse.ui;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.tigris.subversion.subclipse.core.IResourceStateChangeListener;
-import org.tigris.subversion.subclipse.core.ISVNLocalResource;
-import org.tigris.subversion.subclipse.core.resources.LocalResourceStatus;
-import org.tigris.subversion.subclipse.core.resources.SVNWorkspaceRoot;
+import org.eclipse.team.svn.core.internal.IResourceStateChangeListener;
+import org.eclipse.team.svn.core.internal.ISVNLocalResource;
+import org.eclipse.team.svn.core.internal.resources.LocalResourceStatus;
+import org.eclipse.team.svn.core.internal.resources.SVNWorkspaceRoot;
 
 public class SVNMarkerListener implements IResourceStateChangeListener {
 

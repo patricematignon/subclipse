@@ -12,9 +12,9 @@ package org.tigris.subversion.subclipse.ui.actions;
 
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.wizard.WizardDialog;
-import org.tigris.subversion.subclipse.core.ISVNRemoteFile;
-import org.tigris.subversion.subclipse.core.ISVNRemoteFolder;
-import org.tigris.subversion.subclipse.core.ISVNRepositoryLocation;
+import org.eclipse.team.svn.core.internal.ISVNRemoteFile;
+import org.eclipse.team.svn.core.internal.ISVNRemoteFolder;
+import org.eclipse.team.svn.core.internal.ISVNRepositoryLocation;
 import org.tigris.subversion.subclipse.ui.wizards.NewRemoteFolderWizard;
 
 /**

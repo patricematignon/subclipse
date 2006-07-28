@@ -24,7 +24,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-import org.tigris.subversion.subclipse.core.ISVNRemoteFolder;
+import org.eclipse.team.svn.core.internal.ISVNRemoteFolder;
 import org.tigris.subversion.subclipse.ui.Policy;
 
 public class CheckoutWizardCheckoutAsWithoutProjectFilePage extends WizardPage {

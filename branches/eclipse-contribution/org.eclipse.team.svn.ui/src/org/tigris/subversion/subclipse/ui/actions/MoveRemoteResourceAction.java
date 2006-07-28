@@ -12,7 +12,7 @@ package org.tigris.subversion.subclipse.ui.actions;
 
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.wizard.WizardDialog;
-import org.tigris.subversion.subclipse.core.ISVNRemoteResource;
+import org.eclipse.team.svn.core.internal.ISVNRemoteResource;
 import org.tigris.subversion.subclipse.ui.wizards.MoveRemoteResourceWizard;
 
 /**

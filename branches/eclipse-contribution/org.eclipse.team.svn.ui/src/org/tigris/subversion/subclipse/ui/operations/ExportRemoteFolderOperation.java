@@ -16,10 +16,10 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.subversion.client.ISVNClientAdapter;
 import org.eclipse.subversion.client.SVNClientException;
 import org.eclipse.subversion.client.SVNRevision;
+import org.eclipse.team.svn.core.internal.ISVNRemoteFolder;
+import org.eclipse.team.svn.core.internal.SVNException;
+import org.eclipse.team.svn.core.internal.SVNTeamProvider;
 import org.eclipse.ui.IWorkbenchPart;
-import org.tigris.subversion.subclipse.core.ISVNRemoteFolder;
-import org.tigris.subversion.subclipse.core.SVNException;
-import org.tigris.subversion.subclipse.core.SVNTeamProvider;
 import org.tigris.subversion.subclipse.ui.Policy;
 
 public class ExportRemoteFolderOperation extends SVNOperation {

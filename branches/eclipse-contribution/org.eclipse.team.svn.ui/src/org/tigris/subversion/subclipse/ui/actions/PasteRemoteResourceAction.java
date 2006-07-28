@@ -18,9 +18,9 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.team.core.TeamException;
-import org.tigris.subversion.subclipse.core.ISVNRemoteFolder;
-import org.tigris.subversion.subclipse.core.ISVNRemoteResource;
-import org.tigris.subversion.subclipse.core.SVNProviderPlugin;
+import org.eclipse.team.svn.core.internal.ISVNRemoteFolder;
+import org.eclipse.team.svn.core.internal.ISVNRemoteResource;
+import org.eclipse.team.svn.core.internal.SVNProviderPlugin;
 import org.tigris.subversion.subclipse.ui.SVNUIPlugin;
 import org.tigris.subversion.subclipse.ui.repository.RepositoryManager;
 
