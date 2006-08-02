@@ -29,6 +29,7 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.subversion.client.SVNUrl;
 import org.eclipse.team.core.ProjectSetCapability;
 import org.eclipse.team.core.ProjectSetSerializationContext;
 import org.eclipse.team.core.RepositoryProvider;
@@ -70,15 +71,28 @@ public class SVNProjectSetCapability extends ProjectSetCapability {
      */
     private String asReference(IProject project) {
         StringBuffer buffer = new StringBuffer();
-        buffer.append("0.9.3,"); //$NON-NLS-1$
 
         SVNTeamProvider provider = (SVNTeamProvider) RepositoryProvider
                 .getProvider(project);
         SVNWorkspaceRoot root = provider.getSVNWorkspaceRoot();
 
+        SVNUrl rootURL = null;
+		try {
+			rootURL = root.getRepository().getRepositoryRoot();
+		} catch (SVNException e) {	}
+        
+		if (root == null)
+			buffer.append("0.9.3,"); //$NON-NLS-1$
+		else
+			buffer.append("1.0,"); //$NON-NLS-1$
+
         buffer.append(root.getLocalRoot().getUrl().toString());
         buffer.append(",");
         buffer.append(project.getName());
+        if (root != null) {
+	        buffer.append(",");
+	        buffer.append(rootURL.toString());
+        }
         return buffer.toString();
     }
 
@@ -128,10 +142,10 @@ public class SVNProjectSetCapability extends ProjectSetCapability {
                     referenceStrings[i], ","); //$NON-NLS-1$
             String version = tokenizer.nextToken();
             // If this is a newer version, then ignore it
-            if (!version.equals("0.9.3")) { //$NON-NLS-1$
+            if (!version.equals("0.9.3") && !version.equals("1.0")) { //$NON-NLS-1$
                 continue;
             }
-            LoadInfo info = new LoadInfo(context, tokenizer);
+            LoadInfo info = new LoadInfo(context, version, tokenizer);
             IProject proj = info.getProject();
             result.add(proj);
             infoMap.put(proj, info);
@@ -192,16 +206,23 @@ public class SVNProjectSetCapability extends ProjectSetCapability {
          * @param projRef
          *            the project reference
          */
-        LoadInfo(ProjectSetSerializationContext context,
+        LoadInfo(ProjectSetSerializationContext context, String version,
                 StringTokenizer tokenizer) throws SVNException {
             String repo = tokenizer.nextToken();
             String projectName = tokenizer.nextToken();
+            String reposRoot = null;
+            if (version.equals("1.0"))
+            	reposRoot = tokenizer.nextToken();
 
             project = ResourcesPlugin.getWorkspace().getRoot().getProject(
                     projectName);
             if (repo.indexOf("://") != -1) { //$NON-NLS-1$
                 //A normal URL
-                repositoryLocation = SVNRepositoryLocation.fromString(repo);
+            	if (reposRoot != null) {
+            		// Create repository location for the root URL
+            		SVNProviderPlugin.getPlugin().getRepositories().getRepository(reposRoot);
+            	}
+        		repositoryLocation = SVNRepositoryLocation.fromString(repo);
                 fromFileSystem = false;
                 directory = null;
             } else {
