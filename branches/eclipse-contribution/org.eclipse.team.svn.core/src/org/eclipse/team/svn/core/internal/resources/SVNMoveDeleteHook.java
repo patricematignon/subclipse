@@ -202,6 +202,8 @@ public class SVNMoveDeleteHook implements IMoveDeleteHook {
                     }
                     provider.add(new IResource[] { destination.getParent() },
                             IResource.DEPTH_ZERO, new NullProgressMonitor());
+                    ISVNLocalResource parent = SVNWorkspaceRoot.getSVNResourceFor(destination.getParent());
+                    if (parent != null) parent.refreshStatus();
                 }
 
                 if (SVNWorkspaceRoot.getSVNFolderFor(source).getStatus()
