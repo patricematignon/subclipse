@@ -64,8 +64,16 @@ public class SVNStatusUnversioned implements ISVNStatus {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.subversion.client.ISVNStatus#getLastChangedRevision()
+    /*
+	 * @see org.eclipse.subversion.client.ISVNStatus#getUrlString()
+	 */
+	public String getUrlString()
+	{
+		return null;
+	}
+	
+    /* (non-Javadoc)
+     * @see org.eclipse.subversion.client.ISVNStatus#getLastChangedRevision()
 	 */
 	public SVNRevision.Number getLastChangedRevision() {
 		return null;
