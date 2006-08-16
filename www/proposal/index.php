@@ -300,6 +300,14 @@ project and have expressed an interest in this proposal.</p>
 	<li><a href="http://www.eclipse.org/alf/">ALF</a></li>
 </ul>
 
+<p>The following individuals and their organizations have expressed their
+interest in and support for this proposal.</p>
+<ul>
+	<li>Karl Fogel (<a href="http://www.google.com/">Google</a>)</li>
+	<li>Ben Konrath (<a href="http://www.redhat.com/">Red Hat</a>)</li>
+	<li>Andrew Overholt (<a href="http://www.redhat.com/">Red Hat</a>)</li>
+</ul>
+
 <p><b>Developer community</b></p>
 <p>The Subclipse team has a proven track record of operating in an open and
 transparent manner.  Even this proposal has been developed collaboratively
