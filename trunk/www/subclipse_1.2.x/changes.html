@@ -38,6 +38,47 @@ that view open.  This is normal and is not a problem.  You will get the error th
 each perspective that had the view open.</p> 
 
 <hr />
+<a name="1.1.6"></a>
+<h4>Version 1.1.6<br>
+Not released yet</h4>
+<p>from: /trunk<br>
+<a href="http://subclipse.tigris.org/svn/subclipse/tags/subclipse/1.1.6">
+http://subclipse.tigris.org/svn/subclipse/tags/subclipse/1.1.6</a></p>
+<ul>
+ <li>Many performance improvements to status cache maintenance.  Should speed
+ up workspace refreshes/builds as well as Synchronize.</li>
+ <li>Switched resources are now shown with their own decorator. (<a
+  href="http://subclpse.tigris.org/issues/show_bug.cgi?id=521">521</a>)</li>
+ <li>Older revisions of files that do not have an Eclipse editor, such as
+ Word documents, will now be opened in the external editor.</li>
+ <li>History view enhanced to have a vertical layout option  Also new toolbar
+ icons to toggle on/off the display of various elements in the view. (<a
+  href="http://subclpse.tigris.org/issues/show_bug.cgi?id=538">538</a>)</li>
+ <li>Can now export files, not just folders, from the Repositories view. (<a
+  href="http://subclpse.tigris.org/issues/show_bug.cgi?id=540">540</a>)</li>
+ <li>Can now Show History for the repository root from the Repositories view.</li>
+ <li>Option to show Out of Date folders added to Synchronize view.  This should
+ improve usability by prompting the user to update folders when they are out
+ of date.</li>
+ <li>Processing of update option changed in Sync view.  This dovetails with the
+ Show Out of Date Folders change.  Items are selected for update based on what
+ is shown in the view.  When folders were not being shown we were doing some
+ workarounds so that folders would get updated.</li>
+ <li>Added export option to the History view. (<a
+  href="http://subclpse.tigris.org/issues/show_bug.cgi?id=540">540</a>)</li>
+ <li>Support for Incoming Change Sets has been added to the Synchronize view. (<a
+  href="http://subclpse.tigris.org/issues/show_bug.cgi?id=543">543</a>)</li>
+ <li>Allow a commit comment to be specified when sharing a project. (<a
+  href="http://subclpse.tigris.org/issues/show_bug.cgi?id=529">529</a>)</li>
+ <li>Fixed problem parsing bug ID's when the template includes characters
+ after the bug ID. (<a
+  href="http://subclpse.tigris.org/issues/show_bug.cgi?id=536">536</a>)</li>
+ <li>Improve refreshing of tree in Repositories view when a new folder
+ is added. (<a
+  href="http://subclpse.tigris.org/issues/show_bug.cgi?id=505">505</a>)</li>
+</ul>
+
+<hr />
 <a name="1.1.5"></a>
 <h4>Version 1.1.5<br>
 8 August 2006</h4>
