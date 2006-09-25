@@ -21,7 +21,7 @@ import org.tigris.subversion.subclipse.core.commands.GetStatusCommand;
 import org.tigris.subversion.subclipse.core.resources.SVNWorkspaceRoot;
 import org.tigris.subversion.subclipse.core.util.Util;
 import org.tigris.subversion.svnclientadapter.ISVNStatus;
-import org.tigris.subversion.svnclientadapter.SVNStatusUtils;
+import org.tigris.subversion.svnclientadapter.utils.SVNStatusUtils;
 
 public class RevertSynchronizeAction extends SynchronizeModelAction {
 	private String url;
