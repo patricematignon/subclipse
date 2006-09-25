@@ -38,7 +38,14 @@ public class OverrideAndUpdateSynchronizeAction extends SynchronizeModelAction {
 			    while (iter.hasNext()) {
 			    	ISynchronizeModelElement element = (ISynchronizeModelElement)iter.next();
 			    	IResource resource = element.getResource();
-			    	if (!resource.exists()) return false;
+			    	if (resource == null || !resource.exists()) return false;
+			    	ISVNLocalResource svnResource = SVNWorkspaceRoot.getSVNResourceFor(resource);			    
+	                try {
+	                	if (svnResource.isAdded()) return false;
+	                	if (!svnResource.isManaged()) return false;
+	                } catch (SVNException e) {
+	                    return false;
+	                }			    		
 			    }
                 return true;
 			}
