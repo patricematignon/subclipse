@@ -363,7 +363,7 @@ public class CheckoutWizard extends Wizard implements INewWizard, IImportWizard 
 	}
 
 	private boolean checkoutAsProjectInto() {
-		CheckoutIntoAction checkoutAction = new CheckoutIntoAction(remoteFolders, projectName, projectPage.getLocation(), getShell());
+		CheckoutIntoAction checkoutAction = new CheckoutIntoAction(remoteFolders, projectName, projectPage.getCanonicalLocation(), getShell());
 		try {
 			checkoutAction.execute(null);
 		} catch (Exception e) {
