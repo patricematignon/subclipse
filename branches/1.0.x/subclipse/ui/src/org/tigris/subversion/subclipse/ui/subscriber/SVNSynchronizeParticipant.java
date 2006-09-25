@@ -29,6 +29,7 @@ import org.tigris.subversion.subclipse.core.sync.SVNWorkspaceSubscriber;
 import org.tigris.subversion.subclipse.ui.ISVNUIConstants;
 import org.tigris.subversion.subclipse.ui.Policy;
 import org.tigris.subversion.subclipse.ui.SVNUIPlugin;
+import org.tigris.subversion.subclipse.ui.actions.ShowOutOfDateFoldersAction;
 import org.tigris.subversion.subclipse.ui.internal.ScopableSubscriberParticipant;
 
 
@@ -94,12 +95,21 @@ public class SVNSynchronizeParticipant extends ScopableSubscriberParticipant {
 		 */
 		public void initialize(ISynchronizePageConfiguration configuration) {
 			super.initialize(configuration);
+			
+			ShowOutOfDateFoldersAction showOutOfDateFoldersAction = SVNUIPlugin.getPlugin().getShowOutOfDateFoldersAction();
+			showOutOfDateFoldersAction.setSvnSynchronizeParticipant(SVNSynchronizeParticipant.this);
+			appendToGroup(
+					ISynchronizePageConfiguration.P_VIEW_MENU,
+					ISynchronizePageConfiguration.MODE_GROUP,
+					showOutOfDateFoldersAction);
+
 			CommitSynchronizeAction commitAction = new CommitSynchronizeAction(Policy.bind("SyncAction.commit"), configuration); //$NON-NLS-1$
 			commitAction.setImageDescriptor(SVNUIPlugin.getPlugin().getImageDescriptor(ISVNUIConstants.IMG_COMMIT));
 			appendToGroup(
 					ISynchronizePageConfiguration.P_CONTEXT_MENU, 
 					CONTEXT_MENU_CONTRIBUTION_GROUP_1,
 					commitAction);
+			
 			UpdateSynchronizeAction updateAction = new UpdateSynchronizeAction(Policy.bind("SyncAction.update"), configuration); //$NON-NLS-1$
 			updateAction.setImageDescriptor(SVNUIPlugin.getPlugin().getImageDescriptor(ISVNUIConstants.IMG_UPDATE));
 			appendToGroup(

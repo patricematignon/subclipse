@@ -35,6 +35,7 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.help.WorkbenchHelp;
+import org.tigris.subversion.subclipse.core.ISVNCoreConstants;
 import org.tigris.subversion.subclipse.core.SVNProviderPlugin;
 import org.tigris.subversion.subclipse.ui.IHelpContextIds;
 import org.tigris.subversion.subclipse.ui.ISVNUIConstants;
@@ -60,6 +61,7 @@ public class SVNPreferencesPage extends PreferencePage implements IWorkbenchPref
     private Button showCompareRevisionInDialog;
     private Button fetchChangePathOnDemand;
     private Button showTagsInRemoteHistory;
+    private Button showOutOfDateFolders;
     private Button selectUnadded;
     private Text logEntriesToFetchText;
     private Button defaultConfigLocationRadio;
@@ -139,6 +141,8 @@ public class SVNPreferencesPage extends PreferencePage implements IWorkbenchPref
 		fetchChangePathOnDemand = createCheckBox(composite, Policy.bind("SVNPreferencePage.fetchChangePathOnDemand")); //$NON-NLS-1$
 		
 		showTagsInRemoteHistory = createCheckBox(composite, Policy.bind("SVNPreferencePage.showTags")); //$NON-NLS-1$
+		
+		showOutOfDateFolders = createCheckBox(composite, Policy.bind("SVNPreferencePage.showOutOfDateFolders")); //$NON-NLS-1$
 		createLabel(composite, "", 2); //$NON-NLS-1$
 		
 		createLabel(composite, Policy.bind("SVNPreferencePage.logEntriesToFetch"), 1); //$NON-NLS-1$
@@ -232,6 +236,8 @@ public class SVNPreferencesPage extends PreferencePage implements IWorkbenchPref
 		
 		showTagsInRemoteHistory.setSelection(store.getBoolean(ISVNUIConstants.PREF_SHOW_TAGS_IN_REMOTE));
 		
+		showOutOfDateFolders.setSelection(SVNProviderPlugin.getPlugin().getPluginPreferences().getBoolean(ISVNCoreConstants.PREF_SHOW_OUT_OF_DATE_FOLDERS));
+		
 		selectUnadded.setSelection(store.getBoolean(ISVNUIConstants.PREF_SELECT_UNADDED_RESOURCES_ON_COMMIT));
 		
 		logEntriesToFetchText.setText(Integer.toString(store.getInt(ISVNUIConstants.PREF_LOG_ENTRIES_TO_FETCH)));
@@ -276,6 +282,11 @@ public class SVNPreferencesPage extends PreferencePage implements IWorkbenchPref
 		store.setValue(ISVNUIConstants.PREF_FETCH_CHANGE_PATH_ON_DEMAND, fetchChangePathOnDemand.getSelection());
 		
 		store.setValue(ISVNUIConstants.PREF_SHOW_TAGS_IN_REMOTE, showTagsInRemoteHistory.getSelection());
+		
+		if (SVNProviderPlugin.getPlugin().getPluginPreferences().getBoolean(ISVNCoreConstants.PREF_SHOW_OUT_OF_DATE_FOLDERS) != showOutOfDateFolders.getSelection()) {
+			SVNProviderPlugin.getPlugin().getPluginPreferences().setValue(ISVNCoreConstants.PREF_SHOW_OUT_OF_DATE_FOLDERS, showOutOfDateFolders.getSelection());
+			SVNUIPlugin.getPlugin().getShowOutOfDateFoldersAction().setChecked(showOutOfDateFolders.getSelection());
+		}
 		
         // save select unadded resources on commit pref
 		store.setValue(ISVNUIConstants.PREF_SELECT_UNADDED_RESOURCES_ON_COMMIT, selectUnadded.getSelection());
