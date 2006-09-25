@@ -164,6 +164,14 @@
                class="org.tigris.subversion.subclipse.ui.actions.RelocateAction"
                id="org.tigris.subversion.subclipse.ui.relocate">
          </action>                              
+         <action
+               label="%ShowHistoryAction.label"
+               icon="icons/full/cview16/history_view.gif"
+               helpContextId="org.tigris.subversion.subclipse.ui.show_in_history_action_context"
+               class="org.tigris.subversion.subclipse.ui.actions.ShowHistoryAction"
+               tooltip="%ShowHistoryAction.tooltip"
+               id="org.tigris.subversion.subclipse.ui.showHistory">
+         </action>         
       </objectContribution>
       <objectContribution
             objectClass="org.tigris.subversion.subclipse.core.ISVNRemoteResource"
@@ -192,6 +200,13 @@
                menubarPath="historyGroup"
                tooltip="%ShowHistoryAction.tooltip"
                id="org.tigris.subversion.subclipse.ui.showHistory">
+         </action>         
+         <action
+               label="%ExportRemoteFolderAction.label"
+               icon="icons/full/tortoise/export.gif"
+               class="org.tigris.subversion.subclipse.ui.actions.ExportRemoteFolderAction"
+               menubarPath="exportImportGroup"
+               id="org.tigris.subversion.subclipse.ui.ExportRemoteFolder">
          </action>         
          <action
                label="%CopyUrlToClipboardAction.label"
@@ -286,13 +301,6 @@
                menubarPath="exportImportGroup"
                id="org.tigris.subversion.subclipse.ui.ImportFolder">
          </action>                 
-         <action
-               label="%ExportRemoteFolderAction.label"
-               icon="icons/full/tortoise/export.gif"
-               class="org.tigris.subversion.subclipse.ui.actions.ExportRemoteFolderAction"
-               menubarPath="exportImportGroup"
-               id="org.tigris.subversion.subclipse.ui.ExportRemoteFolder">
-         </action>         
       </objectContribution>
       <objectContribution
             objectClass="org.tigris.subversion.subclipse.core.history.LogEntry"
