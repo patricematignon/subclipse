@@ -266,9 +266,13 @@ public class AnnotateView extends ViewPart implements ISelectionChangedListener 
 			// Failed to open the editor but what else can we do.
 			return;
 		}
-		
 		ITextSelection textSelection = (ITextSelection) selectionProvider.getSelection();
-		AnnotateBlock listSelection = (AnnotateBlock) selection.getFirstElement();
+		AnnotateBlock listSelection = null;
+		try {
+			listSelection = (AnnotateBlock) selection.getFirstElement();
+		} catch (ClassCastException cce) {
+			return;
+		}
 
         // IStructuredSelection#getFirstElement can return null
         if (listSelection == null) {
