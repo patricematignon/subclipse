@@ -11,10 +11,12 @@
  *******************************************************************************/
 package org.tigris.subversion.subclipse.core;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
@@ -22,6 +24,7 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
@@ -29,12 +32,15 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
 import org.osgi.framework.BundleContext;
 import org.tigris.subversion.subclipse.core.client.IConsoleListener;
 import org.tigris.subversion.subclipse.core.repo.SVNRepositories;
 import org.tigris.subversion.subclipse.core.resources.ISVNFileModificationValidatorPrompt;
+import org.tigris.subversion.subclipse.core.resources.LocalResourceStatus;
 import org.tigris.subversion.subclipse.core.resources.RepositoryResourcesManager;
+import org.tigris.subversion.subclipse.core.resources.SVNWorkspaceRoot;
 import org.tigris.subversion.subclipse.core.resourcesListeners.FileModificationManager;
 import org.tigris.subversion.subclipse.core.resourcesListeners.SyncFileChangeListener;
 import org.tigris.subversion.subclipse.core.resourcesListeners.TeamPrivateListener;
@@ -504,6 +510,41 @@ public class SVNProviderPlugin extends Plugin {
 			}
     	}
     	return dirname;
+    }
+
+    /**
+     * @return true if the container is managed by SVN
+     */
+    public boolean isManagedBySubversion(IContainer container)
+    {
+    	if (container instanceof IProject)
+    	{
+    		if (RepositoryProvider.getProvider((IProject)container, getTypeId()) != null)
+    			return true; // svn handled project
+    		// Don't return at this point, since the project may not be registered
+    		// yet with Team.
+    	}
+
+    	return isManagedBySubversion(container.getLocation());
+    }
+
+    /**
+     * @return true if the container is managed by SVN
+     */
+    public boolean isManagedBySubversion(IPath folder)
+    {
+    	File svnDir = folder.append(getAdminDirectoryName()).toFile();
+		if (svnDir == null || !svnDir.exists() || !svnDir.isDirectory())
+			return false;
+
+        try {
+        	LocalResourceStatus status = SVNWorkspaceRoot.peekResourceStatusFor(folder);
+            if (status.hasRemote())
+            	return true;
+		} catch (SVNException e) {
+		}
+		
+    	return false;
     }
     
     public boolean isAdminDirectory(String name) {
