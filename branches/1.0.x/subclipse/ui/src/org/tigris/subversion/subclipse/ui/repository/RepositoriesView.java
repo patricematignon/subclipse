@@ -102,40 +102,42 @@ public class RepositoriesView extends ViewPart implements ISelectionListener {
 		public void repositoryAdded(final ISVNRepositoryLocation root) {
 			getViewer().getControl().getDisplay().syncExec(new Runnable() {
 				public void run() {
-					refreshViewer(false);
+					refreshViewer(null, false);
 					getViewer().setSelection(new StructuredSelection(root));
 				}
 			});
 		}
 		public void repositoryRemoved(ISVNRepositoryLocation root) {
-			refresh(false);
+			refresh(null, false);
 		}
 		public void repositoriesChanged(ISVNRepositoryLocation[] roots) {
-			refresh(false);
+			refresh(null, false);
 		}
         public void remoteResourceDeleted(ISVNRemoteResource resource) {
-            refresh(false);
+            refresh(resource.getParent(), false);
         }
         public void remoteResourceCreated(ISVNRemoteFolder parent,String resourceName) {
-            refresh(true);  
+            refresh(parent, true);  
         }
         public void remoteResourceCopied(ISVNRemoteResource source,ISVNRemoteFolder destination) {
-            refresh(false);  
+            refresh(destination, false);  
         }
         public void remoteResourceMoved(ISVNRemoteResource resource, ISVNRemoteFolder destinationFolder,String destinationResourceName) {
-            refresh(false);
+            refresh(resource.getParent(), false);
+            refresh(destinationFolder, false);
         }
-		private void refresh(boolean refreshRepositoriesFolders) {
+		private void refresh(Object object, boolean refreshRepositoriesFolders) {
+			final Object finalObject = object;
             final boolean finalRefreshReposFolders = refreshRepositoriesFolders;
 			Display display = getViewer().getControl().getDisplay();
 			display.syncExec(new Runnable() {
 				public void run() {
-					RepositoriesView.this.refreshViewer(finalRefreshReposFolders);
+					RepositoriesView.this.refreshViewer(finalObject, finalRefreshReposFolders);
 				}
 			});
 		}
 		public void repositoryModified(ISVNRepositoryLocation root) {
-			refresh(false);
+			refresh(null, false);
 		}
 	};
 
@@ -239,7 +241,7 @@ public class RepositoriesView extends ViewPart implements ISelectionListener {
         SVNUIPlugin plugin = SVNUIPlugin.getPlugin();
         refreshAction = new Action(Policy.bind("RepositoriesView.refresh"), SVNUIPlugin.getPlugin().getImageDescriptor(ISVNUIConstants.IMG_REFRESH_ENABLED)) { //$NON-NLS-1$
             public void run() {
-            	refreshViewer(true);
+            	refreshViewer(null, true);
             }
         };
         refreshAction.setToolTipText(Policy.bind("RepositoriesView.refreshTooltip")); //$NON-NLS-1$
@@ -457,11 +459,12 @@ public class RepositoriesView extends ViewPart implements ISelectionListener {
      * this is called whenever a new repository location is added for example
      * or when user wants to refresh
      */
-    protected void refreshViewer(boolean refreshRepositoriesFolders) {
+    protected void refreshViewer(Object object, boolean refreshRepositoriesFolders) {
         if (treeViewer == null) return;
         if (refreshRepositoriesFolders)
             SVNProviderPlugin.getPlugin().getRepositories().refreshRepositoriesFolders();
-        treeViewer.refresh(); 
+        if (object == null) treeViewer.refresh();
+        else treeViewer.refresh(object); 
     }
     
     protected void refreshViewerNode() {
