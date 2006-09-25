@@ -232,7 +232,6 @@ public class StatusCacheManager implements IResourceChangeListener, Preferences.
         
         if (status == null) {
             status = new LocalResourceStatus(new SVNStatusUnversioned(resource.getLocation().toFile(),false), null);
-            updateCache(status);
         }
         
         return status;
@@ -347,14 +346,15 @@ public class StatusCacheManager implements IResourceChangeListener, Preferences.
 
     // getStatuses returns null URL for svn:externals folder.  This will
     // get the URL using svn info command on the local resource
-	private SVNUrl getURL(ISVNStatus status) {
-		SVNUrl url = status.getUrl();
+	private String getURL(ISVNStatus status) {
+		String url = status.getUrlString();
 		if (url == null && !(status.getTextStatus() == SVNStatusKind.UNVERSIONED) 
 				&& !(status.getTextStatus() == SVNStatusKind.IGNORED)) {
 		    try { 
 		    	ISVNClientAdapter svnClient = SVNProviderPlugin.getPlugin().createSVNClient();
 		    	ISVNInfo info = svnClient.getInfoFromWorkingCopy(status.getFile());
-		    	url = info.getUrl();
+		    	SVNUrl svnurl = info.getUrl();
+		    	url = (svnurl != null) ? svnurl.toString() : null;
 		    } catch (SVNException e) {
 			} catch (SVNClientException e) {
 			}
