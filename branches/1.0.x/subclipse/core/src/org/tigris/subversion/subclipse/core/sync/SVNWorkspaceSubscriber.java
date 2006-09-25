@@ -112,7 +112,7 @@ public class SVNWorkspaceSubscriber extends Subscriber implements IResourceState
      */
     public boolean isSupervised(IResource resource) throws TeamException {
 		try {
-			if (SVNWorkspaceRoot.isLinkedResource(resource)) return false;
+			if (resource.isTeamPrivateMember() || SVNWorkspaceRoot.isLinkedResource(resource)) return false;
 			RepositoryProvider provider = RepositoryProvider.getProvider(resource.getProject(), SVNProviderPlugin.getTypeId());
 			if (provider == null) return false;
 			// TODO: what happens for resources that don't exist?
@@ -120,7 +120,8 @@ public class SVNWorkspaceSubscriber extends Subscriber implements IResourceState
 			ISVNLocalResource svnThing = SVNWorkspaceRoot.getSVNResourceFor(resource);
 			if (svnThing.isIgnored()) {
 				// An ignored resource could have an incoming addition (conflict)
-				return false;//getRemoteTree().hasResourceVariant(resource);
+				return (remoteSyncStateStore.getBytes(resource) != null) || 
+						((remoteSyncStateStore.members(resource) != null) && (remoteSyncStateStore.members(resource).length > 0));
 			}
 			return true;
 		} catch (TeamException e) {
@@ -137,7 +138,7 @@ public class SVNWorkspaceSubscriber extends Subscriber implements IResourceState
      * @see org.eclipse.team.core.subscribers.Subscriber#members(org.eclipse.core.resources.IResource)
      */
     public IResource[] members(IResource resource) throws TeamException {
-		if(resource.getType() == IResource.FILE) {
+		if ((resource.getType() == IResource.FILE) || (!isSupervised(resource))){
 			return new IResource[0];
 		}	
 		try {
@@ -216,14 +217,16 @@ public class SVNWorkspaceSubscriber extends Subscriber implements IResourceState
 	
 	private IStatus refresh(IResource resource, int depth, IProgressMonitor monitor) {
 		try {
-			monitor.setTaskName(Policy.bind("SVNWorkspaceSubscriber.refreshingSynchronizationData"));
+			monitor.setTaskName(Policy.bind("SVNWorkspaceSubscriber.refreshingSynchronizationData", resource.getFullPath().toString()));
+			monitor.worked(100);
 			SVNProviderPlugin.getPlugin().getStatusCacheManager().refreshStatus(resource, IResource.DEPTH_INFINITE);
 			monitor.worked(300);
 
+			monitor.setTaskName(Policy.bind("SVNWorkspaceSubscriber.retrievingSynchronizationData"));
 			IResource[] changedResources = findChanges(resource, depth, Policy.infiniteSubMonitorFor(monitor, 400));
 
 			fireTeamResourceChange(SubscriberChangeEvent.asSyncChangedDeltas(this, changedResources));
-			monitor.worked(300);
+			monitor.worked(200);
 			return Status.OK_STATUS;
 		} catch (TeamException e) {
 			return new TeamStatus(IStatus.ERROR, SVNProviderPlugin.ID, 0, Policy.bind("SVNWorkspaceSubscriber.errorWhileSynchronizing.2", resource.getFullPath().toString(), e.getMessage()), e, resource); //$NON-NLS-1$
@@ -232,7 +235,7 @@ public class SVNWorkspaceSubscriber extends Subscriber implements IResourceState
 
     private IResource[] findChanges(IResource resource, int depth, IProgressMonitor monitor) throws TeamException {
         try {
-        	monitor.beginTask(Policy.bind("SVNWorkspaceSubscriber.retrievingSynchronizationData"), 100);
+        	monitor.beginTask("", 100);
 
         	remoteSyncStateStore.flushBytes(resource, depth);
 
@@ -241,6 +244,7 @@ public class SVNWorkspaceSubscriber extends Subscriber implements IResourceState
             boolean descend = (depth == IResource.DEPTH_INFINITE)? true : false;
             StatusAndInfoCommand cmd = new StatusAndInfoCommand(SVNWorkspaceRoot.getSVNResourceFor( resource ), descend, false, true );
             cmd.run(monitor);
+            monitor.worked(70);
 
             RemoteResourceStatus[] statuses = cmd.getRemoteResourceStatuses();
 
@@ -255,7 +259,7 @@ public class SVNWorkspaceSubscriber extends Subscriber implements IResourceState
                 	registerChangedResourceParent(changedResource);
                 }
 			}
-            
+            monitor.worked(30);            
             return (IResource[]) result.toArray(new IResource[result.size()]);
         } catch (SVNException e) {
             throw new TeamException("Error getting status for resource " + resource + " " + e.getMessage(), e);

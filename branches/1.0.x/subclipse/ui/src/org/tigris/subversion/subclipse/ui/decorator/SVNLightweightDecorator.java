@@ -61,6 +61,7 @@ public class SVNLightweightDecorator
 	private static ImageDescriptor dirty;
 	private static ImageDescriptor checkedIn;
     private static ImageDescriptor deleted;
+    private static ImageDescriptor switched;
 	
 	private static ImageDescriptor added;
 	
@@ -115,6 +116,7 @@ public class SVNLightweightDecorator
 		needsLock = new CachedImageDescriptor(SVNUIPlugin.getPlugin().getImageDescriptor(ISVNUIConstants.IMG_NEEDSLOCK));
 		conflicted = new CachedImageDescriptor(SVNUIPlugin.getPlugin().getImageDescriptor(ISVNUIConstants.IMG_CONFLICTED));
 		deleted = new CachedImageDescriptor(SVNUIPlugin.getPlugin().getImageDescriptor(ISVNUIConstants.IMG_DELETED));
+		switched = new CachedImageDescriptor(SVNUIPlugin.getPlugin().getImageDescriptor(ISVNUIConstants.IMG_SWITCHED));
 	}
 
 	public SVNLightweightDecorator() {
@@ -424,8 +426,11 @@ public class SVNLightweightDecorator
 		
 		// Simplest is that is has remote.
 		if (showHasRemote) {
-			if (status.hasRemote())
+			if (status.isSwitched()) {
+				return switched;
+			} else if (status.hasRemote()) {
 				return checkedIn;
+			}
 		}
 
 		//nothing matched
