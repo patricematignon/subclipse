@@ -159,7 +159,7 @@ public class StatusAndInfoCommand extends StatusCommand implements ISVNCommand {
         	monitor.subTask(url.toString());
         	if (SVNStatusKind.EXTERNAL.equals(status.getStatusKind()))
         	{
-        		return client.getInfo(status.getFile());
+        		return client.getInfoFromWorkingCopy(status.getFile());
         	}
         	else
         	{
