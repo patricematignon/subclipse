@@ -11,6 +11,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
+import org.tigris.subversion.subclipse.core.ISVNLocalResource;
+import org.tigris.subversion.subclipse.core.SVNException;
 import org.tigris.subversion.subclipse.core.SVNTeamProvider;
 import org.tigris.subversion.subclipse.core.commands.UnlockResourcesCommand;
 import org.tigris.subversion.subclipse.ui.Policy;
@@ -37,6 +39,17 @@ public class UnlockAction extends WorkspaceAction {
 				}
             }              
         }, true /* cancelable */, PROGRESS_DIALOG);        
+    }
+
+    /**
+     * @see org.tigris.subversion.subclipse.ui.actions.WorkspaceAction#isEnabledForSVNResource(org.tigris.subversion.subclipse.core.ISVNResource)
+     */
+    protected boolean isEnabledForSVNResource(ISVNLocalResource svnResource) {
+        try {
+            return svnResource.getStatus().isLocked();
+        } catch (SVNException e) {
+            return false;
+        }
     }
 
 }
