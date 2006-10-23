@@ -38,6 +38,45 @@ that view open.  This is normal and is not a problem.  You will get the error th
 each perspective that had the view open.</p> 
 
 <hr />
+<a name="1.1.8"></a>
+<h4>Version 1.1.8<br>
+Not released yet</h4>
+<p>from: /trunk<br>
+<a href="http://subclipse.tigris.org/svn/subclipse/tags/subclipse/1.1.8">
+http://subclipse.tigris.org/svn/subclipse/tags/subclipse/1.1.8</a></p>
+<ul>
+ <li>JavaSVN 1.1.0 Beta5 (includes svn 1.4 working copy format)</li>
+ <li>Fixed StringIndexOutOfBoundsException in Compare with Base</li>
+ <li>Use a better merge API when performing a merge with the same From/To
+ URL</li>
+ <li>Enable the Show History and Annotate options on locally copied files. (<a
+  href="http://subclipse.tigris.org/issues/show_bug.cgi?id=442">442</a>)</li>
+ <li>Fixed problem when clicking on Pending... text when expanding tree in
+ checkout wizard.</li>
+ <li>Rearrange items on SVN menu and remove all toolbar items except Checkout. (<a
+  href="http://subclipse.tigris.org/issues/show_bug.cgi?id=394">394</a>)</li>
+ <li>Removed CVS code that stripped template from commit message. (<a
+  href="http://subclipse.tigris.org/issues/show_bug.cgi?id=566">566</a>)</li>
+ <li>Exception during checkout of project set could hang Eclipse.</li>
+ <li>Revert improvements/fixes.</li>
+ <li>WC to WC copy was not copying local contents.</li>
+ <li>Unescape URL's in decorators.</li>
+ <li>Fix potential NPE in shutdown</li>
+ <li>Fix potential ConcurrentModificationException.</li>
+ <li>Performance improvement in Synch view when resources have been locally
+ deleted.</li>
+ <li>Remove forced refresh after Switch/Merge.  JavaSVN includes fix that makes
+ this no longer neccessary.</li>
+ <li>Commit messages were not being remembered. (<a
+  href="http://subclipse.tigris.org/issues/show_bug.cgi?id=570">570</a>)</li>
+ <li>Refresh the Synchronize view automatically after performing a commit from
+ the view when the Show Out of Date folders option is on.</li>
+ <li>If resource is managed but also in global ignore list, we should not ignore
+ it.</li>
+ <li>Fixed potential NPE in refreshing SyncInfo.</li>
+</ul>
+
+<hr />
 <a name="1.1.7"></a>
 <h4>Version 1.1.7<br>
 03 October 2006</h4>
