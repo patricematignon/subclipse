@@ -73,6 +73,9 @@ public class BranchTagDialog extends Dialog {
     private long revisionNumber = 0;
     private Alias newAlias;
 
+    private Button switchAfterBranchTagCheckBox;
+    private boolean switchAfterBranchTag;
+    
     public void setRevisionNumber(long revisionNumber) {
 		this.revisionNumber = revisionNumber;
 	}
@@ -234,11 +237,7 @@ public class BranchTagDialog extends Dialog {
 		revisionButton.addSelectionListener(selectionListener);
 		workingCopyButton.addSelectionListener(selectionListener);
 		
-		if (resource != null) {
-			Label label = createWrappingLabel(top);
-			label.setText(Policy.bind("BranchTagDialog.note")); //$NON-NLS-1$ 
-		}
-		
+
 		if (projectProperties != null) {
 		    addBugtrackingArea(top);
 		}
@@ -253,6 +252,11 @@ public class BranchTagDialog extends Dialog {
 		
 		toUrlCombo.getCombo().setFocus();
 
+		if (resource != null) {
+			switchAfterBranchTagCheckBox = new Button(composite, SWT.CHECK);
+			switchAfterBranchTagCheckBox.setText(Policy.bind("BranchTagDialog.switchAfterTagBranch"));
+		}
+		
 		// set F1 help
 		WorkbenchHelp.setHelp(composite, IHelpContextIds.BRANCH_TAG_DIALOG);
 		
@@ -319,6 +323,10 @@ public class BranchTagDialog extends Dialog {
         toUrlCombo.saveUrl();
         createOnServer = !workingCopyButton.getSelection();
         specificRevision = revisionButton.getSelection();
+        if(switchAfterBranchTagCheckBox != null) {
+        	switchAfterBranchTag = switchAfterBranchTagCheckBox.getSelection();
+        }
+        
         comment = commitCommentArea.getComment();
         if (serverButton.getSelection()) revision = SVNRevision.HEAD;
         try {
@@ -430,4 +438,7 @@ public class BranchTagDialog extends Dialog {
 		return newAlias;
 	}
 
+	public boolean switchAfterTagBranch() {
+		return switchAfterBranchTag;
+	}
 }
