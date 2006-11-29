@@ -12,6 +12,9 @@
 package org.tigris.subversion.subclipse.core.util;
 
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.tigris.subversion.subclipse.core.ISVNLocalFolder;
@@ -85,4 +88,18 @@ public class Util {
         return null;
     }
 
+
+	/**
+	 * unescape UTF8/URL encoded strings
+	 * 
+	 * @param s
+	 * @return
+	 */
+	public static String unescape(String s) {
+		try {
+			return URLDecoder.decode(s, "UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			return s;
+		}
+	}	
 }
