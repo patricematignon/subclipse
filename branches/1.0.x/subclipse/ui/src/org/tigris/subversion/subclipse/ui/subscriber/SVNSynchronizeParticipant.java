@@ -11,6 +11,8 @@
 package org.tigris.subversion.subclipse.ui.subscriber;
 
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -229,4 +231,9 @@ public class SVNSynchronizeParticipant extends ScopableSubscriberParticipant {
 				ISynchronizePageConfiguration.P_CONTEXT_MENU, 
 				CONTEXT_MENU_CONTRIBUTION_GROUP_1);
 	}
+	
+	public IStatus refresh(IResource[] resources, IProgressMonitor monitor) {
+		return refreshNow(resources, getLongTaskName(), monitor);
+	}
+
 }

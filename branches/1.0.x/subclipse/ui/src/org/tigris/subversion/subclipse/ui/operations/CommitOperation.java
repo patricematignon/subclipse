@@ -13,7 +13,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
-import org.eclipse.team.ui.synchronize.ISynchronizePageSite;
 import org.eclipse.ui.IWorkbenchPart;
 import org.tigris.subversion.subclipse.core.ISVNLocalResource;
 import org.tigris.subversion.subclipse.core.SVNException;
@@ -21,6 +20,7 @@ import org.tigris.subversion.subclipse.core.SVNProviderPlugin;
 import org.tigris.subversion.subclipse.core.SVNTeamProvider;
 import org.tigris.subversion.subclipse.core.resources.SVNWorkspaceRoot;
 import org.tigris.subversion.subclipse.ui.Policy;
+import org.tigris.subversion.subclipse.ui.subscriber.SVNSynchronizeParticipant;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
 
@@ -109,7 +109,13 @@ public class CommitOperation extends SVNOperation {
 			monitor.done();
 			// refresh the Synch view
 			if (configuration != null) {
-				configuration.getParticipant().run(getPart(configuration));
+				SVNSynchronizeParticipant sync = (SVNSynchronizeParticipant) configuration.getParticipant();
+				IResource[] roots = sync.getResources();
+				// Reduce the array to just the roots that were affected by this
+				// commit
+				if (roots.length > 1)
+					roots = reduceRoots(roots);
+				sync.refresh(roots, monitor);
 			}
 		}
     }
@@ -163,18 +169,20 @@ public class CommitOperation extends SVNOperation {
 	public void setConfiguration(ISynchronizePageConfiguration configuration) {
 		this.configuration = configuration;
 	}
-	
-	/*
-	 * Helper method for extracting the part safely from a configuration
-	 */
-	private static IWorkbenchPart getPart(ISynchronizePageConfiguration configuration) {
-		if (configuration != null) {
-			ISynchronizePageSite site = configuration.getSite();
-			if (site != null) {
-				return site.getPart();
-			}
-		}
-		return null;
-	}
 
+	private IResource[] reduceRoots(IResource[] roots) {
+		List rootArray = new ArrayList();
+		for (int i = 0; i < roots.length; i++) {
+			for (int j = 0; j < resourcesToCommit.length; j++) {
+				if (resourcesToCommit[j].getFullPath().toString().startsWith(roots[i].getFullPath().toString())) {
+					rootArray.add(roots[i]);
+					break;
+				}
+			}		
+		}
+		roots = new IResource[rootArray.size()];
+		rootArray.toArray(roots);
+		return roots;
+	}
+	
 }
