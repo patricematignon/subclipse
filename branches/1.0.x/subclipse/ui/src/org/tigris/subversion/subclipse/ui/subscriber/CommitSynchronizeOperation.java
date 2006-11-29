@@ -28,8 +28,10 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.synchronize.SyncInfoSet;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
+import org.tigris.subversion.subclipse.core.ISVNCoreConstants;
 import org.tigris.subversion.subclipse.core.ISVNLocalResource;
 import org.tigris.subversion.subclipse.core.SVNException;
+import org.tigris.subversion.subclipse.core.SVNProviderPlugin;
 import org.tigris.subversion.subclipse.core.SVNTeamProvider;
 import org.tigris.subversion.subclipse.core.resources.SVNWorkspaceRoot;
 import org.tigris.subversion.subclipse.ui.Policy;
@@ -47,9 +49,11 @@ public class CommitSynchronizeOperation extends SVNSynchronizeOperation {
     private String url;
     private boolean commit;
     private boolean keepLocks;
+    private ISynchronizePageConfiguration configuration;
 
 	protected CommitSynchronizeOperation(ISynchronizePageConfiguration configuration, IDiffElement[] elements, String url) {
 		super(configuration, elements);
+		this.configuration = configuration;
 		this.url = url;
 	}
 	
@@ -199,7 +203,10 @@ public class CommitSynchronizeOperation extends SVNSynchronizeOperation {
 		    resourcesToBeDeleted[0] = new IResource[toBeDeletedList.size()];
 		    toBeDeletedList.toArray(resourcesToBeDeleted[0]);
 		    try {
-                new CommitOperation(getPart(), resourcesToCommit, resourcesToBeAdded[0], resourcesToBeDeleted[0], resourcesToCommit, commitComment, keepLocks).run();
+                CommitOperation commit = new CommitOperation(getPart(), resourcesToCommit, resourcesToBeAdded[0], resourcesToBeDeleted[0], resourcesToCommit, commitComment, keepLocks);
+                if (SVNProviderPlugin.getPlugin().getPluginPreferences().getBoolean(ISVNCoreConstants.PREF_SHOW_OUT_OF_DATE_FOLDERS))
+                	commit.setConfiguration(configuration);
+                commit.run();
             } catch (InvocationTargetException e) {
                 e.printStackTrace();
             } catch (InterruptedException e) {
