@@ -17,6 +17,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
@@ -139,7 +140,7 @@ public class FileModificationManager implements IResourceChangeListener, ISavePa
     {
     	for (int i = 0; i < resources.length; i++) {
     		try {
-                SVNProviderPlugin.getPlugin().getStatusCacheManager().refreshStatus(resources[i], IResource.DEPTH_INFINITE);
+                SVNProviderPlugin.getPlugin().getStatusCacheManager().refreshStatus((IContainer)resources[i], true);
     		} catch (SVNException e) {
     		    e.printStackTrace();
     		}			
@@ -169,7 +170,7 @@ public class FileModificationManager implements IResourceChangeListener, ISavePa
         for (Iterator it = foldersToRefresh.iterator(); it.hasNext();) {
             IResource folder = (IResource) it.next();
     		try {
-                SVNProviderPlugin.getPlugin().getStatusCacheManager().refreshStatus(folder, IResource.DEPTH_ZERO);
+                SVNProviderPlugin.getPlugin().getStatusCacheManager().refreshStatus((IContainer)folder, false);
     		} catch (SVNException e) {
     		    e.printStackTrace();
     		}
