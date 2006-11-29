@@ -29,13 +29,38 @@ will be pulled out due to testing problems.</p>
 <p>The log of changes leading up to the 1.1.0 release can be viewed <a
  href="../subclipse/changes.html">here</a>.</p>
 
-<p><b>NOTE:</b> As of Subclipse 1.1.0, the minimum Eclipse requirement is now 3.2.0.  Subclipse
-1.1.0 was built on Eclipse 3.2 RC6.  Presumably it will work with most earlier releases of 3.2.</p> 
+<p><b>NOTE:</b> As of Subclipse 1.1.0, the minimum Eclipse requirement is now 3.2.0.</p> 
 
 <p><b>NOTE:</b> Subclipse 1.1.0 removed the SVN Resource History view as we now use the common Team
-History view.  You will likely get an Eclipse error message if you use an existing workspace that had
+History view.  It also removed the SVN Pending Operations view which is replaced by the Synchronize
+view.  You will likely get an Eclipse error message if you use an existing workspace that had
 that view open.  This is normal and is not a problem.  You will get the error the first time you open
 each perspective that had the view open.</p> 
+
+<hr />
+<a name="1.1.9"></a>
+<h4>Version 1.1.9<br>
+Not released yet</h4>
+<p>from: /trunk<br>
+<a href="http://subclipse.tigris.org/svn/subclipse/tags/subclipse/1.1.9">
+http://subclipse.tigris.org/svn/subclipse/tags/subclipse/1.1.9</a></p>
+<ul>
+ <li>JavaHL 1.4.2 binaries for Windows</li>
+ <li>JavaSVN renamed to SVNKit.  1.1.0 + fixes version included.</li>
+ <li>Removed Java 1.5-specific code.  Changed project settings to insure
+ Java 1.4 compatability.</li>
+ <li>Fixed potential NPE in SVN Properties view.</li>
+ <li>Added back a forced refresh after Switch/Merge operations. (<a
+  href="http://subclipse.tigris.org/issues/show_bug.cgi?id=579">579</a>)</li>
+ <li>Added new prompting UI for SVNKit SSH connections.</li>
+ <li>Removed dependency on compare plugin from core.  Allows for headless
+  operation (<a
+  href="http://subclipse.tigris.org/issues/show_bug.cgi?id=583">583</a>)</li>
+ <li>Added option to Create Branch/Tag dialog to perform a switch after the
+  branch/tag is created.</li>
+ <li>Improve handling of read-only files that are not managed by Subclipse</li>
+ <li>Small synch view fixes for externals.</li>
+</ul>
 
 <hr />
 <a name="1.1.8"></a>
