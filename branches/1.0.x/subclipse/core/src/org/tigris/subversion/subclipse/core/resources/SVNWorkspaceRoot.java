@@ -386,13 +386,13 @@ public class SVNWorkspaceRoot {
     {
     	if (status.getFile() == null) return null;
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-		IPath resourcePath = pathForLocation(status.getPath());
+		IPath resourcePath = pathForLocation(status.getIPath());
 		if (resourcePath == null) 
 		{
 			if(status.getFile() != null && status.getFile().getName().equals(".metadata"))  //$NON-NLS-1$
 				return null;
 		    if (!nullResourceLogged) {
-		        String errorMsg = Policy.bind("SVNWorkspaceRoot.nullResource", status.getPathString());
+		        String errorMsg = Policy.bind("SVNWorkspaceRoot.nullResource", status.getPath());
 			    IConsoleListener console = SVNProviderPlugin.getPlugin().getConsoleListener();
 			    if (console != null) {
 			        console.logError(errorMsg);

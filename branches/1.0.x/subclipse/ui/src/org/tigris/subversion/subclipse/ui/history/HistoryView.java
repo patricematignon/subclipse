@@ -105,6 +105,7 @@ import org.tigris.subversion.subclipse.core.SVNException;
 import org.tigris.subversion.subclipse.core.SVNProviderPlugin;
 import org.tigris.subversion.subclipse.core.SVNStatus;
 import org.tigris.subversion.subclipse.core.commands.ChangeCommitPropertiesCommand;
+import org.tigris.subversion.subclipse.core.commands.GetLogsCommand;
 import org.tigris.subversion.subclipse.core.history.ILogEntry;
 import org.tigris.subversion.subclipse.core.history.LogEntry;
 import org.tigris.subversion.subclipse.core.history.LogEntryChangePath;
@@ -1486,7 +1487,7 @@ public class HistoryView extends ViewPart implements IResourceStateChangeListene
 					IPreferenceStore store = SVNUIPlugin.getPlugin().getPreferenceStore();
 					int entriesToFetch = store.getInt(ISVNUIConstants.PREF_LOG_ENTRIES_TO_FETCH);
 					long limit = entriesToFetch;
-					entries = remoteResource.getLogEntries(monitor, pegRevision, revisionStart, revisionEnd, stopOnCopy, limit + 1, tagManager);
+					entries = getLogEntries(remoteResource, pegRevision, revisionStart, revisionEnd, stopOnCopy, limit + 1, tagManager);
 					long entriesLength = entries.length;
 					if (entriesLength > limit) {
 						ILogEntry[] fetchedEntries = new ILogEntry[entries.length - 1];
@@ -1535,7 +1536,7 @@ public class HistoryView extends ViewPart implements IResourceStateChangeListene
 					IPreferenceStore store = SVNUIPlugin.getPlugin().getPreferenceStore();
 					int entriesToFetch = store.getInt(ISVNUIConstants.PREF_LOG_ENTRIES_TO_FETCH);
 					long limit = entriesToFetch;
-					ILogEntry[] nextEntries = remoteResource.getLogEntries(monitor, pegRevision, revisionStart, revisionEnd, stopOnCopy, limit + 1, tagManager);
+					ILogEntry[] nextEntries = getLogEntries(remoteResource, pegRevision, revisionStart, revisionEnd, stopOnCopy, limit + 1, tagManager);
 					long entriesLength = nextEntries.length;
 					if (entriesLength > limit) {
 						ILogEntry[] fetchedEntries = new ILogEntry[nextEntries.length - 1];
@@ -1595,7 +1596,7 @@ public class HistoryView extends ViewPart implements IResourceStateChangeListene
 					SVNRevision revisionEnd = new SVNRevision.Number(0);
 					boolean stopOnCopy = toggleStopOnCopyAction.isChecked();
 					long limit = 0;
-					entries = remoteResource.getLogEntries(monitor, pegRevision, revisionStart, revisionEnd, stopOnCopy, limit, tagManager);
+					entries = getLogEntries(remoteResource, pegRevision, revisionStart, revisionEnd, stopOnCopy, limit, tagManager);
 					final SVNRevision.Number revisionId = remoteResource.getLastChangedRevision();
 					getSite().getShell().getDisplay().asyncExec(new Runnable() {
 						public void run() {
@@ -1784,5 +1785,13 @@ public class HistoryView extends ViewPart implements IResourceStateChangeListene
       }
       
     }
-    
+
+    protected ILogEntry[] getLogEntries(ISVNRemoteResource remoteResource, SVNRevision pegRevision, SVNRevision revisionStart, SVNRevision revisionEnd, boolean stopOnCopy, long limit, AliasManager tagManager) throws TeamException
+    {
+    	GetLogsCommand logCmd = new GetLogsCommand(remoteResource, pegRevision, revisionStart, revisionEnd, stopOnCopy, limit, tagManager);
+    	logCmd.run(null);
+    	return logCmd.getLogEntries(); 					
+    }
+    	
+
 }
