@@ -7,10 +7,13 @@
   </extension>
    
   <extension point="org.eclipse.core.runtime.adapters">
-    <factory adaptableType="org.eclipse.mylar.tasks.core.ILinkedTaskInfo"
+    <factory adaptableType="org.tigris.subversion.subclipse.core.history.LogEntry"
              class="org.tigris.subversion.subclipse.mylar.SubclipseLinkedTaskInfoAdapterFactory">
-      <adapter type="org.tigris.subversion.subclipse.core.history.LogEntry"/>
-      <adapter type="org.tigris.subversion.subclipse.ui.subscriber.SVNChangeSetCollector.SVNCheckedInChangeSet"/>
+      <adapter type="org.eclipse.mylar.tasks.core.ILinkedTaskInfo"/>
+    </factory>
+    <factory adaptableType="org.tigris.subversion.subclipse.ui.subscriber.SVNChangeSetCollector$SVNCheckedInChangeSet"
+             class="org.tigris.subversion.subclipse.mylar.SubclipseLinkedTaskInfoAdapterFactory">
+      <adapter type="org.eclipse.mylar.tasks.core.ILinkedTaskInfo"/>
     </factory>
   </extension>
     

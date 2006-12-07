@@ -109,10 +109,6 @@ class SubclipseLinkedTaskInfo implements ILinkedTaskInfo {
         if(svnres!=null) {
           if(svnres.getResource()!=null) {
             props = ProjectProperties.getProjectProperties(svnres.getResource());
-            if (props != null) {
-              repositoryUrl = getRepositoryUrl(props.getUrl());
-              urls = props.getLinkList(getComment()).getUrls();
-            }
           } else {
             ISVNClientAdapter client = SVNProviderPlugin.getPlugin().getSVNClientManager().createSVNClient();
             ISVNProperty[] properties = client.getProperties(svnres.getUrl());
@@ -130,6 +126,11 @@ class SubclipseLinkedTaskInfo implements ILinkedTaskInfo {
       // ignore?
     }
 
+    if (props != null) {
+      repositoryUrl = getRepositoryUrl(props.getUrl());
+      urls = props.getLinkList(getComment()).getUrls();
+    }
+    
     if (urls == null || urls.length == 0) {
       urls = ProjectProperties.getUrls(getComment()).getUrls();
     }
