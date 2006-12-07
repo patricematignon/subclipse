@@ -24,7 +24,7 @@ import org.tigris.subversion.subclipse.ui.actions.CommitAction;
  * 
  * @author Eugene Kuleshov
  */
-public class SubclipseTeamRepositoryProvider extends AbstractActiveChangeSetProvider {
+public class SubclipseTeamChangeSetProvider extends AbstractActiveChangeSetProvider {
 
 	public ActiveChangeSetManager getActiveChangeSetManager() {
 		// collectors.add((CVSActiveChangeSetCollector)CVSUIPlugin.getPlugin().getChangeSetManager());
