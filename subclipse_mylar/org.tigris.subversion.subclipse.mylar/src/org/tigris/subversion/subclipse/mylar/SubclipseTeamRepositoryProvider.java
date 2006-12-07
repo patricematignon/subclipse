@@ -14,7 +14,7 @@ package org.tigris.subversion.subclipse.mylar;
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.mylar.team.AbstractTeamRepositoryProvider;
+import org.eclipse.mylar.team.AbstractActiveChangeSetProvider;
 import org.eclipse.team.internal.core.subscribers.ActiveChangeSetManager;
 import org.tigris.subversion.subclipse.core.SVNProviderPlugin;
 import org.tigris.subversion.subclipse.ui.actions.CommitAction;
@@ -24,7 +24,7 @@ import org.tigris.subversion.subclipse.ui.actions.CommitAction;
  * 
  * @author Eugene Kuleshov
  */
-public class SubclipseTeamRepositoryProvider extends AbstractTeamRepositoryProvider {
+public class SubclipseTeamRepositoryProvider extends AbstractActiveChangeSetProvider {
 
 	public ActiveChangeSetManager getActiveChangeSetManager() {
 		// collectors.add((CVSActiveChangeSetCollector)CVSUIPlugin.getPlugin().getChangeSetManager());

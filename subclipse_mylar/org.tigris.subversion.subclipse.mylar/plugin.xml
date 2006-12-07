@@ -2,8 +2,8 @@
 <?eclipse version="3.2"?>
 <plugin>
 
-  <extension point="org.eclipse.mylar.team.providers">
-    <repository class="org.tigris.subversion.subclipse.mylar.SubclipseTeamRepositoryProvider"/>
+  <extension point="org.eclipse.mylar.team.changeSets">
+    <activeChangeSetProvider class="org.tigris.subversion.subclipse.mylar.SubclipseTeamRepositoryProvider"/>
   </extension>
    
   <extension point="org.eclipse.core.runtime.adapters">
