@@ -2,7 +2,7 @@
 <feature
       id="org.tigris.subversion.subclipse.mylar"
       label="Subclipse Mylar Integration"
-      version="1.0.0"
+      version="1.0.1"
       provider-name="tigris.org"
       colocation-affinity="org.tigris.subversion.subclipse">
    <install-handler/>
@@ -40,7 +40,7 @@
          id="org.tigris.subversion.subclipse.mylar"
          download-size="0"
          install-size="0"
-         version="1.0.0"
+         version="1.0.1"
          unpack="false"/>
 
 </feature>
