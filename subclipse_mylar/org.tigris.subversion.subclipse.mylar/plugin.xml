@@ -2,9 +2,14 @@
 <?eclipse version="3.2"?>
 <plugin>
 
-  <extension point="org.eclipse.mylar.team.changeSets">
-    <activeChangeSetProvider class="org.tigris.subversion.subclipse.mylar.SubclipseTeamChangeSetProvider"/>
-  </extension>
+   <extension
+         point="org.eclipse.mylar.team.changeSets">
+      <activeChangeSetProvider 
+      	class="org.tigris.subversion.subclipse.mylar.SubclipseTeamChangeSetProvider"/>
+      <contextChangeSetManager
+            class="org.eclipse.mylar.internal.team.ContextActiveChangeSetManager">
+      </contextChangeSetManager>
+   </extension> 
    
   <extension point="org.eclipse.core.runtime.adapters">
     <factory adaptableType="org.tigris.subversion.subclipse.core.history.LogEntry"
