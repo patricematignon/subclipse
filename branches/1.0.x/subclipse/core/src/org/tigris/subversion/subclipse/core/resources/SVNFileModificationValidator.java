@@ -1,5 +1,6 @@
 package org.tigris.subversion.subclipse.core.resources;
 
+import java.io.File;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -109,16 +110,25 @@ public class SVNFileModificationValidator implements IFileModificationValidator 
     private IFile[] getReadOnly(IFile[] files) {
         List result = new ArrayList(files.length);
         for (int i = 0; i < files.length; i++) {
-            if (files[i].isReadOnly()) {
+            if (isReadOnly(files[i])) {
                 result.add(files[i]);
             }
         }
         return (IFile[]) result.toArray(new IFile[result.size()]);
     }
 
+	private boolean isReadOnly(IFile file) {
+		if (file == null) return false;
+		File fsFile = file.getFullPath().toFile();
+		if (fsFile == null || fsFile.canWrite())
+			return false;
+		else
+			return true;
+	}
+
 	private IStatus getDefaultStatus(IFile file) {
 		return 
-			file.isReadOnly()
+		    isReadOnly(file)
 			? new Status(IStatus.ERROR, SVNProviderPlugin.ID, IResourceStatus.READ_ONLY_LOCAL, Policy.bind("FileModificationValidator.fileIsReadOnly", new String[] { file.getFullPath().toString() }), null) 
 				: Status.OK_STATUS;
 	}

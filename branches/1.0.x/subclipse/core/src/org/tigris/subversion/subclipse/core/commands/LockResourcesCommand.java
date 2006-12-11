@@ -54,11 +54,22 @@ public class LockResourcesCommand implements ISVNCommand {
             OperationManager.getInstance().beginOperation(svnClient);
 
             svnClient.lock(resourceFiles,message,force);
+            // Ensure resource is writable.  SVN will only change read-only
+            // flag if the svn:needs-lock property is set.
+            for (int i = 0; i < resources.length; i++) {
+				makeWritable(resources[i]);
+			}
         } catch (SVNClientException e) {
             throw SVNException.wrapException(e);
         } finally {
             OperationManager.getInstance().endOperation();
             monitor.done();
+        }
+	}
+	
+	private void makeWritable(IResource resource) {
+        if (resource.getType() == IResource.FILE && resource.isReadOnly()) {
+    	    resource.setReadOnly(false);
         }
 	}
     
