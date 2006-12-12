@@ -37,7 +37,8 @@ Not released yet</h4>
 <a href="http://subclipse.tigris.org/svn/subclipse/tags/subclipse/1.0.4">
 http://subclipse.tigris.org/svn/subclipse/tags/subclipse/1.0.4</a></p>
 <ul>
- <li>JavaSVN 1.1.0 Beta4 + fixes.  Adds file:// support.</li>
+ <li>JavaHL 1.4.2 binaries for Windows</li>
+ <li>SVNKit 1.1.0 + fixes.  Adds file:// support and 1.4 working copies.</li>
  <li>Fix problem when spaces are in file name.</li>
  <li>Many significant performance improvements.</li>
  <li>Better option enablement in Team and Synchronize menus.</li>
@@ -66,6 +67,29 @@ http://subclipse.tigris.org/svn/subclipse/tags/subclipse/1.0.4</a></p>
   href="http://subclipse.tigris.org/issues/show_bug.cgi?id=548">548</a>)</li>
  <li>Catch potential ClassCastException. (<a
   href="http://subclipse.tigris.org/issues/show_bug.cgi?id=469">469</a>)</li>
+ <li>Fixed StringIndexOutOfBoundsException in Compare with Base</li>
+ <li>Exception during checkout of project set could hang Eclipse.</li>
+ <li>Revert improvements/fixes.</li>
+ <li>WC to WC copy was not copying local contents.</li>
+ <li>Unescape URL's in decorators.</li>
+ <li>Fix potential NPE in shutdown</li>
+ <li>Fix potential ConcurrentModificationException.</li>
+ <li>Performance improvement in Synch view when resources have been locally
+ deleted.</li>
+ <li>Refresh the Synchronize view automatically after performing a commit from
+ the view when the Show Out of Date folders option is on.</li>
+ <li>If resource is managed but also in global ignore list, we should not ignore
+ it.</li>
+ <li>Fixed potential NPE in refreshing SyncInfo.</li>
+ <li>Fixed potential NPE in SVN Properties view.</li>
+ <li>Added new prompting UI for SVNKit SSH connections.</li>
+ <li>Removed dependency on compare plugin from core.  Allows for headless
+  operation (<a
+  href="http://subclipse.tigris.org/issues/show_bug.cgi?id=583">583</a>)</li>
+ <li>Added option to Create Branch/Tag dialog to perform a switch after the
+  branch/tag is created.</li>
+ <li>Improve handling of read-only files that are not managed by Subclipse</li>
+ <li>Small synch view fixes for externals.</li>
 </ul>
 
 <hr />
