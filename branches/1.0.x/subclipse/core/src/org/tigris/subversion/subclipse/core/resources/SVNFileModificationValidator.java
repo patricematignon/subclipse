@@ -41,46 +41,48 @@ public class SVNFileModificationValidator implements IFileModificationValidator 
         String comment = "";
         boolean stealLock = false;
         // reduce the array to just read only files
-        IFile[] readOnlyFiles = getReadOnly(files);
-        int managedCount = readOnlyFiles.length; 
-	    SVNTeamProvider svnTeamProvider = null;
-	    RepositoryProvider provider = RepositoryProvider.getProvider(files[0].getProject());
-	    if ((provider != null) && (provider instanceof SVNTeamProvider)) {
-            IFile[] managedFiles = checkManaged(files);
-            managedCount = managedFiles.length;
-            if (managedCount > 0) {
-                if (context != null) {
-                    ISVNFileModificationValidatorPrompt svnFileModificationValidatorPrompt = 
-                        SVNProviderPlugin.getPlugin().getSvnFileModificationValidatorPrompt();
-                    if (svnFileModificationValidatorPrompt != null) {
-                        if (!svnFileModificationValidatorPrompt.prompt(managedFiles, context))
-                            return Status.CANCEL_STATUS;
-                        comment = svnFileModificationValidatorPrompt.getComment();
-                        stealLock = svnFileModificationValidatorPrompt.isStealLock();
-                    }
-                }
-                svnTeamProvider = (SVNTeamProvider) provider;
-                LockResourcesCommand command = new LockResourcesCommand(svnTeamProvider.getSVNWorkspaceRoot(), managedFiles, stealLock, comment);
-                try {
-                    command.run(new NullProgressMonitor());
-                } catch (SVNException e) {
-                    e.printStackTrace();
-                    return Status.CANCEL_STATUS;
-                }
-            }
+        ReadOnlyFiles readOnlyFiles = processFileArray(files);
+        if (readOnlyFiles.size() == 0) return Status.OK_STATUS;
+        // of the read-only files, get array of ones which are versioned
+	    IFile[] managedFiles = readOnlyFiles.getManaged();
+	    if (managedFiles.length > 0) {
+	    	// Prompt user to lock files
+	    	if (context != null) {
+	    		ISVNFileModificationValidatorPrompt svnFileModificationValidatorPrompt = 
+	    			SVNProviderPlugin.getPlugin().getSvnFileModificationValidatorPrompt();
+	    		if (svnFileModificationValidatorPrompt != null) {
+	    			if (!svnFileModificationValidatorPrompt.prompt(managedFiles, context))
+	    				return Status.CANCEL_STATUS;
+	    			comment = svnFileModificationValidatorPrompt.getComment();
+	    			stealLock = svnFileModificationValidatorPrompt.isStealLock();
+	    		}
+	    	}
+	    	// Run the svn lock command
+	    	RepositoryProvider provider = RepositoryProvider.getProvider(managedFiles[0].getProject());
+	    	if ((provider != null) && (provider instanceof SVNTeamProvider)) {
+	    		SVNTeamProvider svnTeamProvider = (SVNTeamProvider) provider;
+	    		LockResourcesCommand command = new LockResourcesCommand(svnTeamProvider.getSVNWorkspaceRoot(), managedFiles, stealLock, comment);
+	    		try {
+	    			command.run(new NullProgressMonitor());
+	    		} catch (SVNException e) {
+	    			e.printStackTrace();
+	    			return Status.CANCEL_STATUS;
+	    		}
+	    	}
         }
-	    // This is to prompt the user to flip the read only bit
-	    // on files that are not managed by SVN
-	    if (readOnlyFiles.length > managedCount) {
+	    // Process any unmanaged but read-only files.  For
+	    // those we need to prompt the user to flip the read only bit
+	    IFile[] unManagedFiles = readOnlyFiles.getUnManaged();
+	    if (unManagedFiles.length > 0) {
 		    synchronized (this) {
 		        if (uiValidator == null) 
 		            uiValidator = loadUIValidator();
 		    }
 		    if (uiValidator != null) {
-		        return uiValidator.validateEdit(files, context);
+		        return uiValidator.validateEdit(unManagedFiles, context);
 		    }
 		    // There was no plugged in validator so fail gracefully
-			return getStatus(files); 
+			return getStatus(unManagedFiles); 
 	    }
 	    return Status.OK_STATUS;
     }
@@ -91,35 +93,31 @@ public class SVNFileModificationValidator implements IFileModificationValidator 
     
     
     /**
-     * This method does a second check on the files in the array
-     * to verify tey are managed.  
+     * This method processes the file array and separates
+     * the read-only files into managed and unmanaged lists.
      */
-    private IFile[] checkManaged(IFile[] files) {
-        List result = new ArrayList(files.length);
-        for (int i = 0; i < files.length; i++) {
-    	    try {
-    	    	if (SVNWorkspaceRoot.getSVNResourceFor(files[i]).isManaged()) {
-	                    result.add(files[i]);
-    	    	}
-            } catch (SVNException e) {
-            }
-        }
-        return (IFile[]) result.toArray(new IFile[result.size()]);
+    private ReadOnlyFiles processFileArray(IFile[] files) {
+    	ReadOnlyFiles result = new ReadOnlyFiles();
+    	for (int i = 0; i < files.length; i++) {
+			IFile file = files[i];
+			if (isReadOnly(file)) {
+	    	    try {
+	    	    	if (SVNWorkspaceRoot.getSVNResourceFor(file).isManaged())
+		                result.addManaged(file);
+	    	    	else
+	    	    		result.addUnManaged(file);
+	            } catch (SVNException e) {
+	            	result.addUnManaged(file);
+	            }
+			}
+		}
+        return result;
     }
 
-    private IFile[] getReadOnly(IFile[] files) {
-        List result = new ArrayList(files.length);
-        for (int i = 0; i < files.length; i++) {
-            if (isReadOnly(files[i])) {
-                result.add(files[i]);
-            }
-        }
-        return (IFile[]) result.toArray(new IFile[result.size()]);
-    }
 
 	private boolean isReadOnly(IFile file) {
 		if (file == null) return false;
-		File fsFile = file.getFullPath().toFile();
+		File fsFile = file.getLocation().toFile();
 		if (fsFile == null || fsFile.canWrite())
 			return false;
 		else
@@ -174,6 +172,31 @@ public class SVNFileModificationValidator implements IFileModificationValidator 
 			}
 		}
 		return null;
+    }
+    
+    private class ReadOnlyFiles {
+    	private List managed;
+    	private List unManaged;
+		public ReadOnlyFiles() {
+			super();
+			managed = new ArrayList();
+			unManaged = new ArrayList();
+		}
+		public void addManaged(IFile file) {
+			managed.add(file);
+		}
+		public void addUnManaged(IFile file) {
+			unManaged.add(file);
+		}
+		public IFile[] getManaged() {
+			return (IFile[]) managed.toArray(new IFile[managed.size()]);
+		}
+		public IFile[] getUnManaged() {
+			return (IFile[]) unManaged.toArray(new IFile[unManaged.size()]);
+		}
+		public int size() {
+			return managed.size() + unManaged.size();
+		}
     }
 
 }
