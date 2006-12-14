@@ -1,0 +1,73 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+
+<head>
+<meta http-equiv="CONTENT-TYPE" content="text/html; charset=us-ascii" />
+<!--
+<style type="text/css"> /* <![CDATA[ */
+ @import "http://subclipse.tigris.org/branding/css/tigris.css";
+ @import "http://subclipse.tigris.org/branding/css/inst.css";
+ /* ]]> */</style>
+ -->
+<title></title>
+</head>
+
+<body lang="en-US" dir="LTR">
+
+<div id="highlights">
+	<a class="nav" href="index.html">Subclipse</a> .: :.
+	<a class="nav" href="svnant.html">SvnAnt</a> .: :.
+	<a class="nav" href="svnClientAdapter.html">SvnClientAdapter</a> </div>
+<div class="h2" id="svnant" title="svnant">
+	<h2>SvnAnt</h2>
+	<p>SvnAnt is an <a href="http://ant.apache.org">ant</a> task that provides an 
+	interface to <a href="http://subversion.tigris.org/">Subversion</a> revision 
+	control system that is a compelling replacement for CVS in the open source community.</p>
+	<p>With the help of the underlying
+	<a class="nav" href="svnClientAdapter.html">svnClientAdapter</a>, &lt;svn&gt; task uses
+	<a href="http://svn.collab.net/repos/svn/trunk/subversion/bindings/java/javahl/">
+	javahl</a> - a native (JNI) java interface for the subversion api if it can 
+	find the corresponding library.<br/>(See the subclipse
+	<a href="http://subclipse.tigris.org/faq.html#get-javahl">FAQ</a> for hints 
+	how to get it for your operating system).<br/>
+	Otherwise it uses the svn(.exe) command line interface (which must be present on your 
+	OS&#39; path).</p>
+	<p>SvnAnt supports most of the major Subversion commands.</p>
+</div>
+<div class="h2" id="Documentation" title="Documentation">
+	<h2>Documentation</h2>
+	<p align="LEFT">Documentation for the &lt;svn&gt; task is in the /doc directory of 
+	the distribution package.</p>
+	<p>Or directly <a href="svnant/svn.html">here.</a></p>
+</div>
+<div class="h2" id="currentRelease" title="currentRelease">
+	<h2>Current Release</h2>
+	<p><b>The current stable release is SvnAnt 1.0.0.</b></p>
+	<p>You can download it
+	<a href="http://subclipse.tigris.org/files/documents/906/32898/svnant-1.0.0.zip">
+	here.</a></p>
+</div>
+<div class="h2" id="latestDevelopment" title="latestDevelopment">
+	<h2>Latest development</h2>
+	<p>The latest development release of SvnAnt is <a href="http://subclipse.tigris.org/files/documents/906/35081/svnant-1.1.0-RC2.zip"><b>1.1.0-RC2</b></a>.
+	</p>
+	<p>You can also
+	<a href="http://subclipse.tigris.org/source/browse/subclipse/trunk/svnant/">
+	browse the latest source here.</a></p>
+	<p>Or check out the current development source from the repository using svn 
+	(username: guest passwd: none):</p>
+	<ul>
+		<pre>svn co http://subclipse.tigris.org/svn/subclipse/trunk/svnant/ svnant</pre>
+	</ul>
+	<p>Or try the SvnAnt itself to get them:</p>
+	<ul>
+		<pre>
+&lt;svn username=&quot;guest&quot; password=&quot;&quot;&gt;
+  &lt;checkout url=&quot;http://subclipse.tigris.org/svn/subclipse/trunk/svnant/&quot; revision=&quot;HEAD&quot; destPath=&quot;svnant&quot; /&gt;
+&lt;/svn&gt;</pre>
+	</ul>
+</div>
+
+</body>
+
+</html>
