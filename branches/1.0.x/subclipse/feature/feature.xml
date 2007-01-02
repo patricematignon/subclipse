@@ -43,27 +43,27 @@
    <plugin
          id="org.tigris.subversion.javahl.win32"
          os="win32"
-         download-size="1504"
-         install-size="3384"
+         download-size="0"
+         install-size="0"
          version="1.0.4"
          fragment="true"/>
 
    <plugin
          id="org.tigris.subversion.subclipse.core"
-         download-size="1206"
-         install-size="1370"
+         download-size="0"
+         install-size="0"
          version="1.0.4"/>
 
    <plugin
          id="org.tigris.subversion.subclipse.ui"
-         download-size="3507"
-         install-size="4440"
+         download-size="0"
+         install-size="0"
          version="1.0.4"/>
 
    <plugin
          id="org.tigris.subversion.subclipse"
-         download-size="3"
-         install-size="4"
+         download-size="0"
+         install-size="0"
          version="1.0.4"/>
 
 </feature>
