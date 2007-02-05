@@ -155,7 +155,7 @@ public class SVNProjectSetCapability extends ProjectSetCapability {
     private IProject[] checkout(IProject[] projects, Map infoMap,
             IProgressMonitor monitor) throws TeamException {
 
-        ISchedulingRule rule = projects[0].getWorkspace().getRuleFactory().modifyRule(projects[0]);
+        ISchedulingRule rule = projects[0].getWorkspace().getRuleFactory().modifyRule(projects[0].getWorkspace().getRoot());
 		Platform.getJobManager().beginRule(rule, monitor);
         monitor.beginTask("", 1000 * projects.length); //$NON-NLS-1$
         List result = new ArrayList();
