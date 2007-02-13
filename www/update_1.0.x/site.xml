@@ -7,6 +7,9 @@
    <feature url="features/org.tigris.subversion.subclipse_1.0.5.jar" id="org.tigris.subversion.subclipse" version="1.0.5">
       <category name="Subclipse"/>
    </feature>
+   <feature url="features/org.tigris.subversion.subclipse_1.2.0.jar" id="org.tigris.subversion.subclipse" version="1.2.0">
+      <category name="Subclipse"/>
+   </feature>
    <category-def name="Subclipse" label="Subclipse Plugin">
       <description>
          The Subclipse plug-in for Subversion.
