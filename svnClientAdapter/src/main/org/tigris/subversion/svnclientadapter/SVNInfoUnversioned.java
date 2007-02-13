@@ -1,13 +1,18 @@
-/*******************************************************************************
- * Copyright (c) 2004, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+/*
+ *  Copyright(c) 2003-2004 by the authors indicated in the @author tags.
  *
- * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
 package org.tigris.subversion.svnclientadapter;
 
 import java.io.File;
@@ -16,17 +21,14 @@ import java.util.Date;
 import org.tigris.subversion.svnclientadapter.SVNRevision.Number;
 
 /**
- * A special {@link ISVNInfo} implementation that is used if a File/Folder is not versioned.
+ * <p>
+ * A special info class that is used if a File/Folder is not versioned.</p>
  * 
  * @author Cédric Chabanois (cchabanois at no-log.org)
  */
 public class SVNInfoUnversioned implements ISVNInfo {
 	private File file;
     
-	/**
-	 * Constructor
-	 * @param file
-	 */
     public SVNInfoUnversioned(File file) {
     	this.file = file;
     }
@@ -43,13 +45,6 @@ public class SVNInfoUnversioned implements ISVNInfo {
 	 * @see org.tigris.subversion.svnclientadapter.ISVNInfo#getUrl()
 	 */
 	public SVNUrl getUrl() {
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.ISVNInfo#getUrlString()
-	 */
-	public String getUrlString() {
 		return null;
 	}
 

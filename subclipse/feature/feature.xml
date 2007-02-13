@@ -2,10 +2,10 @@
 <feature
       id="org.tigris.subversion.subclipse"
       label="Subclipse"
-      version="1.2.0"
+      version="0.9.37"
       provider-name="tigris.org"
-      plugin="org.tigris.subversion.subclipse.core"
       colocation-affinity="org.tigris.subversion.subclipse">
+
    <install-handler/>
 
    <description url="%changesURL">
@@ -21,25 +21,23 @@
    </license>
 
    <url>
-      <update label="%updateSiteName" url="http://subclipse.tigris.org/update_1.2.x"/>
-      <discovery label="%updateSiteName" url="http://subclipse.tigris.org/update_1.2.x"/>
+      <update label="%updateSiteName" url="http://subclipse.tigris.org/update"/>
+      <discovery label="%updateSiteName" url="http://subclipse.tigris.org/update"/>
    </url>
 
    <requires>
-      <import plugin="org.eclipse.core.resources" version="3.2.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.team.core" version="3.2.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.core.runtime" version="3.2.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.core.resources"/>
+      <import plugin="org.eclipse.ui"/>
+      <import plugin="org.eclipse.team.core"/>
+      <import plugin="org.eclipse.core.runtime"/>
       <import plugin="org.eclipse.osgi"/>
-      <import plugin="org.eclipse.compare"/>
       <import plugin="org.eclipse.ui.ide"/>
       <import plugin="org.eclipse.ui.views"/>
       <import plugin="org.eclipse.jface.text"/>
       <import plugin="org.eclipse.ui.workbench.texteditor"/>
       <import plugin="org.eclipse.ui.editors"/>
-      <import plugin="org.eclipse.ui"/>
       <import plugin="org.eclipse.team.ui"/>
-      <import plugin="org.eclipse.ui.console"/>
-      <import plugin="org.eclipse.help"/>
+      <import plugin="org.eclipse.compare"/>
    </requires>
 
    <plugin
@@ -47,28 +45,25 @@
          os="win32"
          download-size="0"
          install-size="0"
-         version="1.2.0"
+         version="0.9.37"
          fragment="true"/>
 
    <plugin
          id="org.tigris.subversion.subclipse.core"
          download-size="0"
          install-size="0"
-         version="1.2.0"
-         unpack="false"/>
+         version="0.9.37"/>
 
    <plugin
          id="org.tigris.subversion.subclipse.ui"
          download-size="0"
          install-size="0"
-         version="1.2.0"
-         unpack="false"/>
-
+         version="0.9.37"/>
+         
    <plugin
-         id="org.tigris.subversion.subclipse.doc"
+         id="org.tigris.subversion.subclipse"
          download-size="0"
          install-size="0"
-         version="1.2.0"
-         unpack="false"/>
+         version="0.9.37"/>
 
 </feature>

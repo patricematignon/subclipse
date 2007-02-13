@@ -1,12 +1,12 @@
-/*******************************************************************************
- * Copyright (c) 2003, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+/******************************************************************************
+ * This program and the accompanying materials are made available under
+ * the terms of the Common Public License v1.0 which accompanies this
+ * distribution, and is available at the following URL:
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * Copyright(c) 2003-2005 by the authors indicated in the @author tags.
  *
- * Contributors:
- *     Subclipse project committers - initial API and implementation
+ * All Rights are Reserved by the various authors.
+ *
  ******************************************************************************/
 package org.tigris.subversion.subclipse.core.resources;
 
@@ -30,6 +30,7 @@ import org.tigris.subversion.subclipse.core.Policy;
 import org.tigris.subversion.subclipse.core.SVNException;
 import org.tigris.subversion.subclipse.core.SVNProviderPlugin;
 import org.tigris.subversion.subclipse.core.commands.AddIgnoredPatternCommand;
+import org.tigris.subversion.svnclientadapter.SVNConstants;
 
 /**
  * Implements the ISVNLocalFolder interface on top of an instance of the
@@ -63,7 +64,6 @@ public class LocalFolder extends LocalResource implements ISVNLocalFolder {
      * @see org.tigris.subversion.subclipse.core.ISVNFolder#members(org.eclipse.core.runtime.IProgressMonitor, int)
      */
     public ISVNResource[] members(IProgressMonitor monitor, int flags) throws SVNException {
-        if (!resource.exists()) return new ISVNLocalResource[0];
         final List result = new ArrayList();
         IResource[] resources;
         try {
@@ -115,15 +115,15 @@ public class LocalFolder extends LocalResource implements ISVNLocalFolder {
      * @see org.tigris.subversion.subclipse.core.ISVNLocalResource#refreshStatus()
      */
     public void refreshStatus() throws SVNException {
-        refreshStatus(false);
+        refreshStatus(IResource.DEPTH_ZERO);
     }
 
     /* (non-Javadoc)
-     * @see org.tigris.subversion.subclipse.core.ISVNLocalFolder#refreshStatus(boolean)
+     * @see org.tigris.subversion.subclipse.core.ISVNLocalFolder#refreshStatus(int)
      */
-    public void refreshStatus(boolean recursive) throws SVNException {
+    public void refreshStatus(int depth) throws SVNException {
         SVNProviderPlugin.getPlugin().getStatusCacheManager().refreshStatus(
-                (IContainer)resource, recursive);
+                resource, depth);
     }
 
     /**
@@ -139,7 +139,7 @@ public class LocalFolder extends LocalResource implements ISVNLocalFolder {
                 new NullProgressMonitor(), ALL_UNIGNORED_MEMBERS);
 
         for (int i = 0; i < children.length; i++) {
-            if (children[i].isDirty() || (children[i].exists() && !children[i].isManaged())) {
+            if (children[i].isDirty()) {
                 // if a child resource is dirty consider the parent dirty as
                 // well, there is no need to continue checking other siblings.
                 return true;
@@ -208,10 +208,6 @@ public class LocalFolder extends LocalResource implements ISVNLocalFolder {
             private void recursiveUnmanage(IContainer container,
                     IProgressMonitor pm) {
                 try {
-                    // We must not delete svn directories for linked resources.
-                	if (container.isLinked())
-                		return;
-
                     pm.beginTask(null, 10);
                     pm.subTask(container.getFullPath().toOSString());
 
@@ -225,7 +221,7 @@ public class LocalFolder extends LocalResource implements ISVNLocalFolder {
                     // Post order traversal to make sure resources are not
                     // orphaned
                     IFolder svnFolder = container.getFolder(new Path(
-                    		SVNProviderPlugin.getPlugin().getAdminDirectoryName()));
+                            SVNConstants.SVN_DIRNAME));
                     if (svnFolder.exists()) {
                         try {
                             svnFolder.delete(true, null);
@@ -267,7 +263,7 @@ public class LocalFolder extends LocalResource implements ISVNLocalFolder {
      * @see org.tigris.subversion.subclipse.core.ISVNLocalResource#getStatus()
      */
     public LocalResourceStatus getStatus() throws SVNException {
-    	if (getIResource().isTeamPrivateMember() && (SVNProviderPlugin.getPlugin().isAdminDirectory(getIResource().getName())))
+    	if (getIResource().isTeamPrivateMember() && (SVNConstants.SVN_DIRNAME.equals(getIResource().getName())))
     	{
     		return LocalResourceStatus.NONE;
     	}

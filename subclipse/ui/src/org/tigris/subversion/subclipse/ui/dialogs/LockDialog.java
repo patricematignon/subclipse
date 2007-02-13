@@ -1,28 +1,15 @@
-/*******************************************************************************
- * Copyright (c) 2005, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
 package org.tigris.subversion.subclipse.ui.dialogs;
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.jface.dialogs.TrayDialog;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ColumnPixelData;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.graphics.Point;
@@ -35,16 +22,14 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
-import org.eclipse.ui.PlatformUI;
 import org.tigris.subversion.subclipse.core.SVNException;
-import org.tigris.subversion.subclipse.ui.IHelpContextIds;
 import org.tigris.subversion.subclipse.ui.Policy;
 import org.tigris.subversion.subclipse.ui.SVNUIPlugin;
 import org.tigris.subversion.subclipse.ui.comments.CommitCommentArea;
 import org.tigris.subversion.subclipse.ui.settings.CommentProperties;
 import org.tigris.subversion.subclipse.ui.util.TableSetter;
 
-public class LockDialog extends TrayDialog {
+public class LockDialog extends Dialog {
 	private static final int WIDTH_HINT = 500;
 	private final static int SELECTION_HEIGHT_HINT = 100;
     
@@ -78,17 +63,11 @@ public class LockDialog extends TrayDialog {
 		if ((commentProperties != null) && (commentProperties.getMinimumLockMessageSize() != 0)) {
 		    ModifyListener modifyListener = new ModifyListener() {
                 public void modifyText(ModifyEvent e) {
-                    okButton.setEnabled(commitCommentArea.getComment().trim().length() >= commentProperties.getMinimumLockMessageSize());
+                    okButton.setEnabled(commitCommentArea.getText().getText().trim().length() >= commentProperties.getMinimumLockMessageSize());
                 }		        
 		    };
 		    commitCommentArea.setModifyListener(modifyListener);
-		}   
-		commitCommentArea.addPropertyChangeListener(new IPropertyChangeListener() {
-			public void propertyChange(PropertyChangeEvent event) {
-				if (event.getProperty() == CommitCommentArea.OK_REQUESTED)
-					okPressed();
-			}
-		});
+		}        
         settings = SVNUIPlugin.getPlugin().getDialogSettings();
         setter = new TableSetter();
     }
@@ -98,34 +77,14 @@ public class LockDialog extends TrayDialog {
 		Composite composite = new Composite(parent, SWT.NULL);
 		composite.setLayout(new GridLayout());
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
-        
-        SashForm sashForm = new SashForm(composite, SWT.VERTICAL);
-        sashForm.setLayout(new GridLayout());
-        sashForm.setLayoutData(new GridData(GridData.FILL_BOTH));
-                
-        Composite cTop = new Composite(sashForm, SWT.NULL);
-        cTop.setLayout(new GridLayout());
-        cTop.setLayoutData(new GridData(GridData.FILL_BOTH));
-                
-        Composite cBottom1 = new Composite(sashForm, SWT.NULL);
-        cBottom1.setLayout(new GridLayout());
-        cBottom1.setLayoutData(new GridData(GridData.FILL_BOTH));
-        
-        Composite cBottom2 = new Composite(cBottom1, SWT.NULL);
-        cBottom2.setLayout(new GridLayout());
-        cBottom2.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
-		commitCommentArea.createArea(cTop);
-        
-        addResourcesArea(cBottom2);
+		commitCommentArea.createArea(composite);
 		
-		stealButton = new Button(cBottom2, SWT.CHECK);
+		stealButton = new Button(composite, SWT.CHECK);
 		stealButton.setText(Policy.bind("LockDialog.stealLock")); //$NON-NLS-1$
 		
+		addResourcesArea(composite);
 
-		// set F1 help
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, IHelpContextIds.LOCK_DIALOG);	
-		
 		return composite;
 	}
 	

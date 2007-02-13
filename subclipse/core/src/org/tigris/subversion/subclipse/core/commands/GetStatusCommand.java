@@ -1,13 +1,12 @@
-/*******************************************************************************
- * Copyright (c) 2003, 2004 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+/******************************************************************************
+ * This program and the accompanying materials are made available under
+ * the terms of the Common Public License v1.0 which accompanies this
+ * distribution, and is available at the following URL:
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * Copyright(c) 2003-2005 by the authors indicated in the @author tags.
  *
- * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
+ * All Rights are Reserved by the various authors.
+ *******************************************************************************/
 package org.tigris.subversion.subclipse.core.commands;
 
 import org.eclipse.core.resources.IResource;
@@ -17,11 +16,8 @@ import org.tigris.subversion.subclipse.core.ISVNRepositoryLocation;
 import org.tigris.subversion.subclipse.core.SVNException;
 import org.tigris.subversion.subclipse.core.resources.LocalResourceStatus;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
-import org.tigris.subversion.svnclientadapter.ISVNInfo;
 import org.tigris.subversion.svnclientadapter.ISVNStatus;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
-import org.tigris.subversion.svnclientadapter.SVNStatusKind;
-import org.tigris.subversion.svnclientadapter.SVNUrl;
 
 /**
  * Command to get the statuses of local resources
@@ -62,27 +58,10 @@ public class GetStatusCommand implements ISVNCommand {
     private LocalResourceStatus[] convert(ISVNStatus[] statuses) {
         LocalResourceStatus[] localStatuses = new LocalResourceStatus[statuses.length];
         for (int i = 0; i < statuses.length;i++) {
-            localStatuses[i] = new LocalResourceStatus(statuses[i], getURL(statuses[i]));
+            localStatuses[i] = new LocalResourceStatus(statuses[i]);
         }
         return localStatuses;
     }
-
-    // getStatuses returns null URL for svn:externals folder.  This will
-    // get the URL using svn info command on the local resource
-	private String getURL(ISVNStatus status) {
-		String url = status.getUrlString();
-		if (url == null && !(status.getTextStatus() == SVNStatusKind.UNVERSIONED)) {
-		    try { 
-		    	ISVNClientAdapter svnClient = repository.getSVNClient();
-		    	ISVNInfo info = svnClient.getInfoFromWorkingCopy(status.getFile());
-		    	SVNUrl svnurl = info.getUrl();
-		    	url = (svnurl != null) ? svnurl.toString() : null;
-		    } catch (SVNException e) {
-			} catch (SVNClientException e) {
-			}
-		}
-		return url;
-	}
 
     /**
      * get the results

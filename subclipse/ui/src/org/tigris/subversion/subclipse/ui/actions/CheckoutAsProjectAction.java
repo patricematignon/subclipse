@@ -1,13 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
  * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
+ *     IBM Corporation - initial API and implementation
+ *     Cédric Chabanois (cchabanois@ifrance.com) - modified for Subversion 
+ *******************************************************************************/
 package org.tigris.subversion.subclipse.ui.actions;
 
 import java.io.File;
@@ -19,11 +20,9 @@ import java.util.Map;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.tigris.subversion.subclipse.core.ISVNRemoteFolder;
 import org.tigris.subversion.subclipse.core.ISVNRepositoryLocation;
@@ -33,7 +32,6 @@ import org.tigris.subversion.subclipse.ui.WorkspacePathValidator;
 import org.tigris.subversion.subclipse.ui.operations.CheckoutAsProjectOperation;
 import org.tigris.subversion.subclipse.ui.util.IPromptCondition;
 import org.tigris.subversion.subclipse.ui.util.PromptingDialog;
-import org.tigris.subversion.svnclientadapter.SVNRevision;
 
 /**
  * Add some remote resources to the workspace. Current implementation:
@@ -45,20 +43,6 @@ public class CheckoutAsProjectAction extends WorkspaceAction {
     protected ISVNRemoteFolder[] remoteFolders;
     protected IResource[] projects;
     protected boolean proceed;
-	private ISVNRemoteFolder[] selectedFolders;
-	private String projectName;
-	private SVNRevision svnRevision = SVNRevision.HEAD;
-	
-	public CheckoutAsProjectAction() {
-		super();
-	}
-    
-	public CheckoutAsProjectAction(ISVNRemoteFolder[] selectedFolders, String projectName, Shell shell) {
-		super();
-		this.selectedFolders = selectedFolders;
-		this.projectName = projectName;
-		this.shell = shell;
-	}
 
 	/*
 	 * @see SVNAction#execute()
@@ -93,11 +77,7 @@ public class CheckoutAsProjectAction extends WorkspaceAction {
 						    });					        
 					    }
 					    if (proceed) {
-					    	IProject project;
-					    	if (projectName == null)
-					    		project = SVNWorkspaceRoot.getProject(folders[i],monitor);
-					    	else
-					    		project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
+							IProject project = SVNWorkspaceRoot.getProject(folders[i],monitor);
 							targetFolders.put(project.getName(), folders[i]);
 							targetProjects.add(project);
 					    } else return;
@@ -128,11 +108,7 @@ public class CheckoutAsProjectAction extends WorkspaceAction {
 				}
 			}
 		}, true /* cancelable */, PROGRESS_DIALOG);
-	    if (proceed) {
-	    	CheckoutAsProjectOperation checkoutAsProjectOperation = new CheckoutAsProjectOperation(getTargetPart(), remoteFolders, localFolders);
-	    	checkoutAsProjectOperation.setSvnRevision(svnRevision);
-	    	checkoutAsProjectOperation.run();
-	    }
+	    if (proceed) new CheckoutAsProjectOperation(getTargetPart(), remoteFolders, localFolders).run();
 	}
 		
 	/*
@@ -191,13 +167,5 @@ public class CheckoutAsProjectAction extends WorkspaceAction {
         };
     }
 
-	protected ISVNRemoteFolder[] getSelectedRemoteFolders() {
-		if (selectedFolders != null) return selectedFolders;
-		return super.getSelectedRemoteFolders();
-	}
-
-	public void setSvnRevision(SVNRevision svnRevision) {
-		this.svnRevision = svnRevision;
-	}   
 
 }

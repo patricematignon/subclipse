@@ -1,13 +1,12 @@
-/*******************************************************************************
- * Copyright (c) 2004, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+/******************************************************************************
+ * This program and the accompanying materials are made available under
+ * the terms of the Common Public License v1.0 which accompanies this
+ * distribution, and is available at the following URL:
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * Copyright(c) 2003-2005 by the authors indicated in the @author tags.
  *
- * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
+ * All Rights are Reserved by the various authors.
+ *******************************************************************************/
 package org.tigris.subversion.subclipse.core.commands;
 
 import java.util.HashSet;
@@ -18,7 +17,6 @@ import java.util.TreeSet;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceVisitor;
-import org.eclipse.core.resources.ResourceAttributes;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -127,6 +125,7 @@ public class AddResourcesCommand implements ISVNCommand {
   
                 try {
                     svnClient.addDirectory(localResource.getIResource().getLocation().toFile(),false);
+                    localResource.refreshStatus();
                 } catch (SVNClientException e) {
                     throw SVNException.wrapException(e);
                 }
@@ -138,14 +137,9 @@ public class AddResourcesCommand implements ISVNCommand {
                 try {
                     svnClient.addFile(localResource.getIResource().getLocation().toFile());
                     // If file has read-only attribute set, remove it
-                    ResourceAttributes attrs = localResource.getIResource().getResourceAttributes();
-                    if (localResource.getIResource().getType() == IResource.FILE && attrs.isReadOnly()) {
-                        attrs.setReadOnly(false);
-                    	try {
-							localResource.getIResource().setResourceAttributes(attrs);
-						} catch (CoreException swallow) {
-						}
-                    }
+                    if (localResource.getIResource().getType() == IResource.FILE && localResource.getIResource().isReadOnly())
+                        localResource.getIResource().setReadOnly(false);
+                    localResource.refreshStatus();
                 } catch (SVNClientException e) {
                     throw SVNException.wrapException(e);
                 }    

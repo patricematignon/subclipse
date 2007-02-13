@@ -24,7 +24,7 @@ public class SvnJavaHLTest extends SvnTest {
 	{
 		return true;
 	}
-	protected boolean isSVNKitTest()
+	protected boolean isJavaSVNTest()
 	{
 		return false;
 	}
@@ -40,9 +40,9 @@ public class SvnJavaHLTest extends SvnTest {
      */
     protected void executeTarget(String targetName) {
     	project.setProperty("javahl", "true");
-    	project.setProperty("svnkit", "false");
+    	project.setProperty("javasvn", "false");
         assertPropertyEquals("javahl", "true");
-        assertPropertyEquals("svnkit", "false");
+        assertPropertyEquals("javasvn", "false");
     	super.executeTarget(targetName);
     }
 

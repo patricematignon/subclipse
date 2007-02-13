@@ -1,13 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
  * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
+ *     IBM Corporation - initial API and implementation
+ * 	   Korros Panagiotis - pkorros@tigris.org
+ *******************************************************************************/
 package org.tigris.subversion.subclipse.core.sync;
 
 import java.util.ArrayList;
@@ -37,17 +38,14 @@ import org.eclipse.team.core.variants.IResourceVariantComparator;
 import org.eclipse.team.core.variants.ResourceVariantByteStore;
 import org.eclipse.team.core.variants.SessionResourceVariantByteStore;
 import org.tigris.subversion.subclipse.core.IResourceStateChangeListener;
-import org.tigris.subversion.subclipse.core.ISVNCoreConstants;
 import org.tigris.subversion.subclipse.core.ISVNLocalResource;
 import org.tigris.subversion.subclipse.core.Policy;
 import org.tigris.subversion.subclipse.core.SVNException;
 import org.tigris.subversion.subclipse.core.SVNProviderPlugin;
-import org.tigris.subversion.subclipse.core.SVNTeamProvider;
 import org.tigris.subversion.subclipse.core.client.StatusAndInfoCommand;
 import org.tigris.subversion.subclipse.core.resources.LocalResourceStatus;
 import org.tigris.subversion.subclipse.core.resources.RemoteResourceStatus;
 import org.tigris.subversion.subclipse.core.resources.SVNWorkspaceRoot;
-import org.tigris.subversion.svnclientadapter.SVNStatusKind;
 
 public class SVNWorkspaceSubscriber extends Subscriber implements IResourceStateChangeListener {
 
@@ -113,7 +111,7 @@ public class SVNWorkspaceSubscriber extends Subscriber implements IResourceState
      */
     public boolean isSupervised(IResource resource) throws TeamException {
 		try {
-			if (resource.isTeamPrivateMember() || SVNWorkspaceRoot.isLinkedResource(resource)) return false;
+			if (SVNWorkspaceRoot.isLinkedResource(resource)) return false;
 			RepositoryProvider provider = RepositoryProvider.getProvider(resource.getProject(), SVNProviderPlugin.getTypeId());
 			if (provider == null) return false;
 			// TODO: what happens for resources that don't exist?
@@ -121,8 +119,7 @@ public class SVNWorkspaceSubscriber extends Subscriber implements IResourceState
 			ISVNLocalResource svnThing = SVNWorkspaceRoot.getSVNResourceFor(resource);
 			if (svnThing.isIgnored()) {
 				// An ignored resource could have an incoming addition (conflict)
-				return (remoteSyncStateStore.getBytes(resource) != null) || 
-						((remoteSyncStateStore.members(resource) != null) && (remoteSyncStateStore.members(resource).length > 0));
+				return false;//getRemoteTree().hasResourceVariant(resource);
 			}
 			return true;
 		} catch (TeamException e) {
@@ -139,7 +136,7 @@ public class SVNWorkspaceSubscriber extends Subscriber implements IResourceState
      * @see org.eclipse.team.core.subscribers.Subscriber#members(org.eclipse.core.resources.IResource)
      */
     public IResource[] members(IResource resource) throws TeamException {
-		if ((resource.getType() == IResource.FILE) || (!isSupervised(resource))){
+		if(resource.getType() == IResource.FILE) {
 			return new IResource[0];
 		}	
 		try {
@@ -166,9 +163,7 @@ public class SVNWorkspaceSubscriber extends Subscriber implements IResourceState
      * @see org.eclipse.team.core.subscribers.Subscriber#getSyncInfo(org.eclipse.core.resources.IResource)
      */
     public SyncInfo getSyncInfo(IResource resource) throws TeamException {
-        if (resource == null)
-        	return null;
-    	if( ! isSupervised( resource ) )
+        if( ! isSupervised( resource ) )
             return null;
         
         //LocalResourceStatus localStatus = SVNWorkspaceRoot.getSVNResourceFor( resource );
@@ -196,15 +191,11 @@ public class SVNWorkspaceSubscriber extends Subscriber implements IResourceState
 			monitor.beginTask("", 1000 * resources.length);
 			for (int i = 0; i < resources.length; i++) {
 				IResource resource = resources[i];
-				// Make certain that resource is still connected with SVN.  When
-				// Synch is on a schedule it is possible for the project to become disconnected
-				SVNTeamProvider teamProvider = (SVNTeamProvider)RepositoryProvider.getProvider(resource.getProject(), SVNProviderPlugin.getTypeId());
-				if (teamProvider != null) {
-					monitor.subTask(resource.getName());
-					IStatus status = refresh(resource, depth, monitor);
-					if (!status.isOK()) {
-						errors.add(status);
-					}
+
+				monitor.subTask(resource.getName());
+				IStatus status = refresh(resource, depth, monitor);
+				if (!status.isOK()) {
+					errors.add(status);
 				}
 			}
 		} finally {
@@ -220,16 +211,14 @@ public class SVNWorkspaceSubscriber extends Subscriber implements IResourceState
 	
 	private IStatus refresh(IResource resource, int depth, IProgressMonitor monitor) {
 		try {
-//			monitor.setTaskName(Policy.bind("SVNWorkspaceSubscriber.refreshingSynchronizationData", resource.getFullPath().toString()));
-			monitor.worked(100);
-//			SVNProviderPlugin.getPlugin().getStatusCacheManager().refreshStatus(resource, IResource.DEPTH_INFINITE);
-//			monitor.worked(300);
+			monitor.setTaskName(Policy.bind("SVNWorkspaceSubscriber.refreshingSynchronizationData"));
+			SVNProviderPlugin.getPlugin().getStatusCacheManager().refreshStatus(resource, IResource.DEPTH_INFINITE);
+			monitor.worked(300);
 
-			monitor.setTaskName(Policy.bind("SVNWorkspaceSubscriber.retrievingSynchronizationData"));
 			IResource[] changedResources = findChanges(resource, depth, Policy.infiniteSubMonitorFor(monitor, 400));
 
 			fireTeamResourceChange(SubscriberChangeEvent.asSyncChangedDeltas(this, changedResources));
-			monitor.worked(400);
+			monitor.worked(300);
 			return Status.OK_STATUS;
 		} catch (TeamException e) {
 			return new TeamStatus(IStatus.ERROR, SVNProviderPlugin.ID, 0, Policy.bind("SVNWorkspaceSubscriber.errorWhileSynchronizing.2", resource.getFullPath().toString(), e.getMessage()), e, resource); //$NON-NLS-1$
@@ -238,36 +227,30 @@ public class SVNWorkspaceSubscriber extends Subscriber implements IResourceState
 
     private IResource[] findChanges(IResource resource, int depth, IProgressMonitor monitor) throws TeamException {
         try {
-        	monitor.beginTask("", 100);
+        	monitor.beginTask(Policy.bind("SVNWorkspaceSubscriber.retrievingSynchronizationData"), 100);
 
         	remoteSyncStateStore.flushBytes(resource, depth);
 
 //            ISVNClientAdapter client = SVNProviderPlugin.getPlugin().createSVNClient();
 
             boolean descend = (depth == IResource.DEPTH_INFINITE)? true : false;
-            boolean showOutOfDate = SVNProviderPlugin.getPlugin().getPluginPreferences().getBoolean(ISVNCoreConstants.PREF_SHOW_OUT_OF_DATE_FOLDERS);
-            StatusAndInfoCommand cmd = new StatusAndInfoCommand(SVNWorkspaceRoot.getSVNResourceFor( resource ), descend, showOutOfDate, true );
+            StatusAndInfoCommand cmd = new StatusAndInfoCommand(SVNWorkspaceRoot.getSVNResourceFor( resource ), descend, false, true );
             cmd.run(monitor);
-            monitor.worked(70);
 
             RemoteResourceStatus[] statuses = cmd.getRemoteResourceStatuses();
 
             List result = new ArrayList(statuses.length);
             for (int i = 0; i < statuses.length; i++) {
-            	RemoteResourceStatus status = statuses[i];
-            	IResource changedResource = status.getResource();
-
-                if (changedResource == null)
-                	continue;
-
-                if (isSupervised(changedResource) || (status.getTextStatus() != SVNStatusKind.NONE))
+            	IResource changedResource = statuses[i].getResource();
+				
+                if ((changedResource != null) && isSupervised(changedResource))
                 {
                 	result.add(changedResource);
                 	remoteSyncStateStore.setBytes( changedResource, statuses[i].getBytes() );
                 	registerChangedResourceParent(changedResource);
                 }
 			}
-            monitor.worked(30);            
+            
             return (IResource[]) result.toArray(new IResource[result.size()]);
         } catch (SVNException e) {
             throw new TeamException("Error getting status for resource " + resource + " " + e.getMessage(), e);

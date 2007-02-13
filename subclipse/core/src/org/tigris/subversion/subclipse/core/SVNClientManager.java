@@ -1,13 +1,12 @@
-/*******************************************************************************
- * Copyright (c) 2004, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+/******************************************************************************
+ * This program and the accompanying materials are made available under
+ * the terms of the Common Public License v1.0 which accompanies this
+ * distribution, and is available at the following URL:
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * Copyright(c) 2003-2005 by the authors indicated in the @author tags.
  *
- * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
+ * All Rights are Reserved by the various authors.
+ *******************************************************************************/
 package org.tigris.subversion.subclipse.core;
 
 import java.io.File;
@@ -16,13 +15,12 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.team.core.TeamException;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 import org.tigris.subversion.svnclientadapter.SVNClientAdapterFactory;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
 import org.tigris.subversion.svnclientadapter.commandline.CmdLineClientAdapterFactory;
+import org.tigris.subversion.svnclientadapter.javasvn.JavaSvnClientAdapterFactory;
 import org.tigris.subversion.svnclientadapter.javahl.JhlClientAdapterFactory;
-import org.tigris.subversion.svnclientadapter.svnkit.SvnKitClientAdapterFactory;
 
 /**
  * Handles the creation of SVNClients
@@ -33,13 +31,68 @@ public class SVNClientManager {
     private String svnClientInterface;  
     private File configDir = null;
     private boolean fetchChangePathOnDemand = true;
-    private boolean javahl = false;
-    private boolean svnkit = false;
     
+    /* (non-Javadoc)
+     * @see org.eclipse.core.internal.resources.IManager#startup(org.eclipse.core.runtime.IProgressMonitor)
+     */
     public void startup(IProgressMonitor monitor) throws CoreException {
+        boolean adapterAvailable = false;
+        SVNException javahlException = null;
+        SVNException javaSvnException = null;
+        SVNException cliException = null;
+        try {
+            JhlClientAdapterFactory.setup();
+            adapterAvailable = true;
+        } catch (SVNClientException e) {
+            // if an exception is thrown, javahl is not available or 
+            // already registered ...
+            javahlException = SVNException.wrapException(e);
+        }
+        try {
+            JavaSvnClientAdapterFactory.setup();
+            adapterAvailable = true;
+        } catch (SVNClientException e) {
+            // if an exception is thrown, JavaSVN is not available or 
+            // already registered ...
+            javaSvnException = SVNException.wrapException(e);
+        }
+        try {
+            CmdLineClientAdapterFactory.setup();
+            adapterAvailable = true;
+        } catch (SVNClientException e) {
+            // if an exception is thrown, command line interface is not available or 
+            // already registered ...
+            cliException = SVNException.wrapException(e);
+        }
+        
+        if (!adapterAvailable) {
+            System.out.println("No SVN Client Adapter available");
+            if (javahlException != null)
+                SVNProviderPlugin.log(javahlException);
+            if (javaSvnException != null)
+                SVNProviderPlugin.log(javaSvnException);
+            if (cliException != null)
+                SVNProviderPlugin.log(cliException);
+        }
+        
+        
+        
+        // by default, we set the svn client interface to the best available
+        // (JNI if available or command line interface)
+        try {
+            svnClientInterface = SVNClientAdapterFactory.getPreferredSVNClientType();
+        } catch (SVNClientException e) {
+            throw new CoreException(new Status(IStatus.ERROR, SVNProviderPlugin.ID, IStatus.OK, e
+                    .getMessage(), e));
+        }
+        
+        setFetchChangePathOnDemand(fetchChangePathOnDemand);
     }
     
     
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.internal.resources.IManager#shutdown(org.eclipse.core.runtime.IProgressMonitor)
+	 */
 	public void shutdown(IProgressMonitor monitor) throws CoreException {
 	}
 
@@ -51,40 +104,9 @@ public class SVNClientManager {
      * @param svnClientInterface
      */
     public void setSvnClientInterface(String svnClientInterface) {
-        if (svnClientInterface == null) {
-          // if no specific interface is specified, load JavaHL
-          // if JavaHL fails to load, then JavaSVN will load
-            loadJavaHLAdapter();
-            try {
-                this.svnClientInterface = SVNClientAdapterFactory.getPreferredSVNClientType();
-            } catch (SVNClientException e) {
-                SVNProviderPlugin.log(new TeamException(new Status(IStatus.ERROR, SVNProviderPlugin.ID, IStatus.OK, e
-                        .getMessage(), e)));
-                return;
-            }
-        } else {
-	        if (CmdLineClientAdapterFactory.COMMANDLINE_CLIENT.equals(svnClientInterface))
-                svnClientInterface = SvnKitClientAdapterFactory.SVNKIT_CLIENT;
-	        if (JhlClientAdapterFactory.JAVAHL_CLIENT.equals(svnClientInterface))
-	            loadJavaHLAdapter();
-	        if (SvnKitClientAdapterFactory.SVNKIT_CLIENT.equals(svnClientInterface))
-	            loadSVNKitAdapter();
-	        if ("javasvn".equals(svnClientInterface))
-	            loadSVNKitAdapter();
-	        if (SVNClientAdapterFactory.isSVNClientAvailable(svnClientInterface)) {
-	            this.svnClientInterface = svnClientInterface;
-	        } else {
-	            if (this.svnClientInterface == null && SVNClientAdapterFactory.isSVNClientAvailable(SvnKitClientAdapterFactory.SVNKIT_CLIENT))
-	                this.svnClientInterface = SvnKitClientAdapterFactory.SVNKIT_CLIENT;
-	        }
+        if (SVNClientAdapterFactory.isSVNClientAvailable(svnClientInterface)) {
+            this.svnClientInterface = svnClientInterface;
         }
-        
-        // Initialize the admin directory name -- fixes a crash scenario with JavaHL
-        // Since the method being called internally caches the result it
-        // avoids a race condition later on, when someone runs an action like
-        // checkout that forces us to call this method for the first time
-        // in the middle of another action.  That is the theory anyway.
-        SVNProviderPlugin.getPlugin().getAdminDirectoryName();
     }
 
     /**
@@ -92,9 +114,6 @@ public class SVNClientManager {
      * @return
      */
     public String getSvnClientInterface() {
-        if (svnClientInterface == null)
-            // force the adapters to load
-            setSvnClientInterface(null);
         return svnClientInterface;
     }    
     
@@ -111,7 +130,7 @@ public class SVNClientManager {
      */
     public ISVNClientAdapter createSVNClient() throws SVNException {
         try {
-        	ISVNClientAdapter svnClient = SVNClientAdapterFactory.createSVNClient(getSvnClientInterface());
+        	ISVNClientAdapter svnClient = SVNClientAdapterFactory.createSVNClient(svnClientInterface);
         	if (configDir != null) {
         		svnClient.setConfigDirectory(configDir);
         	} 
@@ -135,31 +154,5 @@ public class SVNClientManager {
 	public void setFetchChangePathOnDemand(
 			boolean fetchChangePathOnDemand) {
 		this.fetchChangePathOnDemand = fetchChangePathOnDemand;
-	}
-	
-	public void loadAdapters() {
-	    loadJavaHLAdapter();
-	    loadSVNKitAdapter();
-	}
-	
-	private void loadJavaHLAdapter() {
-        if (!javahl) {
-            javahl = true;
-		    try {
-	            JhlClientAdapterFactory.setup();
-	        } catch (SVNClientException e) {
-	            loadSVNKitAdapter(); // try to make sure there is at least one adapter available
-	        }
-        }
-	}
-	
-	private void loadSVNKitAdapter() {
-        if (!svnkit) {
-            svnkit = true;
-		    try {
-	            SvnKitClientAdapterFactory.setup();
-	        } catch (SVNClientException e) {
-	        }
-        }
 	}
 }

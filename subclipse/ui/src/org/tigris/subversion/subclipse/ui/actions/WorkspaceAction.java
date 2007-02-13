@@ -1,13 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
  * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
+ *     IBM Corporation - initial API and implementation
+ *     Cédric Chabanois (cchabanois@ifrance.com) - modified for Subversion 
+ *******************************************************************************/
 package org.tigris.subversion.subclipse.ui.actions;
 
 import java.util.ArrayList;
@@ -19,20 +20,15 @@ import java.util.List;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
 import org.tigris.subversion.subclipse.core.ISVNLocalResource;
 import org.tigris.subversion.subclipse.core.SVNException;
 import org.tigris.subversion.subclipse.core.SVNProviderPlugin;
-import org.tigris.subversion.subclipse.core.commands.GetStatusCommand;
-import org.tigris.subversion.subclipse.core.resources.LocalResourceStatus;
 import org.tigris.subversion.subclipse.core.resources.SVNWorkspaceRoot;
 import org.tigris.subversion.subclipse.ui.Policy;
 import org.tigris.subversion.subclipse.ui.util.PromptingDialog;
 import org.tigris.subversion.subclipse.ui.util.IPromptCondition;
-import org.tigris.subversion.svnclientadapter.ISVNStatus;
-import org.tigris.subversion.svnclientadapter.utils.SVNStatusUtils;
 
 /**
  * This class represents an action performed on a local SVN workspace
@@ -141,25 +137,18 @@ public abstract class WorkspaceAction extends SVNAction {
 		boolean managed = false;
 		boolean ignored = false;
 		boolean added = false;
-		boolean copied = false;
 		if (svnResource.isIgnored()) {
 			ignored = true;
 		} else {
             managed = svnResource.isManaged();
 			if (managed) {
-				LocalResourceStatus status = svnResource.getStatus();
-				copied = status.isCopied();
-                added = status.isAdded();
+                added = svnResource.getStatus().isAdded();
             }
 		}
 		if (managed && ! isEnabledForManagedResources()) return false;
 		if ( ! managed && ! isEnabledForUnmanagedResources()) return false;
 		if ( ignored && ! isEnabledForIgnoredResources()) return false;
-		if (copied && added) {
-			if (! isEnabledForCopiedResources()) return false;			
-		} else if (added && ! isEnabledForAddedResources()) {
-			return false;
-		}
+		if (added && ! isEnabledForAddedResources()) return false;
 		return true;
 	}
 	
@@ -194,16 +183,7 @@ public abstract class WorkspaceAction extends SVNAction {
 	protected boolean isEnabledForAddedResources() {
 		return true;
 	}
-
-	/**
-	 * Method isEnabledForCopiedResources.
-	 * @return boolean
-	 */
-	protected boolean isEnabledForCopiedResources() {
-		//By default, handle copied as added.
-		return isEnabledForAddedResources();
-	}
-
+	
 	/**
 	 * Method isEnabledForAddedResources.
 	 * @return boolean
@@ -266,27 +246,6 @@ public abstract class WorkspaceAction extends SVNAction {
 		return getNonOverlapping(super.getSelectedResources());
 	}
 
-	protected IResource[] getModifiedResources(IResource[] resources, IProgressMonitor iProgressMonitor) throws SVNException {
-	    final List modified = new ArrayList();
-	    for (int i = 0; i < resources.length; i++) {
-			 IResource resource = resources[i];
-			 ISVNLocalResource svnResource = SVNWorkspaceRoot.getSVNResourceFor(resource);
-			 
-			 // get adds, deletes, updates and property updates.
-			 GetStatusCommand command = new GetStatusCommand(svnResource, true, false);
-			 command.run(iProgressMonitor);
-			 ISVNStatus[] statuses = command.getStatuses();
-			 for (int j = 0; j < statuses.length; j++) {
-			     if (SVNStatusUtils.isReadyForRevert(statuses[j]) ||
-			   		  !SVNStatusUtils.isManaged(statuses[j])) {
-			         IResource currentResource = SVNWorkspaceRoot.getResourceFor(statuses[j]);
-			         if (currentResource != null)
-			             modified.add(currentResource);
-			     }
-			 }
-		}
-	    return (IResource[]) modified.toArray(new IResource[modified.size()]);
-	}	
 	/**
 	 * Prompts user to overwrite resources that are in the <code>resources<code> list and are modified
 	 * @param resources Resources to prompt for overwrite if modified
@@ -295,11 +254,18 @@ public abstract class WorkspaceAction extends SVNAction {
 	 * @throws InterruptedException Prompt dialog was shut down abnormally
 	 */
 	protected IResource[] checkOverwriteOfDirtyResources(IResource[] resources) throws SVNException, InterruptedException {
+		List dirtyResources = new ArrayList();
 		
-		IResource[] dirtyResources = getModifiedResources(resources, null);
+		for (int i = 0; i < resources.length; i++) {
+			IResource resource = resources[i];
+			ISVNLocalResource svnResource = SVNWorkspaceRoot.getSVNResourceFor(resource);
+			if (svnResource.isDirty()) {
+				dirtyResources.add(resource);
+			}			
+		}
 		
-		PromptingDialog dialog = new PromptingDialog(getShell(), dirtyResources, 
-				getPromptCondition(dirtyResources), Policy.bind("ReplaceWithAction.confirmOverwrite"));//$NON-NLS-1$
+		PromptingDialog dialog = new PromptingDialog(getShell(), resources, 
+				getPromptCondition((IResource[]) dirtyResources.toArray(new IResource[dirtyResources.size()])), Policy.bind("ReplaceWithAction.confirmOverwrite"));//$NON-NLS-1$
 		return dialog.promptForMultiple();
 	}
 

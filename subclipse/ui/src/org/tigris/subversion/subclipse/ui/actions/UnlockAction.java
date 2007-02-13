@@ -1,13 +1,3 @@
-/*******************************************************************************
- * Copyright (c) 2005, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
 package org.tigris.subversion.subclipse.ui.actions;
 
 import java.lang.reflect.InvocationTargetException;
@@ -21,11 +11,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
-import org.tigris.subversion.subclipse.core.ISVNLocalResource;
-import org.tigris.subversion.subclipse.core.SVNException;
 import org.tigris.subversion.subclipse.core.SVNTeamProvider;
 import org.tigris.subversion.subclipse.core.commands.UnlockResourcesCommand;
-import org.tigris.subversion.subclipse.ui.ISVNUIConstants;
 import org.tigris.subversion.subclipse.ui.Policy;
 
 public class UnlockAction extends WorkspaceAction {
@@ -51,23 +38,5 @@ public class UnlockAction extends WorkspaceAction {
             }              
         }, true /* cancelable */, PROGRESS_DIALOG);        
     }
-
-    /**
-     * @see org.tigris.subversion.subclipse.ui.actions.WorkspaceAction#isEnabledForSVNResource(org.tigris.subversion.subclipse.core.ISVNResource)
-     */
-    protected boolean isEnabledForSVNResource(ISVNLocalResource svnResource) {
-        try {
-            return svnResource.getStatus().isLocked();
-        } catch (SVNException e) {
-            return false;
-        }
-    }
-
-	/*
-	 * @see org.tigris.subversion.subclipse.ui.actions.ReplaceableIconAction#getImageId()
-	 */
-	protected String getImageId() {
-		return ISVNUIConstants.IMG_MENU_LOCK;
-	}
 
 }

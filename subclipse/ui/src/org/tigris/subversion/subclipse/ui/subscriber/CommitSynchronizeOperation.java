@@ -1,41 +1,34 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
  * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.tigris.subversion.subclipse.ui.subscriber;
 
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.synchronize.SyncInfoSet;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
-import org.tigris.subversion.subclipse.core.ISVNCoreConstants;
 import org.tigris.subversion.subclipse.core.ISVNLocalResource;
 import org.tigris.subversion.subclipse.core.SVNException;
-import org.tigris.subversion.subclipse.core.SVNProviderPlugin;
 import org.tigris.subversion.subclipse.core.SVNTeamProvider;
 import org.tigris.subversion.subclipse.core.resources.SVNWorkspaceRoot;
 import org.tigris.subversion.subclipse.ui.Policy;
-import org.tigris.subversion.subclipse.ui.SVNUIPlugin;
 import org.tigris.subversion.subclipse.ui.dialogs.CommitDialog;
 import org.tigris.subversion.subclipse.ui.operations.CommitOperation;
 import org.tigris.subversion.subclipse.ui.settings.ProjectProperties;
@@ -49,14 +42,10 @@ public class CommitSynchronizeOperation extends SVNSynchronizeOperation {
     private String url;
     private boolean commit;
     private boolean keepLocks;
-    private String proposedComment;
-    private ISynchronizePageConfiguration configuration;
 
-	protected CommitSynchronizeOperation(ISynchronizePageConfiguration configuration, IDiffElement[] elements, String url, String proposedComment) {
+	protected CommitSynchronizeOperation(ISynchronizePageConfiguration configuration, IDiffElement[] elements, String url) {
 		super(configuration, elements);
-		this.configuration = configuration;
 		this.url = url;
-		this.proposedComment = proposedComment;
 	}
 	
 	private boolean confirmCommit(SyncInfoSet set) {
@@ -67,7 +56,6 @@ public class CommitSynchronizeOperation extends SVNSynchronizeOperation {
                 ProjectProperties projectProperties = ProjectProperties.getProjectProperties(modified[0]);
                 IResource[] unaddedResources = getUnaddedResources(set);
                 final CommitDialog dialog = new CommitDialog(getShell(), modified, url, unaddedResources.length > 0, projectProperties);
-                dialog.setComment(proposedComment);
         		getShell().getDisplay().syncExec(new Runnable() {
         			public void run() {
         				commit = (dialog.open() == CommitDialog.OK);
@@ -152,21 +140,7 @@ public class CommitSynchronizeOperation extends SVNSynchronizeOperation {
 	    } catch(IOException ex) {
 	      return true;
 	    }	
-	}
-	
-	public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-		// First, ask the user if they want to include conflicts
-		SyncInfoSet syncSet = getSyncInfoSet();
-		if (!promptForConflictHandling(getShell(), syncSet)) return;
-		// Divide the sync info by project
-		final Map projectSyncInfos = getProjectSyncInfoSetMap(syncSet);
-		Iterator iter = projectSyncInfos.keySet().iterator();
-		final IProject project = (IProject) iter.next();
-		SVNTeamProvider provider = (SVNTeamProvider)RepositoryProvider.getProvider(project, SVNUIPlugin.PROVIDER_ID);
-		monitor.beginTask(null, projectSyncInfos.size() * 100);
-		run(provider, syncSet, Policy.subMonitorFor(monitor,100));
-		monitor.done();
-	}
+	}		
 
     /* (non-Javadoc)
 	 * @see org.eclipse.team.examples.filesystem.ui.FileSystemSynchronizeOperation#run(org.eclipse.team.examples.filesystem.FileSystemProvider, org.eclipse.team.core.synchronize.SyncInfoSet, org.eclipse.core.runtime.IProgressMonitor)
@@ -188,28 +162,20 @@ public class CommitSynchronizeOperation extends SVNSynchronizeOperation {
 		}
 	    if (confirmCommit(set)) {
 	        final IResource[][] resourcesToBeAdded = new IResource[][] { null };
-	        final IResource[][] resourcesToBeDeleted = new IResource[][] { null };
 		    List toBeAddedList = new ArrayList();
-		    List toBeDeletedList = new ArrayList();
 		    for (int i = 0; i < resourcesToCommit.length; i++) {
 		        IResource resource = resourcesToCommit[i];
 		        ISVNLocalResource svnResource = SVNWorkspaceRoot.getSVNResourceFor(resource);
 		        try {
                     if (!svnResource.isManaged()) toBeAddedList.add(resource);
-                    if (svnResource.getStatus().isMissing()) toBeDeletedList.add(resource);
                 } catch (SVNException e) {
                     e.printStackTrace();
                 }
 		    }
 		    resourcesToBeAdded[0] = new IResource[toBeAddedList.size()];
 		    toBeAddedList.toArray(resourcesToBeAdded[0]);
-		    resourcesToBeDeleted[0] = new IResource[toBeDeletedList.size()];
-		    toBeDeletedList.toArray(resourcesToBeDeleted[0]);
 		    try {
-                CommitOperation commit = new CommitOperation(getPart(), resourcesToCommit, resourcesToBeAdded[0], resourcesToBeDeleted[0], resourcesToCommit, commitComment, keepLocks);
-                if (SVNProviderPlugin.getPlugin().getPluginPreferences().getBoolean(ISVNCoreConstants.PREF_SHOW_OUT_OF_DATE_FOLDERS))
-                	commit.setConfiguration(configuration);
-                commit.run();
+                new CommitOperation(getPart(), resourcesToCommit, resourcesToBeAdded[0], resourcesToCommit, commitComment, keepLocks).run();
             } catch (InvocationTargetException e) {
                 e.printStackTrace();
             } catch (InterruptedException e) {

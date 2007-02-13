@@ -1,27 +1,22 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
  * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
+ *     IBM Corporation - initial API and implementation
+ *     Cédric Chabanois (cchabanois@ifrance.com) - modified for Subversion 
+ *******************************************************************************/
 package org.tigris.subversion.subclipse.ui.repository;
 
-import java.lang.reflect.InvocationTargetException;
-import java.util.Iterator;
-
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
@@ -30,7 +25,6 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.jface.window.SameShellProvider;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.DND;
@@ -48,15 +42,12 @@ import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.dialogs.PropertyDialogAction;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.part.DrillDownAdapter;
-import org.eclipse.ui.part.PluginTransfer;
-import org.eclipse.ui.part.PluginTransferData;
 import org.eclipse.ui.part.ViewPart;
-import org.eclipse.ui.part.WorkbenchPart;
 import org.tigris.subversion.subclipse.core.ISVNRemoteFile;
 import org.tigris.subversion.subclipse.core.ISVNRemoteFolder;
 import org.tigris.subversion.subclipse.core.ISVNRemoteResource;
@@ -97,7 +88,6 @@ public class RepositoriesView extends ViewPart implements ISelectionListener {
     private DrillDownAdapter drillPart; // Home, back, and "drill into"
     
     private Action refreshAction;
-    private Action refreshPopupAction;
     private Action collapseAllAction;
     private OpenRemoteFileAction openAction;
     private Action propertiesAction;
@@ -108,42 +98,40 @@ public class RepositoriesView extends ViewPart implements ISelectionListener {
 		public void repositoryAdded(final ISVNRepositoryLocation root) {
 			getViewer().getControl().getDisplay().syncExec(new Runnable() {
 				public void run() {
-					refreshViewer(null, false);
+					refreshViewer(false);
 					getViewer().setSelection(new StructuredSelection(root));
 				}
 			});
 		}
 		public void repositoryRemoved(ISVNRepositoryLocation root) {
-			refresh(null, false);
+			refresh(false);
 		}
 		public void repositoriesChanged(ISVNRepositoryLocation[] roots) {
-			refresh(null, false);
+			refresh(false);
 		}
         public void remoteResourceDeleted(ISVNRemoteResource resource) {
-            refresh(resource.getParent(), false);
+            refresh(false);
         }
         public void remoteResourceCreated(ISVNRemoteFolder parent,String resourceName) {
-            refresh(parent, true);  
+            refresh(false);  
         }
         public void remoteResourceCopied(ISVNRemoteResource source,ISVNRemoteFolder destination) {
-            refresh(destination, false);  
+            refresh(false);  
         }
         public void remoteResourceMoved(ISVNRemoteResource resource, ISVNRemoteFolder destinationFolder,String destinationResourceName) {
-            refresh(resource.getParent(), false);
-            refresh(destinationFolder, false);
+            refresh(false);
         }
-		private void refresh(Object object, boolean refreshRepositoriesFolders) {
-			final Object finalObject = object;
+		private void refresh(boolean refreshRepositoriesFolders) {
             final boolean finalRefreshReposFolders = refreshRepositoriesFolders;
 			Display display = getViewer().getControl().getDisplay();
 			display.syncExec(new Runnable() {
 				public void run() {
-					RepositoriesView.this.refreshViewer(finalObject, finalRefreshReposFolders);
+					RepositoriesView.this.refreshViewer(finalRefreshReposFolders);
 				}
 			});
 		}
 		public void repositoryModified(ISVNRepositoryLocation root) {
-			refresh(null, false);
+			refresh(false);
 		}
 	};
 
@@ -174,16 +162,7 @@ public class RepositoriesView extends ViewPart implements ISelectionListener {
                       return;
                   }
               }
-          } else if (PluginTransfer.getInstance().isSupportedType(event.dataType)) {
-            final Object[] array = selection.toArray();
-            for (int i = 0; i < array.length; i++) {
-                if (array[i] instanceof ISVNRemoteResource) {
-                    event.data = new PluginTransferData("org.tigris.subversion.subclipse.ui.svnRemoteDrop", RemoteResourceTransfer.getInstance().toByteArray((ISVNRemoteResource) array[i])); //$NON-NLS-1$
-                    return;
-                }
-            }
-           
-        } 
+          }
       }
 
       public void dragFinished( DragSourceEvent event) {
@@ -225,10 +204,10 @@ public class RepositoriesView extends ViewPart implements ISelectionListener {
 				dialog.open();
 			}
 		};
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(newAction, IHelpContextIds.NEW_REPOSITORY_LOCATION_ACTION);
+		WorkbenchHelp.setHelp(newAction, IHelpContextIds.NEW_REPOSITORY_LOCATION_ACTION);
 		
 		// Properties
-        propertiesAction = new PropertyDialogAction(new SameShellProvider(shell), getViewer());
+        propertiesAction = new PropertyDialogAction(shell, getViewer());
         getViewSite().getActionBars().setGlobalActionHandler(ActionFactory.PROPERTIES.getId(), propertiesAction);       
         IStructuredSelection selection = (IStructuredSelection)getViewer().getSelection();
         if (selection.size() == 1 && selection.getFirstElement() instanceof ISVNRepositoryLocation) {
@@ -247,7 +226,7 @@ public class RepositoriesView extends ViewPart implements ISelectionListener {
         // Remove Root
 		removeRootAction = new RemoveRootAction(treeViewer.getControl().getShell());
 		removeRootAction.selectionChanged((IStructuredSelection)null);
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(removeRootAction, IHelpContextIds.REMOVE_REPOSITORY_LOCATION_ACTION);
+		WorkbenchHelp.setHelp(removeRootAction, IHelpContextIds.REMOVE_REPOSITORY_LOCATION_ACTION);
 		
 		IActionBars bars = getViewSite().getActionBars();
 		bars.setGlobalActionHandler(ActionFactory.DELETE.getId(), removeRootAction);
@@ -256,7 +235,7 @@ public class RepositoriesView extends ViewPart implements ISelectionListener {
         SVNUIPlugin plugin = SVNUIPlugin.getPlugin();
         refreshAction = new Action(Policy.bind("RepositoriesView.refresh"), SVNUIPlugin.getPlugin().getImageDescriptor(ISVNUIConstants.IMG_REFRESH_ENABLED)) { //$NON-NLS-1$
             public void run() {
-            	refreshViewer(null, true);
+                refreshViewer(true);
             }
         };
         refreshAction.setToolTipText(Policy.bind("RepositoriesView.refreshTooltip")); //$NON-NLS-1$
@@ -264,12 +243,6 @@ public class RepositoriesView extends ViewPart implements ISelectionListener {
         refreshAction.setHoverImageDescriptor(plugin.getImageDescriptor(ISVNUIConstants.IMG_REFRESH));
         getViewSite().getActionBars().setGlobalActionHandler(ActionFactory.REFRESH.getId(), refreshAction);
 
-        refreshPopupAction = new Action(Policy.bind("RepositoriesView.refreshPopup"), SVNUIPlugin.getPlugin().getImageDescriptor(ISVNUIConstants.IMG_REFRESH)) { //$NON-NLS-1$
-            public void run() {
-            	refreshViewerNode();
-            }
-        };
-        
         // Collapse action
         collapseAllAction = new Action(Policy.bind("RepositoriesView.collapseAll"), SVNUIPlugin.getPlugin().getImageDescriptor(ISVNUIConstants.IMG_COLLAPSE_ALL_ENABLED)) { //$NON-NLS-1$
             public void run() {
@@ -321,14 +294,12 @@ public class RepositoriesView extends ViewPart implements ISelectionListener {
         // File actions go first (view file)
         manager.add(new Separator(IWorkbenchActionConstants.GROUP_FILE));
         // Misc additions
-        manager.add(new Separator("historyGroup")); //$NON-NLS-1$
         manager.add(new Separator("checkoutGroup")); //$NON-NLS-1$
-        manager.add(new Separator("exportImportGroup")); //$NON-NLS-1$
         manager.add(new Separator("miscGroup")); //$NON-NLS-1$
         
         manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 
-        manager.add(refreshPopupAction);
+        manager.add(refreshAction);
 
 	
 		IStructuredSelection selection = (IStructuredSelection)getViewer().getSelection();
@@ -363,7 +334,7 @@ public class RepositoriesView extends ViewPart implements ISelectionListener {
         // F1 Help
         String helpID = getHelpContextId();
         if (helpID != null)
-        	PlatformUI.getWorkbench().getHelpSystem().setHelp(treeViewer.getControl(), helpID);
+            WorkbenchHelp.setHelp(treeViewer.getControl(), helpID);
         initializeListeners();
 		SVNUIPlugin.getPlugin().getRepositoryManager().addRepositoryListener(repositoryListener);
 	}
@@ -398,7 +369,7 @@ public class RepositoriesView extends ViewPart implements ISelectionListener {
 
         repositoryDragSourceListener = new RepositoryDragSourceListener();
         treeViewer.addDragSupport( DND.DROP_LINK | DND.DROP_DEFAULT,
-                new Transfer[] { RemoteResourceTransfer.getInstance(), PluginTransfer.getInstance()},
+                new Transfer[] { RemoteResourceTransfer.getInstance()},
                 repositoryDragSourceListener);
         
         treeViewer.addSelectionChangedListener( new ISelectionChangedListener() {
@@ -474,36 +445,11 @@ public class RepositoriesView extends ViewPart implements ISelectionListener {
      * this is called whenever a new repository location is added for example
      * or when user wants to refresh
      */
-    protected void refreshViewer(Object object, boolean refreshRepositoriesFolders) {
+    protected void refreshViewer(boolean refreshRepositoriesFolders) {
         if (treeViewer == null) return;
-        if (refreshRepositoriesFolders) {
-        	IRunnableWithProgress runnable = new IRunnableWithProgress() {
-				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-                	SVNProviderPlugin.getPlugin().getRepositories().refreshRepositoriesFolders(monitor);
-				}
-        	};
-            try {
-				new ProgressMonitorDialog(getShell()).run(true, false, runnable);
-			} catch (Exception e) {
-	            SVNUIPlugin.openError(getShell(), null, null, e, SVNUIPlugin.LOG_TEAM_EXCEPTIONS);
-			}
-        }
-        if (object == null) treeViewer.refresh();
-        else treeViewer.refresh(object); 
-    }
-    
-    protected void refreshViewerNode() {
-    	IStructuredSelection selection = (IStructuredSelection)treeViewer.getSelection();
-        Iterator iter = selection.iterator();
-        while (iter.hasNext()) {
-        	Object object = iter.next();
-        	if (object instanceof ISVNRepositoryLocation) {
-        		refreshAction.run();
-        		break;
-        	}
-        	if (object instanceof ISVNRemoteFolder) ((ISVNRemoteFolder)object).refresh();
-        	treeViewer.refresh(object); 
-        }
+        if (refreshRepositoriesFolders)
+            SVNProviderPlugin.getPlugin().getRepositories().refreshRepositoriesFolders();
+        treeViewer.refresh(); 
     }
     
     public void collapseAll() {

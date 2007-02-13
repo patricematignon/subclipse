@@ -1,23 +1,23 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
  * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
+ *     Cédric Chabanois (cchabanois@ifrance.com) - modified for Subversion 
+ *******************************************************************************/
 package org.tigris.subversion.subclipse.ui.actions;
 
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.team.core.TeamException;
 import org.tigris.subversion.subclipse.core.ISVNLocalResource;
 import org.tigris.subversion.subclipse.core.SVNException;
 import org.tigris.subversion.subclipse.core.resources.SVNWorkspaceRoot;
-import org.tigris.subversion.subclipse.ui.ISVNUIConstants;
 import org.tigris.subversion.subclipse.ui.svnproperties.SvnPropertiesView;
 
 
@@ -28,7 +28,7 @@ import org.tigris.subversion.subclipse.ui.svnproperties.SvnPropertiesView;
  * 
  */
 public class ShowSvnPropertiesAction extends WorkspaceAction {
-
+	
 	protected void execute(IAction action) throws InvocationTargetException, InterruptedException {
         IResource resource = (IResource)getSelectedResources()[0];
 		final ISVNLocalResource svnResource = SVNWorkspaceRoot.getSVNResourceFor(resource);
@@ -42,35 +42,11 @@ public class ShowSvnPropertiesAction extends WorkspaceAction {
 
 	}
 
-	protected boolean isEnabledForAddedResources() {
-		return true;
-	}
-
-	protected boolean isEnabledForIgnoredResources() {
-		return false;
-	}
-
-	protected boolean isEnabledForInaccessibleResources() {
-		return false;
-	}
-
-	protected boolean isEnabledForManagedResources() {
-		return true;
-	}
-
-	protected boolean isEnabledForMultipleResources() {
-		return false;
-	}
-
-	protected boolean isEnabledForUnmanagedResources() {
-		return false;
-	}
-	
-	/*
-	 * @see org.tigris.subversion.subclipse.ui.actions.ReplaceableIconAction#getImageId()
-	 */
-	protected String getImageId() {
-		return ISVNUIConstants.IMG_MENU_SHOWPROPERTY;
-	}
+    /* (non-Javadoc)
+     * @see org.eclipse.team.internal.ui.actions.TeamAction#isEnabled()
+     */
+    protected boolean isEnabled() throws TeamException {
+        return (selection.size() == 1);
+    }
 
 }

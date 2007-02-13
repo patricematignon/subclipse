@@ -1,13 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
  * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
+ *     IBM Corporation - initial API and implementation
+ *     Cédric Chabanois (cchabanois@ifrance.com) - modified for Subversion 
+ *******************************************************************************/
 package org.tigris.subversion.subclipse.core;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -49,11 +50,6 @@ public interface ISVNFolder extends ISVNResource {
 		| MANAGED_MEMBERS
 		| EXISTING_MEMBERS
 		| PHANTOM_MEMBERS;
-	public static final int ALL_EXISTING_UNIGNORED_MEMBERS = FILE_MEMBERS 
-		| FOLDER_MEMBERS 
-		| UNMANAGED_MEMBERS 
-		| MANAGED_MEMBERS 
-		| EXISTING_MEMBERS;
 
 	/**
 	 * Answer the immediate children of the resource 

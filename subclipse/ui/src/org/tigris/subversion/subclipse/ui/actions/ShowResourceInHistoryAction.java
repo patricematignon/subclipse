@@ -1,13 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
  * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
+ *     IBM Corporation - initial API and implementation
+ *     Cédric Chabanois (cchabanois@ifrance.com) - modified for Subversion 
+ *******************************************************************************/
 package org.tigris.subversion.subclipse.ui.actions;
 
 import java.lang.reflect.InvocationTargetException;
@@ -16,9 +17,10 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.team.ui.history.IHistoryView;
-import org.tigris.subversion.subclipse.ui.ISVNUIConstants;
+import org.tigris.subversion.subclipse.core.ISVNLocalResource;
+import org.tigris.subversion.subclipse.core.SVNException;
 import org.tigris.subversion.subclipse.ui.Policy;
+import org.tigris.subversion.subclipse.ui.history.HistoryView;
 
 /**
  * Show history for selected local resource
@@ -32,9 +34,9 @@ public class ShowResourceInHistoryAction extends WorkspaceAction {
 			public void run(IProgressMonitor monitor) {
 				IResource[] resources = getSelectedResources();
 				if (resources.length != 1) return;
-				IHistoryView view = (IHistoryView) showView(ISVNUIConstants.HISTORY_VIEW_ID);
+				HistoryView view = (HistoryView)showView(HistoryView.VIEW_ID);
 				if (view != null) {
-					view.showHistoryFor(resources[0]);
+					view.showHistory(resources[0], false);
 				}
 			}
 		}, false /* cancelable */, PROGRESS_BUSYCURSOR);
@@ -62,17 +64,10 @@ public class ShowResourceInHistoryAction extends WorkspaceAction {
 	}
 
 	/**
-	 * @see org.tigris.subversion.subclipse.ui.actions.WorkspaceAction#isEnabledForCopiedResources()
+	 * @see org.tigris.subversion.subclipse.ui.actions.WorkspaceAction#isEnabledForSVNResource(org.tigris.subversion.subclipse.core.ISVNResource)
 	 */
-	protected boolean isEnabledForCopiedResources() {
-		return true;
-	}
-
-	/*
-	 * @see org.tigris.subversion.subclipse.ui.actions.ReplaceableIconAction#getImageId()
-	 */
-	protected String getImageId() {
-		return ISVNUIConstants.IMG_MENU_SHOWHISTORY;
+	protected boolean isEnabledForSVNResource(ISVNLocalResource svnResource) throws SVNException {
+		return /* (!svnResource.isFolder() && */ super.isEnabledForSVNResource(svnResource);
 	}
 
 }

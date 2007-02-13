@@ -1,13 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
  * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
+ *     IBM Corporation - initial API and implementation
+ *     Cédric Chabanois (cchabanois@ifrance.com) - modified for Subversion 
+ *******************************************************************************/
 package org.tigris.subversion.subclipse.core.resources;
 
 import java.util.Date;
@@ -20,12 +21,13 @@ import org.tigris.subversion.subclipse.core.ISVNLocalResource;
 import org.tigris.subversion.subclipse.core.ISVNRemoteFolder;
 import org.tigris.subversion.subclipse.core.ISVNRemoteResource;
 import org.tigris.subversion.subclipse.core.ISVNRepositoryLocation;
+import org.tigris.subversion.subclipse.core.SVNException;
 import org.tigris.subversion.subclipse.core.SVNProviderPlugin;
-import org.tigris.subversion.svnclientadapter.ISVNLogMessage;
-import org.tigris.subversion.svnclientadapter.SVNClientException;
+import org.tigris.subversion.subclipse.core.commands.GetLogsCommand;
+import org.tigris.subversion.subclipse.core.history.ILogEntry;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
 import org.tigris.subversion.svnclientadapter.SVNUrl;
-import org.tigris.subversion.svnclientadapter.utils.SVNUrlUtils;
+import org.tigris.subversion.svnclientadapter.SVNUrlUtils;
 
 /**
  * The purpose of this class and its subclasses is to implement the corresponding
@@ -46,11 +48,6 @@ public abstract class RemoteResource
     protected Date date;
     protected String author;
 
-    /**
-     * Constructor
-     * @param local
-     * @param bytes
-     */
 	public RemoteResource(IResource local, byte[] bytes){
 		String nfo = new String(bytes);
 		
@@ -61,17 +58,9 @@ public abstract class RemoteResource
 		url = res.getUrl();
 		repository = res.getRepository();
 	}
-
+	
 	/**
 	 * Constructor for RemoteResource.
-	 * 
-	 * @param parent
-	 * @param repository
-	 * @param url
-	 * @param revision
-	 * @param lastChangedRevision
-	 * @param date
-	 * @param author
 	 */
 	public RemoteResource(
 		RemoteFolder parent,
@@ -93,10 +82,7 @@ public abstract class RemoteResource
 	}
 
     /**
-     * This constructor is used for the folder corresponding to repository location
-     * @param repository
-     * @param url
-     * @param revision
+     * this constructor is used for the folder corresponding to repository location
      */
     public RemoteResource(ISVNRepositoryLocation repository, SVNUrl url, SVNRevision revision) {
         this.parent = null;
@@ -200,7 +186,16 @@ public abstract class RemoteResource
 	public String getAuthor() {
 		return author;
 	}
-    
+
+    /**
+     * @see ISVNRemoteResource#getLogEntries()
+     */
+    public ILogEntry[] getLogEntries(IProgressMonitor monitor) throws SVNException {
+        GetLogsCommand command = new GetLogsCommand(this);
+        command.run(monitor);
+        return command.getLogEntries();
+    }
+
     /*
      * (non-Javadoc)
      * @see org.eclipse.team.core.variants.IResourceVariant#getContentIdentifier()
@@ -233,29 +228,8 @@ public abstract class RemoteResource
 	public byte[] asBytes() {
 		return new Long(getContentIdentifier()).toString().getBytes();
 	}
-
-    /* (non-Javadoc)
-     * @see org.tigris.subversion.subclipse.core.ISVNResource#getResource()
-     */
-    public IResource getResource() {
-    	return null;
-    }
 	
-    public ISVNLogMessage[] getLogMessages(SVNRevision pegRevision,
-			SVNRevision revisionStart, SVNRevision revisionEnd,
-			boolean stopOnCopy, boolean fetchChangePath, long limit)
-			throws TeamException {
-
-		try {
-			return repository.getSVNClient().getLogMessages(getUrl(),
-					pegRevision, revisionStart, revisionEnd, stopOnCopy, fetchChangePath,
-					limit);
-		} catch (SVNClientException e) {
-			throw new TeamException("Failed in RemoteResource.getLogMessages()",
-					e);
-		}
-	}
-
+	
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */

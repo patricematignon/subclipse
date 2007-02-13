@@ -1,45 +1,36 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
  * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
+ *     IBM Corporation - initial API and implementation
+ *     Cédric Chabanois (cchabanois@ifrance.com) - modified for Subversion  
+ *******************************************************************************/
 package org.tigris.subversion.subclipse.ui.editor;
 
  
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-
 import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.variants.IResourceVariant;
-import org.eclipse.ui.IPathEditorInput;
 import org.eclipse.ui.IPersistableElement;
 import org.eclipse.ui.IStorageEditorInput;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.tigris.subversion.subclipse.core.ISVNRemoteFile;
 import org.tigris.subversion.subclipse.ui.Policy;
 import org.tigris.subversion.subclipse.ui.SVNUIPlugin;
-import org.tigris.subversion.svnclientadapter.SVNRevision;
 import org.tigris.subversion.svnclientadapter.SVNUrl;
 
 /**
  * An editor input for a file in a repository.
  */
-public class RemoteFileEditorInput implements IWorkbenchAdapter, IStorageEditorInput, IPathEditorInput {
+public class RemoteFileEditorInput implements IWorkbenchAdapter, IStorageEditorInput {
 	private ISVNRemoteFile file;
 	protected IStorage storage;
 
@@ -154,8 +145,7 @@ public class RemoteFileEditorInput implements IWorkbenchAdapter, IStorageEditorI
 	 */
 	public String getName() {
 		String name = file.getName();
-		SVNRevision.Number revision = file.getLastChangedRevision();
-		return Policy.bind("nameAndRevision", name, (revision != null) ? revision.toString() : ""); //$NON-NLS-1$
+		return Policy.bind("nameAndRevision", name, file.getLastChangedRevision().toString()); //$NON-NLS-1$
 	}
 	/**
 	 * Returns the logical parent of the given object in its tree.
@@ -211,36 +201,4 @@ public class RemoteFileEditorInput implements IWorkbenchAdapter, IStorageEditorI
     public ISVNRemoteFile getSVNRemoteFile() {
         return file;
     }
-
-	public IPath getPath() {
-		try {
-			return new Path(writeToTempFile().getAbsolutePath());
-		} catch (Exception e) {
-			SVNUIPlugin.log(0, e.getMessage(), e);
-		}
-		return null;
-	}
-	
-	private File writeToTempFile() throws IOException, CoreException {
-
-		// Save InputStream to the file.
-		InputStream in = this.getStorage().getContents();
-		File temp = File.createTempFile("svn", "." + this.getContentType());
-		temp.deleteOnExit();
-		BufferedOutputStream fOut = null;
-		try {
-			fOut = new BufferedOutputStream(new FileOutputStream(temp));
-			byte[] buffer = new byte[32 * 1024];
-			int bytesRead = 0;
-			while ((bytesRead = in.read(buffer)) != -1) {
-				fOut.write(buffer, 0, bytesRead);
-			}
-		} catch (Exception e) {
-			throw new IOException("Failed to get file contents: " + e.toString());
-		} finally {
-			in.close();
-			fOut.close();
-		}
-		return temp;
-	}
 }

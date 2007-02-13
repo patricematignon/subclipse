@@ -1,13 +1,18 @@
-/*******************************************************************************
- * Copyright (c) 2003, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+/*
+ *  Copyright(c) 2003-2004 by the authors indicated in the @author tags.
  *
- * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
 package org.tigris.subversion.svnclientadapter.commandline;
 
 import java.io.ByteArrayInputStream;
@@ -66,8 +71,7 @@ class CmdLineRemoteDirEntry extends CmdLineXmlCommand implements ISVNDirEntry {
 	/**
      * creates CmdLineRemoteDirEntries from a xml string (see svn list --xml) 
      * @param cmdLineResults
-     * @return CmdLineRemoteDirEntry[] array created from the supplied xml
-     * @throws SVNClientException
+     * @return
      */
 	public static CmdLineRemoteDirEntry[] createDirEntries(byte[] cmdLineResults) throws SVNClientException {
 		Collection logMessages = new ArrayList();
@@ -127,16 +131,12 @@ class CmdLineRemoteDirEntry extends CmdLineXmlCommand implements ISVNDirEntry {
                 SVNRevision.Number rev = Helper.toRevNum(revisionAttribute.getNodeValue());
 
 				Element authorNode = getFirstNamedElement(commitNode, "author");
-				String author = null;
-				if (authorNode != null) {
-					author = authorNode.getFirstChild().getNodeValue();
-				}	
+				if (authorNode == null) throw new Exception("'author' tag expected under 'commit'");
+				String author = authorNode.getFirstChild().getNodeValue();
 				
 				Element dateNode = getNextNamedElement(authorNode, "date");
-				Date date = null;
-                if (dateNode != null) {
-                	date = Helper.convertXMLDate(dateNode.getFirstChild().getNodeValue());
-                }
+				if (dateNode == null) throw new Exception("'date' tag expected under 'commit'");
+				Date date = Helper.convertXMLDate(dateNode.getFirstChild().getNodeValue());
 
 				SVNNodeKind kind = SVNNodeKind.UNKNOWN;
 				if ("file".equals(kindName))

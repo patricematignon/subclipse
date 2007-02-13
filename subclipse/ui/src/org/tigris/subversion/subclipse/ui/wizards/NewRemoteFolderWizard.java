@@ -1,13 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
  * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
+ *     Cédric Chabanois (cchabanois@ifrance.com) - modified for Subversion 
+ *******************************************************************************/
 package org.tigris.subversion.subclipse.ui.wizards;
 
 
@@ -15,7 +15,6 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.wizard.Wizard;
@@ -66,19 +65,16 @@ public class NewRemoteFolderWizard extends Wizard {
 	 */
 	public boolean performFinish() {
         try {
-      	  final String folderName = mainPage.getFolderName();
-      	  final String comment = commitCommentPage.getComment();
-      	  IRunnableWithProgress runnable = new IRunnableWithProgress() {
+            SVNUIPlugin.runWithProgress(getContainer().getShell(), false /*cancelable*/, new IRunnableWithProgress() {
                 public void run(IProgressMonitor monitor) throws InvocationTargetException {
                     try {
-                    	ISVNRemoteFolder parentFolder = mainPage.getParentFolder();
-								parentFolder.createRemoteFolder(folderName,comment,monitor);
+                        ISVNRemoteFolder parentFolder = mainPage.getParentFolder();
+                        parentFolder.createRemoteFolder(mainPage.getFolderName(),commitCommentPage.getComment(),monitor);
                     } catch (SVNException e) {
                         throw new InvocationTargetException(e);
                     }
                 }
-            };
-            new ProgressMonitorDialog(getShell()).run(true, false, runnable);
+            });
         } catch (InterruptedException e) {
             // operation canceled
         } catch (InvocationTargetException e) {

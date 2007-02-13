@@ -1,13 +1,3 @@
-/*******************************************************************************
- * Copyright (c) 2005, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
 package org.tigris.subversion.subclipse.ui.authentication;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -113,32 +103,12 @@ public class SVNPromptUserPassword implements ISVNPromptUserPassword {
         return rtnCode;
     }
 
-    public boolean promptUser(String promptRealm, String promptUsername, boolean promptMaySave) {
-        rtnCode = false;
-        username = promptUsername;
-        realm = promptRealm;
-        maySave = promptMaySave;
-   		SVNUIPlugin.getStandardDisplay().syncExec(new Runnable() {
-			public void run() {
-		        UserPromptDialog dialog = new UserPromptDialog(SVNUIPlugin.getStandardDisplay().getActiveShell(),
-		                realm, username, maySave);
-		        if (dialog.open() == UserPromptDialog.OK) {
-		            username = dialog.getUsername();
-		            allowedSave = dialog.isSave();
-		            rtnCode = true;
-		        }				
-			}
-		});      
-        return rtnCode;
-    }
-
     public String askQuestion(String askRealm, String askQuestion, boolean askShowAnswer,
             boolean askMaySave) {
-        answer = null;
+        answer = "";
         realm = askRealm;
         maySave = askMaySave;
         showAnswer = askShowAnswer;
-        question = askQuestion;
 		SVNUIPlugin.getStandardDisplay().syncExec(new Runnable() {
 			public void run() {
 		        QuestionDialog dialog = new QuestionDialog(Display.getCurrent().getActiveShell(),
@@ -179,30 +149,6 @@ public class SVNPromptUserPassword implements ISVNPromptUserPassword {
 		            username = dialog.getUsername();
 		            password = dialog.getPassword();
 		            sshPort = dialog.getSshPort();
-		            keyFile = dialog.getKeyFile();
-		            passPhrase = dialog.getPassphrase();
-		            allowedSave = dialog.isSave();
-		            rtnCode = true;
-		        }				
-			}
-		});      
-        return rtnCode;
-    }
-    public String getSSLClientCertPassword() {
-        return passPhrase;
-    }
-    public String getSSLClientCertPath() {
-        return keyFile;
-    }
-    public boolean promptSSL(String promptRealm, boolean promptMaySave) {
-        rtnCode = false;
-        realm = promptRealm;
-        maySave = promptMaySave;
-   		SVNUIPlugin.getStandardDisplay().syncExec(new Runnable() {
-			public void run() {
-		        SSLClientCertificate dialog = new SSLClientCertificate(SVNUIPlugin.getStandardDisplay().getActiveShell(),
-		                realm, maySave);
-		        if (dialog.open() == PasswordPromptDialog.OK) {
 		            keyFile = dialog.getKeyFile();
 		            passPhrase = dialog.getPassphrase();
 		            allowedSave = dialog.isSave();

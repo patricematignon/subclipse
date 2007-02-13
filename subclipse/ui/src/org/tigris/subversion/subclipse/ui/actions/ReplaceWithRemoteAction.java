@@ -1,13 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
  * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.tigris.subversion.subclipse.ui.actions;
  
 import java.lang.reflect.InvocationTargetException;
@@ -21,16 +21,6 @@ import org.tigris.subversion.svnclientadapter.SVNRevision;
 
 public class ReplaceWithRemoteAction extends WorkspaceAction {
 	
-	private final SVNRevision revision;
-
-	public ReplaceWithRemoteAction() {
-		this.revision = SVNRevision.HEAD;
-	}
-	
-	public ReplaceWithRemoteAction(SVNRevision revision) {
-		this.revision = revision;
-	}
-	
 	public void execute(IAction action)  throws InvocationTargetException, InterruptedException {		
 		IResource[] resources = null;
 
@@ -43,7 +33,7 @@ public class ReplaceWithRemoteAction extends WorkspaceAction {
 		if (resources == null || resources.length == 0) return;
 		
 		// Peform the replace in the background
-		new ReplaceOperation(getTargetPart(), resources, this.revision, true).run();
+		new ReplaceOperation(getTargetPart(), resources, SVNRevision.HEAD, false).run();
 	}
 	
 	/**

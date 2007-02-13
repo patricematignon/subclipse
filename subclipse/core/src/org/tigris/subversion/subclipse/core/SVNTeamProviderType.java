@@ -1,13 +1,16 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
  * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
+ *     IBM Corporation - initial API and implementation
+ *     Cédric Chabanois (cchabanois@ifrance.com) - modified for Subversion 
+ *     Panagiotis Korros (panagiotis.korros@gmail.com) - ported autoshare code
+ *     Magnus Naeslund	(mag@kite.se) - Added autoadd code
+ *******************************************************************************/
 package org.tigris.subversion.subclipse.core;
 
 import java.io.File;
@@ -20,7 +23,6 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -31,10 +33,9 @@ import org.eclipse.team.core.ProjectSetCapability;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.RepositoryProviderType;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.subscribers.Subscriber;
 import org.tigris.subversion.subclipse.core.resources.SVNWorkspaceRoot;
-import org.tigris.subversion.subclipse.core.sync.SVNWorkspaceSubscriber;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
+import org.tigris.subversion.svnclientadapter.SVNConstants;
 
 
 /**
@@ -208,7 +209,7 @@ public class SVNTeamProviderType extends RepositoryProviderType {
 
 				RepositoryProvider.map(project, SVNProviderPlugin.getTypeId());
 				plugin.getStatusCacheManager().refreshStatus(project,
-						true);
+						IResource.DEPTH_INFINITE);
 				
 			}catch(Exception e){
                 SVNProviderPlugin.log(IStatus.ERROR, "Could not auto-add project " + project.getName(), e); //$NON-NLS-1$
@@ -236,10 +237,11 @@ public class SVNTeamProviderType extends RepositoryProviderType {
 	/* (non-Javadoc)
      * @see org.eclipse.team.core.RepositoryProviderType#metaFilesDetected(org.eclipse.core.resources.IProject, org.eclipse.core.resources.IContainer[])
      */
+	/**
+	 * @deprecated not used in Eclipse 3.0 anymore ?
+	 */
     public void metaFilesDetected(IProject project, IContainer[] containers) {
-    	SVNProviderPlugin plugin = SVNProviderPlugin.getPlugin();
 		boolean isProject = false;
-		boolean isSvnProject = plugin.isManagedBySubversion(project);
 		
         for (int i = 0; i < containers.length; i++) {
             IContainer container = containers[i];
@@ -248,23 +250,17 @@ public class SVNTeamProviderType extends RepositoryProviderType {
 			if (!isProject && container.getType() == IResource.PROJECT)
 				isProject = true;
 			
-            if (plugin.isAdminDirectory(container.getName())) { //$NON-NLS-1$
+            if (container.getName().equals(SVNConstants.SVN_DIRNAME)) { //$NON-NLS-1$
                 svnDir = container;
             } else {
-                IResource resource = container.findMember(plugin.getAdminDirectoryName()); //$NON-NLS-1$
+                IResource resource = container.findMember(SVNConstants.SVN_DIRNAME); //$NON-NLS-1$
                 if (resource != null && resource.getType() != IResource.FILE) {
                     svnDir = (IContainer)resource;
                 }
             }
             try {
-                if (svnDir != null && !svnDir.isTeamPrivateMember()) {
-                	if (!isSvnProject) {
-                		if (plugin.isManagedBySubversion(svnDir.getParent()))
-                    		svnDir.setTeamPrivateMember(true);
-                	} else {
-                		svnDir.setTeamPrivateMember(true);
-                	}
-                }
+                if (svnDir != null && !svnDir.isTeamPrivateMember())
+                    svnDir.setTeamPrivateMember(true);
             } catch (CoreException e) {
                 SVNProviderPlugin.log(IStatus.ERROR, "Could not flag meta-files as team-private for " + svnDir.getFullPath(), e); //$NON-NLS-1$
             }
@@ -273,26 +269,28 @@ public class SVNTeamProviderType extends RepositoryProviderType {
 		if (!isProject)
 			return; // Nothing more to do, all remaining operations are on projects
 
-		if (isSvnProject) {
+		 		 // Somehow sometimes it doesn't work using project.findMember(SVNConstants.SVN_DIRNAME) 
+		 		 // here, this could be due to timing issue with workspace addition, so use trusty File 
+		 		 // instead.
+		
+		 		 File svnDir = project.getLocation().append(SVNConstants.SVN_DIRNAME).toFile(); //$NON-NLS-1$
+		
+		if (svnDir != null && svnDir.exists() && svnDir.isDirectory()) {
 			// It's a project and has toplevel .svn directory, lets share it!
 			getAutoShareJob().share(project);
 		} else {
 			// It's a project and doesn't have .svn dir, let's see if we can add it!
-			IPath parentDir = project.getLocation().append("../"); //$NON-NLS-1$
+		 		 		 File parentSvnDir = project.getLocation().append("../" + SVNConstants.SVN_DIRNAME).
+		 		 		 		 		 toFile(); //$NON-NLS-1$
 			
-			if (plugin.isManagedBySubversion(parentDir)) {
+			if (parentSvnDir != null && parentSvnDir.exists()
+					&& parentSvnDir.isDirectory()) {
+
 				createAutoAddJob(project);
 			}
 		}
+		
     }
-
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.core.RepositoryProviderType#getSubscriber()
-	 */
-	public Subscriber getSubscriber() {
-		return SVNWorkspaceSubscriber.getInstance();
-	}
 	
 	
 }

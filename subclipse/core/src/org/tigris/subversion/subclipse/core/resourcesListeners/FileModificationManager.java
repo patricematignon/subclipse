@@ -1,22 +1,22 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
  * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
+ *     IBM Corporation - initial API and implementation
+ *     Cédric Chabanois (cchabanois@ifrance.com) - modified for Subversion  
+ *******************************************************************************/
 package org.tigris.subversion.subclipse.core.resourcesListeners;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
@@ -29,9 +29,12 @@ import org.eclipse.core.resources.ISavedState;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.team.core.RepositoryProvider;
+import org.tigris.subversion.subclipse.core.Policy;
 import org.tigris.subversion.subclipse.core.SVNException;
 import org.tigris.subversion.subclipse.core.SVNProviderPlugin;
+import org.tigris.subversion.svnclientadapter.SVNConstants;
 
 /**
  * This class performs several functions related to determining the modified
@@ -42,6 +45,8 @@ import org.tigris.subversion.subclipse.core.SVNProviderPlugin;
  */
 public class FileModificationManager implements IResourceChangeListener, ISaveParticipant {
 	
+	protected Set modifiedResources = new HashSet();
+
 	// consider the following changes types and ignore the others (e.g. marker and description changes are ignored)
 	protected int INTERESTING_CHANGES = IResourceDelta.CONTENT | 
 	                                    IResourceDelta.MOVED_FROM | 
@@ -57,41 +62,11 @@ public class FileModificationManager implements IResourceChangeListener, ISavePa
 	 */
 	public void resourceChanged(IResourceChangeEvent event) {
 		try {
-			final List modifiedResources = new ArrayList();
-			final List modifiedInfiniteDepthResources = new ArrayList();
-
 			event.getDelta().accept(new IResourceDeltaVisitor() {
 				public boolean visit(IResourceDelta delta) {
 					IResource resource = delta.getResource();
-
-					if (resource.getType()==IResource.FILE) {
-						if (delta.getKind() == IResourceDelta.CHANGED && resource.exists()) {
-							if((delta.getFlags() & INTERESTING_CHANGES) != 0) {
-								modifiedResources.add(resource);
-								return true;
-							}
-						} else if (delta.getKind() == IResourceDelta.ADDED) {
-							modifiedResources.add(resource);                        
-							return true;
-						} else if (delta.getKind() == IResourceDelta.REMOVED) {
-							// provide notifications for deletions since they may not have been managed
-							// The move/delete hook would have updated the parent counts properly
-							modifiedResources.add(resource);
-							return true;
-						}
-					}				
-					else if(resource.getType()==IResource.FOLDER) {
-						if (delta.getKind() == IResourceDelta.ADDED) {
-							modifiedInfiniteDepthResources.add(resource);
-							return false;
-						}
-						else if (delta.getKind() == IResourceDelta.REMOVED) {
-							modifiedInfiniteDepthResources.add(resource);
-							return false;
-						}
-						return true;
-					}				
-					else if (resource.getType()==IResource.PROJECT) {
+					
+					if (resource.getType()==IResource.PROJECT) {
 						IProject project = (IProject)resource;
 						if (!project.isAccessible()) {
 							return false;
@@ -102,14 +77,26 @@ public class FileModificationManager implements IResourceChangeListener, ISavePa
 						if (RepositoryProvider.getProvider(project, SVNProviderPlugin.getTypeId()) == null) {
 							return false; // not a svn handled project
 						}
-						if (delta.getKind() == IResourceDelta.ADDED) {
-							modifiedInfiniteDepthResources.add(resource);
-							return false;
+					}
+					
+					if(resource.getType()==IResource.FOLDER && resource.getName().equals(SVNConstants.SVN_DIRNAME)) {
+						if (handleSVNDir((IContainer)resource, delta.getKind()))
+							{
+								return false;
+							}
+					}
+					
+					if (resource.getType()==IResource.FILE && delta.getKind() == IResourceDelta.CHANGED && resource.exists()) {
+						int flags = delta.getFlags();
+						if((flags & INTERESTING_CHANGES) != 0) {
+               				modifiedResources.add(resource);
 						}
-						else if (delta.getKind() == IResourceDelta.REMOVED) {
-							modifiedInfiniteDepthResources.add(resource);
-							return false;
-						}
+					} else if (delta.getKind() == IResourceDelta.ADDED) {
+                        modifiedResources.add(resource);                        
+					} else if (delta.getKind() == IResourceDelta.REMOVED) {
+						// provide notifications for deletions since they may not have been managed
+						// The move/delete hook would have updated the parent counts properly
+						modifiedResources.add(resource);
 					}
 					return true;
 				}
@@ -120,31 +107,12 @@ public class FileModificationManager implements IResourceChangeListener, ISavePa
                 IResource[] resources = (IResource[])modifiedResources.toArray(new IResource[modifiedResources.size()]);
 				refreshStatus(resources);
                 SVNProviderPlugin.broadcastModificationStateChanges(resources);
-			}
-			if (!modifiedInfiniteDepthResources.isEmpty()) {
-                IResource[] resources = (IResource[])modifiedInfiniteDepthResources.toArray(new IResource[modifiedInfiniteDepthResources.size()]);
-                refreshStatusInfitite(resources);
-                SVNProviderPlugin.broadcastModificationStateChanges(resources);
+				modifiedResources.clear();
 			}
 		} catch (CoreException e) {
 			SVNProviderPlugin.log(e.getStatus());
 		}
 	}
-
-	/**
-	 * Refresh (reset/reload) the status of all the given resources.
-	 * @param resources Array of IResources to refresh
-     */
-    private void refreshStatusInfitite(IResource[] resources) 
-    {
-    	for (int i = 0; i < resources.length; i++) {
-    		try {
-                SVNProviderPlugin.getPlugin().getStatusCacheManager().refreshStatus((IContainer)resources[i], true);
-    		} catch (SVNException e) {
-    		    e.printStackTrace();
-    		}			
-		}
-    }
 
 	/**
 	 * Refresh (reset/reload) the status of all the given resources.
@@ -169,7 +137,7 @@ public class FileModificationManager implements IResourceChangeListener, ISavePa
         for (Iterator it = foldersToRefresh.iterator(); it.hasNext();) {
             IResource folder = (IResource) it.next();
     		try {
-                SVNProviderPlugin.getPlugin().getStatusCacheManager().refreshStatus((IContainer)folder, false);
+                SVNProviderPlugin.getPlugin().getStatusCacheManager().refreshStatus(folder, IResource.DEPTH_ZERO);
     		} catch (SVNException e) {
     		    e.printStackTrace();
     		}
@@ -210,6 +178,35 @@ public class FileModificationManager implements IResourceChangeListener, ISavePa
 	 * @see org.eclipse.core.resources.ISaveParticipant#saving(org.eclipse.core.resources.ISaveContext)
 	 */
 	public void saving(ISaveContext context) {
+	}
+
+	/**
+	 * If it's a new SVN directory with the canonical child metafiles then mark it as team-private. 
+	 * Makr it is team private even when it is changed but not marked team private yet.
+	 * @param svnDir IContainer which is expected to be svn meta directory
+	 * @param kind resourceDelta kind of change
+	 * @return true when the folder folder really is svn meta directory
+	 */	
+	protected boolean handleSVNDir(IContainer svnDir, int kind) {
+		if((kind & IResourceDelta.ALL_WITH_PHANTOMS)!=0) {
+			if ((kind==IResourceDelta.ADDED) || ((kind==IResourceDelta.CHANGED) && !svnDir.isTeamPrivateMember())) 
+			{
+				// should this dir be made team-private? If it contains Entries then yes!
+				IFile entriesFile = svnDir.getFile(new Path(SVNConstants.SVN_ENTRIES));
+
+				if (entriesFile.exists() &&  !svnDir.isTeamPrivateMember()) {
+					try {
+						svnDir.setTeamPrivateMember(true);			
+						if(Policy.DEBUG_METAFILE_CHANGES) {
+							System.out.println("[svn] found a new SVN meta folder, marking as team-private: " + svnDir.getFullPath()); //$NON-NLS-1$
+						}
+					} catch(CoreException e) {
+						SVNProviderPlugin.log(SVNException.wrapException(svnDir, Policy.bind("SyncFileChangeListener.errorSettingTeamPrivateFlag"), e)); //$NON-NLS-1$
+					}
+				}
+			}
+		}
+		return svnDir.isTeamPrivateMember();
 	}
 
 }

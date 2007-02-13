@@ -1,20 +1,20 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
  * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
+ *     IBM Corporation - initial API and implementation
+ *     Cédric Chabanois (cchabanois@ifrance.com) - modified for Subversion 
+ *******************************************************************************/
 package org.tigris.subversion.subclipse.ui.compare;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.compare.CompareUI;
-import org.eclipse.compare.IEncodedStreamContentAccessor;
 import org.eclipse.compare.IStreamContentAccessor;
 import org.eclipse.compare.ITypedElement;
 import org.eclipse.compare.structuremergeviewer.IStructureComparator;
@@ -25,7 +25,6 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.team.core.TeamException;
 import org.tigris.subversion.subclipse.core.ISVNRemoteResource;
 import org.tigris.subversion.subclipse.ui.SVNUIPlugin;
-import org.tigris.subversion.subclipse.ui.compare.SVNLocalCompareInput.SVNLocalResourceNode;
 /**
  * A class for comparing ISVNRemoteResource objects
  * 
@@ -42,12 +41,9 @@ public class ResourceEditionNode
 		implements
 			IStructureComparator,
 			ITypedElement,
-			IStreamContentAccessor,
-			IEncodedStreamContentAccessor {
+			IStreamContentAccessor {
 	private ISVNRemoteResource resource;
 	private ResourceEditionNode[] children;
-	private SVNLocalResourceNode localResource = null;
-	private String charset = null;
 	/**
 	 * Creates a new ResourceEditionNode on the given resource edition.
 	 */
@@ -94,16 +90,6 @@ public class ResourceEditionNode
 										for (int i = 0; i < members.length; i++) {
 											children[i] = new ResourceEditionNode(
 													members[i]);
-											SVNLocalResourceNode localNode = matchLocalResource((ISVNRemoteResource) members[i]);
-											if (localNode != null) {
-												children[i]
-														.setLocalResource(localNode);
-												try {
-													children[i].setCharset(localNode.getCharset());
-												} catch (CoreException e) {
-													e.printStackTrace();
-												}
-											}
 										}
 									} catch (TeamException e) {
 										throw new InvocationTargetException(e);
@@ -189,34 +175,4 @@ public class ResourceEditionNode
 	public int hashCode() {
 		return getName().hashCode();
 	}
-	
-	public String getCharset() throws CoreException {
-		return charset;
-	}
-	
-	public void setCharset(String charset) throws CoreException {
-		this.charset = charset;
-	}
-	
-	public void setLocalResource(SVNLocalResourceNode localResource){
-		this.localResource = localResource;
-	}
-	
-	private SVNLocalResourceNode matchLocalResource(ISVNRemoteResource remoteNode){
-	    if (localResource == null) return null;
-		Object[] lrn = localResource.getChildren();
-		String remotePath=remoteNode.getRepositoryRelativePath();
-		int idx = remotePath.indexOf("/",1);
-		if (idx > 0)
-			remotePath = remotePath.substring(idx);
-		for(int i=0;i<lrn.length;i++){
-			String localPath=((SVNLocalResourceNode)lrn[i]).getResource().getFullPath().toString();
-			localPath = localPath.substring(localPath.indexOf("/",1));
-			if(localPath.equals(remotePath)){
-				return (SVNLocalResourceNode)lrn[i];
-			}
-		}
-		return null;
-	}
-
 }

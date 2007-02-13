@@ -1,19 +1,20 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
  * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
+ *     IBM Corporation - initial API and implementation
+ *     Cédric Chabanois (cchabanois@ifrance.com) - modified for Subversion 
+ *******************************************************************************/
+
 package org.tigris.subversion.subclipse.ui;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
-import java.net.URL;
 
 import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.runtime.CoreException;
@@ -27,9 +28,7 @@ import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.TeamException;
@@ -42,10 +41,7 @@ import org.tigris.subversion.subclipse.core.ISVNRemoteFolder;
 import org.tigris.subversion.subclipse.core.ISVNRepositoryLocation;
 import org.tigris.subversion.subclipse.core.SVNProviderPlugin;
 import org.tigris.subversion.subclipse.core.SVNStatus;
-import org.tigris.subversion.subclipse.core.resources.BaseResourceStorageFactory;
-import org.tigris.subversion.subclipse.ui.actions.ShowOutOfDateFoldersAction;
 import org.tigris.subversion.subclipse.ui.authentication.SVNPromptUserPassword;
-import org.tigris.subversion.subclipse.ui.compare.UIBaseResourceStorageFactory;
 import org.tigris.subversion.subclipse.ui.console.SVNOutputConsole;
 import org.tigris.subversion.subclipse.ui.repository.RepositoryManager;
 import org.tigris.subversion.subclipse.ui.repository.model.SVNAdapterFactory;
@@ -60,10 +56,7 @@ public class SVNUIPlugin extends AbstractUIPlugin {
 	public static final String ID = "org.tigris.subversion.subclipse.ui"; //$NON-NLS-1$
 	public static final String DECORATOR_ID = "org.tigris.subversion.subclipse.ui.decorator"; //$NON-NLS-1$
 	public static final String PROVIDER_ID="org.tigris.subversion.subclipse.core.svnnature"; //$NON-NLS-1$
-	/**
-	 * Property constant indicating the decorator configuration has changed. 
-	 */
-	public static final String P_DECORATORS_CHANGED = SVNUIPlugin.ID  + ".P_DECORATORS_CHANGED";	 //$NON-NLS-1$
+
 	/**
 	 * The singleton plug-in instance
 	 */
@@ -74,7 +67,7 @@ public class SVNUIPlugin extends AbstractUIPlugin {
 	 */
 	private RepositoryManager repositoryManager;
     
-    private ImageDescriptors imageDescriptors;
+    private ImageDescriptors imageDescriptors = new ImageDescriptors();
     
     private Preferences preferences;
 	
@@ -88,8 +81,6 @@ public class SVNUIPlugin extends AbstractUIPlugin {
 //	};
     
     private SVNMarkerListener markerListener;
-    
-    private ShowOutOfDateFoldersAction showOutOfDateFoldersAction;
 	
 	
     public static void log(CoreException e) {
@@ -238,7 +229,6 @@ public class SVNUIPlugin extends AbstractUIPlugin {
 	public static final int LOG_OTHER_EXCEPTIONS = 8;
 	public static final int LOG_NONTEAM_EXCEPTIONS = LOG_CORE_EXCEPTIONS | LOG_OTHER_EXCEPTIONS;
 	private SVNOutputConsole console;
-    private URL baseURL;
 	
 	/**
 	 * Convenience method for showing an error dialog 
@@ -389,9 +379,6 @@ public class SVNUIPlugin extends AbstractUIPlugin {
 	
 	public void start(BundleContext ctxt)throws Exception{
 		super.start(ctxt);
-		
-		BaseResourceStorageFactory.setCurrent(new UIBaseResourceStorageFactory());
-
 		SVNAdapterFactory factory = new SVNAdapterFactory();
 		
 		Platform.getAdapterManager().registerAdapters(factory, ISVNRemoteFile.class); 
@@ -399,27 +386,21 @@ public class SVNUIPlugin extends AbstractUIPlugin {
 		Platform.getAdapterManager().registerAdapters(factory, ISVNRepositoryLocation.class);
 //		Platform.getAdapterManager().registerAdapters(factory, RepositoryRoot.class);
 		
-		baseURL = ctxt.getBundle().getEntry("/"); //$NON-NLS-1$
+        // we initialize the image descriptors
+		imageDescriptors.initializeImages(ctxt.getBundle().getEntry("/")); //$NON-NLS-1$
 		
         preferences = new Preferences(getPreferenceStore());
 		preferences.initializePreferences();
 		
 		markerListener = new SVNMarkerListener();
-        SVNProviderPlugin.addResourceStateChangeListener(markerListener);
 		
 //		// if the global ignores list is changed then update decorators.
 		//TeamUI.getSynchronizeManager().addSynchronizeParticipants(new ISynchronizeParticipant[]{new SVNWorkspaceSynchronizeParticipant()});
-		try {
-		    console = new SVNOutputConsole();
-	    } catch (RuntimeException e) {
-	        // Don't let the console bring down the SVN UI
-	        log(IStatus.ERROR, "Errors occurred starting the SVN console", e); //$NON-NLS-1$
-	    }
+		
+		console = new SVNOutputConsole();
 		SVNProviderPlugin.getPlugin().setSvnPromptUserPassword(new SVNPromptUserPassword());
 		SVNProviderPlugin.getPlugin().setSimpleDialogsHelper(new SimpleDialogsHelper());
 		SVNProviderPlugin.getPlugin().setSvnFileModificationValidatorPrompt(new SVNFileModificationValidatorPrompt());
-		
-		showOutOfDateFoldersAction = new ShowOutOfDateFoldersAction();
 	}
 	
 	/**
@@ -457,11 +438,6 @@ public class SVNUIPlugin extends AbstractUIPlugin {
      * Returns null if there is no such image.
      */
     public ImageDescriptor getImageDescriptor(String id) {
-        if (imageDescriptors == null) {
-            imageDescriptors = new ImageDescriptors();
-            imageDescriptors.initializeImages(baseURL,
-            		getPreferenceStore().getInt(ISVNUIConstants.PREF_MENU_ICON_SET));
-        }
         return imageDescriptors.getImageDescriptor(id);
     }
 
@@ -507,24 +483,4 @@ public class SVNUIPlugin extends AbstractUIPlugin {
 	public SVNOutputConsole getConsole() {
 		return console;
 	}
-	
-	public ShowOutOfDateFoldersAction getShowOutOfDateFoldersAction() {
-		return showOutOfDateFoldersAction;
-	}
-	
-	public static Image getImage(String key) {
-		return getPlugin().getImageRegistry().get(key);
-	}	
-	
-	protected void initializeImageRegistry(ImageRegistry reg) {
-		super.initializeImageRegistry(reg);
-		reg.put(ISVNUIConstants.IMG_FILEADD_PENDING, getImageDescriptor(ISVNUIConstants.IMG_FILEADD_PENDING));
-		reg.put(ISVNUIConstants.IMG_FILEDELETE_PENDING, getImageDescriptor(ISVNUIConstants.IMG_FILEDELETE_PENDING));
-		reg.put(ISVNUIConstants.IMG_FILEMODIFIED_PENDING, getImageDescriptor(ISVNUIConstants.IMG_FILEMODIFIED_PENDING));
-		reg.put(ISVNUIConstants.IMG_FOLDERADD_PENDING, getImageDescriptor(ISVNUIConstants.IMG_FOLDERADD_PENDING));
-		reg.put(ISVNUIConstants.IMG_FOLDERDELETE_PENDING, getImageDescriptor(ISVNUIConstants.IMG_FOLDERDELETE_PENDING));
-		reg.put(ISVNUIConstants.IMG_FOLDERMODIFIED_PENDING, getImageDescriptor(ISVNUIConstants.IMG_FOLDERMODIFIED_PENDING));
-		reg.put(ISVNUIConstants.IMG_FOLDER, getImageDescriptor(ISVNUIConstants.IMG_FOLDER));
-	}
-	
 }

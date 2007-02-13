@@ -1,16 +1,18 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
  * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
+ *     Cédric Chabanois (cchabanois@ifrance.com) - modified for Subversion 
+ *******************************************************************************/
 package org.tigris.subversion.subclipse.ui.actions;
  
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -19,18 +21,19 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.window.Window;
 import org.tigris.subversion.subclipse.core.ISVNLocalResource;
 import org.tigris.subversion.subclipse.core.SVNException;
+import org.tigris.subversion.subclipse.core.commands.GetStatusCommand;
 import org.tigris.subversion.subclipse.core.resources.SVNWorkspaceRoot;
 import org.tigris.subversion.subclipse.core.util.Util;
-import org.tigris.subversion.subclipse.ui.ISVNUIConstants;
 import org.tigris.subversion.subclipse.ui.Policy;
-import org.tigris.subversion.subclipse.ui.SVNUIPlugin;
 import org.tigris.subversion.subclipse.ui.dialogs.RevertDialog;
 import org.tigris.subversion.subclipse.ui.operations.RevertOperation;
+import org.tigris.subversion.svnclientadapter.ISVNStatus;
+import org.tigris.subversion.svnclientadapter.SVNStatusUtils;
 
 /**
  * Action to restore pristine working copy file 
  */
-public class RevertAction extends WorkbenchWindowAction {
+public class RevertAction extends WorkspaceAction {
     
     private String url;
 	private IResource[] resourcesToRevert;
@@ -49,14 +52,31 @@ public class RevertAction extends WorkbenchWindowAction {
 	/**
 	 * get the modified resources in resources parameter
 	 */	
-	protected IResource[] getModifiedResources(IResource[] resources, IProgressMonitor iProgressMonitor) throws SVNException {
-		 // if only one resource selected, get url.  Revert dialog displays this.
-		 if (resources.length == 1) {
-			   ISVNLocalResource svnResource = SVNWorkspaceRoot.getSVNResourceFor(resources[0]);
-				url = svnResource.getStatus().getUrlString();
-			   if ((url == null) || (resources[0].getType() == IResource.FILE)) url = Util.getParentUrl(svnResource);
-		 }
-	    return super.getModifiedResources(resources, iProgressMonitor);
+	private IResource[] getModifiedResources(IResource[] resources, IProgressMonitor iProgressMonitor) throws SVNException {
+	    final List modified = new ArrayList();
+	    for (int i = 0; i < resources.length; i++) {
+			 IResource resource = resources[i];
+			 ISVNLocalResource svnResource = SVNWorkspaceRoot.getSVNResourceFor(resource);
+			 
+			 // if only one resource selected, get url.  Revert dialog displays this.
+			 if (resources.length == 1) {
+				   url = svnResource.getStatus().getUrlString();
+				   if ((url == null) || (resource.getType() == IResource.FILE)) url = Util.getParentUrl(svnResource);
+			 }
+			 
+			 // get adds, deletes, updates and property updates.
+			 GetStatusCommand command = new GetStatusCommand(svnResource, true, false);
+			 command.run(iProgressMonitor);
+			 ISVNStatus[] statuses = command.getStatuses();
+			 for (int j = 0; j < statuses.length; j++) {
+			     if (SVNStatusUtils.isReadyForRevert(statuses[j])) {
+			         IResource currentResource = SVNWorkspaceRoot.getResourceFor(statuses[j]);
+			         if (currentResource != null)
+			             modified.add(currentResource);
+			     }
+			 }
+		}
+	    return (IResource[]) modified.toArray(new IResource[modified.size()]);
 	}
 	
 	/**
@@ -89,7 +109,7 @@ public class RevertAction extends WorkbenchWindowAction {
 	 * @see org.eclipse.team.internal.ccvs.ui.actions.WorkspaceAction#isEnabledForUnmanagedResources()
 	 */
 	protected boolean isEnabledForUnmanagedResources() {
-		return SVNUIPlugin.getPlugin().getPreferenceStore().getBoolean(ISVNUIConstants.PREF_REMOVE_UNADDED_RESOURCES_ON_REPLACE);
+		return false;
 	}
 
     /*
@@ -99,10 +119,5 @@ public class RevertAction extends WorkbenchWindowAction {
     protected boolean isEnabledForInaccessibleResources() {
         return true;
     }
-
-	protected String getImageId()
-	{
-		return ISVNUIConstants.IMG_MENU_REVERT;
-	}
 	
 }

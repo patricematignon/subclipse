@@ -1,13 +1,18 @@
-/*******************************************************************************
- * Copyright (c) 2004, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+/*
+ *  Copyright(c) 2003-2004 by the authors indicated in the @author tags.
  *
- * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
 package org.tigris.subversion.svnclientadapter.samples;
 
 import java.io.File;
@@ -104,9 +109,9 @@ public class Sample {
 		}
 		
 
-		// set username and password if necessary
-		svnClient.setUsername("guest");
-		svnClient.setPassword(" ");
+		// set username and password if necessary (this is not necessary for this sample)
+		// svnClient.setUsername(username);
+		// svnClient.setPassword(password);
 
 		//	add a listener if you wish
 		NotifyListener listener = new Sample.NotifyListener();
@@ -114,7 +119,7 @@ public class Sample {
 
 		try {
 			//	use the svn commands
-			InputStream is = svnClient.getContent(new SVNUrl("http://subclipse.tigris.org/svn/subclipse/trunk/svnClientAdapter/readme.txt"),SVNRevision.HEAD);
+			InputStream is = svnClient.getContent(new SVNUrl("http://svn.collab.net/repos/subclipse/trunk/svnClientAdapter/readme.txt"),SVNRevision.HEAD);
 			
 			System.out.println("The beginning of the file is :");
 			byte[] bytes = new byte[100];

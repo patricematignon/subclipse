@@ -1,13 +1,18 @@
-/*******************************************************************************
- * Copyright (c) 2003, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+/*
+ *  Copyright(c) 2003-2004 by the authors indicated in the @author tags.
  *
- * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
 package org.tigris.subversion.svnclientadapter.commandline;
 
 import java.io.BufferedReader;
@@ -17,11 +22,10 @@ import java.io.InputStreamReader;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.StringTokenizer;
 
 /**
- * Common superclass for both SvnCommandLine and SvnAdminCommandLine 
+ * common methods for both SvnCommandLine and SvnAdminCommandLine 
  *  
  * @author Philip Schatz (schatz at tigris)
  * @author Cédric Chabanois (cchabanois at no-log.org)
@@ -29,166 +33,82 @@ import java.util.StringTokenizer;
  */
 abstract class CommandLine {
 
-	protected String commandName;
+	protected String CMD;
     protected CmdLineNotificationHandler notificationHandler;
-    protected Process process;
     
-	protected CommandLine(String commandName, CmdLineNotificationHandler notificationHandler) {
-		this.commandName = commandName;
+	//Constructors
+	CommandLine(String svnPath,CmdLineNotificationHandler notificationHandler) {
+		CMD = svnPath;
         this.notificationHandler = notificationHandler;
 	}
 
+	//Methods
 	String version() throws CmdLineException {
-		CmdArguments args = new CmdArguments();
+		ArrayList args = new ArrayList();
 		args.add("--version");
 		return execString(args,false);
 	}
 
+
     /**
-     * Executes the given svn command and returns the corresponding
-     * <code>Process</code> object.
-     *
-     * @param svnArguments The command-line arguments to execute.
+     * execute the given svn command and returns the corresponding process  
      */
-	private Process execProcess(CmdArguments svnArguments)
-        throws CmdLineException {
-		// We add "svn" or "svnadmin" to the arguments (as
-		// appropriate), and convert it to an array of strings.
-        int svnArgsLen = svnArguments.size();
-        String[] cmdline = new String[svnArgsLen + 1];
-        cmdline[0] = commandName;
+	protected Process execProcess(ArrayList svnArguments) throws CmdLineException {
+		Runtime rt = Runtime.getRuntime();
 
-		StringBuffer svnCommand = new StringBuffer();
+		String svnCommand = "";
 		boolean nextIsPassword = false;
-
-		for (int i = 0; i < svnArgsLen; i++) {
+		for (int i = 0; i < svnArguments.size(); i++) {
 			if (i != 0)
-				svnCommand.append(' ');
+				svnCommand += " ";
 			
-			Object arg = svnArguments.get(i);
-            if (arg != null)
-                arg = arg.toString();
+			String arg = (String)svnArguments.get(i);
 			
-			if ("".equals(arg)) {
+			if (arg == "") {
 				arg = "\"\"";
+				svnArguments.set(i, arg);
 			}
 			
 			if (nextIsPassword) {
-				// Avoid showing the password on the console.
-				svnCommand.append("*******");
+				svnCommand += "*******";
 				nextIsPassword = false;	
 			} else {
-				svnCommand.append(arg);
+				svnCommand += arg;
 			}
 			
-			if ("--password".equals(arg)) {
+			if (arg.equals("--password")) {
+				// we don't want to show the password in the console ...
 				nextIsPassword = true;
-			}
-
-            // Regardless of the data type passed in via svnArguments,
-            // at this point we expect to have a String object.
-            cmdline[i + 1] = (String) arg;
+			}				
 		}
-        notificationHandler.logCommandLine(svnCommand.toString());
+        notificationHandler.logCommandLine(svnCommand);
 
-		// Run the command, and return the associated Process object.
+		// we add "svn" or "svnadmin" to  the arguments and convert it to an array of strings
+		ArrayList argsArrayList = new ArrayList(svnArguments);
+		argsArrayList.add(0,CMD);
+		String[] argsArray = new String[argsArrayList.size()];
+		argsArrayList.toArray(argsArray);
+
+		/* run the process */
+		Process proc = null;
 		try {
-            return process = Runtime.getRuntime().exec(cmdline, getEnvironmentVariables());
+			//Set the LANG env variable so the svn's output is not localized
+			proc = rt.exec(argsArray, new String[] {"LANG=C", "LC_ALL=C"});
 		} catch (IOException e) {
 			throw new CmdLineException(e);
 		}
+
+		return proc;
 	}
 
-    /**
-     * Get environment variables to be set when invoking the command-line.
-     * Includes <code>LANG</code> and <code>LC_ALL</code> so Subversion's output is not localized.
-     * <code>Systemroot</code> is required on windows platform. 
-     * Without this variable present, the windows' DNS resolver does not work.
-     * <code>APR_ICONV_PATH</code> is required on windows platform for UTF-8 translation.
-     * The <code>PATH</code> is there, well, just to be sure ;-)
-     */
-	protected String[] getEnvironmentVariables()
-	{
-		final String path = CmdLineClientAdapter.getEnvironmentVariable("PATH");
-		final String systemRoot = CmdLineClientAdapter.getEnvironmentVariable("SystemRoot");
-		final String aprIconv = CmdLineClientAdapter.getEnvironmentVariable("APR_ICONV_PATH");
-		int i = 3;
-		if (path != null)
-			i++;
-		if (systemRoot != null)
-			i++;
-		if (aprIconv != null)
-			i++;
-		String[] lcVars = getLocaleVariables();
-		String[] env = new String[i + lcVars.length];
-		i = 0;
-		//Clear the LC_ALL, we're going to override the LC_MESSAGES and LC_TIME
-		env[i] = "LC_ALL=";
-		i++;
-		//Set the LC_MESSAGES to "C" to avoid translated svn output. (We're parsing the english one)
-		env[i] = "LC_MESSAGES=C";
-		i++;
-		env[i] = "LC_TIME=C";
-		i++;
-		if (path != null) {
-			env[i] = "PATH=" + path;
-			i++;
-		}
-		if (systemRoot != null) {
-			env[i] = "SystemRoot=" + systemRoot;
-			i++;
-		}
-		if (aprIconv != null) {
-			env[i] = "APR_ICONV_PATH=" + aprIconv;
-			i++;
-		}
-		//Add the remaining LC vars
-		for (int j = 0; j < lcVars.length; j++) {
-			env[i] = lcVars[j];
-			i++;
-		}
-		return env;
-	}
-	
-	private String[] getLocaleVariables()
-	{
-		String LC_ALL = CmdLineClientAdapter.getEnvironmentVariable("LC_ALL");
-		if ((LC_ALL == null) || (LC_ALL.length() == 0)) {
-			LC_ALL = CmdLineClientAdapter.getEnvironmentVariable("LANG");
-			if (LC_ALL == null) {
-				LC_ALL="";
-			}
-		}
-		
-		final String[] lcVarNames = new String[] {			
-				"LC_CTYPE", 
-				"LC_NUMERIC",
-				"LC_COLLATE",
-				"LC_MONETARY",
-				"LC_PAPER",
-				"LC_NAME",
-				"LC_ADDRESS",
-				"LC_TELEPHONE",
-				"LC_MEASUREMENT",
-				"LC_IDENTIFICATION" };
-		
-		List variables = new ArrayList(lcVarNames.length);
-		for (int i = 0; i < lcVarNames.length; i++) {
-			String varValue = CmdLineClientAdapter.getEnvironmentVariable(lcVarNames[i]);
-			variables.add(lcVarNames[i] + "=" + ((varValue != null) ? varValue : LC_ALL));
-		}
-		return (String[]) variables.toArray(new String[variables.size()]);
-	}
-	
     /**
      * Pumps the output from both provided streams, blocking until
      * complete.
      *
-     * @param proc 
      * @param outPumper The process output stream.
      * @param outPumper The process error stream.
      */
-    private void pumpProcessStreams(Process proc, StreamPumper outPumper,
+    private void pumpProcessStreams(StreamPumper outPumper,
                                     StreamPumper errPumper) {
         new Thread(outPumper).start();
         new Thread(errPumper).start();
@@ -197,33 +117,24 @@ abstract class CommandLine {
             outPumper.waitFor();
             errPumper.waitFor();
         } catch (InterruptedException ignored) {
-        	notificationHandler.logError("Command output processing interrupted !");
-        } finally {
-        	try {
-        		proc.getInputStream().close();
-        		proc.getOutputStream().close();
-        		proc.getErrorStream().close();
-        	} catch (IOException ioex) {
-        		//Just ignore. Exception when closing the stream.
-        	}
         }
     }
 
 	/**
 	 * Runs the process and returns the results.
-     *
-	 * @param svnArguments The command-line arguments to execute.
+	 * @param svnArguments The arguments to pass to the command-line
+	 * binary.
      * @param coalesceLines
-	 * @return Any output returned from execution of the command-line.
+	 * @return String
 	 */
-	protected String execString(CmdArguments svnArguments, boolean coalesceLines)
+	protected String execString(ArrayList svnArguments, boolean coalesceLines)
         throws CmdLineException {
 		Process proc = execProcess(svnArguments);
         StreamPumper outPumper =
             new CharacterStreamPumper(proc.getInputStream(), coalesceLines);
         StreamPumper errPumper =
             new CharacterStreamPumper(proc.getErrorStream(), false);
-        pumpProcessStreams(proc, outPumper, errPumper);
+        pumpProcessStreams(outPumper, errPumper);
 
 		try {
             String errMessage = errPumper.toString();
@@ -248,14 +159,14 @@ abstract class CommandLine {
      * treated as UTF-8 (as opposed to the JVM's default encoding).
 	 * @return String
 	 */
-	protected byte[] execBytes(CmdArguments svnArguments, boolean assumeUTF8)
+	protected byte[] execBytes(ArrayList svnArguments, boolean assumeUTF8)
         throws CmdLineException {
 		Process proc = execProcess(svnArguments);
         ByteStreamPumper outPumper =
             new ByteStreamPumper(proc.getInputStream());
         StreamPumper errPumper =
             new CharacterStreamPumper(proc.getErrorStream(), false);
-        pumpProcessStreams(proc, outPumper, errPumper);
+        pumpProcessStreams(outPumper, errPumper);
         
 		try {
             String errMessage = errPumper.toString();
@@ -287,34 +198,13 @@ abstract class CommandLine {
 
     /**
      * runs the command (returns nothing)
-     * @param svnArguments
+     * @param svnCommand
      * @throws CmdLineException
      */
-	protected void execVoid(CmdArguments svnArguments) throws CmdLineException {
+	protected void execVoid(ArrayList svnArguments) throws CmdLineException {
 		execString(svnArguments,false);
 	}
 
-	//TODO check the deprecation
-    /**
-	 * Runs the process and returns the results.
-	 * @param svnArguments The arguments to pass to the command-line
-	 * binary.
-	 * @return the InputStream on commads result. Caller has to close it explicitelly().
-	 * @deprecated this does not sound as a good idea. Check if we're able to live without it.
-     */
-	protected InputStream execInputStream(CmdArguments svnArguments)
-        throws CmdLineException {
-		Process proc = execProcess(svnArguments);
-		try {
-			proc.getOutputStream().close();
-			proc.getErrorStream().close();
-			//InputStream has to be closed by caller !
-		} catch (IOException ioex) {
-    		//Just ignore. Exception when closing the stream.
-		}		
-		return proc.getInputStream();
-	}
-	
 	/**
 	 * notify the listeners from the output. This is the default implementation
      *
@@ -333,18 +223,6 @@ abstract class CommandLine {
             notificationHandler.logCompleted(st.nextToken());
     }
     	
-
-    protected void stopProcess() {
-    	try {
-    		process.getInputStream().close();
-    		process.getOutputStream().close();
-    		process.getErrorStream().close();
-    	} catch (IOException ioex) {
-    		//Just ignore. Closing streams.
-    	}
-        process.destroy();
-    }
-
     /**
      * Pulls all the data out of a stream.  Inspired by Ant's
      * StreamPumper (by Robert Field).
@@ -352,15 +230,6 @@ abstract class CommandLine {
     private static abstract class StreamPumper implements Runnable {
         private boolean finished;
 
-        /**
-         * Constructor
-         *
-         */
-        protected StreamPumper()
-        {
-        	super();
-        }
-        
         /**
          * Copies data from the input stream to the internal buffer.
          * Terminates as soon as the input stream is closed, or an
@@ -374,6 +243,7 @@ abstract class CommandLine {
 
             try {
                 pumpStream();
+            } catch (IOException ignored) {
             } finally {
                 synchronized (this) {
                     this.finished = true;
@@ -386,7 +256,8 @@ abstract class CommandLine {
          * Called by {@link #run()} to pull the data out of the
          * stream.
          */
-        protected abstract void pumpStream();
+        protected abstract void pumpStream()
+            throws IOException;
 
         /**
          * Tells whether the end of the stream has been reached.
@@ -399,7 +270,6 @@ abstract class CommandLine {
         /**
          * This method blocks until the stream pumper finishes.
          * @see #isFinished()
-         * @throws InterruptedException
          **/
         public synchronized void waitFor()
             throws InterruptedException {
@@ -428,28 +298,17 @@ abstract class CommandLine {
          * Copies data from the input stream to the internal string
          * buffer.
          */
-        protected void pumpStream() {
-			try {
-				String line;
-				while ((line = this.reader.readLine()) != null) {
-					if (this.coalesceLines) {
-						this.sb.append(line);
-					} else {
-						this.sb.append(line).append(Helper.NEWLINE);
-					}
-				}
-			} catch (IOException ex) {
-				System.err
-						.println("Problem occured during fetching the command output: "
-								+ ex.getMessage());
-			} finally {
-				try {
-					reader.close();
-				} catch (IOException e) {
-					// Exception during closing the stream. Just ignore.
-				}
-			}
-		}
+        protected void pumpStream()
+            throws IOException {
+            String line;
+            while((line = this.reader.readLine()) != null) {
+                if (this.coalesceLines) {
+                    this.sb.append(line);
+                } else {
+                    this.sb.append(line).append(Helper.NEWLINE);
+                }
+            }
+        }
 
         public synchronized String toString() {
             return this.sb.toString();
@@ -467,6 +326,7 @@ abstract class CommandLine {
          * Create a new stream pumper.
          *
          * @param is input stream to read data from
+         * @param coaleasceLines if true, it will coaleasce lines
          */
         public ByteStreamPumper(InputStream is) {
             this.bis = is;
@@ -477,80 +337,23 @@ abstract class CommandLine {
          *
          * Terminates as soon as the input stream is closed or an error occurs.
          */
-        protected void pumpStream() {
-			try {
-				int bytesRead;
-				while ((bytesRead = this.bis.read(this.inputBuffer)) != -1) {
-					this.bytes.write(this.inputBuffer, 0, bytesRead);
-				}
-			} catch (IOException ex) {
-				System.err
-						.println("Problem occured during fetching the command output: "
-								+ ex.getMessage());
-			} finally {
-				try {
-					this.bytes.flush();
-					this.bytes.close();
-					this.bis.close();
-				} catch (IOException e) {
-					// Exception during closing the stream. Just ignore.
-				}
-			}
-		}
+        protected void pumpStream()
+            throws IOException {
+            int bytesRead;
+            while ((bytesRead = this.bis.read(this.inputBuffer)) != -1) {
+                this.bytes.write(this.inputBuffer, 0, bytesRead);
+            }
+            this.bytes.flush();
+            this.bytes.close();
+            this.bis.close();
+        }
     
         /**
-		 * @return A byte array contaning the raw bytes read from the input
-		 *         stream.
-		 */
+         * @return A byte array contaning the raw bytes read from the
+         * input stream.
+         */
         public synchronized byte[] getBytes() {
             return bytes.toByteArray();
         }
-    }
-    
-    protected static class CmdArguments
-    {
-    	private List args = new ArrayList();
-    	
-    	protected void add(Object arg)
-    	{
-    		this.args.add(arg);
-    	}
-
-    	protected void addAuthInfo(String user, String pass) {
-    		if (user != null && user.length() > 0) {
-    			add("--username");
-    			add(user);
-            }
-
-            if (pass != null && pass.length() > 0) {
-    			add("--password");
-    			add(pass);
-    		}
-
-    		add("--non-interactive");
-    	}
-
-        protected void addConfigInfo(String configDir) {
-        	if (configDir != null) {
-        		add("--config-dir");
-                add(configDir);
-            }
-        }
-
-        protected void addLogMessage(String message) {
-			add("--force-log");
-       		add("-m");
-            add((message != null) ? message : "");
-        }
-
-    	private int size()
-    	{
-    		return this.args.size();
-    	}
-    	
-    	private Object get(int index)
-    	{
-    		return this.args.get(index);
-    	}
     }
 }

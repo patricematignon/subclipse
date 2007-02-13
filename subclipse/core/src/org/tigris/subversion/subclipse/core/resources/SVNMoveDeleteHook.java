@@ -1,12 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *     Subclipse project committers - initial API and implementation
+ * Copyright (c) 2000, 2003 IBM Corporation and others. All rights reserved.
+ * This program and the accompanying materials are made available under the
+ * terms of the Common Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors: Daniel Bradby Cédric Chabanois (cchabanois@ifrance.com)
  ******************************************************************************/
 package org.tigris.subversion.subclipse.core.resources;
 
@@ -26,13 +24,10 @@ import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
 import org.tigris.subversion.subclipse.core.ISVNLocalFile;
 import org.tigris.subversion.subclipse.core.ISVNLocalFolder;
-import org.tigris.subversion.subclipse.core.ISVNLocalResource;
-import org.tigris.subversion.subclipse.core.Policy;
 import org.tigris.subversion.subclipse.core.SVNException;
 import org.tigris.subversion.subclipse.core.SVNTeamProvider;
 import org.tigris.subversion.subclipse.core.client.OperationManager;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
-import org.tigris.subversion.svnclientadapter.ISVNProperty;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
 
 public class SVNMoveDeleteHook implements IMoveDeleteHook {
@@ -49,9 +44,6 @@ public class SVNMoveDeleteHook implements IMoveDeleteHook {
                 return false;
             }
 
-            if (getDeferFileDelete(file))
-            	return false;
-            
             monitor.beginTask(null, 1000);
             resource.delete();
             tree.deletedFile(file);
@@ -122,12 +114,8 @@ public class SVNMoveDeleteHook implements IMoveDeleteHook {
                         .isManaged()) {
                     SVNTeamProvider provider = (SVNTeamProvider) RepositoryProvider
                             .getProvider(destination.getProject());
-                    if (provider == null) //target is not SVN project
-                        throw new SVNException(Policy.bind("SVNMoveHook.moveFileException"));
                     provider.add(new IResource[] { destination.getParent() },
                             IResource.DEPTH_ZERO, new NullProgressMonitor());
-                    ISVNLocalResource parent = SVNWorkspaceRoot.getSVNResourceFor(destination.getParent());
-                    if (parent != null) parent.refreshStatus();
                 }
 
                 // force is set to true because when we rename (refactor) a
@@ -197,14 +185,9 @@ public class SVNMoveDeleteHook implements IMoveDeleteHook {
                         .isManaged()) {
                     SVNTeamProvider provider = (SVNTeamProvider) RepositoryProvider
                             .getProvider(destination.getProject());
-                    if (provider == null) {
-                        throw new SVNException(Policy.bind("SVNMoveHook.moveFolderException"));
-                    }
                     provider.add(new IResource[] { destination.getParent() },
                             IResource.DEPTH_ZERO, new NullProgressMonitor());
-                    ISVNLocalResource parent = SVNWorkspaceRoot.getSVNResourceFor(destination.getParent());
-                    if (parent != null) parent.refreshStatus();
-               }
+                }
 
                 if (SVNWorkspaceRoot.getSVNFolderFor(source).getStatus()
                         .isAdded()) {
@@ -252,38 +235,6 @@ public class SVNMoveDeleteHook implements IMoveDeleteHook {
      * @see org.eclipse.core.resources.team.IMoveDeleteHook#moveProject(org.eclipse.core.resources.team.IResourceTree, org.eclipse.core.resources.IProject, org.eclipse.core.resources.IProjectDescription, int, org.eclipse.core.runtime.IProgressMonitor)
      */
     public boolean moveProject(IResourceTree tree, IProject source, IProjectDescription description, int updateFlags, IProgressMonitor monitor) {
-        return false;
-    }
-
-    // Get the DeferFileDelete Property for selected resource.  First looks at selected resource,
-    // then works up through ancestors until a folder with the DeferFileDelete property
-    // is found.  If none found, returns false.
-    private boolean getDeferFileDelete(IResource resource) {
-        ISVNLocalResource svnResource = SVNWorkspaceRoot.getSVNResourceFor(resource);
-        ISVNProperty property = null;
-        try {
-            if (svnResource.isManaged()) {
-                property = svnResource.getSvnProperty("DeferFileDelete"); //$NON-NLS-1$
-            }
-        } catch (SVNException e) {
-        }
-        if ((property != null) && (property.getValue() != null) && (property.getValue().trim().length() > 0)) {
-            return property.getValue().equalsIgnoreCase("true");           
-        }
-        IResource checkResource = resource;
-        while (checkResource.getParent() != null) {
-            checkResource = checkResource.getParent();
-            if (checkResource.getParent() == null) return false;
-            svnResource = SVNWorkspaceRoot.getSVNResourceFor(checkResource);
-            try {
-                if (svnResource.isManaged())
-                    property = svnResource.getSvnProperty("DeferFileDelete"); //$NON-NLS-1$
-            } catch (SVNException e1) {
-            }
-            if ((property != null) && (property.getValue() != null) && (property.getValue().trim().length() > 0)) {
-                return property.getValue().equalsIgnoreCase("true");           
-            }
-        }
         return false;
     }
 

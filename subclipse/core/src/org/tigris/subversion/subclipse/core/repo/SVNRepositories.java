@@ -1,13 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
  * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
+ *     IBM Corporation - initial API and implementation
+ *     Cédric Chabanois (cchabanois@ifrance.com) - modified for Subversion  
+ *******************************************************************************/
 package org.tigris.subversion.subclipse.core.repo;
 
 import java.io.DataInputStream;
@@ -24,12 +25,8 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.team.core.TeamException;
-import org.osgi.service.prefs.BackingStoreException;
 import org.tigris.subversion.subclipse.core.ISVNRepositoryLocation;
 import org.tigris.subversion.subclipse.core.Policy;
 import org.tigris.subversion.subclipse.core.SVNException;
@@ -100,43 +97,12 @@ public class SVNRepositories
     /** 
      * Return a list of the know repository locations
      */
-    public ISVNRepositoryLocation[] getKnownRepositories(IProgressMonitor monitor) {
-        IProgressMonitor progress = Policy.monitorFor(monitor);
-    	IEclipsePreferences prefs = (IEclipsePreferences) SVNRepositoryLocation.getParentPreferences();
-		try {
-			String[] keys = prefs.childrenNames();
-	        progress.beginTask(Policy.bind("SVNRepositories.refresh"), keys.length); //$NON-NLS-1$
-			for (int i = 0; i < keys.length; i++) {
-				progress.worked(1);
-				String key = keys[i];
-				try {
-					IEclipsePreferences node = (IEclipsePreferences) prefs.node(key);
-					String location = node.get(SVNRepositoryLocation.PREF_LOCATION, null);
-					if (location != null && !exactMatchExists(location)) {
-						ISVNRepositoryLocation repos = SVNRepositoryLocation.fromString(location);
-						try {
-							repos.validateConnection(new NullProgressMonitor());
-						} catch(SVNException swallow){}
-						addToRepositoriesCache(repos);
-					} else {
-						node.removeNode();
-						prefs.flush();
-					}
-				} catch (SVNException e) {
-					// Log and continue
-					SVNProviderPlugin.log(e);
-				}
-			}
-		} catch (BackingStoreException e) {
-			// Log and continue (although all repos will be missing)
-			SVNProviderPlugin.log(SVNException.wrapException(e)); 
-		}
-		progress.done();
-		return (ISVNRepositoryLocation[])repositories.values().toArray(new ISVNRepositoryLocation[repositories.size()]);
+    public ISVNRepositoryLocation[] getKnownRepositories() {
+        return (ISVNRepositoryLocation[])repositories.values().toArray(new ISVNRepositoryLocation[repositories.size()]);
     }
 
-    public void refreshRepositoriesFolders(IProgressMonitor monitor) {
-        ISVNRepositoryLocation[] repositories = getKnownRepositories(monitor);
+    public void refreshRepositoriesFolders() {
+        ISVNRepositoryLocation[] repositories = getKnownRepositories();
         for (int i = 0; i < repositories.length;i++) {
             repositories[i].refreshRootFolder();
         }
@@ -276,8 +242,7 @@ public class SVNRepositories
         
         int count = dis.readInt();
         for(int i = 0; i < count;i++){
-        	ISVNRepositoryLocation root = SVNRepositoryLocation.fromString(dis.readUTF());
-        	addToRepositoriesCache(root);
+        	ISVNRepositoryLocation root = getRepository(dis.readUTF());
             if (version >= REPOSITORIES_STATE_FILE_VERSION_2) {
                 String label = dis.readUTF();
                 if (!label.equals("")) {
@@ -333,28 +298,12 @@ public class SVNRepositories
 
 	/**
 	 * Answer whether the provided repository location is known by the provider or not.
-	 * The location string corresponds to the Strin returned by ISVNRepositoryLocation#getLocation()
+	 * The location string corresponds to the Strin returned by ICVSRepositoryLocation#getLocation()
 	 */
 	public boolean isKnownRepository(String location) {
 		Set keys = repositories.keySet();
 		for(Iterator iter = keys.iterator();iter.hasNext();){
 			if(location.indexOf((String)iter.next())!=-1){
-				return true;
-			}
-    		
-		}
-		return false;
-	}
-
-	/**
-	 * Answer whether the provided repository location already has an exact match location
-	 * The location string corresponds to the Strin returned by ISVNRepositoryLocation#getLocation()
-	 */
-	public boolean exactMatchExists(String location) {
-		Set keys = repositories.keySet();
-		for(Iterator iter = keys.iterator();iter.hasNext();){
-			String url = (String)iter.next();
-			if (url.equals(location)){
 				return true;
 			}
     		

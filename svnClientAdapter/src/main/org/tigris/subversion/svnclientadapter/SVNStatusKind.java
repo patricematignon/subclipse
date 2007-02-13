@@ -1,19 +1,25 @@
-/*******************************************************************************
- * Copyright (c) 2004, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+/*
+ *  Copyright(c) 2003-2004 by the authors indicated in the @author tags.
  *
- * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
 package org.tigris.subversion.svnclientadapter;
 
 
 /**
+ * <p>
  * Base class for enumerating the possible types for a <code>Status</code>.
- * 
+ * </p>
  */
 public class SVNStatusKind {
     private final int kind;
@@ -32,6 +38,7 @@ public class SVNStatusKind {
     private static final int ignored = 11;
     private static final int incomplete = 12;
     private static final int external = 13;
+    private static final int locked = 14;
     
     /** does not exist */
     public static final SVNStatusKind NONE = new SVNStatusKind(none);
@@ -75,6 +82,9 @@ public class SVNStatusKind {
     /** is not a versioned thing in this wc */
     public static final SVNStatusKind UNVERSIONED = new SVNStatusKind(unversioned);
     
+    /** a resource marked as locked */
+    public static final SVNStatusKind LOCKED = new SVNStatusKind(locked);
+    
     //Constructors
     /**
      * <p>
@@ -88,19 +98,10 @@ public class SVNStatusKind {
         this.kind = kind;
     }
     
-    /**
-     * @return an integer value representation of the statusKind
-     */
     public int toInt() {
     	return kind;
     }
     
-    /**
-     * Returns the SVNStatusKind corresponding to the given int representation.
-     * (As returned by {@link SVNStatusKind#toInt()} method)
-     * @param kind
-     * @return SVNStatusKind representing the int value
-     */
     public static SVNStatusKind fromInt(int kind) {
         switch (kind)
         {
@@ -130,55 +131,15 @@ public class SVNStatusKind {
             return EXTERNAL;
         case unversioned:
             return UNVERSIONED;
+        case locked:
+            return LOCKED;
         case obstructed:
             return OBSTRUCTED;
         default:
             return null;
         }
     }
-
-    /**
-     * returns the SVNStatusKind corresponding to the given string or null
-     * @param kind
-     * @return SVNStatusKind representing the supplied string value 
-     */
-    public static SVNStatusKind fromString(String kind) {
-        if ("none".equals(kind) || "non-svn".equals(kind)) {
-            return NONE;
-        } else if ("normal".equals(kind)) {
-            return NORMAL;
-        } else if ("added".equals(kind)) {
-            return ADDED;
-        } else if ("missing".equals(kind)) {
-            return MISSING;
-        } else if ("deleted".equals(kind)) {
-            return DELETED;
-        } else if ("replaced".equals(kind)) {
-            return REPLACED;
-        } else if ("modified".equals(kind)) {
-            return MODIFIED;
-        } else if ("merged".equals(kind)) {
-            return MERGED;
-        } else if ("conflicted".equals(kind)) {
-            return CONFLICTED;
-        } else if ("ignored".equals(kind)) {
-            return IGNORED;
-        } else if ("incomplete".equals(kind)) {
-            return INCOMPLETE;
-        } else if ("external".equals(kind)) {
-            return EXTERNAL;
-        } else if ("unversioned".equals(kind)) {
-            return UNVERSIONED;
-        } else if ("obstructed".equals(kind)) {
-            return OBSTRUCTED;
-        } else {
-            throw new IllegalArgumentException("Unknown status " + kind);
-        }
-    }
-    
-    /* (non-Javadoc)
-     * @see java.lang.Object#toString()
-     */
+        
     public String toString() {
         switch (kind)
         {
@@ -206,6 +167,8 @@ public class SVNStatusKind {
             return "incomplete";
         case external:
             return "external";
+        case locked:
+            return "locked";
         case obstructed:
             return "obstructed";
         case unversioned:

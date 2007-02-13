@@ -1,13 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
  * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
+ *     IBM Corporation - initial API and implementation
+ *     Cédric Chabanois (cchabanois@ifrance.com) - modified for Subversion 
+ *******************************************************************************/
 package org.tigris.subversion.subclipse.ui.history;
 
 import java.text.DateFormat;
@@ -38,7 +39,6 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.tigris.subversion.subclipse.core.ISVNRemoteResource;
 import org.tigris.subversion.subclipse.core.history.ILogEntry;
-import org.tigris.subversion.subclipse.core.history.AliasManager;
 import org.tigris.subversion.subclipse.ui.Policy;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
 
@@ -63,10 +63,9 @@ public class HistoryTableProvider {
 
 	//column constants
 	private static final int COL_REVISION = 0;
-	private static final int COL_TAGS = 1;
-	private static final int COL_DATE = 2;
-	private static final int COL_AUTHOR = 3;
-	private static final int COL_COMMENT = 4;
+	private static final int COL_DATE = 1;
+	private static final int COL_AUTHOR = 2;
+	private static final int COL_COMMENT = 3;
 
 	/**
 	 * The history label provider.
@@ -81,12 +80,10 @@ public class HistoryTableProvider {
 			switch (columnIndex) {
 				case COL_REVISION:
 					String revision = entry.getRevision().toString();
-					if (currentRemoteResource != null && entry.getRevision().equals( currentRemoteResource.getLastChangedRevision())) {
+					if (entry.getRevision().equals( currentRemoteResource.getLastChangedRevision())) {
 						revision = Policy.bind("currentRevision", revision); //$NON-NLS-1$
 					}
 					return revision;
-				case COL_TAGS:
-					return AliasManager.getAliasesAsString(entry.getTags());
 				case COL_DATE:
 					Date date = entry.getDate();
 					if (date == null) return Policy.bind("notAvailable"); //$NON-NLS-1$
@@ -150,11 +147,10 @@ public class HistoryTableProvider {
 		
 		// column headings:	"Revision" "Tags" "Date" "Author" "Comment"
 		private int[][] SORT_ORDERS_BY_COLUMN = {
-			{COL_REVISION, COL_TAGS, COL_DATE, COL_AUTHOR, COL_COMMENT },	/* revision */
-			{COL_TAGS, COL_REVISION, COL_DATE, COL_AUTHOR, COL_COMMENT },	/* tags */ 
-			{COL_DATE, COL_REVISION, COL_TAGS, COL_AUTHOR, COL_COMMENT},	/* date */
-			{COL_AUTHOR, COL_REVISION, COL_TAGS, COL_DATE, COL_COMMENT},	/* author */
-			{COL_COMMENT, COL_REVISION, COL_TAGS, COL_DATE, COL_AUTHOR}   /* comment */
+			{COL_REVISION, COL_DATE, COL_AUTHOR, COL_COMMENT },	/* revision */ 
+			{COL_DATE, COL_REVISION, COL_AUTHOR, COL_COMMENT},	/* date */
+			{COL_AUTHOR, COL_REVISION, COL_DATE, COL_COMMENT},	/* author */
+			{COL_COMMENT, COL_REVISION, COL_DATE, COL_AUTHOR}   /* comment */
 		};
 		
 		/**
@@ -192,10 +188,6 @@ public class HistoryTableProvider {
 			switch (columnNumber) {
 				case COL_REVISION: /* revision */
                     return (e1.getRevision().getNumber()<e2.getRevision().getNumber() ? -1 : (e1.getRevision()==e2.getRevision() ? 0 : 1));
-				case COL_TAGS: /* tags */
-					String tags1 = AliasManager.getAliasesAsString(e1.getTags());
-					String tags2 = AliasManager.getAliasesAsString(e2.getTags());
-					return getCollator().compare(tags1, tags2);
 				case COL_DATE: /* date */
 					Date date1 = e1.getDate();
 					Date date2 = e2.getDate();
@@ -267,7 +259,6 @@ public class HistoryTableProvider {
 		HistorySorter sorter = new HistorySorter(COL_REVISION);
 		sorter.setReversed(true);
 		viewer.setSorter(sorter);
-		table.setSortDirection(SWT.DOWN);
 
         table.addDisposeListener(new DisposeListener() {
             public void widgetDisposed(DisposeEvent e) {
@@ -291,22 +282,14 @@ public class HistoryTableProvider {
 		col.setResizable(true);
 		col.setText(Policy.bind("HistoryView.revision")); //$NON-NLS-1$
 		col.addSelectionListener(headerListener);
-		layout.addColumnData(new ColumnWeightData(10, true));
-		table.setSortColumn(col);
-		
-		// tags
-		col = new TableColumn(table, SWT.NONE);
-		col.setResizable(true);
-		col.setText(Policy.bind("HistoryView.tags")); //$NON-NLS-1$
-		col.addSelectionListener(headerListener);
-		layout.addColumnData(new ColumnWeightData(30, true));
+		layout.addColumnData(new ColumnWeightData(20, true));
 	
 		// creation date
 		col = new TableColumn(table, SWT.NONE);
 		col.setResizable(true);
 		col.setText(Policy.bind("HistoryView.date")); //$NON-NLS-1$
 		col.addSelectionListener(headerListener);
-		layout.addColumnData(new ColumnWeightData(25, true));
+		layout.addColumnData(new ColumnWeightData(20, true));
 	
 		// author
 		col = new TableColumn(table, SWT.NONE);
@@ -354,11 +337,6 @@ public class HistoryTableProvider {
 				} else {
 					tableViewer.setSorter(new HistorySorter(column));
 				}
-				tableViewer.getTable().setSortColumn((TableColumn)e.widget);
-				if (tableViewer.getTable().getSortDirection() == SWT.UP)
-					tableViewer.getTable().setSortDirection(SWT.DOWN);
-				else
-					tableViewer.getTable().setSortDirection(SWT.UP);
 			}
 		};
 	}

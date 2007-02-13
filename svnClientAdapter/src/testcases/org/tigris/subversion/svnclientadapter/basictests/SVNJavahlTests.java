@@ -1,18 +1,8 @@
-/*******************************************************************************
- * Copyright (c) 2004, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
 package org.tigris.subversion.svnclientadapter.basictests;
 
 import junit.framework.TestSuite;
 
-public class SVNJavahlTests extends SVNBasicTestsSuite {
+public class SVNJavahlTests extends TestSuite {
 
     public SVNJavahlTests(String name) {
         super(name);
@@ -23,7 +13,26 @@ public class SVNJavahlTests extends SVNBasicTestsSuite {
         System.setProperty("test.protocol","svn");
         
         TestSuite testSuite = new SVNJavahlTests("Test group");
-        addTestsToSuite(testSuite);        
+
+        testSuite.addTestSuite(AddTest.class);
+        testSuite.addTestSuite(CatTest.class);
+        testSuite.addTestSuite(CheckOutTest.class);
+        testSuite.addTestSuite(CommitTest.class);
+        testSuite.addTestSuite(CopyTest.class);
+        testSuite.addTestSuite(DeleteTest.class);
+        testSuite.addTestSuite(ExportTest.class);
+        testSuite.addTestSuite(ImportTest.class);
+        testSuite.addTestSuite(InfoTest.class);
+        testSuite.addTestSuite(LogTest.class);
+        testSuite.addTestSuite(LsTest.class);
+        testSuite.addTestSuite(MkdirTest.class);
+        testSuite.addTestSuite(MoveTest.class);
+        testSuite.addTestSuite(ResolveTest.class);
+        testSuite.addTestSuite(RevertTest.class);
+        testSuite.addTestSuite(StatusTest.class);
+        testSuite.addTestSuite(SwitchTest.class);
+        testSuite.addTestSuite(UpdateTest.class);
+        
         return testSuite;
     }     
     

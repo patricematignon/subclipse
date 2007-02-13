@@ -1,13 +1,18 @@
-/*******************************************************************************
- * Copyright (c) 2004, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+/*
+ *  Copyright(c) 2003-2004 by the authors indicated in the @author tags.
  *
- * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
 package org.tigris.subversion.svnclientadapter.utils;
 
 import java.io.IOException;
@@ -15,7 +20,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 /**
- * This class has been taken from SVNKit 
+ * This class has been taken from javasvn 
  */
 public class ReaderThread extends Thread {
     
@@ -40,10 +45,8 @@ public class ReaderThread extends Thread {
         } catch (IOException e) {
         } finally {
             try {
-            	myInputStream.close();
                 myOutputStream.flush();
             } catch (IOException e) {
-            	//Just ignore. Stream closing.
             }
         }
     }

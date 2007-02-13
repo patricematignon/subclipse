@@ -1,13 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
  * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
+ *     Cédric Chabanois (cchabanois@ifrance.com) - modified for Subversion 
+ *******************************************************************************/
 package org.tigris.subversion.subclipse.ui.properties;
 
 import java.net.MalformedURLException;
@@ -35,7 +35,6 @@ import org.tigris.subversion.subclipse.ui.SVNUIPlugin;
 import org.tigris.subversion.subclipse.ui.decorator.SVNLightweightDecorator;
 import org.tigris.subversion.subclipse.ui.dialogs.ChooseRootUrlDialog;
 import org.tigris.subversion.svnclientadapter.SVNUrl;
-import org.tigris.subversion.svnclientadapter.commandline.CmdLineClientAdapterFactory;
 
 /**
  * Property page to modify settings for a given repository
@@ -51,7 +50,6 @@ public class SVNRepositoryPropertiesPage extends PropertyPage {
     private boolean passwordChanged;
     private Text repositoryRootText;
     private Text repositoryUrlText;
-    private boolean showCredentials;
     
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
@@ -61,6 +59,7 @@ public class SVNRepositoryPropertiesPage extends PropertyPage {
         
         GridLayout layout;
         Label label;
+        Text text;
         GridData data;
         
         Composite composite = new Composite(parent, SWT.NONE);
@@ -105,35 +104,33 @@ public class SVNRepositoryPropertiesPage extends PropertyPage {
         // empty label to separate
         label = new Label(composite, SWT.NONE);
         
-        if (showCredentials) {
-	        // group for login and password
-	        Composite userPasswordGroup = new Composite(composite, SWT.NONE);
-	        userPasswordGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-	        layout = new GridLayout();
-	        layout.numColumns = 2;
-	        userPasswordGroup.setLayout(layout);
-	        
-	        // login
-	        label = new Label(userPasswordGroup, SWT.NONE);
-	        label.setText(Policy.bind("SVNRepositoryPropertiesPage.login")); //$NON-NLS-1$
-	        loginText = new Text(userPasswordGroup, SWT.SINGLE | SWT.BORDER);
-	        data = new GridData(GridData.FILL_HORIZONTAL);
-	        data.grabExcessHorizontalSpace = true;
-	        loginText.setLayoutData(data);
-	
-	        // password
-	        label = new Label(userPasswordGroup, SWT.NONE);
-	        label.setText(Policy.bind("SVNRepositoryPropertiesPage.password")); //$NON-NLS-1$
-	        passwordText = new Text(userPasswordGroup, SWT.SINGLE | SWT.BORDER| SWT.PASSWORD);
-	        data = new GridData(GridData.FILL_HORIZONTAL);
-	        data.grabExcessHorizontalSpace = true;
-	        passwordText.setLayoutData(data);        
-	        passwordText.addListener(SWT.Modify, new Listener() {
-	            public void handleEvent(Event event) {
-	                passwordChanged = !passwordText.getText().equals(FAKE_PASSWORD);
-	            }
-	        });
-        }
+        // group for login and password
+        Composite userPasswordGroup = new Composite(composite, SWT.NONE);
+        userPasswordGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        layout = new GridLayout();
+        layout.numColumns = 2;
+        userPasswordGroup.setLayout(layout);
+        
+        // login
+        label = new Label(userPasswordGroup, SWT.NONE);
+        label.setText(Policy.bind("SVNRepositoryPropertiesPage.login")); //$NON-NLS-1$
+        loginText = new Text(userPasswordGroup, SWT.SINGLE | SWT.BORDER);
+        data = new GridData(GridData.FILL_HORIZONTAL);
+        data.grabExcessHorizontalSpace = true;
+        loginText.setLayoutData(data);
+
+        // password
+        label = new Label(userPasswordGroup, SWT.NONE);
+        label.setText(Policy.bind("SVNRepositoryPropertiesPage.password")); //$NON-NLS-1$
+        passwordText = new Text(userPasswordGroup, SWT.SINGLE | SWT.BORDER| SWT.PASSWORD);
+        data = new GridData(GridData.FILL_HORIZONTAL);
+        data.grabExcessHorizontalSpace = true;
+        passwordText.setLayoutData(data);        
+        passwordText.addListener(SWT.Modify, new Listener() {
+            public void handleEvent(Event event) {
+                passwordChanged = !passwordText.getText().equals(FAKE_PASSWORD);
+            }
+        });
         
         // empty label to separate
         label = new Label(composite, SWT.NONE);
@@ -238,10 +235,8 @@ public class SVNRepositoryPropertiesPage extends PropertyPage {
     private void initializeValues() {
         passwordChanged = false;
         
-        if (showCredentials) {
-	        loginText.setText(location.getUsername());
-	        passwordText.setText(FAKE_PASSWORD);
-        }
+        loginText.setText(location.getUsername());
+        passwordText.setText(FAKE_PASSWORD);
         
         // get the repository label
         String label = location.getLabel();
@@ -281,11 +276,6 @@ public class SVNRepositoryPropertiesPage extends PropertyPage {
                 location = (ISVNRepositoryLocation)adapter;
             }
         }
-		showCredentials = SVNProviderPlugin.getPlugin().getSVNClientManager().getSvnClientInterface().equals(CmdLineClientAdapterFactory.COMMANDLINE_CLIENT);
-		if (!showCredentials) {
-		    if (location.getUsername() != null && !location.getUsername().trim().equals(""))
-		        showCredentials = true;
-		}
     }    
     
     /* (non-Javadoc)
@@ -300,13 +290,12 @@ public class SVNRepositoryPropertiesPage extends PropertyPage {
      * @see PreferencesPage#performOk
      */
     public boolean performOk() {
-        if (showCredentials) {
-	        if (passwordChanged) {
-	            location.setPassword(passwordText.getText());
-	        	passwordChanged = false;
-	        }
-	        location.setUsername(loginText.getText());
+        if (passwordChanged) {
+            location.setPassword(passwordText.getText());
+        	passwordChanged = false;
         }
+        location.setUsername(loginText.getText());
+        
         if (useCustomLabelButton.getSelection()) {
         	location.setLabel(customLabelText.getText());
         } else {

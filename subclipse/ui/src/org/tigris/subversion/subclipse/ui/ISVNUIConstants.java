@@ -1,64 +1,62 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
  * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
+
 package org.tigris.subversion.subclipse.ui;
 
 public interface ISVNUIConstants {
 	// image path
 	public final String ICON_PATH = "icons/full/"; //$NON-NLS-1$
 	
+	// images
+	
 	// overlays
+	public final String IMG_MERGEABLE_CONFLICT = "ovr16/confauto_ov.gif"; //$NON-NLS-1$
 	public final String IMG_QUESTIONABLE = "ovr16/question_ov.gif"; //$NON-NLS-1$
+	public final String IMG_MERGED = "ovr16/merged_ov.gif"; //$NON-NLS-1$
 	public final String IMG_CONFLICTED = "ovr16/conflicted_ov.gif"; //$NON-NLS-1$
+	public final String IMG_EDITED = "ovr16/edited_ov.gif"; //$NON-NLS-1$
+	public final String IMG_NO_REMOTEDIR = "ovr16/no_remotedir_ov.gif"; //$NON-NLS-1$
 	public final String IMG_ADDED = "ovr16/added_ov.gif"; //$NON-NLS-1$
     public final String IMG_EXTERNAL = "ovr16/external_ov.gif"; //$NON-NLS-1$
     public final String IMG_LOCKED = "ovr16/locked_ov.gif"; //$NON-NLS-1$
     public final String IMG_NEEDSLOCK = "ovr16/protected_ov.gif"; //$NON-NLS-1$
     public final String IMG_DELETED = "ovr16/deleted_ov.gif"; //$NON-NLS-1$
-    public final String IMG_SWITCHED = "ovr16/switched_ov.gif"; //$NON-NLS-1$
 	
 	// objects
 	public final String IMG_REPOSITORY = "obj16/repository_rep.gif"; //$NON-NLS-1$
+	public final String IMG_TAG = "obj16/tag.gif"; //$NON-NLS-1$
 	public final String IMG_BRANCHES_CATEGORY = "obj16/branches_rep.gif"; //$NON-NLS-1$
 	public final String IMG_VERSIONS_CATEGORY = "obj16/versions_rep.gif"; //$NON-NLS-1$
+	public final String IMG_MODULE = "obj16/module_rep.gif"; //$NON-NLS-1$
 	public final String IMG_PROJECT_VERSION = "obj16/prjversions_rep.gif"; //$NON-NLS-1$
-	public final String IMG_WARNING = "obj16/warn.gif"; //$NON-NLS-1$
-	public final String IMG_BRANCH = "obj16/tag.gif"; //$NON-NLS-1$
 	
 	// toolbar
 	public final String IMG_REFRESH = "clcl16/refresh.gif"; //$NON-NLS-1$
 	public final String IMG_CLEAR = "clcl16/clear_co.gif"; //$NON-NLS-1$
 	public final String IMG_COLLAPSE_ALL = "clcl16/collapseall.gif"; //$NON-NLS-1$
-	public final String IMG_GET_ALL = "clcl16/get_all.gif"; //$NON-NLS-1$
-	public final String IMG_GET_NEXT = "clcl16/get_next.gif"; //$NON-NLS-1$
-    public final String IMG_FILTER_HISTORY = "clcl16/filter_history.gif"; //$NON-NLS-1$
+	public final String IMG_LINK_WITH_EDITOR = "clcl16/synced.gif"; //$NON-NLS-1$
 	
 	// toolbar (disabled)
 	public final String IMG_REFRESH_DISABLED = "dlcl16/refresh.gif"; //$NON-NLS-1$
 	public final String IMG_CLEAR_DISABLED = "dlcl16/clear_co.gif"; //$NON-NLS-1$
-    public final String IMG_FILTER_HISTORY_DISABLED = "dlcl16/filter_history.gif"; //$NON-NLS-1$
 	
 	// toolbar (enabled)
 	public final String IMG_REFRESH_ENABLED = "elcl16/refresh.gif"; //$NON-NLS-1$
+	public final String IMG_CLEAR_ENABLED = "elcl16/clear_co.gif"; //$NON-NLS-1$
 	public final String IMG_COLLAPSE_ALL_ENABLED = "elcl16/collapseall.gif"; //$NON-NLS-1$
-
-    public final String IMG_AFFECTED_PATHS_FLAT_MODE = "elcl16/flatLayout.gif"; //$NON-NLS-1$
-    public final String IMG_AFFECTED_PATHS_COMPRESSED_MODE = "elcl16/compressedLayout.gif"; //$NON-NLS-1$
-    
-    public final String IMG_AFFECTED_PATHS_HORIZONTAL_LAYOUT = "elcl16/horizontal.gif"; //$NON-NLS-1$
-    public final String IMG_AFFECTED_PATHS_VERTICAL_LAYOUT = "elcl16/vertical.gif"; //$NON-NLS-1$
-    
-    public final String IMG_COMMENTS = "elcl16/comments.gif"; //$NON-NLS-1$
-    
+	public final String IMG_LINK_WITH_EDITOR_ENABLED = "elcl16/synced.gif"; //$NON-NLS-1$
+	
 	// wizards
 	public final String IMG_NEWLOCATION = "wizards/newlocation_wiz.gif"; //$NON-NLS-1$
+    public final String IMG_NEWFOLDER = "wizards/newfolder_wiz.gif"; //$NON-NLS-1$
     
     // pending
     public final String IMG_FILEADD_PENDING = "pending16/fileadd_pending.gif"; //$NON-NLS-1$
@@ -67,51 +65,28 @@ public interface ISVNUIConstants {
     public final String IMG_FOLDERDELETE_PENDING = "pending16/folderdelete_pending.gif"; //$NON-NLS-1$    
     public final String IMG_FILEMODIFIED_PENDING = "pending16/filemodified_pending.gif"; //$NON-NLS-1$
     public final String IMG_FOLDERMODIFIED_PENDING = "pending16/foldermodified_pending.gif"; //$NON-NLS-1$
-    public final String IMG_FOLDER = "pending16/folder_pending.gif"; //$NON-NLS-1$
 
+    //  tortoise
+    public final String IMG_COMMIT = "tortoise/commit.gif"; //$NON-NLS-1$
+    public final String IMG_UPDATE = "tortoise/update.gif"; //$NON-NLS-1$
+    public final String IMG_CONFLICT = "tortoise/conflict.gif"; //$NON-NLS-1$
+    public final String IMG_REVERT = "tortoise/revert.gif"; //$NON-NLS-1$
+    public final String IMG_RESOLVE = "tortoise/resolve.gif"; //$NON-NLS-1$
+    public final String IMG_LOG = "tortoise/log.gif"; //$NON-NLS-1$
+    public final String IMG_MERGE = "tortoise/merge.gif"; //$NON-NLS-1$
+    public final String IMG_IGNORE = "tortoise/ignore.gif"; //$NON-NLS-1$
+    
     // views
     public final String IMG_SVN_CONSOLE = "cview16/console_view.gif"; //$NON-NLS-1$
     
     //operations
     public final String IMG_CHECKOUT = "ctool16/checkout.gif"; //$NON-NLS-1$
-    
-    //Menus
-    public final String IMG_MENU_UPDATE = "Menu Update"; //$NON-NLS-1$
-    public final String IMG_MENU_COMMIT = "Menu Commit"; //$NON-NLS-1$
-    public final String IMG_MENU_SYNC   = "Menu Synchronize"; //$NON-NLS-1$
-    public final String IMG_MENU_REVERT = "Menu Revert"; //$NON-NLS-1$
-    public final String IMG_MENU_ADD    = "Menu Add"; //$NON-NLS-1$
-    public final String IMG_MENU_IGNORE = "Menu Ignore"; //$NON-NLS-1$
-    public final String IMG_MENU_PROPSET = "Menu Set Property"; //$NON-NLS-1$
-    public final String IMG_MENU_SHOWPROPERTY = "Menu Show Property"; //$NON-NLS-1$
-    public final String IMG_MENU_RELOCATE = "Menu Relocate"; //$NON-NLS-1$
-    public final String IMG_MENU_CHECKOUTAS = "Menu Checkout As"; //$NON-NLS-1$
-    public final String IMG_MENU_IMPORTFOLDER = "Menu Import Folder"; //$NON-NLS-1$
-    public final String IMG_MENU_LOCK = "Menu Lock"; //$NON-NLS-1$
-    public final String IMG_MENU_UNLOCK = "Menu Unlock"; //$NON-NLS-1$
-    public final String IMG_MENU_CLEANUP = "Menu Cleanup"; //$NON-NLS-1$
-    public final String IMG_MENU_EXPORT = "Menu Export"; //$NON-NLS-1$
-    public final String IMG_MENU_DIFF = "Menu Diff"; //$NON-NLS-1$
-    public final String IMG_MENU_PROPDELETE = "Menu Property Delete"; //$NON-NLS-1$
-    public final String IMG_MENU_DELETE = "Menu Delete"; //$NON-NLS-1$
-    public final String IMG_MENU_BRANCHTAG = "Menu Branch/Tag"; //$NON-NLS-1$
-    public final String IMG_MENU_MOVE = "Menu Move"; //$NON-NLS-1$
-    public final String IMG_MENU_COPY = "Menu Copy"; //$NON-NLS-1$
-    public final String IMG_MENU_COMPARE = "Menu Compare"; //$NON-NLS-1$
-    public final String IMG_MENU_RESOLVE = "Menu Resolve"; //$NON-NLS-1$
-    public final String IMG_MENU_EDITCONFLICT = "Menu Edit Conflicts"; //$NON-NLS-1$
-    public final String IMG_MENU_SWITCH = "Menu Switch"; //$NON-NLS-1$
-    public final String IMG_MENU_MARKMERGED = "Menu Mark Merged"; //$NON-NLS-1$
-    public final String IMG_MENU_MERGE = "Menu Merge"; //$NON-NLS-1$
-    public final String IMG_MENU_SHOWHISTORY = "Menu Show History"; //$NON-NLS-1$
-    public final String IMG_MENU_ANNOTATE = "Menu Annotate"; //$NON-NLS-1$
+    public final String IMG_ADD_PROPERTY = "ctool16/svn_prop_add.gif"; //$NON-NLS-1$
 	
 	// preferences
 	public final String PREF_SHOW_COMMENTS = "pref_show_comments"; //$NON-NLS-1$
 	public final String PREF_WRAP_COMMENTS = "pref_wrap_comments"; //$NON-NLS-1$
 	public final String PREF_SHOW_PATHS = "pref_show_paths"; //$NON-NLS-1$
-    public final String PREF_AFFECTED_PATHS_MODE = "pref_affected_paths_layout"; //$NON-NLS-1$
-    public final String PREF_AFFECTED_PATHS_LAYOUT = "pref_affected_paths_layout2"; //$NON-NLS-1$
 	public final String PREF_HISTORY_VIEW_EDITOR_LINKING = "pref_history_view_linking"; //$NON-NLS-1$
 	public final String PREF_PRUNE_EMPTY_DIRECTORIES = "pref_prune_empty_directories";	 //$NON-NLS-1$
 	public final String PREF_TIMEOUT = "pref_timeout";	 //$NON-NLS-1$
@@ -122,10 +97,7 @@ public interface ISVNUIConstants {
 	public final String PREF_REPLACE_UNMANAGED = "pref_replace_unmanaged"; //$NON-NLS-1$
 	public final String PREF_COMPRESSION_LEVEL = "pref_compression_level"; //$NON-NLS-1$
 	public final String PREF_TEXT_KSUBST = "pref_text_ksubst"; //$NON-NLS-1$
-	public final String PREF_FETCH_CHANGE_PATH_ON_DEMAND = "pref_fetch_change_path_on_Demand"; //$NON-NLS-1$
-	public final String PREF_SHOW_TAGS_IN_REMOTE = "pref_show_tags_in_remote"; //$NON-NLS-1$
-	public final String PREF_LOG_ENTRIES_TO_FETCH = "pref_log_entries_to_fetch"; //$NON-NLS-1$
-	public final String PREF_STOP_ON_COPY = "pref_stop_on_copy"; //$NON-NLS-1$
+	public final String PREF_FETCH_CHANGE_PATH_ON_DEMAND = "pref_fetch_change_path_on_Demand";
 
 	public final String PREF_PROMPT_ON_MIXED_TAGS = "pref_prompt_on_mixed_tags"; //$NON-NLS-1$
 
@@ -138,12 +110,8 @@ public interface ISVNUIConstants {
     public final String PREF_SHOW_DELETED_RESOURCES = "pref_show_deleted_resources"; //$NON-NLS-1$
     public final String PREF_SHOW_MODIFIED_RESOURCES = "pref_show_modified_resources"; //$NON-NLS-1$
     public final String PREF_SHOW_COMPARE_REVISION_IN_DIALOG = "pref_show_compare_revision_in_dialog"; //$NON-NLS-1$
-    public final String PREF_SHOW_UNADDED_RESOURCES_ON_COMMIT = "pref_show_unadded_resources_on_commit"; //$NON-NLS-1$
-    public final String PREF_SELECT_UNADDED_RESOURCES_ON_COMMIT = "pref_select_unadded_resources_on_commit"; //$NON-NLS-1$
- 	public final String PREF_REMOVE_UNADDED_RESOURCES_ON_REPLACE = "pref_remove_unadded_resources_on_replace";
-	public final String PREF_COMMIT_SET_DEFAULT_ENABLEMENT = "pref_enable_commit_sets"; //$NON-NLS-1$
-	public final String PREF_USE_QUICKDIFFANNOTATE = "pref_use_quickdiffannotate"; //$NON-NLS-1$
-
+    public final String PREF_SELECT_UNADDED_RESOURCES_ON_COMMIT = "pref_select_unadded_resources_on_commit"; //$NON-NLS-1$ 
+   
 	// console preferences
 	public final String PREF_CONSOLE_COMMAND_COLOR = "pref_console_command_color"; //$NON-NLS-1$
 	public final String PREF_CONSOLE_MESSAGE_COLOR = "pref_console_message_color"; //$NON-NLS-1$
@@ -151,8 +119,6 @@ public interface ISVNUIConstants {
 	public final String PREF_CONSOLE_FONT = "pref_console_font"; //$NON-NLS-1$
     public final String PREF_CONSOLE_SHOW_ON_ERROR = "pref_console_show_on_error"; //$NON-NLS-1$
     public final String PREF_CONSOLE_SHOW_ON_MESSAGE = "pref_console_show_on_message"; //$NON-NLS-1$
-	public final String PREF_CONSOLE_LIMIT_OUTPUT = "pref_console_limit_output"; //$NON-NLS-1$
-	public final String PREF_CONSOLE_HIGH_WATER_MARK = "pref_console_high_water_mark"; //$NON-NLS-1$
 		
 	// decorator preferences
 	public final String PREF_FILETEXT_DECORATION = "pref_filetext_decoration"; //$NON-NLS-1$
@@ -170,7 +136,6 @@ public interface ISVNUIConstants {
     public final String PREF_EXTERNAL_FLAG = "pref_external_flag"; //$NON-NLS-1$
 	
 	public final String PREF_CALCULATE_DIRTY = "pref_calculate_dirty";	 //$NON-NLS-1$
-	public final String PREF_USE_FONT_DECORATORS = "pref_use_font_decorators";	 //$NON-NLS-1$
 	
 	public final String PREF_SHOW_SYNCINFO_AS_TEXT = "pref_show_syncinfo_as_text"; //$NON-NLS-1$
 
@@ -191,23 +156,22 @@ public interface ISVNUIConstants {
 	
     // svn client config directory
     public final String PREF_SVNCONFIGDIR = "pref_svnconfigdir"; //$NON-NLS-1$
-
-    // Menu icon preferences
-	public final String PREF_MENU_ICON_SET = "pref_menu_icon_set"; //$NON-NLS-1$
-	public final int    MENU_ICON_SET_DEFAULT         = 1;
-	public final int    MENU_ICON_SET_TORTOISESVN = 2;
-	public final int    MENU_ICON_SET_SUBVERSIVE  = 3;
-    
+ 
     // svn commit comment font
     public final String SVN_COMMENT_FONT = "svn_comment_font"; //$NON-NLS-1$
     
 	// Wizard banners
 	public final String IMG_WIZBAN_SHARE = "wizban/newconnect_wizban.gif";	 //$NON-NLS-1$
+	public final String IMG_WIZBAN_MERGE = "wizban/mergestream_wizban.gif";	 //$NON-NLS-1$
 	public final String IMG_WIZBAN_DIFF = "wizban/createpatch_wizban.gif";   //$NON-NLS-1$
+	public final String IMG_WIZBAN_KEYWORD = "wizban/keywordsub_wizban.gif"; //$NON-NLS-1$
 	public final String IMG_WIZBAN_NEW_LOCATION = "wizban/newlocation_wizban.gif"; //$NON-NLS-1$
     public final String IMG_WIZBAN_NEW_FOLDER = "wizban/newfolder_wizban.gif"; //$NON-NLS-1$
     public final String IMG_WIZBAN_SYNCH = "wizban/share_wizban.gif"; //$NON-NLS-1$
     
+	// XXX checkout is same as ne connect. If it changes, it must be initialized
+	public final String IMG_WIZBAN_CHECKOUT = "wizban/newconnect_wizban.gif";	 //$NON-NLS-1$
+	
 	// Properties
 	public final String PROP_NAME = "svn.name"; //$NON-NLS-1$
 	public final String PROP_REVISION = "svn.revision"; //$NON-NLS-1$
@@ -229,17 +193,7 @@ public interface ISVNUIConstants {
 	// preference options
 	public final int OPTION_NEVER = 1; //$NON-NLS-1$
 	public final int OPTION_PROMPT = 2; //$NON-NLS-1$
-	public final int OPTION_AUTOMATIC = 3; //$NON-NLS-1$
+	public final int OPTION_AUTOMATIC = 3;
 
-    public final int MODE_FLAT = 1; //$NON-NLS-1$
-    public final int MODE_COMPRESSED = 2; //$NON-NLS-1$
-    
-    public final int LAYOUT_HORIZONTAL = 1; //$NON-NLS-1$
-    public final int LAYOUT_VERTICAL = 2; //$NON-NLS-1$
-    
-	public final String PREF_ALLOW_EMPTY_COMMIT_COMMENTS= "pref_allow_empty_commit_comment"; //$NON-NLS-1$
-
-	// This is in Internal class in team.ui, so we are mirroring it
-	public final static String HISTORY_VIEW_ID = "org.eclipse.team.ui.GenericHistoryView"; //$NON-NLS-1$
 }
 

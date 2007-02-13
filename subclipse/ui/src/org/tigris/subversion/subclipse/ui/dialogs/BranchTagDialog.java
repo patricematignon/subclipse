@@ -1,17 +1,7 @@
-/*******************************************************************************
- * Copyright (c) 2004, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
 package org.tigris.subversion.subclipse.ui.dialogs;
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.jface.dialogs.TrayDialog;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -31,11 +21,10 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.tigris.subversion.subclipse.core.ISVNLocalResource;
 import org.tigris.subversion.subclipse.core.ISVNRemoteResource;
 import org.tigris.subversion.subclipse.core.SVNException;
-import org.tigris.subversion.subclipse.core.history.Alias;
 import org.tigris.subversion.subclipse.core.history.ILogEntry;
 import org.tigris.subversion.subclipse.core.resources.SVNWorkspaceRoot;
 import org.tigris.subversion.subclipse.ui.IHelpContextIds;
@@ -44,20 +33,15 @@ import org.tigris.subversion.subclipse.ui.comments.CommitCommentArea;
 import org.tigris.subversion.subclipse.ui.settings.CommentProperties;
 import org.tigris.subversion.subclipse.ui.settings.ProjectProperties;
 import org.tigris.subversion.subclipse.ui.util.UrlCombo;
-import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
-import org.tigris.subversion.svnclientadapter.ISVNInfo;
-import org.tigris.subversion.svnclientadapter.ISVNProperty;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
 import org.tigris.subversion.svnclientadapter.SVNUrl;
 
-public class BranchTagDialog extends TrayDialog {
+public class BranchTagDialog extends Dialog {
     
     private static final int URL_WIDTH_HINT = 450;
     private static final int REVISION_WIDTH_HINT = 40;
     
     private IResource resource;
-    private ISVNRemoteResource remoteResource;
-    private ISVNLocalResource svnResource;
     
     private UrlCombo toUrlCombo;
     private Button serverButton;
@@ -79,18 +63,8 @@ public class BranchTagDialog extends TrayDialog {
     private Button okButton;
     private CommentProperties commentProperties;
     private ProjectProperties projectProperties;
-    
-    private long revisionNumber = 0;
-    private Alias newAlias;
 
-    private Button switchAfterBranchTagCheckBox;
-    private boolean switchAfterBranchTag;
-    
-    public void setRevisionNumber(long revisionNumber) {
-		this.revisionNumber = revisionNumber;
-	}
-
-	public BranchTagDialog(Shell parentShell, IResource resource) {
+    public BranchTagDialog(Shell parentShell, IResource resource) {
         super(parentShell);
 		int shellStyle = getShellStyle();
 		setShellStyle(shellStyle | SWT.RESIZE);
@@ -109,14 +83,6 @@ public class BranchTagDialog extends TrayDialog {
 		}
         this.resource = resource;
     }
-	
-	public BranchTagDialog(Shell parentShell, ISVNRemoteResource remoteResource) {
-        super(parentShell);
-		int shellStyle = getShellStyle();
-		setShellStyle(shellStyle | SWT.RESIZE);
-        commitCommentArea = new CommitCommentArea(this, null, Policy.bind("BranchTagDialog.enterComment"), commentProperties); //$NON-NLS-1$
-        this.remoteResource = remoteResource;
-    }
     
 	/*
 	 * @see Dialog#createDialogArea(Composite)
@@ -126,37 +92,25 @@ public class BranchTagDialog extends TrayDialog {
 		Composite composite = new Composite(parent, SWT.NULL);
 		composite.setLayout(new GridLayout());
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
-        
-        Composite top = new Composite(composite, SWT.NULL);
-        top.setLayout(new GridLayout());
-        top.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
-		Group repositoryGroup = new Group(top, SWT.NULL);
+		Group repositoryGroup = new Group(composite, SWT.NULL);
 		repositoryGroup.setText(Policy.bind("BranchTagDialog.repository")); //$NON-NLS-1$
 		repositoryGroup.setLayout(new GridLayout());
 		GridData data = new GridData(GridData.FILL_BOTH);
 		repositoryGroup.setLayoutData(data);
 		
 		Label fromUrlLabel = new Label(repositoryGroup, SWT.NONE);
-		if (resource == null) fromUrlLabel.setText(Policy.bind("BranchTagDialog.fromUrl")); //$NON-NLS-1$
-		else fromUrlLabel.setText(Policy.bind("BranchTagDialog.url")); //$NON-NLS-1$
+		fromUrlLabel.setText(Policy.bind("BranchTagDialog.url")); //$NON-NLS-1$
 		
 		Text urlText = new Text(repositoryGroup, SWT.BORDER);
 		data = new GridData();
 		data.widthHint = URL_WIDTH_HINT;
 		urlText.setLayoutData(data);
-		
-		if (resource == null) {
-			url = remoteResource.getUrl();
-			urlText.setText(url.toString());
-		} else {
-			svnResource = SVNWorkspaceRoot.getSVNResourceFor(resource);
-			try {
-	            url = svnResource.getStatus().getUrl();
-	            if (url != null) urlText.setText(svnResource.getStatus().getUrlString());
-	        } catch (SVNException e1) {}
-		}
-		
+		ISVNLocalResource svnResource = SVNWorkspaceRoot.getSVNResourceFor(resource);
+		try {
+            url = svnResource.getStatus().getUrl();
+            if (url != null) urlText.setText(svnResource.getStatus().getUrlString());
+        } catch (SVNException e1) {}
         urlText.setEditable(false);
         
 		Label toUrlLabel = new Label(repositoryGroup, SWT.NONE);
@@ -171,8 +125,7 @@ public class BranchTagDialog extends TrayDialog {
 		data = new GridData(GridData.FILL_BOTH);
 		urlComposite.setLayoutData(data);
 		
-		if (resource == null) toUrlCombo = new UrlCombo(urlComposite, "repositoryBrowser"); //$NON-NLS-1$
-		else toUrlCombo = new UrlCombo(urlComposite, resource.getProject().getName());
+		toUrlCombo = new UrlCombo(urlComposite, resource.getProject().getName());
 		toUrlCombo.setText(urlText.getText());
 		
 		Button browseButton = new Button(urlComposite, SWT.PUSH);
@@ -207,8 +160,7 @@ public class BranchTagDialog extends TrayDialog {
 		data = new GridData();
 		data.widthHint = REVISION_WIDTH_HINT;
 		revisionText.setLayoutData(data);
-		if (revisionNumber == 0) revisionText.setEnabled(false);
-		else revisionText.setText("" + revisionNumber);
+		revisionText.setEnabled(false);
 		revisionText.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent e) {
                 setOkButtonStatus();
@@ -216,8 +168,7 @@ public class BranchTagDialog extends TrayDialog {
 		});
 		logButton = new Button(serverComposite, SWT.PUSH);
 		logButton.setText(Policy.bind("MergeDialog.showLog")); //$NON-NLS-1$
-		if (revisionNumber == 0)
-			logButton.setEnabled(false);
+		logButton.setEnabled(false);
 		logButton.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 showLog();
@@ -228,11 +179,9 @@ public class BranchTagDialog extends TrayDialog {
 		workingCopyButton.setText(Policy.bind("BranchTagDialog.working")); //$NON-NLS-1$
 		data = new GridData();
 		data.horizontalSpan = 3;
-		workingCopyButton.setLayoutData(data);	
-		if (resource == null) workingCopyButton.setVisible(false);
+		workingCopyButton.setLayoutData(data);			
 		
-		if (revisionNumber == 0) serverButton.setSelection(true);
-		else revisionButton.setSelection(true);
+		serverButton.setSelection(true); 
 		
 		SelectionListener selectionListener = new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
@@ -247,9 +196,11 @@ public class BranchTagDialog extends TrayDialog {
 		revisionButton.addSelectionListener(selectionListener);
 		workingCopyButton.addSelectionListener(selectionListener);
 		
-
+		Label label = createWrappingLabel(composite);
+		label.setText(Policy.bind("BranchTagDialog.note")); //$NON-NLS-1$ 
+		
 		if (projectProperties != null) {
-		    addBugtrackingArea(top);
+		    addBugtrackingArea(composite);
 		}
 		
 		commitCommentArea.createArea(composite);
@@ -262,33 +213,25 @@ public class BranchTagDialog extends TrayDialog {
 		
 		toUrlCombo.getCombo().setFocus();
 
-		if (resource != null) {
-			switchAfterBranchTagCheckBox = new Button(composite, SWT.CHECK);
-			switchAfterBranchTagCheckBox.setText(Policy.bind("BranchTagDialog.switchAfterTagBranch"));
-		}
-		
 		// set F1 help
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, IHelpContextIds.BRANCH_TAG_DIALOG);
+		WorkbenchHelp.setHelp(composite, IHelpContextIds.BRANCH_TAG_DIALOG);
 		
 		return composite;
 	}
 	
 	protected void showLog() {
 	    ISVNRemoteResource remoteResource = null;
-	    if (resource == null) remoteResource = this.remoteResource;
-	    else {
-	        try {
-	            remoteResource = SVNWorkspaceRoot.getSVNResourceFor(resource).getRepository().getRemoteFile(url);
-	        } catch (Exception e) {
-	            MessageDialog.openError(getShell(), Policy.bind("MergeDialog.showLog"), e.toString()); //$NON-NLS-1$
-	            return;
-	        }
-	    }
+        try {
+            remoteResource = SVNWorkspaceRoot.getSVNResourceFor(resource).getRepository().getRemoteFile(url);
+        } catch (Exception e) {
+            MessageDialog.openError(getShell(), Policy.bind("MergeDialog.showLog"), e.toString()); //$NON-NLS-1$
+            return;
+        }
         if (remoteResource == null) {
             MessageDialog.openError(getShell(), Policy.bind("MergeDialog.showLog"), Policy.bind("MergeDialog.urlError") + " " + toUrlCombo.getText()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
             return;	            
         }	
-        HistoryDialog dialog = new HistoryDialog(getShell(), remoteResource);
+        HistoryDialog dialog = dialog = new HistoryDialog(getShell(), remoteResource);
         if (dialog.open() == HistoryDialog.CANCEL) return;
         ILogEntry[] selectedEntries = dialog.getSelectedLogEntries();
         if (selectedEntries.length == 0) return;
@@ -332,10 +275,6 @@ public class BranchTagDialog extends TrayDialog {
         toUrlCombo.saveUrl();
         createOnServer = !workingCopyButton.getSelection();
         specificRevision = revisionButton.getSelection();
-        if(switchAfterBranchTagCheckBox != null) {
-        	switchAfterBranchTag = switchAfterBranchTagCheckBox.getSelection();
-        }
-        
         comment = commitCommentArea.getComment();
         if (serverButton.getSelection()) revision = SVNRevision.HEAD;
         try {
@@ -345,39 +284,12 @@ public class BranchTagDialog extends TrayDialog {
             MessageDialog.openError(getShell(), Policy.bind("BranchTagDialog.title"), e.getMessage()); //$NON-NLS-1$
             return;
         }
-        if (resource != null) updateTagsProperty(toUrl);
         super.okPressed();
-    }
-    
-    private void updateTagsProperty(SVNUrl toUrl) {
-    	try {
-			ISVNProperty property = null;
-			property = svnResource.getSvnProperty("subclipse:tags"); //$NON-NLS-1$
-			if (property == null) return;
-			newAlias = new Alias();
-			newAlias.setBranch(toUrl.toString().toUpperCase().indexOf("TAGS") == -1); //$NON-NLS-1$
-			String relativePath = toUrl.toString().substring(svnResource.getRepository().getUrl().toString().length());
-			newAlias.setRelativePath(relativePath);
-			SVNRevision revision = null;
-			if (revisionButton.getSelection()) revision = SVNRevision.getRevision(revisionText.getText().trim());
-			else {
-				ISVNClientAdapter svnClient = svnResource.getRepository().getSVNClient();
-				ISVNInfo svnInfo = svnClient.getInfo(url);
-				revision = SVNRevision.getRevision(svnInfo.getRevision().toString());
-			}
-			newAlias.setRevision(Integer.parseInt(revision.toString()));
-			newAlias.setName(toUrl.getLastPathSegment());
-			BranchTagPropertyUpdateDialog dialog = new BranchTagPropertyUpdateDialog(getShell(), resource, newAlias);
-			if (dialog.open() == BranchTagPropertyUpdateDialog.OK) 
-				newAlias = dialog.getNewAlias();
-			else
-				newAlias = null;
-    	} catch (Exception e) {}
     }
     
     private void setOkButtonStatus() {
         if ((commentProperties != null) && (commentProperties.getMinimumLogMessageSize() != 0)) {
-            if (commitCommentArea.getComment().trim().length() < commentProperties.getMinimumLogMessageSize()) {
+            if (commitCommentArea.getText().getText().trim().length() < commentProperties.getMinimumLogMessageSize()) {
                 okButton.setEnabled(false);
                 return;
             }
@@ -442,12 +354,4 @@ public class BranchTagDialog extends TrayDialog {
     public SVNRevision getRevision() {
         return revision;
     }
-
-	public Alias getNewAlias() {
-		return newAlias;
-	}
-
-	public boolean switchAfterTagBranch() {
-		return switchAfterBranchTag;
-	}
 }

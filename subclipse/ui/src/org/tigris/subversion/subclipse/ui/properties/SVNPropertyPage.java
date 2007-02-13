@@ -1,13 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
  * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
+ *     Daniel Bradby 
+ *******************************************************************************/
 package org.tigris.subversion.subclipse.ui.properties;
 
 import org.eclipse.core.resources.IResource;
@@ -23,8 +23,8 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PropertyPage;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.tigris.subversion.subclipse.core.ISVNLocalResource;
 import org.tigris.subversion.subclipse.core.SVNProviderPlugin;
 import org.tigris.subversion.subclipse.core.SVNTeamProvider;
@@ -33,16 +33,13 @@ import org.tigris.subversion.subclipse.core.resources.SVNWorkspaceRoot;
 import org.tigris.subversion.subclipse.ui.IHelpContextIds;
 import org.tigris.subversion.subclipse.ui.Policy;
 import org.tigris.subversion.subclipse.ui.SVNUIPlugin;
-import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
-import org.tigris.subversion.svnclientadapter.ISVNInfo;
-import org.tigris.subversion.svnclientadapter.ISVNProperty;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
 
 public class SVNPropertyPage extends PropertyPage {
 
     private Text ignoredValue;
     private Text managedValue;
-    private Text switchedValue;
+    private Text hasRemoteValue;
     private Text urlValue;
     private Text lastChangedRevisionValue;
     private Text lastChangedDateValue;
@@ -68,23 +65,15 @@ public class SVNPropertyPage extends PropertyPage {
         Composite composite = createDefaultComposite(parent);
 
         //Label for path field
-        Label label = new Label(composite, SWT.NONE);
-        label.setText(Policy.bind("SVNPropertyPage.path")); //$NON-NLS-1$
+        Label pathLabel = new Label(composite, SWT.NONE);
+        pathLabel.setText(Policy.bind("SVNPropertyPage.path")); //$NON-NLS-1$
 
         // Path text field
         Text pathValueText = new Text(composite, SWT.WRAP | SWT.READ_ONLY);
-//        GridData gd = new GridData();
-//        gd.horizontalSpan = 2;
-//        pathValueText.setLayoutData(gd);
+        GridData gd = new GridData();
+        gd.horizontalSpan = 2;
+        pathValueText.setLayoutData(gd);
         pathValueText.setText(((IResource) getElement()).getFullPath().toString());
-
-        label = new Label(composite, SWT.NONE);
-        label.setText(Policy.bind("SVNPropertyPage.url")); //$NON-NLS-1$
-        urlValue = new Text(composite, SWT.WRAP | SWT.READ_ONLY);
-
-        label = new Label(composite, SWT.NONE);
-        label.setText(Policy.bind("SVNPropertyPage.revision")); //$NON-NLS-1$
-        revisionValue = new Text(composite, SWT.WRAP | SWT.READ_ONLY);
     }
 
     private void addSeparator(Composite parent) {
@@ -107,8 +96,12 @@ public class SVNPropertyPage extends PropertyPage {
         managedValue = new Text(composite, SWT.WRAP | SWT.READ_ONLY);
 
         label = new Label(composite, SWT.NONE);
-        label.setText(Policy.bind("SVNPropertyPage.switched")); //$NON-NLS-1$
-        switchedValue = new Text(composite, SWT.WRAP | SWT.READ_ONLY);
+        label.setText(Policy.bind("SVNPropertyPage.hasRemote")); //$NON-NLS-1$
+        hasRemoteValue = new Text(composite, SWT.WRAP | SWT.READ_ONLY);
+
+        label = new Label(composite, SWT.NONE);
+        label.setText(Policy.bind("SVNPropertyPage.url")); //$NON-NLS-1$
+        urlValue = new Text(composite, SWT.WRAP | SWT.READ_ONLY);
 
         label = new Label(composite, SWT.NONE);
         label.setText(Policy.bind("SVNPropertyPage.changedRevision")); //$NON-NLS-1$
@@ -141,6 +134,10 @@ public class SVNPropertyPage extends PropertyPage {
         label = new Label(composite, SWT.NONE);
         label.setText(Policy.bind("SVNPropertyPage.added")); //$NON-NLS-1$
         addedValue = new Text(composite, SWT.WRAP | SWT.READ_ONLY);
+
+        label = new Label(composite, SWT.NONE);
+        label.setText(Policy.bind("SVNPropertyPage.revision")); //$NON-NLS-1$
+        revisionValue = new Text(composite, SWT.WRAP | SWT.READ_ONLY);
 
         label = new Label(composite, SWT.NONE);
         label.setText(Policy.bind("SVNPropertyPage.copied")); //$NON-NLS-1$
@@ -182,7 +179,7 @@ public class SVNPropertyPage extends PropertyPage {
 
             ignoredValue.setText(new Boolean(status.isIgnored()).toString());
             managedValue.setText(new Boolean(status.isManaged()).toString());
-            switchedValue.setText(new Boolean(status.isSwitched()).toString());
+            hasRemoteValue.setText(new Boolean(status.isIgnored()).toString());
             urlValue.setText(status.getUrlString() != null ? status.getUrlString() : ""); //$NON-NLS-1$
             lastChangedRevisionValue.setText(status.getLastChangedRevision() != null ? status
                     .getLastChangedRevision().toString() : ""); //$NON-NLS-1$
@@ -202,21 +199,7 @@ public class SVNPropertyPage extends PropertyPage {
             lockCreationDate.setText(status.getLockOwner() != null ? status
                     .getLockCreationDate().toString() : ""); //$NON-NLS-1$
             lockComment.setText(status.getLockOwner() != null ? status.getLockComment() : ""); //$NON-NLS-1$
-            // Get lock information from server if svn:needs-lock property is set
-            if (status.getLockOwner() == null && status.getUrlString() != null) {
-           		ISVNProperty prop = svnResource.getSvnProperty("svn:needs-lock");
-           		if (prop != null) {
-	           	    ISVNClientAdapter client = svnResource.getRepository().getSVNClient();
-	            	try {
-	            		ISVNInfo info = client.getInfo(status.getUrl());
-	                    lockOwner.setText(info.getLockOwner() != null ? info.getLockOwner() : ""); //$NON-NLS-1$
-	                    lockCreationDate.setText(info.getLockOwner() != null ? info
-	                            .getLockCreationDate().toString() : ""); //$NON-NLS-1$
-	                    lockComment.setText(info.getLockOwner() != null ? info.getLockComment() : ""); //$NON-NLS-1$
-	            	} catch (Exception e) {
-	            	}
-           		}
-            }
+
         } catch (Exception e) {
             SVNUIPlugin.log(new Status(IStatus.ERROR, SVNUIPlugin.ID, TeamException.UNABLE,
                     "Property Exception", e)); //$NON-NLS-1$
@@ -240,7 +223,7 @@ public class SVNPropertyPage extends PropertyPage {
         
         Dialog.applyDialogFont(parent);
         
-        PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, IHelpContextIds.SVN_RESOURCE_PROPERTIES_PAGE);
+        WorkbenchHelp.setHelp(composite, IHelpContextIds.SVN_RESOURCE_PROPERTIES_PAGE);
 
         return composite;
     }

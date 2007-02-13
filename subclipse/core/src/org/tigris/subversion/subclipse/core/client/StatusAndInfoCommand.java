@@ -1,13 +1,12 @@
-/*******************************************************************************
- * Copyright (c) 2005, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+/******************************************************************************
+ * This program and the accompanying materials are made available under
+ * the terms of the Common Public License v1.0 which accompanies this
+ * distribution, and is available at the following URL:
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * Copyright(c) 2003-2005 by the authors indicated in the @author tags.
  *
- * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
+ * All Rights are Reserved by the various authors.
+ *******************************************************************************/
 package org.tigris.subversion.subclipse.core.client;
 
 import java.util.Arrays;
@@ -20,9 +19,13 @@ import org.tigris.subversion.subclipse.core.SVNException;
 import org.tigris.subversion.subclipse.core.commands.ISVNCommand;
 import org.tigris.subversion.subclipse.core.resources.RemoteResourceStatus;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
+import org.tigris.subversion.svnclientadapter.ISVNInfo;
 import org.tigris.subversion.svnclientadapter.ISVNStatus;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
+import org.tigris.subversion.svnclientadapter.SVNNodeKind;
 import org.tigris.subversion.svnclientadapter.SVNStatusKind;
+import org.tigris.subversion.svnclientadapter.SVNUrl;
+import org.tigris.subversion.svnclientadapter.SVNUrlUtils;
 
 /**
  * svn status + subsequent svn info command(s).
@@ -36,10 +39,14 @@ public class StatusAndInfoCommand extends StatusCommand implements ISVNCommand {
 	
 	private RemoteResourceStatus[] remoteStatuses;
 	private ISVNLocalResource svnResource;
+	private SVNUrl rootUrl;
+	private String rootPath;
 
     public StatusAndInfoCommand(ISVNLocalResource svnResource, boolean descend, boolean getAll, boolean contactServer) {
         super(svnResource.getFile(), descend, getAll, contactServer);
         this.svnResource = svnResource;
+        this.rootUrl = svnResource.getWorkspaceRoot().getLocalRoot().getUrl();
+        this.rootPath = svnResource.getWorkspaceRoot().getLocalRoot().getFile().getAbsolutePath();
     }
 
     protected void execute(final ISVNClientAdapter client, final IProgressMonitor monitor) throws SVNClientException {
@@ -82,22 +89,14 @@ public class StatusAndInfoCommand extends StatusCommand implements ISVNCommand {
         });
 
         for (int i = 0; i < statuses.length; i++) {
-        	ISVNStatus status = statuses[i];
-        	SVNStatusKind localTextStatus = status.getTextStatus();
-
-        	if (SVNStatusKind.UNVERSIONED.equals(localTextStatus)
-        			|| SVNStatusKind.ADDED.equals(localTextStatus)
-        			|| SVNStatusKind.IGNORED.equals(localTextStatus)
-        		)
+        	if ((SVNStatusKind.UNVERSIONED.equals(statuses[i].getTextStatus()) || (SVNStatusKind.ADDED.equals(statuses[i].getTextStatus()))))
         	{
-        		if (SVNStatusKind.NONE.equals(status.getRepositoryTextStatus()))
-        			result[i] = RemoteResourceStatus.NONE;
-        		else
-            		result[i] = new RemoteResourceStatus(statuses[i], getRevisionFor(statuses[i]));
+        		result[i] = RemoteResourceStatus.NONE;
         	}
         	else
         	{
-        		result[i] = new RemoteResourceStatus(statuses[i], getRevisionFor(statuses[i]));
+        		RemoteResourceStatus remoteStatus = new RemoteResourceStatus(statuses[i], getRevisionFor(statuses[i]));
+                result[i] = ensureStatusContainsRemoteData(remoteStatus, client, monitor);
         	}
         	monitor.worked(1);
         }	
@@ -108,4 +107,66 @@ public class StatusAndInfoCommand extends StatusCommand implements ISVNCommand {
     	}
     }
 
+    /**
+     * Ensure that the supplied <code>remoteStatus</code> contains all required data,
+     * (I.e. nodeKind for incoming resources, repository's lastChangedRevision for incoming modifications etc ... 
+     * @param remoteStatus
+     * @return
+     */
+    private RemoteResourceStatus ensureStatusContainsRemoteData(RemoteResourceStatus remoteStatus, final ISVNClientAdapter client, final IProgressMonitor monitor)
+    {
+    	//Some clientAdpater implementations (e.g. JavaSVN) do their job right, so there's no need to fetch additional data.
+    	if (client.statusReturnsRemoteInfo())
+    	{
+    		return remoteStatus;
+    	}
+    	
+    		
+		if (	//If some crucial data missing ..
+				(remoteStatus.getNodeKind() == SVNNodeKind.UNKNOWN) ||
+				(remoteStatus.getLastChangedDate() == null) ||
+				(remoteStatus.getLastChangedRevision() == null) ||
+				(remoteStatus.getLastCommitAuthor() == null) ||
+				(remoteStatus.getRepositoryRevision() == null) ||
+				(remoteStatus.getUrlString() == null) ||
+				//For outgoing changes we don't need to obtain server revisions ...
+				((SVNStatusKind.NONE != remoteStatus.getStatusKind()) &&
+				 (SVNStatusKind.NORMAL != remoteStatus.getStatusKind()))			
+			)
+		{
+			remoteStatus.updateFromInfo(fetchInfo(client, remoteStatus, monitor));
+		}
+    	
+    	return remoteStatus;
+    }
+    
+    /**
+     * Fetch SVNInfo for the supplied remote resource
+     * 
+     * @param client svnAdapter to run "info" command on
+     * @param statuse - RemoteResourceStatus which nodeKinds we want to get and set
+     * @throws SVNClientException
+     */
+    private ISVNInfo fetchInfo(ISVNClientAdapter client, RemoteResourceStatus status, final IProgressMonitor monitor)
+    {
+    	if (SVNStatusKind.DELETED.equals(status.getTextStatus())) return null;
+    	SVNUrl url = status.getUrl();
+    	if (url == null)
+    	{
+    		url = SVNUrlUtils.getUrlFromLocalFileName(status.getPathString(), rootUrl, rootPath);
+    	}
+        try {
+        	monitor.subTask(url.toString());
+        	if (SVNStatusKind.EXTERNAL.equals(status.getStatusKind()))
+        	{
+        		return client.getInfo(status.getFile());
+        	}
+        	else
+        	{
+        		return client.getInfo(url);
+        	}
+        } catch (SVNClientException e) {
+            return null;
+        }        
+    }
 }

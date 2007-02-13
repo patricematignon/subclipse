@@ -1,38 +1,33 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
  * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
+ *     IBM Corporation - initial API and implementation
+ *     Cédric Chabanois (cchabanois@ifrance.com) - modified for Subversion 
+ *******************************************************************************/
 package org.tigris.subversion.subclipse.core.resourcesListeners;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
-import org.tigris.subversion.subclipse.core.ISVNRunnable;
 import org.tigris.subversion.subclipse.core.Policy;
 import org.tigris.subversion.subclipse.core.SVNException;
 import org.tigris.subversion.subclipse.core.SVNProviderPlugin;
-import org.tigris.subversion.subclipse.core.status.StatusCacheManager;
 import org.tigris.subversion.svnclientadapter.SVNConstants;
 
 /**
@@ -69,8 +64,7 @@ public class SyncFileChangeListener implements IResourceChangeListener {
 	 */
 	public void resourceChanged(IResourceChangeEvent event) {
 		try {
-			final StatusCacheManager cacheManager = SVNProviderPlugin.getPlugin().getStatusCacheManager();
-			final ChangesCollector changesCollector = new ChangesCollector();
+			final Set changedContainers = new HashSet();
 			
 			event.getDelta().accept(new IResourceDeltaVisitor() {
 				public boolean visit(IResourceDelta delta) {
@@ -89,21 +83,6 @@ public class SyncFileChangeListener implements IResourceChangeListener {
 					String name = resource.getName();
 					int kind = delta.getKind();
 					
-					//We seem to receive repetitive ADD change events.
-					//Since we do not want to refresh the statuses again, we finish the visitor if we already have the statuses
-					try {
-						if ((resource.getType() == IResource.FOLDER) && (kind == IResourceDelta.ADDED) 
-								&& (cacheManager.hasCachedStatus(resource)) && (cacheManager.getStatus(resource).isManaged())) {
-							if(Policy.DEBUG_METAFILE_CHANGES) {
-								System.out.println("[svn] duplicte ADD change event registered in SyncFileChangeListener: " + resource); //$NON-NLS-1$
-							}
-							return false;
-						}
-					} catch (SVNException e) {
-						//The get status failed, so just proceed deeper as normal.
-						return true;
-					}
-					
 					// if the file has changed but not in a way that we care
 					// then ignore the change (e.g. marker changes to files).
 					if(kind == IResourceDelta.CHANGED && 
@@ -111,9 +90,9 @@ public class SyncFileChangeListener implements IResourceChangeListener {
 							return true;
 					}
 					
-					IContainer toBeNotified = null;
+					IResource toBeNotified = null;
 										
-					if(SVNProviderPlugin.getPlugin().isAdminDirectory(name)) {
+					if(name.equals(SVNConstants.SVN_DIRNAME)) {
 						handleSVNDir((IContainer)resource, kind);
 					}
 										
@@ -128,7 +107,7 @@ public class SyncFileChangeListener implements IResourceChangeListener {
 					}
 					
                     if(toBeNotified != null) {    
-                    	changesCollector.collectChange(toBeNotified);							
+						changedContainers.add(toBeNotified);							
 						if(Policy.DEBUG_METAFILE_CHANGES) {
 							System.out.println("[svn] metafile changed : " + resource.getFullPath()); //$NON-NLS-1$
 						}
@@ -139,8 +118,30 @@ public class SyncFileChangeListener implements IResourceChangeListener {
 				}
 			}, IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS);
 				
-			changesCollector.refreshChangedResources();
-			
+			if(!changedContainers.isEmpty()) {
+                for (Iterator it = changedContainers.iterator(); it.hasNext();){
+                    IContainer dotSvnContainer = (IContainer)it.next();
+                    IContainer container = dotSvnContainer.getParent();
+                    
+//                    IResource[] members = container.members(true);
+//                    dotSvnContainer.refreshLocal(IResource.DEPTH_ONE, new NullProgressMonitor());
+//                    for (int i = 0; i < members.length; i++) {
+//						if (members[i].getType() != IResource.FILE)
+//						{
+//							IResource childSvnDir = ((IContainer) members[i]).findMember(SVNConstants.SVN_DIRNAME);
+//							childSvnDir.refreshLocal(IResource.DEPTH_ONE, new NullProgressMonitor());
+//						}
+//					}
+
+                    // we update the members. Refresh can be useful in case of revert etc ...
+                    container.refreshLocal(IResource.DEPTH_ONE, new NullProgressMonitor());
+                    //ISVNLocalFolder svnContainer = (ISVNLocalFolder)SVNWorkspaceRoot.getSVNResourceFor(container);
+                    //svnContainer.refreshStatus(IResource.DEPTH_ONE);
+                    IResource[] refreshed = SVNProviderPlugin.getPlugin().getStatusCacheManager().refreshStatus(container, IResource.DEPTH_ONE);
+                    
+                    SVNProviderPlugin.broadcastSyncInfoChanges(refreshed);
+                    }                
+			}			
 		} catch(CoreException e) {
 			SVNProviderPlugin.log(e.getStatus());
         }
@@ -182,7 +183,7 @@ public class SyncFileChangeListener implements IResourceChangeListener {
 		IContainer parent = resource.getParent();		
 
 		if ((parent != null) && 
-		    (SVNProviderPlugin.getPlugin().isAdminDirectory(parent.getName())) && 
+		    (parent.getName().equals(SVNConstants.SVN_DIRNAME)) && 
 		    (parent.isTeamPrivateMember() || !parent.exists()) ) {
 			return true;
 		}
@@ -202,7 +203,7 @@ public class SyncFileChangeListener implements IResourceChangeListener {
 		IContainer parent = resource.getParent();		
 		
 		if ((parent != null) && 
-			(SVNProviderPlugin.getPlugin().isAdminDirectory(parent.getName())) && 
+			(parent.getName().equals(SVNConstants.SVN_DIRNAME)) && 
 			(parent.isTeamPrivateMember() || !parent.exists()) ) {
 			return true;
 		}
@@ -230,7 +231,7 @@ public class SyncFileChangeListener implements IResourceChangeListener {
 		// we then verify that grand-father is svn
 		parent = parent.getParent();
 		if ((parent != null) && 
-			(SVNProviderPlugin.getPlugin().isAdminDirectory(parent.getName())) && 
+			(parent.getName().equals(SVNConstants.SVN_DIRNAME)) && 
 			(parent.isTeamPrivateMember() || !parent.exists()) ) {
 			return true;
 		}
@@ -241,8 +242,7 @@ public class SyncFileChangeListener implements IResourceChangeListener {
 	
 	protected IContainer handleChangedEntries(IResource resource, int kind) {		
 		IContainer changedContainer = resource.getParent();
-		IContainer parent           = changedContainer.getParent();
-		if((parent != null) && parent.exists()) {
+		if(changedContainer.exists()) {
 			return changedContainer;
 		} else {
 			return null;
@@ -251,8 +251,7 @@ public class SyncFileChangeListener implements IResourceChangeListener {
 
 	protected IContainer handleChangedDirProps(IResource resource, int kind) {		
 		IContainer changedContainer = resource.getParent();
-		IContainer parent           = changedContainer.getParent();
-		if((parent != null) && parent.exists()) {
+		if(changedContainer.exists()) {
 			return changedContainer;
 		} else {
 			return null;
@@ -261,61 +260,12 @@ public class SyncFileChangeListener implements IResourceChangeListener {
 
 	protected IContainer handleChangedPropFile(IResource resource, int kind) {		
 		IContainer changedContainer = resource.getParent().getParent();
-		IContainer parent           = changedContainer.getParent();
-		if((parent != null) && parent.exists()) {
+		if(changedContainer.exists()) {
 			return changedContainer;
 		} else {
 			return null;
 		}
 	}
 
-	protected final static class ChangesCollector
-	{
-		private Map map = new HashMap();
-		
-		protected void collectChange(IContainer svnFolder)
-		{
-			IProject project = svnFolder.getProject();
-			Set changes = (Set) map.get(project);
-			if (changes == null) {
-				changes = new HashSet();
-				map.put(project, changes);
-			}
-			changes.add(svnFolder);
-		}
-		
-		protected void refreshChangedResources() throws CoreException
-		{
-			for (Iterator iter = map.entrySet().iterator(); iter.hasNext();) {
-				final Map.Entry element = (Map.Entry) iter.next();
-				SVNProviderPlugin.run(new ISVNRunnable() {
-					public void run(IProgressMonitor monitor) throws SVNException {
-						refreshProjectFolders((Set) element.getValue(), monitor);
-					}}, 
-					(IProject) element.getKey(), null);				
-			}
-		}
-		
-		protected void refreshProjectFolders(Set folders, IProgressMonitor monitor) throws SVNException
-		{
-			for (Iterator it = folders.iterator(); it.hasNext();) {
-				IContainer dotSvnContainer = (IContainer)it.next();
-				IContainer container = dotSvnContainer.getParent();
-
-				// we update the members. Refresh can be useful in case of revert etc ...
-				try {
-//					container.refreshLocal(IResource.DEPTH_ONE, Policy.subMonitorFor(monitor, 100, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
-					container.refreshLocal(IResource.DEPTH_ONE, new NullProgressMonitor());
-				} catch (CoreException e) {
-					throw SVNException.wrapException(e);
-				}
-				//ISVNLocalFolder svnContainer = (ISVNLocalFolder)SVNWorkspaceRoot.getSVNResourceFor(container);
-				//svnContainer.refreshStatus(IResource.DEPTH_ONE);
-				IResource[] refreshed = SVNProviderPlugin.getPlugin().getStatusCacheManager().refreshStatus(container, false);
-
-				SVNProviderPlugin.broadcastSyncInfoChanges(refreshed);
-			}                			
-		}					
-	}
 
 }

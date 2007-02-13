@@ -34,11 +34,147 @@
          point="org.eclipse.team.core.ignore">
       <ignore
             enabled="true"
+            pattern="RCS">
+      </ignore>
+      <ignore
+            enabled="true"
+            pattern="RCSLOG">
+      </ignore>
+      <ignore
+            enabled="true"
+            pattern="SCCS">
+      </ignore>
+      <ignore
+            enabled="true"
+            pattern="CVS.adm">
+      </ignore>
+      <ignore
+            enabled="true"
+            pattern="tags">
+      </ignore>
+      <ignore
+            enabled="true"
+            pattern="TAGS">
+      </ignore>
+      <ignore
+            enabled="true"
+            pattern=".make.state">
+      </ignore>
+      <ignore
+            enabled="true"
+            pattern=".nse_depinfo">
+      </ignore>
+      <ignore
+            enabled="true"
+            pattern="*~">
+      </ignore>
+      <ignore
+            enabled="true"
+            pattern="#*">
+      </ignore>
+      <ignore
+            enabled="true"
+            pattern=".#*">
+      </ignore>
+      <ignore
+            enabled="true"
+            pattern=",*">
+      </ignore>
+      <ignore
+            enabled="true"
+            pattern="_$*">
+      </ignore>
+      <ignore
+            enabled="true"
+            pattern="*$">
+      </ignore>
+      <ignore
+            enabled="true"
+            pattern="*.old">
+      </ignore>
+      <ignore
+            enabled="true"
+            pattern="*.bak">
+      </ignore>
+      <ignore
+            enabled="true"
+            pattern="*.BAK">
+      </ignore>
+      <ignore
+            enabled="true"
+            pattern="*.orig">
+      </ignore>
+      <ignore
+            enabled="true"
+            pattern="*.rej">
+      </ignore>
+      <ignore
+            enabled="true"
+            pattern=".del-*">
+      </ignore>
+      <ignore
+            enabled="true"
+            pattern="*.a">
+      </ignore>
+      <ignore
+            enabled="true"
+            pattern="*.olb">
+      </ignore>
+      <ignore
+            enabled="true"
+            pattern="*.obj">
+      </ignore>
+      <ignore
+            enabled="true"
+            pattern="*.so">
+      </ignore>
+      <ignore
+            enabled="true"
+            pattern="*.exe">
+      </ignore>
+      <ignore
+            enabled="true"
+            pattern="*.Z">
+      </ignore>
+      <ignore
+            enabled="true"
+            pattern="*.elc">
+      </ignore>
+      <ignore
+            enabled="true"
+            pattern="*.ln">
+      </ignore>
+      <ignore
+            enabled="true"
+            pattern=".DS_Store">
+      </ignore>
+      <ignore
+            enabled="false"
+            pattern="core">
+      </ignore>
+      <ignore
+            enabled="true"
             pattern=".svn">
       </ignore>
       <ignore
             enabled="true"
             pattern="_svn">
+      </ignore>
+      <ignore
+            enabled="true"
+            pattern="svn-commit*.tmp">
+      </ignore>
+      <ignore
+            enabled="true"
+            pattern="*.merge-right*">
+      </ignore>
+      <ignore
+            enabled="true"
+            pattern="*.merge-left*">
+      </ignore>
+      <ignore
+            enabled="true"
+            pattern="*.working">
       </ignore>
    </extension>
    
@@ -128,21 +264,6 @@ For example:
 
 foo      http://example.com/repos/zig
 foo/bar  -r 1234  http://example.com/repos/zag
-        </description>
-      </svnPropertyTypes>
-      <svnPropertyTypes
-            type="Boolean"
-            fileOrFolder="folder"
-            allowRecurse = "false"
-            name="DeferFileDelete">
-         <description>
-DeferFileDelete
-Set to &quot;true&quot; if your project is using some kind of generator or other process that
-updates versioned files by deleting and then recreating the files.  By setting this property
-you indicate that you do not want Delete operations to be immediately handled and turned into
-svn delete commands.  If the file is deleted and recreated, this will cause it to be recognized
-as a modification.  If the file is never recreated it will have a status of missing and can be
-deleted on commit or from the Show Pending Operations view.
         </description>
       </svnPropertyTypes>
  </extension>

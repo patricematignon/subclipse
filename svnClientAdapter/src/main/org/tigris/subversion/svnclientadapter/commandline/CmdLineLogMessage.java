@@ -1,13 +1,18 @@
-/*******************************************************************************
- * Copyright (c) 2003, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+/*
+ *  Copyright(c) 2003-2004 by the authors indicated in the @author tags.
  *
- * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
 package org.tigris.subversion.svnclientadapter.commandline;
 
 import java.io.ByteArrayInputStream;
@@ -137,8 +142,8 @@ class CmdLineLogMessage extends CmdLineXmlCommand implements ISVNLogMessage {
 		return msg;
 	}
 	
-    /* (non-Javadoc)
-     * @see java.lang.Object#toString()
+    /**
+     * @return The value of {@link #getMesssage()}.
      */
     public String toString() {
         return getMessage();
@@ -147,8 +152,7 @@ class CmdLineLogMessage extends CmdLineXmlCommand implements ISVNLogMessage {
     /**
      * creates CmdLineLogMessages from a xml string (see svn log --xml -v) 
      * @param cmdLineResults
-     * @return CmdLineLogMessage[] array created from the supplied xml
-     * @throws SVNClientException
+     * @return
      */
 	public static CmdLineLogMessage[] createLogMessages(byte[] cmdLineResults) throws SVNClientException {
 		Collection logMessages = new ArrayList();
@@ -189,26 +193,29 @@ class CmdLineLogMessage extends CmdLineXmlCommand implements ISVNLogMessage {
 				Node logEntry = nodes.item(i);
 				
 				Element authorNode = getFirstNamedElement(logEntry, "author");
-
-				Element dateNode;				
-				if (authorNode == null) {
-					dateNode = getFirstNamedElement(logEntry, "date");
-				} else {
-					dateNode = getNextNamedElement(authorNode, "date");	
-				}							
+				if (authorNode == null) throw new Exception("'author' tag expected under 'logentry'");
+				
+				Element dateNode = getNextNamedElement(authorNode, "date");
 				if (dateNode == null) throw new Exception("'date' tag expected under 'logentry'");
 
 				Element pathsNode = getNextNamedElement(dateNode, "paths");
+
 				Element msgNode = getNextNamedElement(pathsNode != null ? pathsNode : dateNode, "msg");
+
 				Node revisionAttribute = logEntry.getAttributes().getNamedItem("revision");
 
-                SVNRevision.Number rev = (revisionAttribute != null) ? Helper.toRevNum(revisionAttribute.getNodeValue()) : null;
-				String author = (authorNode != null) ? authorNode.getFirstChild().getNodeValue() : "";
+                SVNRevision.Number rev = Helper.toRevNum(revisionAttribute.getNodeValue());
+				String author = authorNode.getFirstChild().getNodeValue();
 				Date date = Helper.convertXMLDate(dateNode.getFirstChild().getNodeValue());
-				Node msgTextNode = msgNode.getFirstChild();
-                String msg = (msgTextNode != null) ? msgTextNode.getNodeValue() : "";
 
-                List paths = new ArrayList();
+				Node msgTextNode = msgNode.getFirstChild();
+                String msg;
+				if(msgTextNode != null)
+					msg = msgTextNode.getNodeValue();
+				else
+					msg = "";
+
+				List paths = new ArrayList();
 				Element pathNode = getFirstNamedElement(pathsNode, "path");
 				while (pathNode != null) {
                 	String path = pathNode.getFirstChild().getNodeValue();

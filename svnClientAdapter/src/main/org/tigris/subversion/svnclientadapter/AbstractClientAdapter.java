@@ -1,13 +1,18 @@
-/*******************************************************************************
- * Copyright (c) 2005, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+/*
+ *  Copyright(c) 2003-2004 by the authors indicated in the @author tags.
  *
- * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
 package org.tigris.subversion.svnclientadapter;
 
 import java.io.File;
@@ -82,12 +87,11 @@ public abstract class AbstractClientAdapter implements ISVNClientAdapter {
         if (pd == null)
             return list;
         String patterns = pd.getValue();
-        StringTokenizer st = new StringTokenizer(patterns,"\n\r");
+        StringTokenizer st = new StringTokenizer(patterns,"\n");
         while (st.hasMoreTokens()) {
             String entry = st.nextToken();
-            if ((entry != null) && (entry.length() > 0)) {
+            if (!entry.equals(""))
                 list.add(entry);
-            }
         }
         return list;
     }
@@ -114,13 +118,12 @@ public abstract class AbstractClientAdapter implements ISVNClientAdapter {
     public void setIgnoredPatterns(File path, List patterns) throws SVNClientException {
         if (!path.isDirectory())
             return;
-        String separator = System.getProperty("line.separator");
-        StringBuffer value = new StringBuffer();
+        String value ="";
         for (Iterator it = patterns.iterator(); it.hasNext();) {
             String pattern = (String)it.next();
-            value.append(pattern + separator);
+            value = value + '\n' + pattern;    
         }
-        propertySet(path, ISVNProperty.IGNORE, value.toString(), false);
+        propertySet(path, ISVNProperty.IGNORE, value, false);       
     }    
 
     /* (non-Javadoc)
@@ -178,66 +181,4 @@ public abstract class AbstractClientAdapter implements ISVNClientAdapter {
     public boolean canCommitAcrossWC() {
         return false;
     }
-    
-    public void mkdir(SVNUrl url, boolean makeParents, String message)
-            throws SVNClientException {
-        if (makeParents) {
-            SVNUrl parent = url.getParent();
-            if (parent != null) {
-		        ISVNInfo info = null;
-		        try {
-		            info = this.getInfo(parent);
-		        } catch (SVNClientException e) {
-		        }
-		        if (info == null)
-		            this.mkdir(parent, makeParents, message);
-            }
-        }
-        this.mkdir(url, message);
-    }
-    
-
-	/**
-	 * Answer whether running on Windows OS.
-	 * (Actual code extracted from org.apache.commons.lang.SystemUtils.IS_OS_WINDOWS)
-	 * (For such one simple method it does make sense to introduce dependency on whole commons-lang.jar)
-	 * @return true when the underlying 
-	 */
-	public static boolean isOsWindows()
-	{
-        try {
-            return System.getProperty("os.name").startsWith("Windows");
-        } catch (SecurityException ex) {
-            // we are not allowed to look at this property
-            return false;
-        }
-	}
-
-	public ISVNInfo getInfo(SVNUrl url) throws SVNClientException {
-		return getInfo(url, SVNRevision.HEAD, SVNRevision.HEAD);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#merge(org.tigris.subversion.svnclientadapter.SVNUrl, org.tigris.subversion.svnclientadapter.SVNRevision, org.tigris.subversion.svnclientadapter.SVNUrl, org.tigris.subversion.svnclientadapter.SVNRevision, java.io.File, boolean, boolean, boolean)
-	 */
-	public void merge(SVNUrl path1, SVNRevision revision1, SVNUrl path2, SVNRevision revision2, File localPath, boolean force, boolean recurse, boolean dryRun) throws SVNClientException {
-		merge(path1, revision1, path2, revision2, localPath, force, recurse, dryRun, false);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#merge(org.tigris.subversion.svnclientadapter.SVNUrl, org.tigris.subversion.svnclientadapter.SVNRevision, org.tigris.subversion.svnclientadapter.SVNUrl, org.tigris.subversion.svnclientadapter.SVNRevision, java.io.File, boolean, boolean)
-	 */
-	public void merge(SVNUrl path1, SVNRevision revision1, SVNUrl path2, SVNRevision revision2, File localPath, boolean force, boolean recurse) throws SVNClientException {
-		merge(path1, revision1, path2, revision2, localPath, force, recurse, false, false);
-	}
-	
-
-	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#propertyGet(org.tigris.subversion.svnclientadapter.SVNUrl, java.lang.String)
-	 */
-	public ISVNProperty propertyGet(SVNUrl url, String propertyName)
-		throws SVNClientException {
-		return propertyGet(url, SVNRevision.HEAD, SVNRevision.HEAD, propertyName);
-	}
-
 }

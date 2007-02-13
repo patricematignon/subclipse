@@ -1,13 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
  * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.tigris.subversion.subclipse.ui.compare;
 
 
@@ -39,7 +39,6 @@ import org.tigris.subversion.subclipse.core.ISVNRemoteResource;
 import org.tigris.subversion.subclipse.core.SVNException;
 import org.tigris.subversion.subclipse.ui.Policy;
 import org.tigris.subversion.subclipse.ui.SVNUIPlugin;
-import org.tigris.subversion.subclipse.ui.compare.internal.Utilities;
 import org.tigris.subversion.subclipse.ui.internal.Utils;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
 
@@ -54,7 +53,6 @@ public class SVNLocalCompareInput extends CompareEditorInput implements ISaveabl
 	private ISVNLocalResource resource;
 	private Shell shell;
 	private final ISVNRemoteResource remoteResource; // the remote resource to compare to or null if it does not exist
-	private boolean readOnly;
 	
     /**
      * Differencer that only uses teh status to determine if a file has changed
@@ -146,7 +144,7 @@ public class SVNLocalCompareInput extends CompareEditorInput implements ISaveabl
                 
                 if (svnResource instanceof ISVNLocalFolder) {
                     try {
-                        ISVNLocalResource[] members = (ISVNLocalResource[])((ISVNLocalFolder)svnResource).members(null, ISVNFolder.ALL_EXISTING_UNIGNORED_MEMBERS);
+                        ISVNLocalResource[] members = (ISVNLocalResource[])((ISVNLocalFolder)svnResource).members(null, ISVNFolder.ALL_EXISTING_MEMBERS);
                         for (int i= 0; i < members.length; i++) {
                             IStructureComparator child= createChild(members[i]);
                             if (child != null)
@@ -174,38 +172,17 @@ public class SVNLocalCompareInput extends CompareEditorInput implements ISaveabl
 	
 	/**
 	 * @throws SVNException
-	 * creates a SVNLocalCompareInput, allows setting whether the current local resource is read only or not.
+	 * creates a SVNCompareRevisionsInput  
 	 */
-	public SVNLocalCompareInput(ISVNLocalResource resource, SVNRevision revision, boolean readOnly) throws SVNException {
+	public SVNLocalCompareInput(ISVNLocalResource resource, SVNRevision revision) throws SVNException {
 		super(new CompareConfiguration());
         this.remoteRevision = revision;
-        this.readOnly = readOnly;
-        this.resource = resource;
+		this.resource = resource;
 		// SVNRevision can be any valid revision : BASE, HEAD, number ...
 		this.remoteResource = resource.getRemoteResource(revision);
         
         // remoteResouce can be null if there is no corresponding remote resource
         // (for example no base because resource has just been added)
-	}
-
-	/**
-	 * Constructor which allows 
-	 * @throws SVNException
-	 * creates a SVNLocalCompareInput, defaultin to read/write.  
-	 */
-	public SVNLocalCompareInput(ISVNLocalResource resource, SVNRevision revision) throws SVNException {
-		this(resource, revision, false);
-	}
-
-	/**
-	 * @throws SVNException
-	 * creates a SVNCompareRevisionsInput  
-	 */
-	public SVNLocalCompareInput(ISVNLocalResource resource, ISVNRemoteResource remoteResource) throws SVNException {
-		super(new CompareConfiguration());
-		this.resource = resource;
-		this.remoteResource = remoteResource;
-        this.remoteRevision = remoteResource.getRevision();
 	}
 	
 	
@@ -216,7 +193,7 @@ public class SVNLocalCompareInput extends CompareEditorInput implements ISaveabl
 		CompareConfiguration cc = getCompareConfiguration();
 		String resourceName = resource.getName();	
 		setTitle(Policy.bind("SVNCompareRevisionsInput.compareResourceAndVersions", new Object[] {resourceName})); //$NON-NLS-1$
-		cc.setLeftEditable(! readOnly);
+		cc.setLeftEditable(true);
 		cc.setRightEditable(false);
 		
 		String leftLabel = Policy.bind("SVNCompareRevisionsInput.workspace", new Object[] {resourceName}); //$NON-NLS-1$
@@ -231,19 +208,7 @@ public class SVNLocalCompareInput extends CompareEditorInput implements ISaveabl
 	protected Object prepareInput(IProgressMonitor monitor){
 		initLabels();
 		ITypedElement left = new SVNLocalResourceNode(resource);
-		ResourceEditionNode right = new ResourceEditionNode(remoteResource);
-		if(left.getType()==ITypedElement.FOLDER_TYPE){
-			right.setLocalResource((SVNLocalResourceNode) left);
-		}
-
-
-		String localCharset = Utilities.getCharset(resource.getIResource());
-		try {
-			right.setCharset(localCharset);
-		} catch (CoreException e) {
-			e.printStackTrace();
-		}
-
+		ITypedElement right = new ResourceEditionNode(remoteResource);
         if (SVNRevision.BASE.equals(remoteRevision)) {
             return new StatusAwareDifferencer().findDifferences(false, monitor,null,null,left,right);
         }

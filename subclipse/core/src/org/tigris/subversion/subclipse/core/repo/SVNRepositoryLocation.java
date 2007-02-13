@@ -1,13 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
  * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
+ *     IBM Corporation - initial API and implementation
+ *     Cédric Chabanois (cchabanois@ifrance.com) - modified for Subversion 
+ *******************************************************************************/
 package org.tigris.subversion.subclipse.core.repo;
 
 import java.net.MalformedURLException;
@@ -22,10 +23,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.eclipse.team.core.TeamException;
-import org.osgi.service.prefs.BackingStoreException;
-import org.osgi.service.prefs.Preferences;
 import org.tigris.subversion.subclipse.core.ISVNRemoteFile;
 import org.tigris.subversion.subclipse.core.ISVNRemoteFolder;
 import org.tigris.subversion.subclipse.core.ISVNRemoteResource;
@@ -38,7 +36,7 @@ import org.tigris.subversion.subclipse.core.client.NotificationListener;
 import org.tigris.subversion.subclipse.core.resources.RemoteFile;
 import org.tigris.subversion.subclipse.core.resources.RemoteFolder;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
-import org.tigris.subversion.svnclientadapter.ISVNInfo;
+import org.tigris.subversion.svnclientadapter.ISVNDirEntry;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
 import org.tigris.subversion.svnclientadapter.SVNUrl;
@@ -51,22 +49,6 @@ import org.tigris.subversion.svnclientadapter.SVNUrl;
  */
 public class SVNRepositoryLocation
 	implements ISVNRepositoryLocation, IUserInfo, IAdaptable {
-
-	/**
-	 * The name of the preferences node in the CVS preferences that contains
-	 * the known repositories as its children.
-	 */
-	public static final String PREF_REPOSITORIES_NODE = "repositories"; //$NON-NLS-1$
-	
-	/*
-	 * The name of the node in the default scope that has the default settings
-	 * for a repository.
-	 */
-	private static final String DEFAULT_REPOSITORY_SETTINGS_NODE = "default_repository_settings"; //$NON-NLS-1$
-
-	// Preference keys used to persist the state of the location
-	public static final String PREF_LOCATION = "location"; //$NON-NLS-1$
-	public static final String PREF_SERVER_ENCODING = "encoding"; //$NON-NLS-1$
 
 	// friendly name of the location
 	private String label = null; 
@@ -107,28 +89,6 @@ public class SVNRepositoryLocation
 		FAKE_URL = temp;
 	}
 
-	/**
-	 * Return the preferences node whose child nodes are the know repositories
-	 * @return a preferences node
-	 */
-	public static Preferences getParentPreferences() {
-		return SVNProviderPlugin.getPlugin().getInstancePreferences().node(PREF_REPOSITORIES_NODE);
-	}
-	
-	/**
-	 * Return a preferences node that contains suitabel defaults for a
-	 * repository location.
-	 * @return  a preferences node
-	 */
-	public static Preferences getDefaultPreferences() {
-		Preferences defaults = new DefaultScope().getNode(SVNProviderPlugin.ID).node(DEFAULT_REPOSITORY_SETTINGS_NODE);
-		defaults.put(PREF_SERVER_ENCODING, getDefaultEncoding());
-		return defaults;
-	}
-	
-	private static String getDefaultEncoding() {
-		return System.getProperty("file.encoding", "UTF-8"); //$NON-NLS-1$ //$NON-NLS-2$
-	}	
 	/*
 	 * Create a SVNRepositoryLocation from its composite parts.
 	 */
@@ -152,20 +112,10 @@ public class SVNRepositoryLocation
 				FAKE_URL,
 				getLocation(),
 				AUTH_SCHEME);
-				ensurePreferencesStored();
 		} catch (CoreException e) {
 			// We should probably wrap the CoreException here!
 			SVNProviderPlugin.log(e.getStatus());
 			throw new SVNException(IStatus.ERROR, IStatus.ERROR, Policy.bind("SVNRepositoryLocation.errorFlushing", getLocation()), e); //$NON-NLS-1$ 
-		}
-		// remove repo location from preferences
-		try {
-			if (hasPreferences()) {
-				internalGetPreferences().removeNode();
-				getParentPreferences().flush();
-			}
-		} catch (BackingStoreException e) {
-			SVNProviderPlugin.log(SVNException.wrapException(e));
 		}
 	}
 
@@ -225,28 +175,25 @@ public class SVNRepositoryLocation
 	 */
 	public ISVNRemoteFile getRemoteFile(SVNUrl url) throws SVNException{
 		ISVNClientAdapter svnClient = getSVNClient();
-		ISVNInfo info = null;
+		ISVNDirEntry dirEntry = null;
 		try {
-			if (this.getRepositoryRoot().equals(url))
-			    return new RemoteFile(this, url, SVNRevision.HEAD);
-			else
-			    info = svnClient.getInfo(url, SVNRevision.HEAD, SVNRevision.HEAD);
+			dirEntry = svnClient.getDirEntry(url, SVNRevision.HEAD);
 		} catch (SVNClientException e) {
 			throw new SVNException(
 				"Can't get latest remote resource for "
 					+ url);
 		}
 
-		if (info == null)
+		if (dirEntry == null)
 			return null; // no remote file
 		else {
 			return new RemoteFile(null, // we don't know its parent
 			this,
 				url,
 				SVNRevision.HEAD,
-				info.getLastChangedRevision(),
-				info.getLastChangedDate(),
-				info.getLastCommitAuthor());
+				dirEntry.getLastChangedRevision(),
+				dirEntry.getLastChangedDate(),
+				dirEntry.getLastCommitAuthor());
 		}		
 	}
 
@@ -390,8 +337,6 @@ public class SVNRepositoryLocation
     	password = null;
     	// Ensure that the receiver is known by the SVN provider
     	SVNProviderPlugin.getPlugin().getRepository(getLocation());
-    	// Ensure location is stored in plugin preferences
-    	ensurePreferencesStored();
     }
 
     /*
@@ -404,8 +349,7 @@ public class SVNRepositoryLocation
     	ISVNClientAdapter svnClient = getSVNClient();
     	try {
     		// we try to get the list of directories and files using the connection
-    		ISVNInfo info = svnClient.getInfo(getUrl());
-   		    repositoryRootUrl = info.getRepository();
+    		svnClient.getList(getUrl(), SVNRevision.HEAD, false);
     	} catch (SVNClientException e) {
     		// If the validation failed, dispose of any cached info
     		dispose();
@@ -607,63 +551,6 @@ public class SVNRepositoryLocation
 	public void setLabel(String label) {
 		this.label = label;
 	}
-	/*
-	 * Return the preferences node for this repository
-	 */
-	public Preferences getPreferences() {
-		if (!hasPreferences()) {
-			ensurePreferencesStored();
-		}
-		return internalGetPreferences();
-	}
-	
-	private Preferences internalGetPreferences() {
-		return getParentPreferences().node(getPreferenceName());
-	}
-	
-	private boolean hasPreferences() {
-		try {
-			return getParentPreferences().nodeExists(getPreferenceName());
-		} catch (Exception e) {
-			// FIXME: commented 2 lines below is how CVS did it. Did i do it right?
-			//CVSProviderPlugin.log(IStatus.ERROR, NLS.bind(CVSMessages.CVSRepositoryLocation_74, new String[] { getLocation(true) }), e); 
-			//return false;
-			SVNProviderPlugin.log(SVNException.wrapException(e));
-			return false;
-		}
-	}
-	
-	/**
-	 * Return a unique name that identifies this location but
-	 * does not contain any slashes (/). Also, do not use ':'.
-	 * Although a valid path character, the initial core implementation
-	 * didn't handle it well.
-	 */
-	private String getPreferenceName() {
-		return getLocation().replace('/', '%').replace(':', '%');
-	}
 
-	public void storePreferences() {
-		Preferences prefs = internalGetPreferences();
-		// Must store at least one preference in the node
-		prefs.put(PREF_LOCATION, getLocation());
-		flushPreferences();
-	}
-	
-	private void flushPreferences() {
-		try {
-			internalGetPreferences().flush();
-		} catch (BackingStoreException e) {
-			SVNProviderPlugin.log(SVNException.wrapException(e));
-		}
-	}
-	public void setUrl(SVNUrl url) {
-		this.url = url;
-	}
-	private void ensurePreferencesStored() {
-		if (!hasPreferences()) {
-			storePreferences();
-		}
-	}
 
 }

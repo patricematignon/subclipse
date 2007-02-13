@@ -1,18 +1,15 @@
-/*******************************************************************************
- * Copyright (c) 2004, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+/******************************************************************************
+ * This program and the accompanying materials are made available under
+ * the terms of the Common Public License v1.0 which accompanies this
+ * distribution, and is available at the following URL:
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * Copyright(c) 2003-2005 by the authors indicated in the @author tags.
  *
- * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
+ * All Rights are Reserved by the various authors.
+ *******************************************************************************/
 package org.tigris.subversion.subclipse.core.commands;
 
-import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.team.core.TeamException;
@@ -60,12 +57,10 @@ public class AddIgnoredPatternCommand implements ISVNCommand {
                 // broadcast changes to unmanaged children - they are the only candidates for being ignored
                 ISVNResource[] members = folder.members(null, ISVNFolder.UNMANAGED_MEMBERS);
                 IResource[] possiblesIgnores = new IResource[members.length];
-                for (int i = 0; i < members.length;i++) {
-                    possiblesIgnores[i] = ((ISVNLocalResource)members[i]).getIResource();
-                }
-                folder.refreshStatus(false);
+                for (int i = 0; i < members.length;i++)
+                    possiblesIgnores[i] = ((ISVNLocalResource)members[i]).getIResource(); 
+                folder.refreshStatus(IResource.DEPTH_ONE);
                 SVNProviderPlugin.broadcastSyncInfoChanges(possiblesIgnores);
-                broadcastNestedFolders(possiblesIgnores);
             }
             catch (SVNClientException e) {
                 throw SVNException.wrapException(e);
@@ -76,22 +71,5 @@ public class AddIgnoredPatternCommand implements ISVNCommand {
             monitor.done();
         }
 	}
-
-    /**
-     * @param resources
-     */
-    private void broadcastNestedFolders(IResource[] resources) {
-        for (int i = 0; i < resources.length;i++) {
-            if (resources[i].getType() == IResource.FOLDER) {
-                IFolder folder = (IFolder) resources[i];
-                try {
-                    IResource[] children = folder.members(true);
-                    SVNProviderPlugin.broadcastSyncInfoChanges(children);
-                    broadcastNestedFolders(children);
-                } catch (CoreException e1) {
-                }
-            }
-        }
-    }
     
 }

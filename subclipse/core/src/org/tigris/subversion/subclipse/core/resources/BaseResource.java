@@ -1,19 +1,18 @@
-/*******************************************************************************
- * Copyright (c) 2005, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+/* ***************************************************************************
+ * This program and the accompanying materials are made available under
+ * the terms of the Common Public License v1.0 which accompanies this
+ * distribution, and is available at the following URL:
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * Copyright(c) 2003-2005 by the authors indicated in the @author tags.
  *
- * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
+ * All Rights are Reserved by the various authors.
+ *
+ * ***************************************************************************/
 package org.tigris.subversion.subclipse.core.resources;
 
 import java.io.File;
 import java.util.Date;
 
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.PlatformObject;
@@ -22,29 +21,27 @@ import org.tigris.subversion.subclipse.core.ISVNRemoteFolder;
 import org.tigris.subversion.subclipse.core.ISVNRemoteResource;
 import org.tigris.subversion.subclipse.core.ISVNRepositoryLocation;
 import org.tigris.subversion.subclipse.core.SVNException;
+import org.tigris.subversion.subclipse.core.commands.GetLogsCommand;
+import org.tigris.subversion.subclipse.core.history.ILogEntry;
 import org.tigris.subversion.subclipse.core.util.Assert;
-import org.tigris.subversion.svnclientadapter.ISVNLogMessage;
-import org.tigris.subversion.svnclientadapter.SVNClientException;
 import org.tigris.subversion.svnclientadapter.SVNNodeKind;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
 import org.tigris.subversion.svnclientadapter.SVNUrl;
-import org.tigris.subversion.svnclientadapter.utils.SVNUrlUtils;
+import org.tigris.subversion.svnclientadapter.SVNUrlUtils;
 
 /**
  * Represents handles to SVN resource on the base (pristine copy).
  * Synchronization information is taken from the .svn subdirectories. 
  *
  * @see BaseFolder
- * @see BaseFile
+ * @see BaselFile
  */
 public abstract class BaseResource extends PlatformObject implements ISVNRemoteResource {
 
-	private String charset = null;
 	protected LocalResourceStatus localResourceStatus;
 
 	/**
 	 * Constructor for BaseResource.
-	 * @param localResourceStatus
 	 */
 	public BaseResource(LocalResourceStatus localResourceStatus)
 	{
@@ -53,21 +50,9 @@ public abstract class BaseResource extends PlatformObject implements ISVNRemoteR
 	}
 
 	/**
-	 * Constructor for BaseResource.
-	 * @param localResourceStatus
-	 * @param charset
-	 */
-	public BaseResource(LocalResourceStatus localResourceStatus, String charset)
-	{
-		Assert.isNotNull(localResourceStatus);
-		this.localResourceStatus = localResourceStatus;
-		this.charset = charset;
-	}
-
-	/**
 	 * Create a BaseFile or BaseFolder according to nodeKind of the given status.
 	 * @param localResourceStatus
-	 * @return newly constructed BaseFile or BaseFolder instance
+	 * @return
 	 */
 	public static BaseResource from(LocalResourceStatus localResourceStatus)
 	{
@@ -166,7 +151,7 @@ public abstract class BaseResource extends PlatformObject implements ISVNRemoteR
 
     /**
      * Get resource file
-     * @return a file corresponding to base resource
+     * @return
      */
     public File getFile()
     {
@@ -175,11 +160,11 @@ public abstract class BaseResource extends PlatformObject implements ISVNRemoteR
 
     /**
      * Get resource path
-     * @return a path corresponding to base resource
+     * @return
      */
     public IPath getPath()
     {
-    	return localResourceStatus.getIPath();
+    	return localResourceStatus.getPath();
     }    
     
     /* (non-Javadoc)
@@ -189,24 +174,16 @@ public abstract class BaseResource extends PlatformObject implements ISVNRemoteR
         return SVNUrlUtils.getRelativePath(getRepository().getUrl(), getUrl(), true);
     }    
 
-    public ISVNLogMessage[] getLogMessages(SVNRevision pegRevision,
-			SVNRevision revisionStart, SVNRevision revisionEnd,
-			boolean stopOnCopy, boolean fetchChangePath, long limit)
-			throws TeamException {
+    /* (non-Javadoc)
+     * @see org.tigris.subversion.subclipse.core.ISVNRemoteResource#getLogEntries(org.eclipse.core.runtime.IProgressMonitor)
+     */
+    public ILogEntry[] getLogEntries(IProgressMonitor monitor) throws SVNException {
+        GetLogsCommand command = new GetLogsCommand(this);
+        command.run(monitor);
+        return command.getLogEntries();
+    }
 
-		try {
-			return getRepository().getSVNClient().getLogMessages(getFile(),
-					revisionStart, revisionEnd, stopOnCopy, fetchChangePath,
-					limit);
-		} catch (SVNClientException e) {
-			throw new TeamException("Failed in BaseResource.getLogMessages()",
-					e);
-		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see org.tigris.subversion.subclipse.core.ISVNRemoteResource#exists(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public boolean exists(IProgressMonitor monitor) throws TeamException
@@ -221,29 +198,12 @@ public abstract class BaseResource extends PlatformObject implements ISVNRemoteR
 		return null;
 	}
 	
-	/**
-	 * @return charset same as local resource.
-	 */
-	public String getCharset(){
-		return charset;
-	}
-	
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
 	public String toString()
 	{
-		return (localResourceStatus != null) ? localResourceStatus.getPath() : "";
+		return (localResourceStatus != null) ? localResourceStatus.getPathString() : "";
 	}
 
-	/* (non-Javadoc)
-	 * @see org.tigris.subversion.subclipse.core.ISVNResource#getResource()
-	 */
-	public IResource getResource() {
-		try {
-			return localResourceStatus.getResource();
-		} catch (SVNException e) {
-			return null;
-		}
-	}
 }

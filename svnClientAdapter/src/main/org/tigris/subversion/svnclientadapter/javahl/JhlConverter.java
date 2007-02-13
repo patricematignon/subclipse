@@ -1,13 +1,18 @@
-/*******************************************************************************
- * Copyright (c) 2004, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+/*
+ *  Copyright(c) 2003-2004 by the authors indicated in the @author tags.
  *
- * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
 package org.tigris.subversion.svnclientadapter.javahl;
 
 import java.util.logging.Logger;
@@ -22,7 +27,9 @@ import org.tigris.subversion.javahl.RevisionKind;
 import org.tigris.subversion.javahl.ScheduleKind;
 import org.tigris.subversion.javahl.Status;
 import org.tigris.subversion.javahl.StatusKind;
+import org.tigris.subversion.svnclientadapter.ISVNLogMessage;
 import org.tigris.subversion.svnclientadapter.ISVNLogMessageChangePath;
+import org.tigris.subversion.svnclientadapter.ISVNStatus;
 import org.tigris.subversion.svnclientadapter.SVNLogMessageChangePath;
 import org.tigris.subversion.svnclientadapter.SVNNodeKind;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
@@ -42,11 +49,6 @@ public class JhlConverter {
 		//non-instantiable
 	}
 	
-	/**
-	 * Convert clientAdapter's {@link SVNRevision} into JavaHL's {@link Revision}
-	 * @param svnRevision
-	 * @return a {@link Revision} representing suppplied SVNRevision
-	 */
     public static Revision convert(SVNRevision svnRevision) {
         switch(svnRevision.getKind()) {
             case SVNRevision.Kind.base : return Revision.BASE;
@@ -64,12 +66,7 @@ public class JhlConverter {
         }
     }
 
-	/**
-	 * Convert JavaHL's {@link Revision} into clientAdapter's {@link SVNRevision} 
-	 * @param rev
-	 * @return a {@link SVNRevision} representing suppplied Revision
-	 */
-	public static SVNRevision convert(Revision rev) {
+	static SVNRevision convert(Revision rev) {
 		switch (rev.getKind()) {
 			case RevisionKind.base :
 				return SVNRevision.BASE;
@@ -158,7 +155,7 @@ public class JhlConverter {
 	/**
 	 * Wrap everything up.
 	 * @param dirEntry
-	 * @return an JhlDirEntry[] array constructed from the given DirEntry[] 
+	 * @return
 	 */
 	static JhlDirEntry[] convert(DirEntry[] dirEntry) {
 		JhlDirEntry[] entries = new JhlDirEntry[dirEntry.length];
@@ -172,7 +169,7 @@ public class JhlConverter {
 		return new JhlDirEntry(dirEntry);
 	}
 
-	static JhlLogMessage[] convert(LogMessage[] msg) {
+	static ISVNLogMessage[] convert(LogMessage[] msg) {
 		JhlLogMessage[] messages = new JhlLogMessage[msg.length];
 		for(int i=0; i < msg.length; i++) {
 			messages[i] = new JhlLogMessage(msg[i]);
@@ -180,7 +177,7 @@ public class JhlConverter {
 		return messages;
 	}
     
-    public static JhlStatus[] convert(Status[] status) {
+    static ISVNStatus[] convert(Status[] status) {
         JhlStatus[] jhlStatus = new JhlStatus[status.length];
         for(int i=0; i < status.length; i++) {
             jhlStatus[i] = new JhlStatus(status[i]);
@@ -193,7 +190,7 @@ public class JhlConverter {
             return new SVNLogMessageChangePath[0];
         SVNLogMessageChangePath[] jhlChangePaths = new SVNLogMessageChangePath[changePaths.length];
         for(int i=0; i < changePaths.length; i++) {
-        	jhlChangePaths[i] = new JhlLogMessageChangePath(changePaths[i]);
+        	jhlChangePaths[i] = new SVNLogMessageChangePath(changePaths[i]);
         }
         return jhlChangePaths;
     }

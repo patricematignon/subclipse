@@ -1,24 +1,22 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
  * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.tigris.subversion.subclipse.ui.subscriber;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.RepositoryProvider;
@@ -77,7 +75,7 @@ public abstract class SVNSynchronizeOperation extends SynchronizeModelOperation 
 	/*
 	 * Divide the sync info for the operation by project
 	 */
-	protected Map getProjectSyncInfoSetMap(SyncInfoSet syncSet) {
+	private Map getProjectSyncInfoSetMap(SyncInfoSet syncSet) {
 		Map map = new HashMap();
 		SyncInfo[] infos = syncSet.getSyncInfos();
 		for (int i = 0; i < infos.length; i++) {
@@ -91,32 +89,6 @@ public abstract class SVNSynchronizeOperation extends SynchronizeModelOperation 
 			set.add(info);
 		}
 		return map;
-	}
-
-    /**
-     * @param IResource[] selectedResources
-     * @param SyncInfoSet selections
-     * @return resources that belong to current project
-     * 
-     * The Synch view runs operations once for each selected
-     * project.  selectedResources contains all of the selected resources
-     * across projects so we need to reduce the array to just the selected 
-     * resources associated with the SyncInfoSet.  To do that we get the
-     * IProject associated with the first resource in the set, and then
-     * create an array from resources of just those resources that belong
-     * to the same IProject.
-     * 
-     */	
-	protected IResource[] extractResources(IResource[] selectedResources, SyncInfoSet set) {
-        IResource[] setResources = set.getResources();
-		IProject project = setResources[0].getProject();
-		ArrayList projectResources = new ArrayList();
-		for (int i = 0; i < selectedResources.length; i++) {
-			if (selectedResources[i].getProject().equals(project)) projectResources.add(selectedResources[i]);
-		}
-		IResource[] resourceArray = new IResource[projectResources.size()];
-		projectResources.toArray(resourceArray);
-        return resourceArray;		
 	}
 	
 	/**

@@ -1,30 +1,25 @@
-/*******************************************************************************
- * Copyright (c) 2005, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+/******************************************************************************
+ * This program and the accompanying materials are made available under
+ * the terms of the Common Public License v1.0 which accompanies this
+ * distribution, and is available at the following URL:
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * Copyright(c) 2003-2005 by the authors indicated in the @author tags.
  *
- * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
+ * All Rights are Reserved by the various authors.
+ *******************************************************************************/
 package org.tigris.subversion.subclipse.core.client;
 
 import java.io.File;
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.IPath;
 import org.tigris.subversion.subclipse.core.SVNException;
 import org.tigris.subversion.subclipse.core.resources.LocalResourceStatus;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
-import org.tigris.subversion.svnclientadapter.ISVNInfo;
 import org.tigris.subversion.svnclientadapter.ISVNNotifyListener;
 import org.tigris.subversion.svnclientadapter.ISVNStatus;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
 import org.tigris.subversion.svnclientadapter.SVNNodeKind;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
-import org.tigris.subversion.svnclientadapter.SVNStatusKind;
-import org.tigris.subversion.svnclientadapter.SVNUrl;
 
 /**
  * Peek for (get) the resource status.
@@ -33,20 +28,12 @@ import org.tigris.subversion.svnclientadapter.SVNUrl;
  */
 public class PeekStatusCommand {
     private final IResource resource;
-    private final IPath     path;
 
     private ISVNStatus status = null;
-    private ISVNInfo info = null;
     protected SVNRevision.Number revision;
 
     public PeekStatusCommand(IResource resource) {
         this.resource = resource;
-        this.path     = null;
-    }
-
-    public PeekStatusCommand(IPath path) {
-        this.resource = null;
-        this.path     = path;
     }
 
     public void execute(ISVNClientAdapter client) throws SVNException {
@@ -64,19 +51,13 @@ public class PeekStatusCommand {
 
         try{
             client.addNotifyListener( revisionListener );
-            File file;
-            if (resource != null)
-            	file = resource.getLocation().toFile();
-            else
-            	file = path.toFile();
+            File file = resource.getLocation().toFile();
             status = null;
             ISVNStatus[] statuses = client.getStatus( file, false, true, false);
             for (int i = 0; i < statuses.length; i++) {
 				if (file.equals(statuses[i].getFile()))
 				{
 					status = statuses[i];
-					if (status.getUrl() == null && !(status.getTextStatus() == SVNStatusKind.UNVERSIONED))
-						info = client.getInfo(status.getFile());
 					break;
 				}
 			}
@@ -95,22 +76,10 @@ public class PeekStatusCommand {
 
     public LocalResourceStatus getLocalResourceStatus()
     {    	
-    	return (status != null) ? new LocalResourceStatus(status, getURL(status)) : null;
+    	return (status != null) ? new LocalResourceStatus(status) : null;
     }
     
     public SVNRevision.Number getRevision() {
         return revision;
     }
-
-
-    // getStatuses returns null URL for svn:externals folder.  This will
-    // get the URL using svn info command on the local resource
-	private String getURL(ISVNStatus status) {
-		String url = status.getUrlString();
-		if (url == null && info != null) {
-	    	SVNUrl svnurl = info.getUrl();
-	    	url = (svnurl != null) ? svnurl.toString() : null;
-		}
-		return url;
-	}
 }

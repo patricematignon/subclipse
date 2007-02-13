@@ -1,18 +1,9 @@
-/*******************************************************************************
- * Copyright (c) 2004, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
+/*
+ * Created on 20 Ιουλ 2004
+ */
 package org.tigris.subversion.subclipse.core.sync;
 
-import org.eclipse.core.resources.IEncodedStorage;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.core.variants.IResourceVariant;
@@ -117,13 +108,6 @@ public class SVNStatusSyncInfo extends SyncInfo {
 	public String getLocalContentIdentifier() {
 		return (baseStatusInfo.getLastChangedRevision() != null) ? baseStatusInfo.getLastChangedRevision().toString() : null;
 	}
-	
-	/**
-	 * Returns the remote status information of this SyncInfo
-	 */
-	public RemoteResourceStatus getRemoteResourceStatus() {
-		return remoteStatusInfo;
-	}
 
     /* (non-Javadoc)
      * @see org.eclipse.team.core.synchronize.SyncInfo#calculateKind()
@@ -146,27 +130,16 @@ public class SVNStatusSyncInfo extends SyncInfo {
         //this makes sense for directories only - they still exists when they are being deleted
         else if ( isDeletion(localKind))
         {
-        	if ((IResource.FOLDER == local.getType() || IResource.PROJECT == local.getType())) {
-        		if (isNotModified(repositoryKind)) {
-        			if (isOutOfDate())
-        				return SyncInfo.CONFLICTING | SyncInfo.DELETION;
-        			else
-        				return SyncInfo.OUTGOING | SyncInfo.DELETION;
-        		} else
-        			return SyncInfo.CONFLICTING | SyncInfo.DELETION;
-        	}
+        	if ((IResource.FOLDER == local.getType()) 
+        			&& (isNotModified(repositoryKind))) return SyncInfo.OUTGOING | SyncInfo.DELETION;
         }
         else if( isChange(localKind) ) {
             if( isChange( repositoryKind )
              || isAddition( repositoryKind ) 
              || isDeletion( repositoryKind ))
                 return SyncInfo.CONFLICTING | SyncInfo.CHANGE;
-            else {
-            	if ((IResource.FOLDER == local.getType() || IResource.PROJECT == local.getType()) && isOutOfDate())
-            		return SyncInfo.CONFLICTING | SyncInfo.CHANGE;
-            	else
-            		return SyncInfo.OUTGOING | SyncInfo.CHANGE;
-            }
+            else
+                return SyncInfo.OUTGOING | SyncInfo.CHANGE;
         }
         else if( isAddition( localKind ) ) {
             if( isAddition( repositoryKind ) )
@@ -174,13 +147,8 @@ public class SVNStatusSyncInfo extends SyncInfo {
             return SyncInfo.OUTGOING | SyncInfo.ADDITION;
         }
         else if( isNotModified(localKind) ) {
-            if( isNotModified( repositoryKind) ) {
-            	if ((IResource.FOLDER == local.getType() || IResource.PROJECT == local.getType()) && isOutOfDate())
-            		return SyncInfo.INCOMING | SyncInfo.CHANGE;
+            if( isNotModified( repositoryKind) )
                 return SyncInfo.IN_SYNC;
-            }
-            if ((localKind == SVNStatusKind.IGNORED) && (repositoryKind == SVNStatusKind.ADDED))
-	                return SyncInfo.CONFLICTING | SyncInfo.ADDITION;
             if( repositoryKind == SVNStatusKind.DELETED )
                 return SyncInfo.INCOMING | SyncInfo.DELETION;
             if( repositoryKind == SVNStatusKind.ADDED )
@@ -193,31 +161,15 @@ public class SVNStatusSyncInfo extends SyncInfo {
             return SyncInfo.INCOMING | SyncInfo.CHANGE;
         }
         else if( repositoryKind == SVNStatusKind.EXTERNAL ) {
-            if (localKind == SVNStatusKind.EXTERNAL)
-            	return SyncInfo.IN_SYNC;
-        }
-        else if ((localKind == SVNStatusKind.EXTERNAL) && (remoteStatusInfo == null))
-        {
-        	return SyncInfo.IN_SYNC;
+        	if ( localKind == SVNStatusKind.EXTERNAL)
+        		return SyncInfo.OUTGOING | SyncInfo.CHANGE;
         }
         
         return super.calculateKind();
     }
     
-    private boolean isOutOfDate() {
-    	if (remoteStatusInfo == null || baseStatusInfo == null)
-    		return false;
-    	if (remoteStatusInfo.getLastChangedRevision() == null || baseStatusInfo.getLastChangedRevision() == null)
-    		return false;
-    	if (remoteStatusInfo.getLastChangedRevision().getNumber() > baseStatusInfo.getLastChangedRevision().getNumber())
-    		return true;
-    	else
-    		return false;
-    }
-    
     private boolean isDeletion(SVNStatusKind kind) {
-        return kind == SVNStatusKind.DELETED
-			 || kind == SVNStatusKind.MISSING;
+        return kind == SVNStatusKind.DELETED;
     }
 
     private boolean isChange(SVNStatusKind kind) {
@@ -242,13 +194,7 @@ public class SVNStatusSyncInfo extends SyncInfo {
           return null;
         
         if( local.getType() == IResource.FILE ) {
-        	String charset = null;
-        	try {
-        		charset = ((IEncodedStorage)local).getCharset();
-        	} catch (CoreException e) {
-        		e.printStackTrace();
-        	}
-        	return new BaseFile(baseStatusInfo, charset);
+            return new BaseFile(baseStatusInfo);
         }
         else {
             return new BaseFolder(baseStatusInfo);

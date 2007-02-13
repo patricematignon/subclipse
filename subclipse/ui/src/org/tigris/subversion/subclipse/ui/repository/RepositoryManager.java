@@ -1,13 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
  * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
+ *     IBM Corporation - initial API and implementation
+ *     Cédric Chabanois (cchabanois@ifrance.com) - modified for Subversion 
+ *******************************************************************************/
 package org.tigris.subversion.subclipse.ui.repository;
 
 
@@ -25,7 +26,6 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
@@ -58,8 +58,8 @@ public class RepositoryManager {
 	/**
 	 * Answer an array of all known remote roots.
 	 */
-	public ISVNRepositoryLocation[] getKnownRepositoryLocations(IProgressMonitor monitor) {
-		return SVNProviderPlugin.getPlugin().getRepositories().getKnownRepositories(monitor);
+	public ISVNRepositoryLocation[] getKnownRepositoryLocations() {
+		return SVNProviderPlugin.getPlugin().getRepositories().getKnownRepositories();
 	}
 	
 	/**
@@ -145,7 +145,6 @@ public class RepositoryManager {
      */	
 	public void startup() {
         commentsManager.loadCommentHistory();
-        commentsManager.loadCommentTemplates();
         keyFilesManager.loadKeyFileHistory();
 		
         // we listen to changes to repository so that we can advise concerned views
@@ -180,7 +179,6 @@ public class RepositoryManager {
      */
 	public void shutdown() throws TeamException {
         commentsManager.saveCommentHistory();
-        commentsManager.saveCommentTemplates();
         keyFilesManager.saveKeyFilesHistory();
 	}
 
@@ -290,10 +288,10 @@ public class RepositoryManager {
         shell.getDisplay().syncExec(new Runnable() {
             public void run() {
                 result[0] = dialog.open();
-                if (result[0] != Window.OK) return;
+                if (result[0] != ReleaseCommentDialog.OK) return;
             }
         });
-        if (result[0] != Window.OK) return null;
+        if (result[0] != ReleaseCommentDialog.OK) return null;
         return dialog.getComment();
     }	
 

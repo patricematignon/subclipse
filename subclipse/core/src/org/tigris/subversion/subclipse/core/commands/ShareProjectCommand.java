@@ -1,16 +1,16 @@
-/*******************************************************************************
- * Copyright (c) 2004, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+/******************************************************************************
+ * This program and the accompanying materials are made available under
+ * the terms of the Common Public License v1.0 which accompanies this
+ * distribution, and is available at the following URL:
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * Copyright(c) 2003-2005 by the authors indicated in the @author tags.
  *
- * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
+ * All Rights are Reserved by the various authors.
+ *******************************************************************************/
 package org.tigris.subversion.subclipse.core.commands;
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
@@ -19,8 +19,6 @@ import org.tigris.subversion.subclipse.core.ISVNRunnable;
 import org.tigris.subversion.subclipse.core.Policy;
 import org.tigris.subversion.subclipse.core.SVNException;
 import org.tigris.subversion.subclipse.core.SVNProviderPlugin;
-import org.tigris.subversion.subclipse.core.client.OperationManager;
-import org.tigris.subversion.subclipse.core.client.OperationProgressNotifyListener;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
@@ -44,8 +42,6 @@ public class ShareProjectCommand implements ISVNCommand {
 	protected IProject project;
 
 	protected String remoteDirName;
-	
-	protected String comment;
 
     /**
      * if remoteDirName is null, the name of the project is used    
@@ -82,25 +78,17 @@ public class ShareProjectCommand implements ISVNCommand {
 			// perform the workspace modifications in a runnable
             SVNProviderPlugin.run(new ISVNRunnable() {
     				public void run(IProgressMonitor pm) throws SVNException {
-    						String message;
-    						if (comment == null)
-    							message = Policy.bind("SVNProvider.initialImport"); //$NON-NLS-1$
-    						else
-    							message = comment;
+							String message = Policy
+									.bind("SVNProvider.initialImport"); //$NON-NLS-1$
 
 							try {
 								// create the remote dir
 								SVNUrl url = location.getUrl().appendPath(remoteDirName);
-								svnClient.mkdir(url, true, message);
+								svnClient.mkdir(url, message);
 
-								try {
-									OperationManager.getInstance().beginOperation(svnClient, new OperationProgressNotifyListener(pm));
-									// checkout it so that we have .svn
-									svnClient.checkout(url, project.getLocation()
-											.toFile(), SVNRevision.HEAD, false);
-								} finally {
-									OperationManager.getInstance().endOperation();
-								}
+								// checkout it so that we have .svn
+								svnClient.checkout(url, project.getLocation()
+										.toFile(), SVNRevision.HEAD, false);
 							} catch (SVNClientException e) {
 								throw new SVNException(
 										"Error while creating module: "
@@ -114,7 +102,7 @@ public class ShareProjectCommand implements ISVNCommand {
 							// hasRemote value
 							SVNProviderPlugin.getPlugin()
 									.getStatusCacheManager().refreshStatus(
-											project, true);
+											project, IResource.DEPTH_INFINITE);
 
 							try {
 								//Register it with Team. 
@@ -138,10 +126,6 @@ public class ShareProjectCommand implements ISVNCommand {
 		if (!alreadyExists)
 			SVNProviderPlugin.getPlugin().getRepositories()
 					.addOrUpdateRepository(location);
-	}
-
-	public void setComment(String comment) {
-		this.comment = comment;
 	}
 
 }

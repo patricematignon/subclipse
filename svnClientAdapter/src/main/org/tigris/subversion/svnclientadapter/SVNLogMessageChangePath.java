@@ -1,21 +1,47 @@
-/*******************************************************************************
- * Copyright (c) 2004, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+/*
+ *  Copyright(c) 2003-2004 by the authors indicated in the @author tags.
  *
- * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
 package org.tigris.subversion.svnclientadapter;
 
+import org.tigris.subversion.javahl.ChangePath;
+
 /**
- * A generic implementation of the {@link ISVNLogMessageChangePath} interface.
- * 
+ * This class has been copied from javahl and modified a bit.
+ * We cannot use original ChangePath because constructor visibility is package
  */
 public class SVNLogMessageChangePath implements ISVNLogMessageChangePath
 {
+    public SVNLogMessageChangePath(ChangePath changePath)
+    {
+        this.path = changePath.getPath();
+        this.copySrcPath = changePath.getCopySrcPath();
+        this.action = changePath.getAction();
+        this.copySrcRevision = null;
+        if (changePath.getCopySrcRevision() != -1) {
+            this.copySrcRevision = new SVNRevision.Number(changePath.getCopySrcRevision());	
+        }
+    }
+
+	public SVNLogMessageChangePath(String path, SVNRevision.Number copySrcRevision, String copySrcPath, char action)
+    {
+        this.path = path;
+        this.copySrcRevision = copySrcRevision;
+        this.copySrcPath = copySrcPath;
+        this.action = action;
+    }
+
     /** Path of commited item */
     private String path;
 
@@ -29,46 +55,35 @@ public class SVNLogMessageChangePath implements ISVNLogMessageChangePath
     private char action;
 
     /**
-     * Constructor
-     * @param path
-     * @param copySrcRevision
-     * @param copySrcPath
-     * @param action
-     */
-	public SVNLogMessageChangePath(String path, SVNRevision.Number copySrcRevision, String copySrcPath, char action)
-    {
-        this.path = path;
-        this.copySrcRevision = copySrcRevision;
-        this.copySrcPath = copySrcPath;
-        this.action = action;
-    }
-
-    /* (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNLogMessageChangePath#getPath()
+     * Retrieve the path to the commited item
+     * @return  the path to the commited item
      */
     public String getPath()
     {
         return path;
     }
 
-    /* (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNLogMessageChangePath#getCopySrcRevision()
+    /**
+     * Retrieve the copy source revision (if any)
+     * @return  the copy source revision (if any)
      */
     public SVNRevision.Number getCopySrcRevision()
     {
     	return copySrcRevision;    
     }
 
-    /* (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNLogMessageChangePath#getCopySrcPath()
+    /**
+     * Retrieve the copy source path (if any)
+     * @return  the copy source path (if any)
      */
     public String getCopySrcPath()
     {
         return copySrcPath;
     }
 
-    /* (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNLogMessageChangePath#getAction()
+    /**
+     * Retrieve action performed
+     * @return  action performed
      */
     public char getAction()
     {

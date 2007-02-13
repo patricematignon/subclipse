@@ -1,13 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
  * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
+ *     IBM Corporation - initial API and implementation
+ *     Cédric Chabanois (cchabanois@ifrance.com) - modified for Subversion 
+ *******************************************************************************/
 package org.tigris.subversion.subclipse.ui.actions;
 
 import java.lang.reflect.InvocationTargetException;
@@ -26,15 +27,14 @@ import org.tigris.subversion.subclipse.core.ISVNLocalResource;
 import org.tigris.subversion.subclipse.core.SVNException;
 import org.tigris.subversion.subclipse.core.SVNTeamProvider;
 import org.tigris.subversion.subclipse.core.resources.SVNWorkspaceRoot;
-import org.tigris.subversion.subclipse.ui.ISVNUIConstants;
 import org.tigris.subversion.subclipse.ui.Policy;
 
 /**
  * AddAction performs a 'svn add' command on the selected resources. If a
  * container is selected, its children are recursively added.
  */
-public class AddAction extends WorkbenchWindowAction {
-
+public class AddAction extends WorkspaceAction {
+	
 	/*
 	 * @see SVNAction#execute()
 	 */
@@ -129,11 +129,6 @@ public class AddAction extends WorkbenchWindowAction {
 		IResource resource = svnResource.getIResource();
 		if (resource.isLinked()) return false;
 		return super.isEnabledForSVNResource(svnResource);
-	}
-
-	protected String getImageId()
-	{
-		return ISVNUIConstants.IMG_MENU_ADD;
 	}
 
 }

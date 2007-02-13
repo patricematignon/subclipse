@@ -1,13 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
  * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
+ *     IBM Corporation - initial API and implementation
+ *     Cédric Chabanois (cchabanois@ifrance.com) - modified for Subversion  
+ *******************************************************************************/
 package org.tigris.subversion.subclipse.core.resources;
 
 import java.io.InputStream;
@@ -15,6 +16,8 @@ import java.io.InputStream;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.eclipse.core.internal.resources.ResourceInfo;
+import org.eclipse.core.internal.resources.Workspace;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -41,14 +44,11 @@ import org.tigris.subversion.subclipse.core.Policy;
 import org.tigris.subversion.subclipse.core.SVNException;
 import org.tigris.subversion.subclipse.core.SVNProviderPlugin;
 import org.tigris.subversion.subclipse.core.SVNStatus;
-import org.tigris.subversion.subclipse.core.client.IConsoleListener;
 import org.tigris.subversion.subclipse.core.client.PeekStatusCommand;
 import org.tigris.subversion.subclipse.core.commands.CheckoutCommand;
 import org.tigris.subversion.subclipse.core.commands.ShareProjectCommand;
-import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
-import org.tigris.subversion.svnclientadapter.ISVNInfo;
 import org.tigris.subversion.svnclientadapter.ISVNStatus;
-import org.tigris.subversion.svnclientadapter.SVNClientException;
+import org.tigris.subversion.svnclientadapter.SVNConstants;
 import org.tigris.subversion.svnclientadapter.SVNNodeKind;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -73,7 +73,6 @@ public class SVNWorkspaceRoot {
 
 	private ISVNLocalFolder localRoot;
     private String url;
-    private static boolean nullResourceLogged = false;
 	
 	public SVNWorkspaceRoot(IContainer resource){
 		this.localRoot = getSVNFolderFor(resource);
@@ -147,9 +146,8 @@ public class SVNWorkspaceRoot {
      * if remoteDirName is null, the name of the project is used
      * if location is not in repositories, it is added 
 	 */
-	public static void shareProject(ISVNRepositoryLocation location, IProject project, String remoteDirName, String comment, IProgressMonitor monitor) throws TeamException {
+	public static void shareProject(ISVNRepositoryLocation location, IProject project, String remoteDirName, IProgressMonitor monitor) throws TeamException {
 		ShareProjectCommand command = new ShareProjectCommand(location, project, remoteDirName);
-		command.setComment(comment);
         command.run(monitor);
     }
 	
@@ -169,19 +167,8 @@ public class SVNWorkspaceRoot {
         if (!status.hasRemote())
             throw new SVNException(new SVNStatus(IStatus.ERROR, Policy.bind("SVNProvider.infoMismatch", project.getName())));//$NON-NLS-1$
         
-        String repositoryURL = null;
-        ISVNClientAdapter client = SVNProviderPlugin.getPlugin().createSVNClient();
-        try {
-			ISVNInfo info = client.getInfoFromWorkingCopy(project.getLocation().toFile());
-			if (info.getRepository() != null)
-				repositoryURL = info.getRepository().toString();
-		} catch (SVNClientException e) {
-		}
-		if (repositoryURL == null)
-			repositoryURL = status.getUrlString();
-        
 		// Ensure that the provided location is managed
-		SVNProviderPlugin.getPlugin().getRepositories().getRepository(repositoryURL);
+		SVNProviderPlugin.getPlugin().getRepositories().getRepository(status.getUrlString());
 		
 		// Register the project with Team
 		RepositoryProvider.map(project, SVNProviderPlugin.getTypeId());
@@ -280,13 +267,6 @@ public class SVNWorkspaceRoot {
 		return command.getLocalResourceStatus();	
     }
 
-    public static LocalResourceStatus peekResourceStatusFor(IPath path) throws SVNException
-    {
-		PeekStatusCommand command = new PeekStatusCommand(path);
-		command.execute(SVNProviderPlugin.getPlugin().createSVNClient());
-		return command.getLocalResourceStatus();	
-    }
-    
 	/**
      * get the repository for this project 
 	 */
@@ -337,7 +317,7 @@ public class SVNWorkspaceRoot {
 	 */
 	public static boolean isSvnMetaResource(IResource resource)
 	{
-		if ((resource.getType() == IResource.FOLDER) && (SVNProviderPlugin.getPlugin().isAdminDirectory(resource.getName())))
+		if ((resource.getType() == IResource.FOLDER) && (resource.getName().equals(SVNConstants.SVN_DIRNAME)))
 			return true;
 		
         IResource parent = resource.getParent();
@@ -368,8 +348,9 @@ public class SVNWorkspaceRoot {
 	public static int getResourceType(IPath aResourcePath)
 	{
 		if (aResourcePath == null) return 0;
-		IResource r = ResourcesPlugin.getWorkspace().getRoot().findMember(aResourcePath);
-		return r == null ? 0 : r.getType();	
+		//TODO This code is using eclipse internal classes !		
+		ResourceInfo resourceInfo = ((Workspace) ResourcesPlugin.getWorkspace()).getResourceInfo(aResourcePath, true, false);
+		return (resourceInfo != null) ? resourceInfo.getType() : 0;
 	}
 	
     /**
@@ -380,29 +361,13 @@ public class SVNWorkspaceRoot {
      */
     public static IResource getResourceFor(ResourceStatus status) throws SVNException
     {
-    	if (status.getFile() == null) return null;
+    	if (status.path == null) return null;
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-		IPath resourcePath = pathForLocation(status.getIPath());
+		IPath resourcePath = pathForLocation(status.getPath());
 		if (resourcePath == null) 
 		{
-			return null;
-//			if(status.getFile() != null && status.getFile().getName().equals(".metadata"))  //$NON-NLS-1$
-//				return null;
-//		    if (!nullResourceLogged) {
-//		        String errorMsg = Policy.bind("SVNWorkspaceRoot.nullResource", status.getPathString());
-//			    IConsoleListener console = SVNProviderPlugin.getPlugin().getConsoleListener();
-//			    if (console != null) {
-//			        console.logError(errorMsg);
-//			        console.logError(Policy.bind("SVNWorkspaceRoot.nullResource.2"));
-//			        console.logError(Policy.bind("SVNWorkspaceRoot.nullResource.3"));
-//			        console.logError(Policy.bind("SVNWorkspaceRoot.nullResource.4"));
-//			        console.logError(Policy.bind("SVNWorkspaceRoot.nullResource.5"));
-//			        console.logError(Policy.bind("SVNWorkspaceRoot.nullResource.6"));
-//			    }
-//			    nullResourceLogged = true;
-//			    throw new SVNException(errorMsg);
-//		    }
-//		    throw new SVNException("");
+			throw new SVNException("An (un?)expected error has occured! Please report to users@subclipse.tigris.org ! pathForLocation(" 
+				+ status.getPathString() +") is null ! Url: " + status.getUrlString() + " Projects: " + ResourcesPlugin.getWorkspace().getRoot().getProjects());
 		}
 		int kind = getResourceType(resourcePath);			
 
@@ -461,23 +426,8 @@ public class SVNWorkspaceRoot {
 		IPath resourcePath = pathForLocation(new Path(status.getPath()));
 		if (resourcePath == null) 
 		{
-			if(status.getFile() != null && status.getFile().getName().equals(".metadata"))  //$NON-NLS-1$
-				return null;
-		    if (!nullResourceLogged) {
-		        String errorMsg = Policy.bind("SVNWorkspaceRoot.nullResource", status.getPath());
-		        IConsoleListener console = SVNProviderPlugin.getPlugin().getConsoleListener();
-			    if (console != null) {
-			        console.logError(Policy.bind(errorMsg));
-			        console.logError(Policy.bind("SVNWorkspaceRoot.nullResource.2"));
-			        console.logError(Policy.bind("SVNWorkspaceRoot.nullResource.3"));
-			        console.logError(Policy.bind("SVNWorkspaceRoot.nullResource.4"));
-			        console.logError(Policy.bind("SVNWorkspaceRoot.nullResource.5"));
-			        console.logError(Policy.bind("SVNWorkspaceRoot.nullResource.6"));
-			    }
-			    nullResourceLogged = true;
-			    throw new SVNException(errorMsg);
-		    }
-		    throw new SVNException("");
+			throw new SVNException("An (un?)expected error has occured! Please report to users@subclipse.tigris.org ! pathForLocation(" 
+				+ status.getPath() +") is null ! Url: " + status.getUrl() + " Projects: " + ResourcesPlugin.getWorkspace().getRoot().getProjects());
 		}
 		int kind = getResourceType(resourcePath);			
 

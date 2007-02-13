@@ -1,13 +1,12 @@
-/*******************************************************************************
- * Copyright (c) 2004, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+/******************************************************************************
+ * This program and the accompanying materials are made available under
+ * the terms of the Common Public License v1.0 which accompanies this
+ * distribution, and is available at the following URL:
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * Copyright(c) 2003-2005 by the authors indicated in the @author tags.
  *
- * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
+ * All Rights are Reserved by the various authors.
+ *******************************************************************************/
 package org.tigris.subversion.subclipse.core.commands;
 
 import java.io.File;
@@ -77,15 +76,13 @@ public class CheckinResourcesCommand implements ISVNCommand {
         }
         
         // convert parents and resources to an array of File
-        int parents = parentsList.size();
-        if (parents > 0)
-        	depth = IResource.DEPTH_ZERO; // change commit to non-recursive!!
-           
-        final File[] resourceFiles = new File[parents + resources.length];
-        for (int i = 0; i < parents;i++)
-        	resourceFiles[i] = ((IResource)parentsList.get(i)).getLocation().toFile();
-        for (int i = 0, j = parents; i < resources.length;i++, j++)
-            resourceFiles[j] = resources[i].getLocation().toFile(); 
+        final File[] parents = new File[parentsList.size()];
+        for (int i = 0; i < parentsList.size();i++)
+            parents[i] = ((IResource)parentsList.get(i)).getLocation().toFile();
+            
+        final File[] resourceFiles = new File[resources.length];
+        for (int i = 0; i < resources.length;i++)
+            resourceFiles[i] = resources[i].getLocation().toFile(); 
         
         SVNProviderPlugin.run(new ISVNRunnable() {
             public void run(final IProgressMonitor pm) throws SVNException {
@@ -93,9 +90,12 @@ public class CheckinResourcesCommand implements ISVNCommand {
                     pm.beginTask(null, resourceFiles.length);
                     OperationManager.getInstance().beginOperation(svnClient, new OperationProgressNotifyListener(pm));
                     
+                    // we commit the parents (not recursively)
+                    if (parents.length > 0)
+                        svnClient.commit(parents,message,false,false);
+                    
                     // then the resources the user has requested to commit
-                    if (svnClient.canCommitAcrossWC()) svnClient.commitAcrossWC(resourceFiles,message,depth == IResource.DEPTH_INFINITE,keepLocks,true);
-                    else svnClient.commit(resourceFiles,message,depth == IResource.DEPTH_INFINITE,keepLocks);
+                    svnClient.commit(resourceFiles,message,depth == IResource.DEPTH_INFINITE,keepLocks);
                 } catch (SVNClientException e) {
                     throw SVNException.wrapException(e);
                 } finally {

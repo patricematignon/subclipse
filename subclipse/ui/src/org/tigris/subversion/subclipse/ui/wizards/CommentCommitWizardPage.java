@@ -1,13 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
  * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.tigris.subversion.subclipse.ui.wizards;
 
 import org.eclipse.jface.dialogs.Dialog;
@@ -15,8 +15,6 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.PlatformUI;
-import org.tigris.subversion.subclipse.ui.IHelpContextIds;
 import org.tigris.subversion.subclipse.ui.comments.CommitCommentArea;
 
 public class CommentCommitWizardPage extends SVNWizardPage {
@@ -49,7 +47,7 @@ public class CommentCommitWizardPage extends SVNWizardPage {
 		top.setLayout(new GridLayout());
 		setControl(top);
 		// set F1 help
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(top, IHelpContextIds.COMMENT_COMMIT_PAGE_DIALOG);
+//		WorkbenchHelp.setHelp(top, IHelpContextIds.KEYWORD_SUBSTITUTION_COMMIT_COMMENT_PAGE);
 		commitCommentArea.createArea(top);
         
 	}

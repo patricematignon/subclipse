@@ -1,105 +1,87 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
  * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
+ *     Cédric Chabanois (cchabanois@ifrance.com) - modified for Subversion 
+ *******************************************************************************/
 package org.tigris.subversion.subclipse.core.commands;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.team.core.TeamException;
-import org.tigris.subversion.subclipse.core.ISVNRemoteFile;
-import org.tigris.subversion.subclipse.core.ISVNRemoteFolder;
 import org.tigris.subversion.subclipse.core.ISVNRemoteResource;
 import org.tigris.subversion.subclipse.core.Policy;
 import org.tigris.subversion.subclipse.core.SVNException;
 import org.tigris.subversion.subclipse.core.SVNProviderPlugin;
 import org.tigris.subversion.subclipse.core.history.ILogEntry;
 import org.tigris.subversion.subclipse.core.history.LogEntry;
-import org.tigris.subversion.subclipse.core.history.AliasManager;
-import org.tigris.subversion.subclipse.core.history.Tags;
+import org.tigris.subversion.subclipse.core.resources.RemoteFile;
+import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 import org.tigris.subversion.svnclientadapter.ISVNLogMessage;
 import org.tigris.subversion.svnclientadapter.ISVNLogMessageChangePath;
+import org.tigris.subversion.svnclientadapter.SVNClientException;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
 import org.tigris.subversion.svnclientadapter.SVNUrl;
 
 /**
  * Command to get the logs of a remote resource
- * 
  */
 public class GetLogsCommand implements ISVNCommand {
-	
 	private ISVNRemoteResource remoteResource;
-	private SVNRevision pegRevision = SVNRevision.HEAD;
-	private SVNRevision revisionStart = new SVNRevision.Number(0);
-	private SVNRevision revisionEnd = SVNRevision.HEAD;
-	private boolean stopOnCopy = false;
-	private long limit = 0;
-	private AliasManager tagManager;
     private ILogEntry[] logEntries;
-   
-    /**
-     * Constructor
-     * 
-     * @param remoteResource
-     * @param pegRevision   peg revision for URL
-     * @param revisionStart first revision to show
-     * @param revisionEnd   last revision to show
-     * @param stopOnCopy    do not continue on copy operations
-     * @param limit         limit the number of log messages (if 0 or less no
-     *                      limit)
-     * @param tagManager    used to determine tags for revision                     
-     */
-    public GetLogsCommand(ISVNRemoteResource remoteResource, SVNRevision pegRevision, SVNRevision revisionStart, SVNRevision revisionEnd, boolean stopOnCopy, long limit, AliasManager tagManager) {
+    
+    public GetLogsCommand(ISVNRemoteResource remoteResource) {
         this.remoteResource = remoteResource;
-        this.pegRevision = (pegRevision != null) ? pegRevision : SVNRevision.HEAD;
-        this.revisionStart = revisionStart;
-        this.revisionEnd = (revisionEnd != null) ? revisionEnd : SVNRevision.HEAD;
-        this.stopOnCopy = stopOnCopy;
-        this.limit = limit;
-        this.tagManager = tagManager;
-    }    
+    }
+    
     
     /**
      * execute the command
-     * @param aMonitor
+     * @param monitor
      * @throws SVNException
      */
-    public void run(IProgressMonitor aMonitor) throws SVNException {
+    public void run(IProgressMonitor monitor) throws SVNException {
         logEntries = null;
-        IProgressMonitor monitor = Policy.monitorFor(aMonitor);
+        ISVNClientAdapter client = remoteResource.getRepository().getSVNClient();
+        monitor = Policy.monitorFor(monitor);
         monitor.beginTask(Policy.bind("RemoteFile.getLogEntries"), 100); //$NON-NLS-1$
         
         ISVNLogMessage[] logMessages;
         try {
-            logMessages = remoteResource.getLogMessages(
-                    pegRevision,
-                    revisionStart,
-                    revisionEnd, 
-                    stopOnCopy,
-                    !SVNProviderPlugin.getPlugin().getSVNClientManager().isFetchChangePathOnDemand(),
-                    limit);
-
-            if (remoteResource.isFolder()) {
-                logEntries = LogEntry.createLogEntriesFrom((ISVNRemoteFolder) remoteResource, logMessages, getTags(logMessages));   
-            } else {
-            	logEntries = LogEntry.createLogEntriesFrom((ISVNRemoteFile) remoteResource, logMessages, getTags(logMessages), getUrls(logMessages));
-            }
-
-        } catch (TeamException e) {
+        	// Conditional behavior to retieve the log messages 
+        	if (SVNProviderPlugin.getPlugin().getSVNClientManager().isFetchChangePathOnDemand()) {
+            logMessages =
+                client.getLogMessages(
+                    remoteResource.getUrl(),
+                    new SVNRevision.Number(0),
+                    SVNRevision.HEAD, false);
+        	} else {
+        		logMessages =
+                    client.getLogMessages(
+                        remoteResource.getUrl(),
+                        new SVNRevision.Number(0),
+                        SVNRevision.HEAD, true);	
+        	}
+        } catch (SVNClientException e) {
             throw SVNException.wrapException(e);
-        } finally {
-        	monitor.done();
         }
+        
+        if (remoteResource.isFolder()) {
+            // if we get the history for a folder, we get the history for all
+            // its members
+            logEntries = createLogEntriesForFolder(logMessages);   
+        } else {
+        	logEntries = createLogEntriesForFile(logMessages);
+        }
+             
+        monitor.done();
     }    
     
     /**
      * get the result of the command
-     * @return log entries for the supplied resource and range
+     * @return
      */
     public ILogEntry[] getLogEntries() {
     	return logEntries;
@@ -116,7 +98,7 @@ public class GetLogsCommand implements ISVNCommand {
      * get the urls of the resource for each revision in logMessages
      * It will always be the same url if the resource has never been moved
      * @param logMessages
-     * @return an array of corresponding resource urls
+     * @return
      */
     private SVNUrl[] getUrls(ISVNLogMessage[] logMessages) {
         SVNUrl[] urls = new SVNUrl[logMessages.length];
@@ -189,16 +171,46 @@ public class GetLogsCommand implements ISVNCommand {
             }
         return urls;
     }
-
-	private Tags[] getTags(ISVNLogMessage[] logMessages) throws NumberFormatException {
-		Tags[] tags = new Tags[logMessages.length]; 
+    
+    /**
+     * create the LogEntry for the logMessages
+     * @param logMessages
+     * @return
+     */
+    private ILogEntry[] createLogEntriesForFolder(ISVNLogMessage[] logMessages) {
+        // if we get the history for a folder, we get the history for all
+        // its members
+    	// so there is no remoteResource associated with each LogEntry
+        ILogEntry[] result = new ILogEntry[logMessages.length]; 
         for (int i = 0; i < logMessages.length;i++) {
-        	if (tagManager != null) {
-        		String rev = logMessages[i].getRevision().toString();
-        		int revNo = Integer.parseInt(rev);
-        		tags[i] = new Tags(tagManager.getTags(revNo));
-        	}
+        	result[i] = new LogEntry(logMessages[i], remoteResource, null); 
         }
-		return tags;
-	}
+        return result;
+    }
+    
+    /**
+     * create the LogEntry for the logMessages
+     * @param logMessages
+     * @return
+     */
+    private ILogEntry[] createLogEntriesForFile(ISVNLogMessage[] logMessages) {
+        SVNUrl[] urls = getUrls(logMessages);
+        ILogEntry[] result = new ILogEntry[logMessages.length]; 
+        for (int i = 0; i < logMessages.length;i++) {
+            ISVNLogMessage logMessage = logMessages[i];
+            ISVNRemoteResource correspondingResource;
+            correspondingResource = new RemoteFile(
+                        null,
+                        remoteResource.getRepository(), 
+                        urls[i], 
+                        logMessage.getRevision(), 
+                        logMessage.getRevision(), 
+                        logMessage.getDate(), 
+                        logMessage.getAuthor());  
+            result[i] = new LogEntry(logMessage, remoteResource, correspondingResource);
+        }
+        return result;
+    }
+    
+    
 }

@@ -1,13 +1,3 @@
-/*******************************************************************************
- * Copyright (c) 2005, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
 package org.tigris.subversion.subclipse.ui.decorator;
 
 import java.io.File;
@@ -45,7 +35,7 @@ public class AcceptMineResolution implements IMarkerResolution {
 		try {
 	        IFile file = (IFile)marker.getResource();
 			ISVNLocalFile svnFile = (ISVNLocalFile) SVNWorkspaceRoot.getSVNResourceFor(file);
-			File mine = svnFile.getStatus().getConflictWorking();
+			File mine = svnFile.getStatus().getFileConflictWorking();
 			// If the file was removed or there was no conflict there is nothing we can do
 			if (mine == null) {
 				return;

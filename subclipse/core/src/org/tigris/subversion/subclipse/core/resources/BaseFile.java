@@ -1,13 +1,13 @@
-/*******************************************************************************
- * Copyright (c) 2004, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+/* ***************************************************************************
+ * This program and the accompanying materials are made available under
+ * the terms of the Common Public License v1.0 which accompanies this
+ * distribution, and is available at the following URL:
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * Copyright(c) 2003-2005 by the authors indicated in the @author tags.
  *
- * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
+ * All Rights are Reserved by the various authors.
+ *
+ * ***************************************************************************/
 package org.tigris.subversion.subclipse.core.resources;
 
 import org.eclipse.core.resources.IStorage;
@@ -15,33 +15,21 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.TeamException;
 import org.tigris.subversion.subclipse.core.ISVNRemoteFile;
 import org.tigris.subversion.subclipse.core.ISVNRemoteResource;
+import org.tigris.subversion.subclipse.core.Policy;
 import org.tigris.subversion.svnclientadapter.ISVNAnnotations;
+import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
-import org.tigris.subversion.svnclientadapter.SVNRevision;
 
 /**
- * Represents the base revision of a file.
+ * Represents the base revision of a file 
  * 
  */
 public class BaseFile extends BaseResource implements ISVNRemoteFile {
 	
-	/**
-	 * Constructor
-	 * @param localResourceStatus
-	 */
 	public BaseFile(LocalResourceStatus localResourceStatus)
 	{
 		super(localResourceStatus);
 	}	
-
-	/**
-	 * Constructor
-	 * @param localResourceStatus
-	 * @param charset
-	 */
-	public BaseFile(LocalResourceStatus localResourceStatus, String charset) {
-		super(localResourceStatus, charset);
-	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.core.variants.IResourceVariant#isContainer()
@@ -62,7 +50,7 @@ public class BaseFile extends BaseResource implements ISVNRemoteFile {
 	 */
 	public IStorage getStorage(IProgressMonitor monitor) throws TeamException
 	{
-		return BaseResourceStorageFactory.current().createResourceStorage(this);
+		return new BaseResourceStorage(this);
 	}
 
 	/* (non-Javadoc)
@@ -73,15 +61,22 @@ public class BaseFile extends BaseResource implements ISVNRemoteFile {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.subclipse.core.ISVNRemoteFile#getAnnotations(org.tigris.subversion.svnclientadapter.SVNRevision, org.tigris.subversion.svnclientadapter.SVNRevision)
+	 * @see org.tigris.subversion.subclipse.core.ISVNRemoteFile#getAnnotations(org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public ISVNAnnotations getAnnotations(SVNRevision fromRevision,
-			SVNRevision toRevision) throws TeamException {
+	public ISVNAnnotations getAnnotations(IProgressMonitor monitor) throws TeamException {
+		monitor = Policy.monitorFor(monitor);
+		monitor.beginTask(Policy.bind("RemoteFile.getAnnotations"), 100);//$NON-NLS-1$
 		try {
-			return getRepository().getSVNClient().annotate(
-					localResourceStatus.getFile(), fromRevision, toRevision);
-		} catch (SVNClientException e) {
-			throw new TeamException("Failed in BaseFile.getAnnotations()", e);
-		}
-	}
+			ISVNClientAdapter svnClient = getRepository().getSVNClient();
+			try {
+				return svnClient.annotate(localResourceStatus.getFile(), null,
+						getRevision());
+			} catch (SVNClientException e) {
+				throw new TeamException(
+						"Failed in BaseFile.getAnnotations()", e);
+			}
+		} finally {
+			monitor.done();
+		}	
+	}		
 }

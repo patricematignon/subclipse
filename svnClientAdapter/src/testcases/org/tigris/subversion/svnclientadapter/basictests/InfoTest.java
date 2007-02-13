@@ -1,13 +1,20 @@
-/*******************************************************************************
- * Copyright (c) 2004, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+/**
+ * @copyright
+ * ====================================================================
+ * Copyright (c) 2003-2004 CollabNet.  All rights reserved.
  *
- * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
+ * This software is licensed as described in the file COPYING, which
+ * you should have received as part of this distribution.  The terms
+ * are also available at http://subversion.tigris.org/license-1.html.
+ * If newer versions of this license are posted there, you may use a
+ * newer version instead, at your option.
+ *
+ * This software consists of voluntary contributions made by many
+ * individuals.  For exact contribution history, see the revision
+ * history and logs, available at http://subversion.tigris.org/.
+ * ====================================================================
+ * @endcopyright
+ */
 package org.tigris.subversion.svnclientadapter.basictests;
 
 import java.io.File;
@@ -17,8 +24,6 @@ import org.tigris.subversion.svnclientadapter.ISVNInfo;
 import org.tigris.subversion.svnclientadapter.SVNNodeKind;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
 import org.tigris.subversion.svnclientadapter.SVNScheduleKind;
-import org.tigris.subversion.svnclientadapter.testUtils.OneTest;
-import org.tigris.subversion.svnclientadapter.testUtils.SVNTest;
 
 
 public class InfoTest extends SVNTest {
@@ -103,15 +108,5 @@ public class InfoTest extends SVNTest {
 	    assertNull("wrong revision from info", info.getLastChangedRevision());
 	    assertNull("wrong schedule kind from info", info.getSchedule());
 	    assertNull("wrong node kind from info", info.getNodeKind());
-	    
-	    //test the wc root directotry info
-	    info = client.getInfoFromWorkingCopy(thisTest.getWorkingCopy());
-	    assertEquals(thisTest.getWorkingCopy(), info.getFile());
-	    assertEquals("wrong revision from info", new SVNRevision.Number(1),
-	            info.getLastChangedRevision());
-	    assertEquals("wrong schedule kind from info", SVNScheduleKind.NORMAL,
-	            info.getSchedule());
-	    assertEquals("wrong node kind from info", SVNNodeKind.DIR,
-	            info.getNodeKind());
 	}
 }

@@ -1,18 +1,17 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
  * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
+ *     IBM Corporation - initial API and implementation
+ *     Cédric Chabanois (cchabanois@ifrance.com) - modified for Subversion  
+ *******************************************************************************/
 package org.tigris.subversion.subclipse.core;
 
 
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
@@ -23,7 +22,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * <p>
  * Clients may implement this interface.
  * </p>
- * @see IWorkspace#run(IWorkspaceRunnable, IProgressMonitor)
+ * @see 
  */
 public interface ISVNRunnable {
 	/**
@@ -38,7 +37,7 @@ public interface ISVNRunnable {
 	 * 
 	 * @param monitor a progress monitor, or <code>null</code> if progress
 	 *    reporting and cancellation are not desired
-	 * @exception SVNException if this operation fails.
+	 * @exception CoreException if this operation fails.
 	 */
 	public void run(IProgressMonitor monitor) throws SVNException;
 }

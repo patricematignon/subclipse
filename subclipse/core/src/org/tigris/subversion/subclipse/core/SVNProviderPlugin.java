@@ -1,20 +1,20 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
  * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
+ *     IBM Corporation - initial API and implementation
+ *     Cédric Chabanois (cchabanois@ifrance.com) - modified for Subversion 
+ *******************************************************************************/
 package org.tigris.subversion.subclipse.core;
 
-import java.io.File;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
@@ -22,31 +22,22 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
-import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
-import org.eclipse.core.runtime.preferences.InstanceScope;
-import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.internal.core.subscribers.ActiveChangeSetManager;
 import org.osgi.framework.BundleContext;
 import org.tigris.subversion.subclipse.core.client.IConsoleListener;
-import org.tigris.subversion.subclipse.core.mapping.SVNActiveChangeSetCollector;
 import org.tigris.subversion.subclipse.core.repo.SVNRepositories;
 import org.tigris.subversion.subclipse.core.resources.ISVNFileModificationValidatorPrompt;
-import org.tigris.subversion.subclipse.core.resources.LocalResourceStatus;
 import org.tigris.subversion.subclipse.core.resources.RepositoryResourcesManager;
-import org.tigris.subversion.subclipse.core.resources.SVNWorkspaceRoot;
 import org.tigris.subversion.subclipse.core.resourcesListeners.FileModificationManager;
 import org.tigris.subversion.subclipse.core.resourcesListeners.SyncFileChangeListener;
-import org.tigris.subversion.subclipse.core.resourcesListeners.TeamPrivateListener;
 import org.tigris.subversion.subclipse.core.status.StatusCacheManager;
-import org.tigris.subversion.subclipse.core.sync.SVNWorkspaceSubscriber;
 import org.tigris.subversion.subclipse.core.util.ISimpleDialogsHelper;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 import org.tigris.subversion.svnclientadapter.ISVNPromptUserPassword;
@@ -76,7 +67,6 @@ public class SVNProviderPlugin extends Plugin {
 	// SVN specific resource delta listeners
 	private FileModificationManager fileModificationManager;
 	private SyncFileChangeListener metaFileSyncListener;
-	private TeamPrivateListener teamPrivateListener;
 
 	// the list of all repositories currently handled by this provider
 	private SVNRepositories repositories;
@@ -94,11 +84,7 @@ public class SVNProviderPlugin extends Plugin {
 	private ISimpleDialogsHelper simpleDialogsHelper;
 	
 	private ISVNFileModificationValidatorPrompt svnFileModificationValidatorPrompt;
-	
-	private String dirname;
     
-	private SVNActiveChangeSetCollector changeSetManager;
-	
 	/**
 	 * This constructor required by the bundle loader (calls newInstance())
 	 *  
@@ -139,6 +125,13 @@ public class SVNProviderPlugin extends Plugin {
 
 	public void start(BundleContext ctxt) throws Exception {
 		super.start(ctxt);
+
+        svnClientManager = new SVNClientManager();
+        svnClientManager.startup(null);
+        
+        // load the state which includes the known repositories
+        repositories = new SVNRepositories();
+        repositories.startup();
 		
 		// register all the adapter factories
 		adapterFactories = new SVNAdapterFactories();
@@ -150,9 +143,6 @@ public class SVNProviderPlugin extends Plugin {
 		// Initialize SVN change listeners. Note tha the report type is important.
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 
-		// this listener will listen to additions of svn meta directories
-		teamPrivateListener = new TeamPrivateListener();
-
 		// this listener will listen to modifications to files
 		fileModificationManager = new FileModificationManager();
 
@@ -160,8 +150,6 @@ public class SVNProviderPlugin extends Plugin {
 		// subdir)
 		metaFileSyncListener = new SyncFileChangeListener();
 
-		workspace.addResourceChangeListener(teamPrivateListener,
-				IResourceChangeEvent.POST_CHANGE);
 		workspace.addResourceChangeListener(statusCacheManager,
 				IResourceChangeEvent.PRE_BUILD);
 		workspace.addResourceChangeListener(metaFileSyncListener,
@@ -169,11 +157,8 @@ public class SVNProviderPlugin extends Plugin {
 		workspace.addResourceChangeListener(fileModificationManager,
 				IResourceChangeEvent.POST_CHANGE);
 
-		teamPrivateListener.registerSaveParticipant();
 		fileModificationManager.registerSaveParticipant();
 
-		// Must load the change set manager on startup since it listens to deltas
-		getChangeSetManager();
 	}
 
 	/**
@@ -187,12 +172,9 @@ public class SVNProviderPlugin extends Plugin {
 		workspace.removeResourceChangeListener(statusCacheManager);
 		workspace.removeResourceChangeListener(metaFileSyncListener);
 		workspace.removeResourceChangeListener(fileModificationManager);
-		workspace.removeResourceChangeListener(teamPrivateListener);
 
 		// save the state which includes the known repositories
-		if (repositories != null) {
-			repositories.shutdown();
-		}
+        repositories.shutdown();
 		
 		adapterFactories.shutdown(null);
         getPluginPreferences().removePropertyChangeListener(statusCacheManager);
@@ -206,10 +188,7 @@ public class SVNProviderPlugin extends Plugin {
 		// shutdown.
 		workspace.removeSaveParticipant(this);
         
-        if (svnClientManager != null)
-        	svnClientManager.shutdown(null);
-        
-       	getChangeSetManager().dispose();
+        svnClientManager.shutdown(null);
 	}
 
 	private static List listeners = new ArrayList();
@@ -219,9 +198,7 @@ public class SVNProviderPlugin extends Plugin {
 	 */
 	public static void addResourceStateChangeListener(
 			IResourceStateChangeListener listener) {
-		synchronized(listeners) {
-			listeners.add(listener);
-		}
+		listeners.add(listener);
 	}
 
 	/*
@@ -229,9 +206,7 @@ public class SVNProviderPlugin extends Plugin {
 	 */
 	public static void removeResourceStateChangeListener(
 			IResourceStateChangeListener listener) {
-		synchronized(listeners) {
-			listeners.remove(listener);
-		}
+		listeners.remove(listener);
 	}
 
 	/**
@@ -239,13 +214,9 @@ public class SVNProviderPlugin extends Plugin {
 	 * changed
 	 */
 	public static void broadcastSyncInfoChanges(final IResource[] resources) {
-		IResourceStateChangeListener[] toNotify;
-		synchronized(listeners) {
-			toNotify = (IResourceStateChangeListener[])listeners.toArray(new IResourceStateChangeListener[listeners.size()]);
-		}
-
-		for (int i = 0; i < toNotify.length; ++i) {
-			final IResourceStateChangeListener listener = toNotify[i];
+		for (Iterator it = listeners.iterator(); it.hasNext();) {
+			final IResourceStateChangeListener listener = (IResourceStateChangeListener) it
+					.next();
 			ISafeRunnable code = new ISafeRunnable() {
 				public void run() throws Exception {
 					listener.resourceSyncInfoChanged(resources);
@@ -255,7 +226,7 @@ public class SVNProviderPlugin extends Plugin {
 					// Platform#run
 				}
 			};
-			SafeRunner.run(code);
+			Platform.run(code);
 		}
 	}
 
@@ -282,13 +253,9 @@ public class SVNProviderPlugin extends Plugin {
 	 */
 	public static void broadcastModificationStateChanges(
 			final IResource[] resources) {
-		IResourceStateChangeListener[] toNotify;
-		synchronized(listeners) {
-			toNotify = (IResourceStateChangeListener[])listeners.toArray(new IResourceStateChangeListener[listeners.size()]);
-		}
-
-		for (int i = 0; i < toNotify.length; ++i) {
-			final IResourceStateChangeListener listener = toNotify[i];
+		for (Iterator it = listeners.iterator(); it.hasNext();) {
+			final IResourceStateChangeListener listener = (IResourceStateChangeListener) it
+					.next();
 			ISafeRunnable code = new ISafeRunnable() {
 				public void run() throws Exception {
 					listener.resourceModified(resources);
@@ -298,7 +265,7 @@ public class SVNProviderPlugin extends Plugin {
 					// Platform#run
 				}
 			};
-			SafeRunner.run(code);
+			Platform.run(code);
 		}
 	}
 
@@ -307,13 +274,9 @@ public class SVNProviderPlugin extends Plugin {
 	 * invoked when a project is mapped
 	 */
 	protected static void broadcastProjectConfigured(final IProject project) {
-		IResourceStateChangeListener[] toNotify;
-		synchronized(listeners) {
-			toNotify = (IResourceStateChangeListener[])listeners.toArray(new IResourceStateChangeListener[listeners.size()]);
-		}
-
-		for (int i = 0; i < toNotify.length; ++i) {
-			final IResourceStateChangeListener listener = toNotify[i];
+		for (Iterator it = listeners.iterator(); it.hasNext();) {
+			final IResourceStateChangeListener listener = (IResourceStateChangeListener) it
+					.next();
 			ISafeRunnable code = new ISafeRunnable() {
 				public void run() throws Exception {
 					listener.projectConfigured(project);
@@ -323,7 +286,7 @@ public class SVNProviderPlugin extends Plugin {
 					// Platform#run
 				}
 			};
-			SafeRunner.run(code);
+			Platform.run(code);
 		}
 	}
 
@@ -332,13 +295,9 @@ public class SVNProviderPlugin extends Plugin {
 	 * after a provider has been unmaped
 	 */
 	protected static void broadcastProjectDeconfigured(final IProject project) {
-		IResourceStateChangeListener[] toNotify;
-		synchronized(listeners) {
-			toNotify = (IResourceStateChangeListener[])listeners.toArray(new IResourceStateChangeListener[listeners.size()]);
-		}
-
-		for (int i = 0; i < toNotify.length; ++i) {
-			final IResourceStateChangeListener listener = toNotify[i];
+		for (Iterator it = listeners.iterator(); it.hasNext();) {
+			final IResourceStateChangeListener listener = (IResourceStateChangeListener) it
+					.next();
 			ISafeRunnable code = new ISafeRunnable() {
 				public void run() throws Exception {
 					listener.projectDeconfigured(project);
@@ -348,7 +307,7 @@ public class SVNProviderPlugin extends Plugin {
 					// Platform#run
 				}
 			};
-			SafeRunner.run(code);
+			Platform.run(code);
 		}
 	}
 
@@ -378,18 +337,13 @@ public class SVNProviderPlugin extends Plugin {
 	 */
 	public ISVNRepositoryLocation getRepository(String location)
 			throws SVNException {
-		return getRepositories().getRepository(location);
+		return repositories.getRepository(location);
 	}
 
 	/**
 	 * get all the known repositories
 	 */
 	public SVNRepositories getRepositories() {
-	    if (repositories == null) {
-	        // load the state which includes the known repositories
-	        repositories = new SVNRepositories();
-	        repositories.startup();
-	    }
 		return repositories;
 	}
     
@@ -401,13 +355,6 @@ public class SVNProviderPlugin extends Plugin {
     }
 
     public SVNClientManager getSVNClientManager() {
-        if (svnClientManager == null) {
-            svnClientManager = new SVNClientManager();
-            try {
-                svnClientManager.startup(null);
-            } catch (CoreException e) {
-            }
-        }
     	return svnClientManager;
     }
     
@@ -528,80 +475,5 @@ public class SVNProviderPlugin extends Plugin {
     public void setSvnFileModificationValidatorPrompt(
             ISVNFileModificationValidatorPrompt svnFileModificationValidatorPrompt) {
         this.svnFileModificationValidatorPrompt = svnFileModificationValidatorPrompt;
-    }
-    
-    public String getAdminDirectoryName() {
-    	if (dirname == null) {
-    		try {
-				dirname = createSVNClient().getAdminDirectoryName();
-			} catch (SVNException e) {
-				dirname = ".svn";
-			}
-    	}
-    	return dirname;
-    }
-
-    /**
-     * @return true if the container is managed by SVN
-     */
-    public boolean isManagedBySubversion(IContainer container)
-    {
-    	if (container instanceof IProject)
-    	{
-    		if (RepositoryProvider.getProvider((IProject)container, getTypeId()) != null)
-    			return true; // svn handled project
-    		// Don't return at this point, since the project may not be registered
-    		// yet with Team.
-    	}
-
-    	return isManagedBySubversion(container.getLocation());
-    }
-
-    /**
-     * @return true if the container is managed by SVN
-     */
-    public boolean isManagedBySubversion(IPath folder)
-    {
-    	File svnDir = folder.append(getAdminDirectoryName()).toFile();
-		if (svnDir == null || !svnDir.exists() || !svnDir.isDirectory())
-			return false;
-
-        try {
-        	LocalResourceStatus status = SVNWorkspaceRoot.peekResourceStatusFor(folder);
-            if (status.hasRemote())
-            	return true;
-		} catch (SVNException e) {
-		}
-		
-    	return false;
-    }
-    
-	/**
-	 * Return the SVN preferences node in the instance scope
-	 */
-	public org.osgi.service.prefs.Preferences getInstancePreferences() {
-		return new InstanceScope().getNode(getBundle().getSymbolicName());
-	}
-	
-    public boolean isAdminDirectory(String name) {
-    	if (".svn".equals(name) || getAdminDirectoryName().equals(name))
-    		return true;
-    	else
-    		return false;
-//  Calling the adapter method here potentially lead to a thread problem
-//  that would make native JavaHL crash.  So I am recreating the logic
-//  internally.  This method is likely to be a lot faster so it is worth it.    	
-//    	try {
-//			return createSVNClient().isAdminDirectory(name);
-//		} catch (SVNException e) {
-//			return getAdminDirectoryName().equals(name);
-//		}
-    }
-    
-    public synchronized ActiveChangeSetManager getChangeSetManager() {
-        if (changeSetManager == null) {
-            changeSetManager = new SVNActiveChangeSetCollector(SVNWorkspaceSubscriber.getInstance());
-        }
-        return changeSetManager;
     }
 }

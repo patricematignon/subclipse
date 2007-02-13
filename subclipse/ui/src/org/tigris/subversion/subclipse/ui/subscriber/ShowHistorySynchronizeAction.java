@@ -1,13 +1,3 @@
-/*******************************************************************************
- * Copyright (c) 2005, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
 package org.tigris.subversion.subclipse.ui.subscriber;
 
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
@@ -38,11 +28,10 @@ public class ShowHistorySynchronizeAction extends SynchronizeModelAction {
 			    IStructuredSelection selection = getStructuredSelection();
 			    if (selection.size() != 1) return false;
 		        ISynchronizeModelElement element = (ISynchronizeModelElement)selection.getFirstElement();
-		        IResource resource = element.getResource();
-		        if (resource == null) return false;
+			    IResource resource = element.getResource();
                 ISVNLocalResource svnResource = SVNWorkspaceRoot.getSVNResourceFor(resource);			    
                 try {
-                	return !resource.exists() || (svnResource.getStatus().isManaged() && !svnResource.getStatus().isAdded());
+                    return !svnResource.getStatus().isAdded() && svnResource.getStatus().isManaged() && resource.exists();
                 } catch (SVNException e) {
                     return false;
                 }
@@ -53,14 +42,6 @@ public class ShowHistorySynchronizeAction extends SynchronizeModelAction {
     protected SynchronizeModelOperation getSubscriberOperation(ISynchronizePageConfiguration configuration, IDiffElement[] elements) {
         ISynchronizeModelElement element = (ISynchronizeModelElement)getStructuredSelection().getFirstElement();
         IResource resource = element.getResource();
-        if (!resource.exists()) {
-        	try {
-        		ISVNLocalResource svnResource = SVNWorkspaceRoot.getSVNResourceFor(resource);
-				return new ShowHistorySynchronizeOperation(configuration, elements, svnResource.getLatestRemoteResource());
-        	} catch (SVNException e) {
-				e.printStackTrace();
-			}
-        }
         return new ShowHistorySynchronizeOperation(configuration, elements, resource);
     }
 

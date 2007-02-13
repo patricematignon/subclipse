@@ -1,20 +1,9 @@
-/*******************************************************************************
- * Copyright (c) 2004, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
 package org.tigris.subversion.subclipse.ui.actions;
 
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.IAction;
-import org.tigris.subversion.subclipse.ui.ISVNUIConstants;
 import org.tigris.subversion.subclipse.ui.Policy;
 import org.tigris.subversion.subclipse.ui.dialogs.BranchTagDialog;
 import org.tigris.subversion.subclipse.ui.operations.BranchTagOperation;
@@ -31,10 +20,7 @@ public class BranchTagAction extends WorkspaceAction {
             SVNUrl destinationUrl = dialog.getToUrl();
             String message = dialog.getComment();
             boolean createOnServer = dialog.isCreateOnServer();
-            BranchTagOperation branchTagOperation = new BranchTagOperation(getTargetPart(), getSelectedResources(), sourceUrl, destinationUrl, createOnServer, dialog.getRevision(), message);
-            branchTagOperation.setNewAlias(dialog.getNewAlias());
-            branchTagOperation.switchAfterTagBranchOperation(dialog.switchAfterTagBranch());
-            branchTagOperation.run();
+            new BranchTagOperation(getTargetPart(), getSelectedResources(), sourceUrl, destinationUrl, createOnServer, dialog.getRevision(), message).run();
         }          
     }
     
@@ -78,11 +64,4 @@ public class BranchTagAction extends WorkspaceAction {
     protected boolean isEnabledForAddedResources() {
         return false;
     }
-
-	/*
-	 * @see org.tigris.subversion.subclipse.ui.actions.ReplaceableIconAction#getImageId()
-	 */
-	protected String getImageId() {
-		return ISVNUIConstants.IMG_MENU_BRANCHTAG;
-	}
 }

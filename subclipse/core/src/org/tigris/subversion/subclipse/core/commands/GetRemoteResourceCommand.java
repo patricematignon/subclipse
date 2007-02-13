@@ -1,13 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
  * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
+ *     Cédric Chabanois (cchabanois@ifrance.com) - modified for Subversion 
+ *******************************************************************************/
 package org.tigris.subversion.subclipse.core.commands;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -18,7 +18,7 @@ import org.tigris.subversion.subclipse.core.SVNException;
 import org.tigris.subversion.subclipse.core.resources.RemoteFile;
 import org.tigris.subversion.subclipse.core.resources.RemoteFolder;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
-import org.tigris.subversion.svnclientadapter.ISVNInfo;
+import org.tigris.subversion.svnclientadapter.ISVNDirEntry;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
 import org.tigris.subversion.svnclientadapter.SVNNodeKind;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
@@ -55,27 +55,27 @@ public class GetRemoteResourceCommand implements ISVNCommand {
         
         remoteResource = null;
         ISVNClientAdapter svnClient = repository.getSVNClient();
-        ISVNInfo info;
+        ISVNDirEntry dirEntry;
         try {
-            info = svnClient.getInfo(url, revision, revision);
+            dirEntry = svnClient.getDirEntry(url,revision);
         } catch (SVNClientException e) {
             throw new SVNException("Can't get remote resource "+url+" at revision "+revision,e);   
         }
         
-        if (info == null) {
+        if (dirEntry == null) {
             remoteResource = null; // no remote file
         }
         else
         {
-            if (info.getNodeKind() == SVNNodeKind.FILE)
+            if (dirEntry.getNodeKind() == SVNNodeKind.FILE)
                 remoteResource = new RemoteFile(
                     null,  // we don't know its parent
                     repository,
                     url,
                     revision,
-                    info.getLastChangedRevision(),
-                    info.getLastChangedDate(),
-                    info.getLastCommitAuthor()
+                    dirEntry.getLastChangedRevision(),
+                    dirEntry.getLastChangedDate(),
+                    dirEntry.getLastCommitAuthor()
                 );
              else
                 remoteResource = new RemoteFolder(
@@ -83,9 +83,9 @@ public class GetRemoteResourceCommand implements ISVNCommand {
                     repository,
                     url,
                     revision,
-                    info.getLastChangedRevision(),
-                    info.getLastChangedDate(),
-                    info.getLastCommitAuthor()
+                    dirEntry.getLastChangedRevision(),
+                    dirEntry.getLastChangedDate(),
+                    dirEntry.getLastCommitAuthor()
                 );                
         }
         monitor.done();

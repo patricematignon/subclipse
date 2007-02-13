@@ -1,17 +1,14 @@
-/*******************************************************************************
- * Copyright (c) 2005, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+/******************************************************************************
+ * This program and the accompanying materials are made available under
+ * the terms of the Common Public License v1.0 which accompanies this
+ * distribution, and is available at the following URL:
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * Copyright(c) 2003-2005 by the authors indicated in the @author tags.
  *
- * Contributors:
- *     Subclipse project committers - initial API and implementation
+ * All Rights are Reserved by the various authors.
+ *
  ******************************************************************************/
 package org.tigris.subversion.subclipse.ui.subscriber;
-
-import java.util.ArrayList;
-import java.util.Iterator;
 
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.core.resources.IProject;
@@ -42,13 +39,10 @@ public class IgnoreSynchronizeAction extends SynchronizeModelAction {
 	protected FastSyncInfoFilter getSyncInfoFilter() {
 		return new FastSyncInfoFilter() {
 			public boolean select(SyncInfo info) {
-				SyncInfoDirectionFilter filter = new SyncInfoDirectionFilter(new int[] {SyncInfo.OUTGOING});
-				if (!filter.select(info)) return false;
 			    IStructuredSelection selection = getStructuredSelection();
 			    if (selection.size() != 1) return false;
 		        ISynchronizeModelElement element = (ISynchronizeModelElement)selection.getFirstElement();
 			    IResource resource = element.getResource();
-		        if (resource == null) return false;
                 ISVNLocalResource svnResource = SVNWorkspaceRoot.getSVNResourceFor(resource);			    
                 try {
             	    //If the resource is a IProject then the action should not be enabled.
@@ -67,17 +61,7 @@ public class IgnoreSynchronizeAction extends SynchronizeModelAction {
 	}    
 
     protected SynchronizeModelOperation getSubscriberOperation(ISynchronizePageConfiguration configuration, IDiffElement[] elements) {
-		ArrayList selectedElements = new ArrayList();
-		IStructuredSelection selection = getStructuredSelection();
-		Iterator iter = selection.iterator();
-		while (iter.hasNext()) {
-			ISynchronizeModelElement synchronizeModelElement = (ISynchronizeModelElement)iter.next();
-			IResource resource = synchronizeModelElement.getResource();
-			selectedElements.add(resource);
-		}
-		IResource[] resources = new IResource[selectedElements.size()];
-		selectedElements.toArray(resources);      
-		return new IgnoreSynchronizeOperation(configuration, elements, resources);
+        return new IgnoreSynchronizeOperation(configuration, elements);
     }
 
 }

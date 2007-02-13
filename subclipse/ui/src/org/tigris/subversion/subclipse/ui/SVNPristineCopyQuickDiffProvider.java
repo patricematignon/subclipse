@@ -1,13 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
  * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.tigris.subversion.subclipse.ui;
 
 import java.io.BufferedReader;
@@ -37,6 +37,7 @@ import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.IElementStateListener;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.texteditor.quickdiff.IQuickDiffReferenceProvider;
+import org.tigris.subversion.subclipse.core.ISVNFile;
 import org.tigris.subversion.subclipse.core.ISVNLocalFile;
 import org.tigris.subversion.subclipse.core.ISVNRemoteFile;
 import org.tigris.subversion.subclipse.core.SVNException;
@@ -223,6 +224,7 @@ public class SVNPristineCopyQuickDiffProvider implements IQuickDiffReferenceProv
 				return false;
 			}
 			
+			int kind = info.getKind();			
 			if(fLastSyncState == null) {
 				needToUpdateReferenceDocument = true;
 			} else if(! fLastSyncState.equals(info)) {
@@ -244,6 +246,7 @@ public class SVNPristineCopyQuickDiffProvider implements IQuickDiffReferenceProv
 
 	private SyncInfo getSyncState(IResource resource) throws TeamException {
 		if (resource == null) return null;
+		ISVNFile SVNFile = getManagedSVNFile();
 		return SVNWorkspaceSubscriber.getInstance().getSyncInfo(resource);
 	}
 	

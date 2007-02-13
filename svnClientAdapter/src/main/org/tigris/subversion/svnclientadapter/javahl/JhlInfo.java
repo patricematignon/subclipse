@@ -1,19 +1,26 @@
-/*******************************************************************************
- * Copyright (c) 2005, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+/*
+ *  Copyright(c) 2003-2004 by the authors indicated in the @author tags.
  *
- * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
 package org.tigris.subversion.svnclientadapter.javahl;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.tigris.subversion.javahl.Info;
 import org.tigris.subversion.svnclientadapter.ISVNInfo;
@@ -23,21 +30,16 @@ import org.tigris.subversion.svnclientadapter.SVNUrl;
 import org.tigris.subversion.svnclientadapter.SVNRevision.Number;
 
 /**
- * A JavaHL based implementation of {@link ISVNInfo}.
- * Actually just an adapter from {@link org.tigris.subversion.javahl.Info}
+ * adapter : convert from Info to ISVNInfo
  *  
  * @author Cédric Chabanois
  */
 public class JhlInfo implements ISVNInfo {
+	private static final Logger log = Logger.getLogger(JhlInfo.class.getName());
 	
 	private Info info;
 	private File file;
 
-	/**
-	 * Constructor
-	 * @param file
-	 * @param info
-	 */
 	public JhlInfo(File file, Info info) {
         super();
         this.file = file;
@@ -62,16 +64,9 @@ public class JhlInfo implements ISVNInfo {
 		try {
 			return new SVNUrl(info.getUrl());
 		} catch (MalformedURLException e) {
-            //should never happen.
+			log.log(Level.SEVERE, e.getMessage(), e);
 			return null;
 		}
-	}
-
-	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.ISVNInfo#getUrlString()
-	 */
-	public String getUrlString() {
-		return info.getUrl();
 	}
 
 	/* (non-Javadoc)
@@ -88,7 +83,7 @@ public class JhlInfo implements ISVNInfo {
 		try {
 			return new SVNUrl(info.getRepository());
 		} catch (MalformedURLException e) {
-            //should never happen.
+			log.log(Level.SEVERE, e.getMessage(), e);
 			return null;
 		}
 	}
@@ -170,7 +165,7 @@ public class JhlInfo implements ISVNInfo {
 		try {
 			return new SVNUrl(info.getCopyUrl());
 		} catch (MalformedURLException e) {
-            //should never happen.
+			log.log(Level.SEVERE, e.getMessage(), e);
 			return null;
 		}
 	}
@@ -179,7 +174,6 @@ public class JhlInfo implements ISVNInfo {
      * @see org.tigris.subversion.svnclientadapter.ISVNInfo#getLockCreationDate()
      */
     public Date getLockCreationDate() {
-    	//Not available in info(1)
         return null;
     }
 
@@ -187,7 +181,6 @@ public class JhlInfo implements ISVNInfo {
      * @see org.tigris.subversion.svnclientadapter.ISVNInfo#getLockOwner()
      */
     public String getLockOwner() {
-    	//Not available in info(1)
         return null;
     }
     
@@ -195,7 +188,6 @@ public class JhlInfo implements ISVNInfo {
      * @see org.tigris.subversion.svnclientadapter.ISVNInfo#getLockComment()
      */
     public String getLockComment() {
-    	//Not available in info(1)
         return null;
     }
 }

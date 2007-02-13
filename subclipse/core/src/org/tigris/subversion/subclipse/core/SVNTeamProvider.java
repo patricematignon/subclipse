@@ -1,13 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
  * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
+ *     IBM Corporation - initial API and implementation
+ *     Cédric Chabanois (cchabanois@ifrance.com) - modified for Subversion 
+ *******************************************************************************/
 package org.tigris.subversion.subclipse.core;
  
 import org.eclipse.core.resources.IContainer;
@@ -21,17 +22,20 @@ import org.eclipse.core.resources.team.IMoveDeleteHook;
 import org.eclipse.core.resources.team.ResourceRuleFactory;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.variants.IResourceVariant;
 import org.tigris.subversion.subclipse.core.commands.AddResourcesCommand;
 import org.tigris.subversion.subclipse.core.commands.CheckinResourcesCommand;
 import org.tigris.subversion.subclipse.core.commands.SwitchToUrlCommand;
+import org.tigris.subversion.subclipse.core.resources.LocalResourceStatus;
 import org.tigris.subversion.subclipse.core.resources.RemoteFile;
 import org.tigris.subversion.subclipse.core.resources.RemoteFolder;
 import org.tigris.subversion.subclipse.core.resources.SVNFileModificationValidator;
 import org.tigris.subversion.subclipse.core.resources.SVNMoveDeleteHook;
 import org.tigris.subversion.subclipse.core.resources.SVNWorkspaceRoot;
+import org.tigris.subversion.svnclientadapter.SVNConstants;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
 import org.tigris.subversion.svnclientadapter.SVNUrl;
 
@@ -71,12 +75,37 @@ public class SVNTeamProvider extends RepositoryProvider {
 			// we no longer need the sync info cached. This does not affect the actual SVN
 			// meta directories on disk, and will remain unless a client calls unmanage().		
 			SVNProviderPlugin.getPlugin().getStatusCacheManager().purgeCache(getProject(), true);
+			deconfigureTeamPrivateResource(getProject());
 		} catch (SVNException e)
 		{
 			SVNProviderPlugin.log(e);
 		}
 
 		SVNProviderPlugin.broadcastProjectDeconfigured(getProject());
+	}
+
+	private void deconfigureTeamPrivateResource(IProject project)
+	{
+		try {
+			project.accept(
+					new IResourceVisitor() {
+						public boolean visit(IResource resource) throws CoreException {
+							if ((resource.getType() == IResource.FOLDER)
+									&& (resource.getName().equals(SVNConstants.SVN_DIRNAME))
+									&& (resource.isTeamPrivateMember()))
+							{
+								resource.setTeamPrivateMember(false);
+								return false;
+							}
+							else
+							{
+								return true;
+							}
+						}
+					}, IResource.DEPTH_INFINITE, IContainer.INCLUDE_PHANTOMS | IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS);
+		} catch (CoreException e) {
+			SVNProviderPlugin.log(SVNException.wrapException(e));
+		}
 	}
 
 	private void configureTeamPrivateResource(IProject project)
@@ -86,7 +115,7 @@ public class SVNTeamProvider extends RepositoryProvider {
 					new IResourceVisitor() {
 						public boolean visit(IResource resource) throws CoreException {
 							if ((resource.getType() == IResource.FOLDER)
-									&& (resource.getName().equals(SVNProviderPlugin.getPlugin().getAdminDirectoryName()))
+									&& (resource.getName().equals(SVNConstants.SVN_DIRNAME))
 									&& (!resource.isTeamPrivateMember()))
 							{
 								resource.setTeamPrivateMember(true);
@@ -109,7 +138,17 @@ public class SVNTeamProvider extends RepositoryProvider {
 	 */
 	public void setProject(IProject project) {
 		super.setProject(project);
-		this.workspaceRoot = new SVNWorkspaceRoot(project);
+		try {
+			this.workspaceRoot = new SVNWorkspaceRoot(project);
+			// Ensure that the project has SVN info
+			LocalResourceStatus status = SVNWorkspaceRoot.peekResourceStatusFor(workspaceRoot.getLocalRoot().getIResource());
+			if (!status.hasRemote()) {
+				throw new SVNException(new SVNStatus(IStatus.ERROR, Policy.bind("SVNTeamProvider.noFolderInfo", project.getName()))); //$NON-NLS-1$
+			}
+		} catch (SVNException e) {
+			// Log any problems creating the CVS managed resource
+			SVNProviderPlugin.log(e);
+		}
 	}
 
 	/**
@@ -220,8 +259,4 @@ public class SVNTeamProvider extends RepositoryProvider {
     public boolean canHandleLinkedResources() {
         return true;
     }
-
-	public boolean canHandleLinkedResourceURI() {
-		return true;
-	}
 }

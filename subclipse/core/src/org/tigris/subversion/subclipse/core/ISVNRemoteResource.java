@@ -1,13 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
  * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
+ *     IBM Corporation - initial API and implementation
+ *     Cédric Chabanois (cchabanois@ifrance.com) - modified for Subversion 
+ *******************************************************************************/
 package org.tigris.subversion.subclipse.core;
 
  
@@ -17,7 +18,7 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.variants.IResourceVariant;
-import org.tigris.subversion.svnclientadapter.ISVNLogMessage;
+import org.tigris.subversion.subclipse.core.history.ILogEntry;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
 
 /**
@@ -30,16 +31,13 @@ import org.tigris.subversion.svnclientadapter.SVNRevision;
 public interface ISVNRemoteResource extends ISVNResource, IAdaptable, IResourceVariant {
 	
 	/**
-	 * Does the remote resource represented by this handle exist on the server?
-	 * This method may contact the server and be long running.
-	 * @param monitor
-	 * @return true when a resource exists 
-     * @throws TeamException
+	 * Does the remote resource represented by this handle exist on the server. This
+	 * method may contact the server and be long running.
 	 */
 	public boolean exists(IProgressMonitor monitor) throws TeamException;
 	
 	/**
-	 * @return the repository relative path of this remote folder.
+	 * Answers the repository relative path of this remote folder.
 	 */
 	public String getRepositoryRelativePath();
 	
@@ -65,43 +63,28 @@ public interface ISVNRemoteResource extends ISVNResource, IAdaptable, IResourceV
     public SVNRevision getRevision();
 
     /**
-     * @return the date of modification for this remote resource or null if this date is not available
+     * @return the date of modification for this remote resource
+     * @return null if this date is not available
      */
     public Date getDate();
 
     /**
-     * @return the author of this remote resource or null if the author is not available
+     * @return the author of this remote resource
+     * @return null if the author is not available
      */
     public String getAuthor();
 
     /**
      * Get all the log entries of the remote resource
-     * 
-     * 
-     * @param pegRevision
-     * @param revisionStart
-     * @param revisionEnd
-     * @param stopOnCopy
-     * @param fetchChangePath
-     * @param limit
-     * @return array of LogMessages
-     * @throws TeamException
      */
-    public ISVNLogMessage[] getLogMessages(SVNRevision pegRevision,
-			SVNRevision revisionStart, SVNRevision revisionEnd,
-			boolean stopOnCopy, boolean fetchChangePath, long limit)
-			throws TeamException;
-    
-    /**
-     * @return the parent remote folder
-     */
+    public ILogEntry[] getLogEntries(IProgressMonitor monitor) throws TeamException;
+
     public ISVNRemoteFolder getParent();
     
     /**
      * Get the members of this remote resource (at the same revision than this resource)
      * @param progress a progress monitor
      * @return ISVNRemoteResource[] and array of members (children resources)
-     * @throws TeamException
      */
     public ISVNRemoteResource[] members(IProgressMonitor progress) throws TeamException;
 

@@ -1,13 +1,3 @@
-/*******************************************************************************
- * Copyright (c) 2004, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
 package org.tigris.subversion.subclipse.ui.settings;
 
 import java.util.ArrayList;
@@ -85,15 +75,9 @@ public class ProjectProperties {
     public LinkList getLinkList(String commitMessage) {
         ArrayList links = new ArrayList();
         ArrayList urls = new ArrayList();
-        String bugID = "%BUGID%"; //$NON-NLS-1$
         if (message != null) {
-	        int index = message.indexOf(bugID);
+	        int index = message.indexOf("%BUGID%"); //$NON-NLS-1$
 	        if (index != -1) {
-	        	String remainder = null;
-	        	if (message.length() > index + bugID.length())
-	        		remainder = message.substring(index + bugID.length());
-	        	else
-	        		remainder = "";
 		        String tag = message.substring(0, index);
 		        index = commitMessage.indexOf(tag);
 		        if (index != -1) {
@@ -112,7 +96,6 @@ public class ProjectProperties {
 			                issue = new StringBuffer();
 			            } else {
 			                if (commitMessage.substring(index, index + 1).equals("\n") || commitMessage.substring(index, index + 1).equals("\r")) break; //$NON-NLS-1$ //$NON-NLS-2$
-			                if (commitMessage.substring(index).trim().equals(remainder.trim())) break;
 			                if (commitMessage.substring(index, index + 1).equals(" ")) {
 			                    int lineIndex = commitMessage.indexOf("\n", index);
 			                    if (lineIndex == -1) lineIndex = commitMessage.indexOf("\r", index);
@@ -150,12 +133,8 @@ public class ProjectProperties {
     }
     
     public static LinkList getUrls(String s) {
-        int max = 0;
-        int i = -1;
-        if (s != null) {
-            max = s.length();
-            i = s.indexOf(URL);
-        }
+    	int max = s.length();
+    	int i = s.indexOf(URL);
     	ArrayList linkRanges = new ArrayList();
     	ArrayList links = new ArrayList();
     	while (i != -1) {
@@ -166,7 +145,7 @@ public class ProjectProperties {
     	        }
     	        i--;
     	    }
-    		int start = (i < 0) ? 0 : i;
+    		int start = i;
     		// look for the first whitespace character
     		boolean found = false;
     		i += URL.length();
@@ -215,12 +194,9 @@ public class ProjectProperties {
         ISVNLocalResource svnResource = SVNWorkspaceRoot.getSVNResourceFor(resource);
         ISVNProperty property = null;
         ISVNProperty labelProperty = null;
-        if (svnResource != null && svnResource.isManaged()) {
-            try {
-				property = svnResource.getSvnProperty("bugtraq:message"); //$NON-NLS-1$
-	            labelProperty = svnResource.getSvnProperty("bugtraq:label"); //$NON-NLS-1$
-			} catch (SVNException e) {
-			}
+        if (svnResource.isManaged()) {
+            property = svnResource.getSvnProperty("bugtraq:message"); //$NON-NLS-1$
+            labelProperty = svnResource.getSvnProperty("bugtraq:label"); //$NON-NLS-1$
         }
         if ((property != null) && (property.getValue() != null) && (property.getValue().trim().length() > 0)) {
             ProjectProperties projectProperties = new ProjectProperties();
@@ -240,13 +216,10 @@ public class ProjectProperties {
         while (checkResource.getParent() != null) {
             checkResource = checkResource.getParent();
             if (checkResource.getParent() == null) return null;
-            try {
-	            svnResource = SVNWorkspaceRoot.getSVNResourceFor(checkResource);
-	            if (svnResource.isManaged())
-	                property = svnResource.getSvnProperty("bugtraq:message"); //$NON-NLS-1$
-	            if (property != null) return getProjectProperties(checkResource);
-            } catch (SVNException e) {
-            }
+            svnResource = SVNWorkspaceRoot.getSVNResourceFor(checkResource);
+            if (svnResource.isManaged())
+                property = svnResource.getSvnProperty("bugtraq:message"); //$NON-NLS-1$
+            if (property != null) return getProjectProperties(checkResource);
         }
         return null;
     }

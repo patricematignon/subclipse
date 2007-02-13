@@ -1,75 +1,67 @@
-/*******************************************************************************
- * Copyright (c) 2003, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+/*
+ *  Copyright(c) 2003-2004 by the authors indicated in the @author tags.
  *
- * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
 package org.tigris.subversion.svnclientadapter;
 
 import java.io.File;
 import java.util.Date;
 
 /**
- * An interface defining the status of one subversion item (file or directory) in
- * the working copy or repository.
  * 
  * @author philip schatz
  */
 public interface ISVNStatus {
 
     /**
-     * @return the SVNUrl instance of url of the resource on repository
+     * get the url of the resource on repository
+     * @return
      */
 	SVNUrl getUrl();
-	
-	/**
-	 * @return the url (String) of the resource in repository
-	 */
-	String getUrlString();
 
 	/**
-	 * @return the last changed revision or null if resource is not managed 
+	 * get the last changed revision or null if resource is not managed 
 	 */
 	SVNRevision.Number getLastChangedRevision();
 
     /**
-     * @return date this resource last changed
+     * date this resource last changed
+     * @return
      */
 	Date getLastChangedDate();
 
 	/**
 	 * get the last commit author or null if resource is not versionned
 	 * or if last commit author is unknown
-	 * @return the last commit author or null 
+	 * @return
 	 */
 	String getLastCommitAuthor();
 
-    /**
-     * @return the file or directory status
-     */
 	SVNStatusKind getTextStatus();
 
-    /**
-     * @return the file or directory status of base
-     */
 	SVNStatusKind getRepositoryTextStatus();
 	
 	/**
-     * @return status of properties (either Kind.NORMAL, Kind.CONFLICTED or Kind.MODIFIED)
+     * status of properties
+	 * will return either Kind.NORMAL, Kind.CONFLICTED or Kind.MODIFIED
 	 */
 	SVNStatusKind getPropStatus();
 
-    /**
-     * @return the status of the properties base (either Kind.NORMAL, Kind.CONFLICTED or Kind.MODIFIED)
-     */
 	SVNStatusKind getRepositoryPropStatus();
 
 	/**
-	 * @return the revision of the resource or null if not managed 
+	 * get the revision of the resource or null if not managed 
 	 */
 	SVNRevision.Number getRevision();
 
@@ -91,23 +83,11 @@ public interface ISVNStatus {
 	SVNNodeKind getNodeKind();
 
     /**
-     * @return true when the resource was copied
+     * 
+     * @return
      */
     boolean isCopied();    
     
-    /**
-     * @return true when the working copy directory is locked. 
-     */
-    boolean isWcLocked();
-    
-    /**
-     * @return true when the resource was switched relative to its parent.
-     */
-    boolean isSwitched();
-    
-    /**
-     * @return the url of the copy source if copied, null otherwise
-     */
 	SVNUrl getUrlCopiedFrom();
 
     /**

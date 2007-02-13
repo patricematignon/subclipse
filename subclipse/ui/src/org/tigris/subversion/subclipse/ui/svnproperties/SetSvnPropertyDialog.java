@@ -1,20 +1,20 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
  * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
+ *     Cédric Chabanois (cchabanois@ifrance.com) 
+ *******************************************************************************/
 package org.tigris.subversion.subclipse.ui.svnproperties;
 
 import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 
-import org.eclipse.jface.dialogs.TrayDialog;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.swt.SWT;
@@ -35,12 +35,10 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.PlatformUI;
 import org.tigris.subversion.subclipse.core.ISVNLocalResource;
 import org.tigris.subversion.subclipse.core.SVNException;
 import org.tigris.subversion.subclipse.core.properties.SVNPropertyDefinition;
 import org.tigris.subversion.subclipse.core.properties.SVNPropertyManager;
-import org.tigris.subversion.subclipse.ui.IHelpContextIds;
 import org.tigris.subversion.subclipse.ui.Policy;
 import org.tigris.subversion.subclipse.ui.SVNUIPlugin;
 import org.tigris.subversion.svnclientadapter.ISVNProperty;
@@ -48,7 +46,7 @@ import org.tigris.subversion.svnclientadapter.ISVNProperty;
 /**
  * Dialog to set a svn property 
  */
-public class SetSvnPropertyDialog extends TrayDialog {
+public class SetSvnPropertyDialog extends Dialog {
 	private ISVNProperty property;   // null when we set a new property
 	private ISVNLocalResource svnResource;	
 	private Combo propertyNameText;
@@ -65,7 +63,6 @@ public class SetSvnPropertyDialog extends TrayDialog {
 	private File propertyFile;
 	private boolean recurse;
 	
-	private ArrayList allPropertyTypes = new ArrayList();
 	private SVNPropertyDefinition[] propertyTypes;
 	private ArrayList propertyNames;
 	private int prop;
@@ -152,7 +149,7 @@ public class SetSvnPropertyDialog extends TrayDialog {
 		propertyNameText = new Combo(composite, SWT.BORDER);
 
 		gridData = new GridData(GridData.FILL_HORIZONTAL);
-		gridData.widthHint = 400;
+		gridData.widthHint = 300;
 		gridData.grabExcessHorizontalSpace = true;
 		propertyNameText.setLayoutData(gridData);
 		if (property != null) {
@@ -191,7 +188,7 @@ public class SetSvnPropertyDialog extends TrayDialog {
 		propertyValueText = new Text(group,SWT.BORDER | SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 		gridData = new GridData(GridData.FILL_BOTH);
 		gridData.heightHint = 100;
-		gridData.widthHint = 400;
+		gridData.widthHint = 300;
 		gridData.horizontalIndent = 30;
 		gridData.grabExcessHorizontalSpace = true;
 		propertyValueText.setLayoutData(gridData);
@@ -252,17 +249,13 @@ public class SetSvnPropertyDialog extends TrayDialog {
 		}
 		propertyValueText.addListener(SWT.Modify,updatePropertiesListener);
 	
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(area, IHelpContextIds.SET_SVN_PROPERTY_DIALOG);	
-		
 		return area;
 	}
 
     private void getPropertyTypes() {
-	    if (svnResource.isFolder()) {
-	    	SVNPropertyDefinition[] allProperties = SVNPropertyManager.getInstance().getPropertyTypes();
-	    	for (int i = 0; i < allProperties.length; i++) allPropertyTypes.add(allProperties[i]);
+	    if (svnResource.isFolder())
 	        propertyTypes = SVNPropertyManager.getInstance().getFolderPropertyTypes();
-	    } else
+	    else
 	        propertyTypes = SVNPropertyManager.getInstance().getFilePropertyTypes();
 	    propertyNames = new ArrayList();
 	    for (int i = 0; i < propertyTypes.length; i++) {
@@ -379,16 +372,7 @@ public class SetSvnPropertyDialog extends TrayDialog {
 		                return;
 		            }
 		        } 		   		        
-		    }
-		    // if non-folder property specified for folder, recurse must be selected.
-		    if (svnResource.isFolder() && !recurseCheckbox.getSelection() && prop == -1) {
-		    	SVNPropertyDefinition checkDefinition = new SVNPropertyDefinition(propertyName, null);
-		    	int index = allPropertyTypes.indexOf(checkDefinition);
-		    	if (index != -1) {
-		    		setError(Policy.bind("SetSvnPropertyDialog.recurseRequired")); //$NON-NLS-1$
-		    		return;
-		    	}
-		    }
+		    }							
 		}
 		
 		// verify file

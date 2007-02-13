@@ -1,19 +1,22 @@
-/*******************************************************************************
- * Copyright (c) 2004, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+/*
+ *  Copyright(c) 2003-2004 by the authors indicated in the @author tags.
  *
- * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
 package org.tigris.subversion.svnclientadapter;
 
 import java.io.File;
 import java.io.IOException;
-
-import org.tigris.subversion.svnclientadapter.utils.StringUtils;
 
 /**
  * During notification (both with svn command line and javahl), the files and
@@ -40,7 +43,7 @@ public class SVNBaseDir {
      * @param file1
      * @param file2
      */
-    protected static File getCommonPart(File file1, File file2) {
+    static File getCommonPart(File file1, File file2) {
     		if (file1 == null)
     			return null;
     		if (file2 == null)
@@ -94,7 +97,6 @@ public class SVNBaseDir {
      * get the base directory for the given file
      * 
      * @param file
-     * @return the base directory for the given file or null if there is no base
      */
     static public File getBaseDir(File file) {
         return getBaseDir(new File[] { file });
@@ -105,7 +107,6 @@ public class SVNBaseDir {
      * directory for the set of files
      * 
      * @param files
-     * @return the base directory for the given set of files or null if there is no base
      */
     static public File getBaseDir(File[] files) {
         File rootDir = getRootDir(files);
@@ -149,8 +150,8 @@ public class SVNBaseDir {
      * 
      * @param rootDir
      * @param file
-     * @return path of file relative to rootDir
-     * @throws SVNClientException
+     * @return @throws
+     *         SVNClientException
      */
     static public String getRelativePath(File rootDir, File file)
             throws SVNClientException {

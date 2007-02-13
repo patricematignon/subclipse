@@ -1,13 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
  * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
+ *     IBM Corporation - initial API and implementation
+ *     Cédric Chabanois (cchabanois@ifrance.com) - modified for Subversion 
+ *******************************************************************************/
 package org.tigris.subversion.subclipse.ui.wizards.sharing;
 
 
@@ -22,7 +23,6 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.wizard.IWizardPage;
@@ -70,10 +70,7 @@ public class SharingWizard extends Wizard implements IConfigurationWizard {
 	
 	// The status of the project directory
 	private LocalResourceStatus projectStatus;  
-	
-	// The repository locations
-	private ISVNRepositoryLocation[] locations;
-	
+
 	public SharingWizard() {
 		IDialogSettings workbenchSettings = SVNUIPlugin.getPlugin().getDialogSettings();
 		IDialogSettings section = workbenchSettings.getSection("NewLocationWizard");//$NON-NLS-1$
@@ -103,16 +100,7 @@ public class SharingWizard extends Wizard implements IConfigurationWizard {
             // - the create location page
             // - the module selection page
             // - the finish page 
-    		
-           	IRunnableWithProgress runnable = new IRunnableWithProgress() {
-    			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-                	locations = SVNUIPlugin.getPlugin().getRepositoryManager().getKnownRepositoryLocations(monitor);			}
-        	};
-            try {
-    			new ProgressMonitorDialog(getShell()).run(true, false, runnable);
-    		} catch (Exception e) {
-                SVNUIPlugin.openError(getShell(), null, null, e, SVNUIPlugin.LOG_TEAM_EXCEPTIONS);
-    		}
+			ISVNRepositoryLocation[] locations = SVNUIPlugin.getPlugin().getRepositoryManager().getKnownRepositoryLocations();
 			if (locations.length > 0) {
 				locationPage = new RepositorySelectionPage("importPage", Policy.bind("SharingWizard.importTitle"), sharingImage); //$NON-NLS-1$ //$NON-NLS-2$
 				locationPage.setDescription(Policy.bind("SharingWizard.importTitleDescription")); //$NON-NLS-1$
@@ -136,7 +124,13 @@ public class SharingWizard extends Wizard implements IConfigurationWizard {
      */
 	public boolean canFinish() {
 		IWizardPage page = getContainer().getCurrentPage();
-		if (page == directoryPage) {
+		if (page == locationPage) {
+			if (locationPage.getLocation() == null) {
+				return createLocationPage.isPageComplete();
+			} else {
+				return directoryPage.useProjectName() || directoryPage.getDirectoryName() != null;
+			}
+		} else if (page == directoryPage) {
 			return directoryPage.useProjectName() || directoryPage.getDirectoryName() != null;
 		} else if (page == finishPage) {
 			return true;
@@ -266,7 +260,7 @@ public class SharingWizard extends Wizard implements IConfigurationWizard {
 							}
 							
 							// Create the remote module for the project
-							SVNWorkspaceRoot.shareProject(location, project, getRemoteDirectoryName(), finishPage.getComment(), new SubProgressMonitor(monitor, 50));
+							SVNWorkspaceRoot.shareProject(location, project, getRemoteDirectoryName(), new SubProgressMonitor(monitor, 50));
 							
 							try{
 								project.refreshLocal(IProject.DEPTH_INFINITE, new SubProgressMonitor(monitor, 50));
@@ -283,14 +277,10 @@ public class SharingWizard extends Wizard implements IConfigurationWizard {
 					}
 				}
 			});
-
-			if (autoconnectPage == null || (projectStatus == null)) {
-				CommitAction commitAction = new CommitAction(finishPage.getComment());
-				commitAction.setSharing(true);
-				IResource[] selectedResources = { project };
-				commitAction.setSelectedResources(selectedResources);
-				commitAction.run(null);
-			}
+			CommitAction commitAction = new CommitAction();
+			IResource[] selectedResources = { project };
+			commitAction.setSelectedResources(selectedResources);
+			commitAction.run(null);
 //			if (doSync[0]) {
 //			    IResource[] resources = { project };
 //			    SVNSynchronizeParticipant participant = (SVNSynchronizeParticipant)SubscriberParticipant.getMatchingParticipant(SVNSynchronizeParticipant.ID, resources);

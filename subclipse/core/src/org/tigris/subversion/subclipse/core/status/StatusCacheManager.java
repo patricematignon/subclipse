@@ -1,13 +1,12 @@
-/*******************************************************************************
- * Copyright (c) 2004, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+/******************************************************************************
+ * This program and the accompanying materials are made available under
+ * the terms of the Common Public License v1.0 which accompanies this
+ * distribution, and is available at the following URL:
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * Copyright(c) 2003-2005 by the authors indicated in the @author tags.
  *
- * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
+ * All Rights are Reserved by the various authors.
+ *******************************************************************************/
 package org.tigris.subversion.subclipse.core.status;
 
 import java.util.ArrayList;
@@ -34,14 +33,10 @@ import org.tigris.subversion.subclipse.core.SVNProviderPlugin;
 import org.tigris.subversion.subclipse.core.commands.GetInfoCommand;
 import org.tigris.subversion.subclipse.core.resources.LocalResourceStatus;
 import org.tigris.subversion.subclipse.core.resources.SVNWorkspaceRoot;
-import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 import org.tigris.subversion.svnclientadapter.ISVNInfo;
 import org.tigris.subversion.svnclientadapter.ISVNStatus;
-import org.tigris.subversion.svnclientadapter.SVNClientException;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
-import org.tigris.subversion.svnclientadapter.SVNStatusKind;
 import org.tigris.subversion.svnclientadapter.SVNStatusUnversioned;
-import org.tigris.subversion.svnclientadapter.SVNUrl;
 
 /**
  * Provides a method to get the status of a resource. <br>   
@@ -71,15 +66,31 @@ public class StatusCacheManager implements IResourceChangeListener, Preferences.
         statusUpdateStrategy = recursiveStatusUpdate ? (StatusUpdateStrategy)new RecursiveStatusUpdateStrategy(statusCache) : (StatusUpdateStrategy)new NonRecursiveStatusUpdateStrategy(statusCache);
     }
     
-	/**
-	 * @param resource
-	 * @return true when the resource's status is present in cache
-	 */
-	public boolean hasCachedStatus(IResource resource)
-	{
-		return statusCache.hasCachedStatus(resource);
-	}
-
+    /**
+     * A resource which ancestor is not managed is not managed
+     * @param resource
+     * @return true if an ancestor of the resource is not managed and false 
+     *         if we don't know 
+     */
+    private boolean isAncestorNotManaged(IResource resource) {
+        IResource parent = resource.getParent();
+        if (parent == null) {
+            return false;
+        }
+        
+        while (parent != null) {
+            LocalResourceStatus statusParent = statusCache.getStatus(parent);
+            
+            if (statusParent != null) {
+            	if (!statusParent.isManaged()) {
+            		return true;
+            	}
+            }
+            parent = parent.getParent();
+        }
+        return false;
+    }
+    
     /**
      * update the cache using the given statuses
      * @param statuses
@@ -120,7 +131,7 @@ public class StatusCacheManager implements IResourceChangeListener, Preferences.
      * @param workspaceRoot
      */
     protected IResource updateCache(ISVNStatus status) {
-   		return statusCache.addStatus(new LocalResourceStatus(status, getURL(status)));
+   		return statusCache.addStatus(new LocalResourceStatus(status));
     }
 
     /**
@@ -200,26 +211,20 @@ public class StatusCacheManager implements IResourceChangeListener, Preferences.
      */
     private LocalResourceStatus basicGetStatus(IResource resource, StatusUpdateStrategy strategy) throws SVNException 
 	{
-    	if (!resource.exists())
-    		return LocalResourceStatus.NONE;
+        LocalResourceStatus status = null;
 
-    	LocalResourceStatus status = null;
-
-   /* Code commented so that svn:externals that are multi-level deep will be 
-    * decorated.  In this scenario, there can be unversioned files in the middle
-    * of the svn:externals files.                                               */     
-//        if (isAncestorNotManaged(resource)) {
-//            // we know the resource is not managed because one of its ancestor is not managed
-//       		status = new LocalResourceStatus(new SVNStatusUnversioned(resource.getLocation().toFile(),false)); 
-//        } else {
+        if (isAncestorNotManaged(resource)) {
+            // we know the resource is not managed because one of its ancestor is not managed
+       		status = new LocalResourceStatus(new SVNStatusUnversioned(resource.getLocation().toFile(),false)); 
+        } else {
             // we don't know if resource is managed or not, we must update its status
         	strategy.setStatusCache(statusCache);
         	setStatuses(strategy.statusesToUpdate(resource), resource);
         	status = statusCache.getStatus(resource);
-//        }
+        }
         
         if (status == null) {
-            status = new LocalResourceStatus(new SVNStatusUnversioned(resource.getLocation().toFile(),false), null);
+            status = new LocalResourceStatus(new SVNStatusUnversioned(resource.getLocation().toFile(),false));
         }
         
         return status;
@@ -246,16 +251,13 @@ public class StatusCacheManager implements IResourceChangeListener, Preferences.
 	 * infinite always ...
 	 * 
 	 * @param resource
-	 * @param recursive
+	 * @param depth
 	 * @return array of resources which were refreshed (including all phantoms
 	 *         and their children)
 	 * @throws SVNException
 	 */
-    public IResource[] refreshStatus(final IContainer resource, final boolean recursive) throws SVNException {
+    public IResource[] refreshStatus(final IResource resource, final int depth) throws SVNException {
     	if (SVNWorkspaceRoot.isLinkedResource(resource)) { return new IResource[0]; }
-
-		final int depth = (recursive) ? IResource.DEPTH_INFINITE : IResource.DEPTH_ONE;
-
     	final StatusUpdateStrategy strategy = 
     		(depth == IResource.DEPTH_INFINITE) 
 							? (StatusUpdateStrategy) new RecursiveStatusUpdateStrategy(statusCache)
@@ -333,24 +335,6 @@ public class StatusCacheManager implements IResourceChangeListener, Preferences.
 	 */
 	public void resourceChanged(IResourceChangeEvent event) {
 		statusCache.flushPendingStatuses();
-	}
-
-    // getStatuses returns null URL for svn:externals folder.  This will
-    // get the URL using svn info command on the local resource
-	private String getURL(ISVNStatus status) {
-		String url = status.getUrlString();
-		if (url == null && !(status.getTextStatus() == SVNStatusKind.UNVERSIONED) 
-				&& !(status.getTextStatus() == SVNStatusKind.IGNORED)) {
-		    try { 
-		    	ISVNClientAdapter svnClient = SVNProviderPlugin.getPlugin().createSVNClient();
-		    	ISVNInfo info = svnClient.getInfoFromWorkingCopy(status.getFile());
-		    	SVNUrl svnurl = info.getUrl();
-		    	url = (svnurl != null) ? svnurl.toString() : null;
-		    } catch (SVNException e) {
-			} catch (SVNClientException e) {
-			}
-		}
-		return url;
 	}
 
 }

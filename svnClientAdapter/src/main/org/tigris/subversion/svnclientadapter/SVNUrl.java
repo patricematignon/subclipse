@@ -1,21 +1,25 @@
-/*******************************************************************************
- * Copyright (c) 2003, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+/*
+ *  Copyright(c) 2003-2004 by the authors indicated in the @author tags.
  *
- * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
 package org.tigris.subversion.svnclientadapter;
 
 import java.net.MalformedURLException;
 
-import org.tigris.subversion.svnclientadapter.utils.StringUtils;
-
 /**
- * We could have used URL, using custom protocols (svn, svn+ssl) 
+ *
+ * we could have used URL, using custom protocols (svn, svn+ssl) 
  * (@see http://developer.java.sun.com/developer/onlineTraining/protocolhandlers/)
  * but this is not really necessary as we don't want to open a connection 
  * directly with this class.
@@ -30,12 +34,6 @@ import org.tigris.subversion.svnclientadapter.utils.StringUtils;
  */
 public class SVNUrl {
 	
-	private static final String SVN_PROTOCOL = "svn";
-	private static final String SVNSSH_PROTOCOL = "svn+";
-	private static final String HTTP_PROTOCOL = "http";
-	private static final String HTTPS_PROTOCOL = "https";
-	private static final String FILE_PROTOCOL = "file";
-	
 	protected static final char SEGMENT_SEPARATOR = '/'; 
 	
     private String protocol; // http, file, svn or svn+ssh
@@ -43,16 +41,11 @@ public class SVNUrl {
     private String host;
     private int port;
 
-    /**
-     * Constructor
-     * @param svnUrl a string to parse url from
-     * @throws MalformedURLException when parsing failed
-     */
     public SVNUrl(String svnUrl) throws MalformedURLException {
         if(svnUrl == null)
             throw new MalformedURLException("Svn url cannot be null. Is this a versioned resource?");
    
-        parseUrl(svnUrl.trim());
+        parseUrl(svnUrl);
     }
     
     private SVNUrl(String protocol, String host, int port, String[] segments)
@@ -101,11 +94,11 @@ public class SVNUrl {
         if (i == -1)
             throw new MalformedURLException("Invalid svn url :"+svnUrl);
         protocol = parsed.substring(0,i).toLowerCase();
-        if ((!protocol.equalsIgnoreCase(HTTP_PROTOCOL)) &&
-            (!protocol.equalsIgnoreCase(HTTPS_PROTOCOL)) &&
-            (!protocol.equalsIgnoreCase(FILE_PROTOCOL)) &&
-            (!protocol.equalsIgnoreCase(SVN_PROTOCOL)) &&
-            (!protocol.startsWith(SVNSSH_PROTOCOL)) ) {
+        if ((!protocol.equalsIgnoreCase("http")) &&
+            (!protocol.equalsIgnoreCase("https")) &&
+            (!protocol.equalsIgnoreCase("file")) &&
+            (!protocol.equalsIgnoreCase("svn")) &&
+            (!protocol.equalsIgnoreCase("svn+ssh")) ) {
             throw new MalformedURLException("Invalid svn url :"+svnUrl);
         }
         parsed = parsed.substring(i+3);
@@ -118,12 +111,10 @@ public class SVNUrl {
         if (i == -1) {
             i = parsed.length();
         }
-        if (!protocol.equalsIgnoreCase(FILE_PROTOCOL)) {
+        if (!protocol.equalsIgnoreCase("file")) {
 	        String hostPort = parsed.substring(0,i).toLowerCase();
 	        String[] hostportArray = StringUtils.split(hostPort,':');
-	        if (hostportArray.length == 0) {
-	        	throw new MalformedURLException("Invalid svn url :"+svnUrl);                    
-	        } else if (hostportArray.length == 2) {
+	        if (hostportArray.length == 2) {
 	            this.host = hostportArray[0];
 	            try {
 	                this.port = Integer.parseInt(hostportArray[1]);
@@ -159,13 +150,13 @@ public class SVNUrl {
      */
     public static int getDefaultPort(String protocol) {
         int port = -1;
-        if (SVN_PROTOCOL.equals(protocol)) {
+        if ("svn".equals(protocol)) {
             port = 3690;
-        } else if (HTTP_PROTOCOL.equals(protocol)) {
+        } else if ("http".equals(protocol)) {
             port = 80;
-        } else if (HTTPS_PROTOCOL.equals(protocol)) {
+        } else if ("https".equals(protocol)) {
             port = 443;
-        } else if (protocol != null && protocol.startsWith(SVNSSH_PROTOCOL)) {
+        } else if ("svn+ssh".equals(protocol)) {
             port = 22;
         }
         return port;
@@ -173,7 +164,7 @@ public class SVNUrl {
     
     /**
      * Get the url as String. The url returned never ends with "/"
-     * @return String representation of this url instance
+     * @return
      */
     private String get() {
     	//Be sofisticated and compute the StringBuffer size up-front. 
@@ -229,21 +220,19 @@ public class SVNUrl {
     public int getPort() {
         return port;
     }
+    public String toString() {
+        return get();
+    }
     
     /**
      * get the path of the url. 
-     * @return an arrray of url path segments
+     * @return
      */
     public String[] getPathSegments() {
     	return segments;
     }
     
-    /**
-     * @return the "file" name, i.e. the element after last /
-     */
     public String getLastPathSegment() {
-        if (segments.length == 0)
-            return "";
     	return segments[segments.length-1];
     }
     
@@ -283,11 +272,4 @@ public class SVNUrl {
 	{
 		return get().hashCode();
 	}
-	
-    /* (non-Javadoc)
-     * @see java.lang.Object#toString()
-     */
-    public String toString() {
-        return get();
-    }
 }

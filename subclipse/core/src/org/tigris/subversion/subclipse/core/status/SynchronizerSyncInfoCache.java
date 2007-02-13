@@ -1,13 +1,12 @@
-/*******************************************************************************
- * Copyright (c) 2005, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+/******************************************************************************
+ * This program and the accompanying materials are made available under
+ * the terms of the Common Public License v1.0 which accompanies this
+ * distribution, and is available at the following URL:
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * Copyright(c) 2003-2005 by the authors indicated in the @author tags.
  *
- * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
+ * All Rights are Reserved by the various authors.
+ *******************************************************************************/
 package org.tigris.subversion.subclipse.core.status;
 
 import java.util.HashMap;
@@ -34,19 +33,6 @@ public class SynchronizerSyncInfoCache implements IStatusCache {
 	
 	protected static final byte[] BYTES_REMOVED = new byte[0];
 	protected SyncInfoSynchronizedAccessor accessor = new SyncInfoSynchronizedAccessor();
-	
-	/* (non-Javadoc)
-	 * @see org.tigris.subversion.subclipse.core.status.IStatusCache#hasCachedStatus(org.eclipse.core.resources.IResource)
-	 */
-	public boolean hasCachedStatus(IResource resource)
-	{
-		try {
-			return getCachedSyncBytes(resource) != null;
-		} catch (SVNException e) {
-			SVNProviderPlugin.log(e);
-			return false;
-		}
-	}
 
 	/* (non-Javadoc)
 	 * @see org.tigris.subversion.subclipse.core.status.IStatusCache#getStatus(org.eclipse.core.resources.IResource)
@@ -66,7 +52,6 @@ public class SynchronizerSyncInfoCache implements IStatusCache {
 	public IResource addStatus(LocalResourceStatus status) {
 		try {
 			IResource resource = status.getResource();
-			if (resource == null) return null;
 			if (status.isUnversioned() && !(resource.exists() || resource.isPhantom()))
 			{
 				return resource;
@@ -74,8 +59,7 @@ public class SynchronizerSyncInfoCache implements IStatusCache {
 			setCachedSyncBytes(resource, status.getBytes());
 			return resource;
 		} catch (SVNException e) {
-		    if (!"".equals(e.getMessage())) // We send these exceptions so that the log does not go nuts
-		        SVNProviderPlugin.log(e);
+			SVNProviderPlugin.log(e);
 			return null;
 		}
 	}
@@ -201,7 +185,7 @@ public class SynchronizerSyncInfoCache implements IStatusCache {
 		}
 	}
 	
-	protected final static class SyncInfoSynchronizedAccessor
+	private static class SyncInfoSynchronizedAccessor
 	{
 		// Map of sync bytes that were set without a scheduling rule
 		private Map pendingCacheWrites = new HashMap();
@@ -243,15 +227,15 @@ public class SynchronizerSyncInfoCache implements IStatusCache {
 					if (cachedEntry != null)
 					{
 						IResource resource = (IResource) cachedEntry.getKey();
-						byte[] value = (byte []) cachedEntry.getValue();
-						if (value == BYTES_REMOVED)
-							value = null;
 						try {
-							ResourcesPlugin.getWorkspace().getSynchronizer().setSyncInfo(StatusCacheManager.SVN_BC_SYNC_KEY, resource, value);
+							if (resource.exists() || resource.isPhantom())
+							{
+								ResourcesPlugin.getWorkspace().getSynchronizer().setSyncInfo(StatusCacheManager.SVN_BC_SYNC_KEY, resource, (byte []) cachedEntry.getValue());
+							}
+							removeFromPendingCacheIfEqual((IResource) cachedEntry.getKey(), (byte []) cachedEntry.getValue());
 						} catch (CoreException e) {
 							SVNProviderPlugin.log(SVNException.wrapException(e));
 						}
-						removeFromPendingCacheIfEqual((IResource) cachedEntry.getKey(), (byte []) cachedEntry.getValue());
 					}
 				}
 			}

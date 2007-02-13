@@ -1,13 +1,3 @@
-/*******************************************************************************
- * Copyright (c) 2005, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
 package org.tigris.subversion.svnclientadapter.basictests;
 
 import java.io.File;
@@ -16,10 +6,6 @@ import java.util.Map;
 
 import org.tigris.subversion.svnclientadapter.ISVNProperty;
 import org.tigris.subversion.svnclientadapter.SVNKeywords;
-import org.tigris.subversion.svnclientadapter.SVNRevision;
-import org.tigris.subversion.svnclientadapter.SVNUrl;
-import org.tigris.subversion.svnclientadapter.testUtils.OneTest;
-import org.tigris.subversion.svnclientadapter.testUtils.SVNTest;
 
 public class PropertiesTest extends SVNTest {
 
@@ -30,7 +16,6 @@ public class PropertiesTest extends SVNTest {
 
         File dir = new File(thisTest.getWorkingCopy() + "/A");
         File file = new File(thisTest.getWorkingCopy() + "/A/mu");
-        SVNUrl fileUrl = new SVNUrl(thisTest.getUrl()+ "/A/mu");
 
         client.propertySet(file, "myProp", "my value", false);
         client.propertySet(dir, "myProp2", "my value 2", true);
@@ -49,42 +34,15 @@ public class PropertiesTest extends SVNTest {
         assertNotNull(prop);
         assertEquals("my value 2", prop.getValue());
         
-        // get property using propertyGet on file
+        // get property using propertyGet
         prop = client.propertyGet(file, "myProp");
         assertNotNull(prop);
-        assertEquals("myProp", prop.getName());
         assertEquals("my value", prop.getValue());
-        assertEquals(file, prop.getFile());
-        assertNull(prop.getUrl());
-
-        //commit the wc so we can test the properties on URL
-        client.commit(new File[] {dir}, "Commited properties", true);
         
-        // get property using propertyGet on url
-        prop = client.propertyGet(fileUrl, "myProp");
-        assertNotNull(prop);
-        assertEquals("myProp", prop.getName());
-        assertEquals("my value", prop.getValue());
-        assertEquals(fileUrl, prop.getUrl());
-        assertNull(prop.getFile());
-        
-        // delete properties
+        // delete property
         client.propertyDel(dir,"myProp2",true);
         prop = client.propertyGet(file, "myProp2");
         assertNull(prop);
-        
-        //commit with deleteted property so we can test the properties on URL and revisions
-        client.commit(new File[] {dir}, "Commited properties", true);
-
-        long lastChangedRevision = client.getInfo(file).getLastChangedRevision().getNumber();
-        
-        //the last changed revision of the file does not have the property
-        prop = client.propertyGet(fileUrl, SVNRevision.getRevision("" +lastChangedRevision), SVNRevision.HEAD, "myProp2");
-        assertNull(prop);
-
-        //the revision before has the property
-        prop = client.propertyGet(fileUrl, SVNRevision.getRevision("" + --lastChangedRevision), SVNRevision.HEAD, "myProp2");
-        assertNotNull(prop);
     }
 
     public void testBasicKeywords() throws Throwable {

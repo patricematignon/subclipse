@@ -1,12 +1,12 @@
-/*******************************************************************************
- * Copyright (c) 2003, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+/******************************************************************************
+ * This program and the accompanying materials are made available under
+ * the terms of the Common Public License v1.0 which accompanies this
+ * distribution, and is available at the following URL:
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * Copyright(c) 2003-2005 by the authors indicated in the @author tags.
  *
- * Contributors:
- *     Subclipse project committers - initial API and implementation
+ * All Rights are Reserved by the various authors.
+ *
  ******************************************************************************/
 package org.tigris.subversion.subclipse.core.resources;
 
@@ -16,7 +16,6 @@ import java.io.IOException;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.Team;
@@ -24,20 +23,18 @@ import org.tigris.subversion.subclipse.core.ISVNLocalFolder;
 import org.tigris.subversion.subclipse.core.ISVNLocalResource;
 import org.tigris.subversion.subclipse.core.ISVNRemoteResource;
 import org.tigris.subversion.subclipse.core.ISVNRepositoryLocation;
-import org.tigris.subversion.subclipse.core.Policy;
 import org.tigris.subversion.subclipse.core.SVNException;
 import org.tigris.subversion.subclipse.core.SVNProviderPlugin;
 import org.tigris.subversion.subclipse.core.SVNTeamProvider;
 import org.tigris.subversion.subclipse.core.client.OperationManager;
 import org.tigris.subversion.subclipse.core.commands.AddIgnoredPatternCommand;
 import org.tigris.subversion.subclipse.core.commands.GetRemoteResourceCommand;
-import org.tigris.subversion.subclipse.core.status.StatusCacheManager;
 import org.tigris.subversion.subclipse.core.util.Assert;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 import org.tigris.subversion.svnclientadapter.ISVNProperty;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
+import org.tigris.subversion.svnclientadapter.SVNConstants;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
-import org.tigris.subversion.svnclientadapter.SVNStatusKind;
 import org.tigris.subversion.svnclientadapter.SVNUrl;
 
 /**
@@ -93,13 +90,13 @@ public abstract class LocalResource implements ISVNLocalResource, Comparable {
 	 * @see org.tigris.subversion.subclipse.core.ISVNLocalResource#isIgnored()
 	 */
 	public boolean isIgnored() throws SVNException {
-		// If the resource is a derived, team private or linked resource, it is ignored
-		if (resource.isDerived() || resource.isTeamPrivateMember() || resource.isLinked() ) {
+		// If the resource is a derived or linked resource, it is ignored
+		if (resource.isDerived() || resource.isLinked()) {
 			return true;
 		}
 
 		// always ignore .svn folder
-		if ((resource.getType() == IResource.FOLDER) && SVNProviderPlugin.getPlugin().isAdminDirectory(getName())) { //$NON-NLS-1$
+		if ((resource.getType() == IResource.FOLDER) && SVNConstants.SVN_DIRNAME.equals(getName())) { //$NON-NLS-1$
 			return true; 
 		}
 
@@ -107,10 +104,11 @@ public abstract class LocalResource implements ISVNLocalResource, Comparable {
 			return false;
 		}
 		
-		if (isParentInSvnIgnore()) {
+		// check the global ignores from Team
+		if (Team.isIgnoredHint(resource)) {
 			return true;
 		}
-		
+
 		LocalResourceStatus status = getStatus();
 		
 		// a managed resource is never ignored
@@ -123,11 +121,6 @@ public abstract class LocalResource implements ISVNLocalResource, Comparable {
             return true;
         }
 		
-		// check the global ignores from Team
-		if (Team.isIgnoredHint(resource)) {
-			return true;
-		}
-
 		// check the parent, if the parent is ignored
 		// then this resource is ignored also
 		ISVNLocalFolder parent = getParent();
@@ -137,31 +130,6 @@ public abstract class LocalResource implements ISVNLocalResource, Comparable {
         return false;
 	}
 
-	/**
-	 * Check whether any of the resources parent does not have svn status IGNORED present in cache.
-	 * @return true if there's parent with IGNORED status in cache, false otherwise
-	 * @throws SVNException
-	 */
-	protected boolean isParentInSvnIgnore() throws SVNException
-	{
-		StatusCacheManager cacheMgr = SVNProviderPlugin.getPlugin().getStatusCacheManager();
-		IResource parent = resource.getParent();
-		
-		//Traverse up to the first parent with status present in cache
-    	while ((parent != null) && !cacheMgr.hasCachedStatus(parent)) {
-    		parent = parent.getParent();
-    	}
-    	//Check if the first parent with status has status IGNORED
-    	if (parent != null) {
-    		LocalResourceStatus status = cacheMgr.getStatus(parent);
-    		if ((status != null) && (SVNStatusKind.IGNORED.equals(status.getTextStatus()))) {
-    			return true;
-    		}
-    	}
-    	//It's not under svn:ignore (at least according to cached statuses)
-		return false;
-	}
-	
     /* (non-Javadoc)
      * @see org.tigris.subversion.subclipse.core.ISVNLocalResource#setIgnored()
      */
@@ -175,13 +143,6 @@ public abstract class LocalResource implements ISVNLocalResource, Comparable {
 	 */
 	public boolean isManaged() throws SVNException {
 		return !this.resource.isDerived() && getStatus().isManaged();
-	}
-    
-	/*
-	 * @see ISVNLocalResource#isAdded()
-	 */
-	public boolean isAdded() throws SVNException {
-		return getStatus().isAdded();
 	}
     
     /* (non-Javadoc)
@@ -244,7 +205,6 @@ public abstract class LocalResource implements ISVNLocalResource, Comparable {
 	 */
 	public SVNWorkspaceRoot getWorkspaceRoot() {
 		SVNTeamProvider teamProvider = (SVNTeamProvider)RepositoryProvider.getProvider(resource.getProject(), SVNProviderPlugin.getTypeId());
-		if (teamProvider == null) return null;
 		return teamProvider.getSVNWorkspaceRoot();
 	}
 
@@ -253,12 +213,7 @@ public abstract class LocalResource implements ISVNLocalResource, Comparable {
 	 */
 	public ISVNRepositoryLocation getRepository()  {
 		try {
-		    SVNWorkspaceRoot root = getWorkspaceRoot();
-		    if (root == null) {
-		        SVNProviderPlugin.log(IStatus.WARNING, Policy.bind("LocalResource.errorGettingTeamProvider", resource.toString()), null);
-		        return null;
-		    }
-			return root.getRepository();
+			return getWorkspaceRoot().getRepository();
 		} catch (SVNException e) {
 			// an exception is thrown when project is not managed
 			SVNProviderPlugin.log(e);
@@ -413,10 +368,10 @@ public abstract class LocalResource implements ISVNLocalResource, Comparable {
 	 */
 	public ISVNProperty getSvnProperty(String name) throws SVNException {
 		try {
-			ISVNClientAdapter svnClient = SVNProviderPlugin.getPlugin().createSVNClient();
+			ISVNClientAdapter svnClient = getRepository().getSVNClient();
 			return svnClient.propertyGet(getFile(),name);
 		} catch (SVNClientException e) {
-	        throw SVNException.wrapException(e); 
+			throw SVNException.wrapException(e); 
 		}
 	}
 
@@ -433,13 +388,6 @@ public abstract class LocalResource implements ISVNLocalResource, Comparable {
 		}		
 	}
 
-    /* (non-Javadoc)
-     * @see org.tigris.subversion.subclipse.core.ISVNResource#getResource()
-     */
-    public IResource getResource() {
-    	return resource;
-    }
-    
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
