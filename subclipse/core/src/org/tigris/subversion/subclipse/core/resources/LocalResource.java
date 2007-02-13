@@ -1,12 +1,12 @@
-/*******************************************************************************
- * Copyright (c) 2003, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+/******************************************************************************
+ * This program and the accompanying materials are made available under
+ * the terms of the Common Public License v1.0 which accompanies this
+ * distribution, and is available at the following URL:
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * Copyright(c) 2003-2005 by the authors indicated in the @author tags.
  *
- * Contributors:
- *     Subclipse project committers - initial API and implementation
+ * All Rights are Reserved by the various authors.
+ *
  ******************************************************************************/
 package org.tigris.subversion.subclipse.core.resources;
 
@@ -433,13 +433,6 @@ public abstract class LocalResource implements ISVNLocalResource, Comparable {
 		}		
 	}
 
-    /* (non-Javadoc)
-     * @see org.tigris.subversion.subclipse.core.ISVNResource#getResource()
-     */
-    public IResource getResource() {
-    	return resource;
-    }
-    
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */

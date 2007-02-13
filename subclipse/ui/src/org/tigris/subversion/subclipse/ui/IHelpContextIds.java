@@ -1,13 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
  * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.tigris.subversion.subclipse.ui;
 
 /**
@@ -59,10 +59,6 @@ public interface IHelpContextIds {
 
 	public static final String CHANGE_REVPROPS = PREFIX + "change_revprops_context"; //$NON_NLS-1$
 
-	public static final String COMMIT_SET_DIALOG = PREFIX + "commit_set_dialog_context"; //$NON-NLS-1$
-
-	public static final String SEARCH_HISTORY_DIALOG = PREFIX + "search_history_dialog_context"; //$NON-NLS-1$
-
 	// Wizard Pages
 	public static final String SHARING_AUTOCONNECT_PAGE = PREFIX + "sharing_autoconnect_page_context"; //$NON-NLS-1$
 	public static final String SHARING_SELECT_REPOSITORY_PAGE = PREFIX + "sharing_select_repository_page_context"; //$NON-NLS-1$
@@ -82,7 +78,6 @@ public interface IHelpContextIds {
 	public static final String SVN_PREFERENCE_DIALOG = PREFIX + "svn_preference_page_context"; //$NON-NLS-1$
 	public static final String SVN_RESOURCE_PROPERTIES_PAGE = PREFIX + "svn_resource_properties_page_context"; //$NON-NLS-1$
 	public static final String DIFF_MERGE_PREFERENCE_PAGE  = PREFIX + "diff_merge_preferences_page_context"; //$NON-NLS-1$
-	public static final String COMMENT_TEMPLATE_PREFERENCE_PAGE = PREFIX + "comment_template_preference_page_context"; //$NON-NLS-1$
 	
 	// Views
 	public static final String CONSOLE_VIEW = PREFIX + "console_view_context"; //$NON-NLS-1$
@@ -99,4 +94,6 @@ public interface IHelpContextIds {
 	public static final String NEW_REPOSITORY_LOCATION_ACTION = PREFIX + "new_repository_location_action_context"; //$NON-NLS-1$
 	public static final String REMOVE_REPOSITORY_LOCATION_ACTION = PREFIX + "remove_root_action_context"; //$NON-NLS-1$
 	public static final String DISCONNECT_ACTION = PREFIX + "disconnect_action_context"; //$NON-NLS-1$;
+
+
 }

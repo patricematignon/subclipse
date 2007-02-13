@@ -1,13 +1,12 @@
-/*******************************************************************************
- * Copyright (c) 2005, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+/******************************************************************************
+ * This program and the accompanying materials are made available under
+ * the terms of the Common Public License v1.0 which accompanies this
+ * distribution, and is available at the following URL:
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * Copyright(c) 2003-2005 by the authors indicated in the @author tags.
  *
- * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
+ * All Rights are Reserved by the various authors.
+ *******************************************************************************/
 package org.tigris.subversion.subclipse.core.commands;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -28,10 +27,8 @@ public class ChangeCommitPropertiesCommand implements ISVNCommand {
     private SVNRevision.Number revisionNo;
     private String logMessage;
     private String author;
-    private boolean logMessageChanged = false;
-    private boolean authorChanged = false;
-
-	public ChangeCommitPropertiesCommand(ISVNRepositoryLocation theRepositoryLocation, SVNRevision.Number theRevisionNo, String theLogMessage, String theAuthor) {
+    
+    public ChangeCommitPropertiesCommand(ISVNRepositoryLocation theRepositoryLocation, SVNRevision.Number theRevisionNo, String theLogMessage, String theAuthor) {
     	this.repositoryLocation = theRepositoryLocation; 
         this.revisionNo = theRevisionNo;
         this.logMessage = theLogMessage;
@@ -49,14 +46,10 @@ public class ChangeCommitPropertiesCommand implements ISVNCommand {
             OperationManager.getInstance().beginOperation(svnClient);
             
             try {
-            	if (logMessage != null) {
+            	if (logMessage != null)
             		svnClient.setRevProperty(repositoryLocation.getUrl(), revisionNo, "svn:log", logMessage, true);
-            		logMessageChanged = true;
-            	}
-            	if (author != null) {
+            	if (author != null)
             		svnClient.setRevProperty(repositoryLocation.getUrl(), revisionNo, "svn:author", author, true);
-            		authorChanged = true;
-            	}
             }
             catch (SVNClientException e) {
                 throw SVNException.wrapException(e);
@@ -67,12 +60,4 @@ public class ChangeCommitPropertiesCommand implements ISVNCommand {
             monitor.done();
         }
 	}
-	
-	   public boolean isAuthorChanged() {
-			return authorChanged;
-		}
-
-		public boolean isLogMessageChanged() {
-			return logMessageChanged;
-		}
 }

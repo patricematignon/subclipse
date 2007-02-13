@@ -1,16 +1,6 @@
-/*******************************************************************************
- * Copyright (c) 2005, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
 package org.tigris.subversion.subclipse.ui.dialogs;
 
-import org.eclipse.jface.dialogs.TrayDialog;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
@@ -31,7 +21,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.tigris.subversion.subclipse.core.ISVNRemoteFile;
 import org.tigris.subversion.subclipse.core.history.ILogEntry;
 import org.tigris.subversion.subclipse.ui.IHelpContextIds;
@@ -39,7 +29,7 @@ import org.tigris.subversion.subclipse.ui.Policy;
 import org.tigris.subversion.subclipse.ui.operations.ShowAnnotationOperation;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
 
-public class AnnotateDialog extends TrayDialog {
+public class AnnotateDialog extends Dialog {
 	private IWorkbenchPart targetPart;
 	private ISVNRemoteFile remoteFile;
 	private Text fromRevisionText;
@@ -162,7 +152,7 @@ public class AnnotateDialog extends TrayDialog {
 		revisionButton.addSelectionListener(selectionListener);
 		
 		// set F1 help
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, IHelpContextIds.ANNOTATE_DIALOG);	
+		WorkbenchHelp.setHelp(composite, IHelpContextIds.ANNOTATE_DIALOG);	
 
 		fromRevisionText.selectAll();
 		fromRevisionText.setFocus();

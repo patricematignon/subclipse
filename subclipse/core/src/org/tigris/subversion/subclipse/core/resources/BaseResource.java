@@ -1,19 +1,18 @@
-/*******************************************************************************
- * Copyright (c) 2005, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+/* ***************************************************************************
+ * This program and the accompanying materials are made available under
+ * the terms of the Common Public License v1.0 which accompanies this
+ * distribution, and is available at the following URL:
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * Copyright(c) 2003-2005 by the authors indicated in the @author tags.
  *
- * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
+ * All Rights are Reserved by the various authors.
+ *
+ * ***************************************************************************/
 package org.tigris.subversion.subclipse.core.resources;
 
 import java.io.File;
 import java.util.Date;
 
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.PlatformObject;
@@ -21,7 +20,6 @@ import org.eclipse.team.core.TeamException;
 import org.tigris.subversion.subclipse.core.ISVNRemoteFolder;
 import org.tigris.subversion.subclipse.core.ISVNRemoteResource;
 import org.tigris.subversion.subclipse.core.ISVNRepositoryLocation;
-import org.tigris.subversion.subclipse.core.SVNException;
 import org.tigris.subversion.subclipse.core.util.Assert;
 import org.tigris.subversion.svnclientadapter.ISVNLogMessage;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
@@ -236,14 +234,4 @@ public abstract class BaseResource extends PlatformObject implements ISVNRemoteR
 		return (localResourceStatus != null) ? localResourceStatus.getPath() : "";
 	}
 
-	/* (non-Javadoc)
-	 * @see org.tigris.subversion.subclipse.core.ISVNResource#getResource()
-	 */
-	public IResource getResource() {
-		try {
-			return localResourceStatus.getResource();
-		} catch (SVNException e) {
-			return null;
-		}
-	}
 }

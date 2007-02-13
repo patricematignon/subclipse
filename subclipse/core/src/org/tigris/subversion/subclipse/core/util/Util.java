@@ -1,13 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
  * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
+ *     IBM Corporation - initial API and implementation
+ *     Cédric Chabanois (cchabanois@ifrance.com) - modified for Subversion 
+ *******************************************************************************/
 package org.tigris.subversion.subclipse.core.util;
 
 
@@ -87,22 +88,6 @@ public class Util {
         return null;
     }
 
-	public static String flattenText(String string) {
-		StringBuffer buffer = new StringBuffer(string.length() + 20);
-		boolean skipAdjacentLineSeparator = true;
-		for (int i = 0; i < string.length(); i++) {
-			char c = string.charAt(i);
-			if (c == '\r' || c == '\n') {
-				if (!skipAdjacentLineSeparator)
-					buffer.append(SERVER_SEPARATOR); 
-				skipAdjacentLineSeparator = true;
-			} else {
-				buffer.append(c);
-				skipAdjacentLineSeparator = false;
-			}
-		}
-		return buffer.toString();
-	}
 
 	/**
 	 * unescape UTF8/URL encoded strings

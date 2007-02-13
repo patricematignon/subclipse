@@ -1,19 +1,20 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
  * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
+ *     IBM Corporation - initial API and implementation
+ *     Cédric Chabanois (cchabanois@ifrance.com) - modified for Subversion
+ *     Panagiotis Korros (panagiotis.korros@gmail.com) - added operations support
+ *******************************************************************************/
 package org.tigris.subversion.subclipse.ui.actions;
 
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.jface.action.IAction;
-import org.tigris.subversion.subclipse.ui.ISVNUIConstants;
 import org.tigris.subversion.subclipse.ui.Policy;
 import org.tigris.subversion.subclipse.ui.operations.UpdateOperation;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
@@ -24,17 +25,12 @@ import org.tigris.subversion.svnclientadapter.SVNRevision;
  * the changes will be merged into the local file such that the user must
  * resolve the conflicts. 
  */
-public class UpdateAction extends WorkbenchWindowAction {
+public class UpdateAction extends WorkspaceAction {
 	/*
 	 * @see IActionDelegate#run(IAction)
 	 */
 	public void execute(IAction action) throws InterruptedException, InvocationTargetException {
-        if (action != null && !action.isEnabled()) { 
-        	action.setEnabled(true);
-        } 
-        else {
-	    	    new UpdateOperation(getTargetPart(), getSelectedResources(), SVNRevision.HEAD, true).run();
-        } 		
+	    new UpdateOperation(getTargetPart(), getSelectedResources(), SVNRevision.HEAD, true).run();
 	}
 
 	/**
@@ -51,9 +47,4 @@ public class UpdateAction extends WorkbenchWindowAction {
 		return false;
 	}
 
-	protected String getImageId()
-	{
-		return ISVNUIConstants.IMG_MENU_UPDATE;
-	}
-	
 }

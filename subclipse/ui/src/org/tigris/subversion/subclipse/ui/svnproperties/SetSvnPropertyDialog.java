@@ -1,20 +1,20 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
  * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
+ *     Cédric Chabanois (cchabanois@ifrance.com) 
+ *******************************************************************************/
 package org.tigris.subversion.subclipse.ui.svnproperties;
 
 import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 
-import org.eclipse.jface.dialogs.TrayDialog;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.swt.SWT;
@@ -35,7 +35,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.tigris.subversion.subclipse.core.ISVNLocalResource;
 import org.tigris.subversion.subclipse.core.SVNException;
 import org.tigris.subversion.subclipse.core.properties.SVNPropertyDefinition;
@@ -48,7 +48,7 @@ import org.tigris.subversion.svnclientadapter.ISVNProperty;
 /**
  * Dialog to set a svn property 
  */
-public class SetSvnPropertyDialog extends TrayDialog {
+public class SetSvnPropertyDialog extends Dialog {
 	private ISVNProperty property;   // null when we set a new property
 	private ISVNLocalResource svnResource;	
 	private Combo propertyNameText;
@@ -252,7 +252,7 @@ public class SetSvnPropertyDialog extends TrayDialog {
 		}
 		propertyValueText.addListener(SWT.Modify,updatePropertiesListener);
 	
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(area, IHelpContextIds.SET_SVN_PROPERTY_DIALOG);	
+		WorkbenchHelp.setHelp(area, IHelpContextIds.SET_SVN_PROPERTY_DIALOG);	
 		
 		return area;
 	}

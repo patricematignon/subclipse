@@ -1,13 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
  * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
+ *     IBM Corporation - initial API and implementation
+ *     Cédric Chabanois (cchabanois@ifrance.com) - modified for Subversion 
+ *******************************************************************************/
 package org.tigris.subversion.subclipse.core;
 
 import java.io.File;
@@ -26,17 +27,14 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
-import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
-import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.internal.core.subscribers.ActiveChangeSetManager;
 import org.osgi.framework.BundleContext;
 import org.tigris.subversion.subclipse.core.client.IConsoleListener;
-import org.tigris.subversion.subclipse.core.mapping.SVNActiveChangeSetCollector;
 import org.tigris.subversion.subclipse.core.repo.SVNRepositories;
 import org.tigris.subversion.subclipse.core.resources.ISVNFileModificationValidatorPrompt;
 import org.tigris.subversion.subclipse.core.resources.LocalResourceStatus;
@@ -46,7 +44,6 @@ import org.tigris.subversion.subclipse.core.resourcesListeners.FileModificationM
 import org.tigris.subversion.subclipse.core.resourcesListeners.SyncFileChangeListener;
 import org.tigris.subversion.subclipse.core.resourcesListeners.TeamPrivateListener;
 import org.tigris.subversion.subclipse.core.status.StatusCacheManager;
-import org.tigris.subversion.subclipse.core.sync.SVNWorkspaceSubscriber;
 import org.tigris.subversion.subclipse.core.util.ISimpleDialogsHelper;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 import org.tigris.subversion.svnclientadapter.ISVNPromptUserPassword;
@@ -97,8 +94,6 @@ public class SVNProviderPlugin extends Plugin {
 	
 	private String dirname;
     
-	private SVNActiveChangeSetCollector changeSetManager;
-	
 	/**
 	 * This constructor required by the bundle loader (calls newInstance())
 	 *  
@@ -172,8 +167,6 @@ public class SVNProviderPlugin extends Plugin {
 		teamPrivateListener.registerSaveParticipant();
 		fileModificationManager.registerSaveParticipant();
 
-		// Must load the change set manager on startup since it listens to deltas
-		getChangeSetManager();
 	}
 
 	/**
@@ -208,8 +201,6 @@ public class SVNProviderPlugin extends Plugin {
         
         if (svnClientManager != null)
         	svnClientManager.shutdown(null);
-        
-       	getChangeSetManager().dispose();
 	}
 
 	private static List listeners = new ArrayList();
@@ -255,7 +246,7 @@ public class SVNProviderPlugin extends Plugin {
 					// Platform#run
 				}
 			};
-			SafeRunner.run(code);
+			Platform.run(code);
 		}
 	}
 
@@ -298,7 +289,7 @@ public class SVNProviderPlugin extends Plugin {
 					// Platform#run
 				}
 			};
-			SafeRunner.run(code);
+			Platform.run(code);
 		}
 	}
 
@@ -323,7 +314,7 @@ public class SVNProviderPlugin extends Plugin {
 					// Platform#run
 				}
 			};
-			SafeRunner.run(code);
+			Platform.run(code);
 		}
 	}
 
@@ -348,7 +339,7 @@ public class SVNProviderPlugin extends Plugin {
 					// Platform#run
 				}
 			};
-			SafeRunner.run(code);
+			Platform.run(code);
 		}
 	}
 
@@ -576,13 +567,6 @@ public class SVNProviderPlugin extends Plugin {
     	return false;
     }
     
-	/**
-	 * Return the SVN preferences node in the instance scope
-	 */
-	public org.osgi.service.prefs.Preferences getInstancePreferences() {
-		return new InstanceScope().getNode(getBundle().getSymbolicName());
-	}
-	
     public boolean isAdminDirectory(String name) {
     	if (".svn".equals(name) || getAdminDirectoryName().equals(name))
     		return true;
@@ -596,12 +580,5 @@ public class SVNProviderPlugin extends Plugin {
 //		} catch (SVNException e) {
 //			return getAdminDirectoryName().equals(name);
 //		}
-    }
-    
-    public synchronized ActiveChangeSetManager getChangeSetManager() {
-        if (changeSetManager == null) {
-            changeSetManager = new SVNActiveChangeSetCollector(SVNWorkspaceSubscriber.getInstance());
-        }
-        return changeSetManager;
     }
 }

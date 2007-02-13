@@ -1,13 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
  * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
+ *     Cédric Chabanois (cchabanois@ifrance.com) - modified for Subversion 
+ *******************************************************************************/
 package org.tigris.subversion.subclipse.ui.actions;
 
 import java.io.ByteArrayInputStream;
@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.ui.dialogs.SaveAsDialog;
+import org.tigris.subversion.subclipse.core.ISVNLocalResource;
 import org.tigris.subversion.subclipse.ui.Policy;
 import org.tigris.subversion.svnclientadapter.ISVNProperty;
 
@@ -33,6 +34,7 @@ public class SVNPropertySaveAction extends SVNPropertyAction {
 	protected void execute(IAction action)
 		throws InvocationTargetException, InterruptedException {
 		ISVNProperty svnProperty = getSelectedSvnProperties()[0];
+		ISVNLocalResource svnResource = getSVNLocalResource(svnProperty);
 
 		SaveAsDialog dialog = new SaveAsDialog(getShell());
 

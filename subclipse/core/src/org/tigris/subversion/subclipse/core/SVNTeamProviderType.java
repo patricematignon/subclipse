@@ -1,13 +1,16 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
  * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
+ *     IBM Corporation - initial API and implementation
+ *     Cédric Chabanois (cchabanois@ifrance.com) - modified for Subversion 
+ *     Panagiotis Korros (panagiotis.korros@gmail.com) - ported autoshare code
+ *     Magnus Naeslund	(mag@kite.se) - Added autoadd code
+ *******************************************************************************/
 package org.tigris.subversion.subclipse.core;
 
 import java.io.File;
@@ -31,9 +34,7 @@ import org.eclipse.team.core.ProjectSetCapability;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.RepositoryProviderType;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.subscribers.Subscriber;
 import org.tigris.subversion.subclipse.core.resources.SVNWorkspaceRoot;
-import org.tigris.subversion.subclipse.core.sync.SVNWorkspaceSubscriber;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 
 
@@ -285,14 +286,6 @@ public class SVNTeamProviderType extends RepositoryProviderType {
 			}
 		}
     }
-
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.core.RepositoryProviderType#getSubscriber()
-	 */
-	public Subscriber getSubscriber() {
-		return SVNWorkspaceSubscriber.getInstance();
-	}
 	
 	
 }

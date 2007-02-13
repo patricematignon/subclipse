@@ -1,29 +1,15 @@
-/*******************************************************************************
- * Copyright (c) 2004, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
 package org.tigris.subversion.subclipse.ui.dialogs;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Iterator;
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
-import org.eclipse.jface.dialogs.TrayDialog;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.IDoubleClickListener;
@@ -45,7 +31,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Tree;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.tigris.subversion.subclipse.core.ISVNLocalResource;
 import org.tigris.subversion.subclipse.core.ISVNRemoteResource;
@@ -66,7 +52,7 @@ import org.tigris.subversion.subclipse.ui.repository.RepositoryFilters;
 import org.tigris.subversion.subclipse.ui.repository.model.AllRootsElement;
 import org.tigris.subversion.subclipse.ui.repository.model.RemoteContentProvider;
 
-public class ChooseUrlDialog extends TrayDialog {
+public class ChooseUrlDialog extends Dialog {
     private static final int LIST_HEIGHT_HINT = 250;
     private static final int LIST_WIDTH_HINT = 450;
 
@@ -176,25 +162,15 @@ public class ChooseUrlDialog extends TrayDialog {
         tree.setMenu(menu);
 
 		// set F1 help
-        PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, IHelpContextIds.CHOOSE_URL_DIALOG);	
+		WorkbenchHelp.setHelp(composite, IHelpContextIds.CHOOSE_URL_DIALOG);	
         
 		return composite;
 	}
 
     protected void refreshViewer(boolean refreshRepositoriesFolders) {
         if (treeViewer == null) return;
-        if (refreshRepositoriesFolders) {
-        	IRunnableWithProgress runnable = new IRunnableWithProgress() {
-				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-                	SVNProviderPlugin.getPlugin().getRepositories().refreshRepositoriesFolders(monitor);
-				}
-        	};
-            try {
-				new ProgressMonitorDialog(getShell()).run(true, false, runnable);
-			} catch (Exception e) {
-	            SVNUIPlugin.openError(getShell(), null, null, e, SVNUIPlugin.LOG_TEAM_EXCEPTIONS);
-			}
-        }
+        if (refreshRepositoriesFolders)
+            SVNProviderPlugin.getPlugin().getRepositories().refreshRepositoriesFolders();
         treeViewer.refresh();
     }
 

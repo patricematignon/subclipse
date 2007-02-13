@@ -1,13 +1,3 @@
-/*******************************************************************************
- * Copyright (c) 2005, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
 package org.tigris.subversion.subclipse.ui.actions;
 
 import java.lang.reflect.InvocationTargetException;
@@ -33,7 +23,6 @@ import org.tigris.subversion.subclipse.ui.Policy;
 import org.tigris.subversion.subclipse.ui.WorkspacePathValidator;
 import org.tigris.subversion.subclipse.ui.operations.CheckoutAsProjectOperation;
 import org.tigris.subversion.subclipse.ui.util.PromptingDialog;
-import org.tigris.subversion.svnclientadapter.SVNRevision;
 
 
 
@@ -43,7 +32,6 @@ public class CheckoutIntoAction extends CheckoutAsProjectAction {
 	private ISVNRemoteFolder[] selectedFolders;
 	private String projectName;
 	private String intoDirectory;
-	private SVNRevision svnRevision = SVNRevision.HEAD;
 	
 	public CheckoutIntoAction(ISVNRemoteFolder[] selectedFolders, String projectName, String intoDirectory, Shell shell) {
 		super();
@@ -129,20 +117,12 @@ public class CheckoutIntoAction extends CheckoutAsProjectAction {
 				}
 			}
 		}, true /* cancelable */, PROGRESS_DIALOG);
-	    if (proceed) {
-	    	CheckoutAsProjectOperation checkoutAsProjectOperation = new CheckoutAsProjectOperation(getTargetPart(), remoteFolders, localFolders, intoDir);
-	    	checkoutAsProjectOperation.setSvnRevision(svnRevision);
-	    	checkoutAsProjectOperation.run();
-	    }
+	    if (proceed) new CheckoutAsProjectOperation(getTargetPart(), remoteFolders, localFolders, intoDir).run();
 	}
 
 	protected ISVNRemoteFolder[] getSelectedRemoteFolders() {
 		if (selectedFolders != null) return selectedFolders;
 		return super.getSelectedRemoteFolders();
-	}
-
-	public void setSvnRevision(SVNRevision svnRevision) {
-		this.svnRevision = svnRevision;
 	}
 
 }

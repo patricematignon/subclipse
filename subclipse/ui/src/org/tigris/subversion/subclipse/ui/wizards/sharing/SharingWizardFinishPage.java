@@ -1,13 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
  * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
+ *     IBM Corporation - initial API and implementation
+ *     Cédric Chabanois (cchabanois@ifrance.com) - modified for Subversion 
+ *******************************************************************************/
 package org.tigris.subversion.subclipse.ui.wizards.sharing;
 
 import org.eclipse.core.resources.IProject;
@@ -18,7 +19,7 @@ import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.tigris.subversion.subclipse.core.SVNException;
 import org.tigris.subversion.subclipse.ui.IHelpContextIds;
 import org.tigris.subversion.subclipse.ui.Policy;
@@ -44,7 +45,7 @@ public class SharingWizardFinishPage extends SVNWizardPage {
 	public void createControl(Composite parent) {
 		Composite composite = createComposite(parent, 1);
 		// set F1 help
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, IHelpContextIds.SHARING_FINISH_PAGE);
+		WorkbenchHelp.setHelp(composite, IHelpContextIds.SHARING_FINISH_PAGE);
 		Label label = new Label(composite, SWT.LEFT | SWT.WRAP);
 		label.setText(Policy.bind("SharingWizardFinishPage.message")); //$NON-NLS-1$
 		GridData data = new GridData();
@@ -56,11 +57,11 @@ public class SharingWizardFinishPage extends SVNWizardPage {
             commentProperties = CommentProperties.getCommentProperties(project);
         } catch (SVNException e) {}
 		commitCommentArea = new CommitCommentArea(null, null, commentProperties); //$NON-NLS-1$
-		commitCommentArea.setProposedComment(Policy.bind("SharingWizard.initialImport")); //$NON-NLS-1$
+		commitCommentArea.setOldComment(Policy.bind("SharingWizard.initialImport")); //$NON-NLS-1$
 		if ((commentProperties != null) && (commentProperties.getMinimumLogMessageSize() != 0)) {
 		    ModifyListener modifyListener = new ModifyListener() {
                 public void modifyText(ModifyEvent e) {
-                    setPageComplete(commitCommentArea.getComment().trim().length() >= commentProperties.getMinimumLogMessageSize());
+                    setPageComplete(commitCommentArea.getText().getText().trim().length() >= commentProperties.getMinimumLogMessageSize());
                 }		        
 		    };
 		    commitCommentArea.setModifyListener(modifyListener);

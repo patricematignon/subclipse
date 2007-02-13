@@ -1,13 +1,3 @@
-/*******************************************************************************
- * Copyright (c) 2005, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
 package org.tigris.subversion.subclipse.ui.subscriber;
 
 import java.util.Iterator;
@@ -44,7 +34,7 @@ public class MarkMergedSynchronizeAction extends SynchronizeModelAction {
 			    while (iter.hasNext()) {
 			    	ISynchronizeModelElement element = (ISynchronizeModelElement)iter.next();
 			    	IResource resource = element.getResource();
-			    	if (resource == null || !resource.exists()) return false;
+			    	if (!resource.exists()) return false;
 			    	ISVNLocalResource svnResource = SVNWorkspaceRoot.getSVNResourceFor(resource);			    
 	                try {
 	                	if (!svnResource.isManaged() || svnResource.isAdded()) return false;

@@ -1,13 +1,3 @@
-/*******************************************************************************
- * Copyright (c) 2005, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
 package org.tigris.subversion.subclipse.ui.wizards;
 
 import java.lang.reflect.InvocationTargetException;
@@ -363,12 +353,6 @@ public class CheckoutWizard extends Wizard implements INewWizard, IImportWizard 
 	private boolean checkoutUsingWizard() {
 		CheckoutUsingProjectWizardAction checkoutAction = new CheckoutUsingProjectWizardAction(remoteFolders);
 		try {
-			if (remoteFolders.length == 1) {
-				if (hasProjectFile)
-					checkoutAction.setSvnRevision(checkoutAsWithProjectFilePage.getRevision());
-				else
-					checkoutAction.setSvnRevision(checkoutAsWithoutProjectFilePage.getRevision());
-			} else checkoutAction.setSvnRevision(checkoutAsMultiplePage.getRevision());
 			checkoutAction.execute(null);
 		} catch (Exception e) {
 			MessageDialog.openError(getShell(), Policy
@@ -381,12 +365,6 @@ public class CheckoutWizard extends Wizard implements INewWizard, IImportWizard 
 	private boolean checkoutAsProjectInto() {
 		CheckoutIntoAction checkoutAction = new CheckoutIntoAction(remoteFolders, projectName, projectPage.getCanonicalLocation(), getShell());
 		try {
-			if (remoteFolders.length == 1) {
-				if (hasProjectFile)
-					checkoutAction.setSvnRevision(checkoutAsWithProjectFilePage.getRevision());
-				else
-					checkoutAction.setSvnRevision(checkoutAsWithoutProjectFilePage.getRevision());
-			} else checkoutAction.setSvnRevision(checkoutAsMultiplePage.getRevision());
 			checkoutAction.execute(null);
 		} catch (Exception e) {
 			MessageDialog.openError(getShell(), Policy
@@ -399,12 +377,6 @@ public class CheckoutWizard extends Wizard implements INewWizard, IImportWizard 
 	private boolean checkoutAsProject() {
 		CheckoutAsProjectAction checkoutAction = new CheckoutAsProjectAction(remoteFolders, projectName, getShell());
 		try {
-			if (remoteFolders.length == 1) {
-				if (hasProjectFile)
-					checkoutAction.setSvnRevision(checkoutAsWithProjectFilePage.getRevision());
-				else
-					checkoutAction.setSvnRevision(checkoutAsWithoutProjectFilePage.getRevision());
-			} else checkoutAction.setSvnRevision(checkoutAsMultiplePage.getRevision());
 			checkoutAction.execute(null);
 		} catch (Exception e) {
 			MessageDialog.openError(getShell(), Policy

@@ -1,17 +1,7 @@
-/*******************************************************************************
- * Copyright (c) 2004, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
 package org.tigris.subversion.subclipse.ui.dialogs;
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.jface.dialogs.TrayDialog;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -31,7 +21,7 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.tigris.subversion.subclipse.core.ISVNLocalResource;
 import org.tigris.subversion.subclipse.core.ISVNRemoteResource;
 import org.tigris.subversion.subclipse.core.SVNException;
@@ -50,7 +40,7 @@ import org.tigris.subversion.svnclientadapter.ISVNProperty;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
 import org.tigris.subversion.svnclientadapter.SVNUrl;
 
-public class BranchTagDialog extends TrayDialog {
+public class BranchTagDialog extends Dialog {
     
     private static final int URL_WIDTH_HINT = 450;
     private static final int REVISION_WIDTH_HINT = 40;
@@ -268,7 +258,7 @@ public class BranchTagDialog extends TrayDialog {
 		}
 		
 		// set F1 help
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, IHelpContextIds.BRANCH_TAG_DIALOG);
+		WorkbenchHelp.setHelp(composite, IHelpContextIds.BRANCH_TAG_DIALOG);
 		
 		return composite;
 	}
@@ -288,7 +278,8 @@ public class BranchTagDialog extends TrayDialog {
             MessageDialog.openError(getShell(), Policy.bind("MergeDialog.showLog"), Policy.bind("MergeDialog.urlError") + " " + toUrlCombo.getText()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
             return;	            
         }	
-        HistoryDialog dialog = new HistoryDialog(getShell(), remoteResource);
+        HistoryDialog dialog = dialog = new HistoryDialog(getShell(), remoteResource);
+        dialog.setSelectedResource(resource);
         if (dialog.open() == HistoryDialog.CANCEL) return;
         ILogEntry[] selectedEntries = dialog.getSelectedLogEntries();
         if (selectedEntries.length == 0) return;
@@ -377,7 +368,7 @@ public class BranchTagDialog extends TrayDialog {
     
     private void setOkButtonStatus() {
         if ((commentProperties != null) && (commentProperties.getMinimumLogMessageSize() != 0)) {
-            if (commitCommentArea.getComment().trim().length() < commentProperties.getMinimumLogMessageSize()) {
+            if (commitCommentArea.getText().getText().trim().length() < commentProperties.getMinimumLogMessageSize()) {
                 okButton.setEnabled(false);
                 return;
             }

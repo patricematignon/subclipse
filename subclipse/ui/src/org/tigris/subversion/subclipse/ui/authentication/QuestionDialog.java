@@ -1,16 +1,6 @@
-/*******************************************************************************
- * Copyright (c) 2005, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
 package org.tigris.subversion.subclipse.ui.authentication;
 
-import org.eclipse.jface.dialogs.TrayDialog;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -20,11 +10,11 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.tigris.subversion.subclipse.ui.IHelpContextIds;
 import org.tigris.subversion.subclipse.ui.Policy;
 
-public class QuestionDialog extends TrayDialog {
+public class QuestionDialog extends Dialog {
     private String realm;
     private String question;
     private boolean showAnswer;
@@ -54,24 +44,13 @@ public class QuestionDialog extends TrayDialog {
 		rtnGroup.setLayoutData(
 		new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
 		
-		Label realmLabel = new Label(rtnGroup, SWT.NONE);
-		realmLabel.setText(Policy.bind("PasswordPromptDialog.repository")); //$NON-NLS-1$
-		Text realmText = new Text(rtnGroup, SWT.BORDER);
-		GridData gd = new GridData();
-		gd.widthHint = WIDTH;
-		realmText.setLayoutData(gd);
-		realmText.setEditable(false);
-		realmText.setText(realm);
-		
 		Label questionLabel = new Label(rtnGroup, SWT.NONE);
 		questionLabel.setText(question);
 		
-		if (showAnswer) {
-			answerText = new Text(rtnGroup, SWT.NONE);
-			gd = new GridData();
-			gd.widthHint = WIDTH;
-			answerText.setLayoutData(gd);
-		}
+		answerText = new Text(rtnGroup, SWT.NONE);
+		GridData gd = new GridData();
+		gd.widthHint = WIDTH;
+		answerText.setLayoutData(gd);
 		
 		if (maySave) {
 		    saveButton = new Button(rtnGroup, SWT.CHECK);
@@ -82,16 +61,15 @@ public class QuestionDialog extends TrayDialog {
 		}
 		
 		// set F1 help
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(rtnGroup, IHelpContextIds.QUESTION_DIALOG);	
+		WorkbenchHelp.setHelp(rtnGroup, IHelpContextIds.QUESTION_DIALOG);	
 
-		if (showAnswer)
-			answerText.setFocus();
+		answerText.setFocus();
 		
 		return rtnGroup;
 	}
 	
     protected void okPressed() {
-    	if (showAnswer)	answer = answerText.getText().trim();
+        answer = answerText.getText().trim();
         if (maySave) save = saveButton.getSelection();
         super.okPressed();
     }	

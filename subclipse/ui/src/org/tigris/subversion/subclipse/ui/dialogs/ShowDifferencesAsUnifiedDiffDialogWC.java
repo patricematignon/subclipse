@@ -1,13 +1,3 @@
-/*******************************************************************************
- * Copyright (c) 2005, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
 package org.tigris.subversion.subclipse.ui.dialogs;
 
 import java.io.File;
@@ -15,7 +5,7 @@ import java.io.File;
 import org.eclipse.compare.CompareUI;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.jface.dialogs.TrayDialog;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
@@ -58,7 +48,7 @@ import org.tigris.subversion.svnclientadapter.SVNNodeKind;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
 import org.tigris.subversion.svnclientadapter.SVNUrl;
 
-public class ShowDifferencesAsUnifiedDiffDialogWC extends TrayDialog {
+public class ShowDifferencesAsUnifiedDiffDialogWC extends Dialog {
 	private IResource resource;
 	private IWorkbenchPart targetPart;
 	private Button compareButton;
@@ -335,8 +325,9 @@ public class ShowDifferencesAsUnifiedDiffDialogWC extends TrayDialog {
 	private void showLog(Object sourceButton) {
 		try {
 			SVNUrl url = new SVNUrl(toUrlText.getText().trim());
-			ISVNRemoteResource remoteResource = SVNWorkspaceRoot.getSVNResourceFor(resource).getRepository().getRemoteFile(url);
+			ISVNRemoteResource remoteResource = remoteResource = SVNWorkspaceRoot.getSVNResourceFor(resource).getRepository().getRemoteFile(url);
 			HistoryDialog dialog = new HistoryDialog(getShell(), remoteResource);
+			dialog.setSelectedResource(resource);
 	        if (dialog.open() == HistoryDialog.CANCEL) return;
 	        ILogEntry[] selectedEntries = dialog.getSelectedLogEntries();
 	        if (selectedEntries.length == 0) return;

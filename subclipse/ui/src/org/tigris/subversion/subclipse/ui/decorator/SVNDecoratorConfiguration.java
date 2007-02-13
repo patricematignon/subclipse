@@ -1,13 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
  * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
+ *     IBM Corporation - initial API and implementation
+ *     Cédric Chabanois (cchabanois@ifrance.com) - modified for Subversion 
+ *******************************************************************************/
 package org.tigris.subversion.subclipse.ui.decorator;
 
 
@@ -78,16 +79,8 @@ public class SVNDecoratorConfiguration {
     
 	public static final String DEFAULT_FOLDERTEXTFORMAT = "{external_flag}{added_flag}{dirty_flag}{name} "; //$NON-NLS-1$
 	public static final String DEFAULT_PROJECTTEXTFORMAT = "{dirty_flag}{name} [{url_short}]"; //$NON-NLS-1$
-	
-	// font and color definition ids
-	public static final String OUTGOING_CHANGE_FOREGROUND_COLOR = "svn_outgoing_change_foreground_color"; //$NON-NLS-1$
-	public static final String OUTGOING_CHANGE_BACKGROUND_COLOR = "svn_outgoing_change_background_color"; //$NON-NLS-1$
-	public static final String OUTGOING_CHANGE_FONT = "svn_outgoing_change_font"; //$NON-NLS-1$
-	public static final String IGNORED_FOREGROUND_COLOR = "svn_ignored_resource_foreground_color"; //$NON-NLS-1$
-	public static final String IGNORED_BACKGROUND_COLOR = "svn_ignored_resource_background_color"; //$NON-NLS-1$
-	public static final String IGNORED_FONT = "svn_ignored_resource_font"; //$NON-NLS-1$
-    
-	/**
+
+    /**
      * add a prefix and a suffix depending on format string and the bindings
      * @param decoration
      * @param format

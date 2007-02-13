@@ -1,13 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2006 Subclipse project and others.
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * http://www.eclipse.org/legal/cpl-v10.html
  *
  * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
+ *     Cédric Chabanois (cchabanois@ifrance.com) - modified for Subversion
+ *******************************************************************************/
 package org.tigris.subversion.subclipse.ui.wizards;
 
 
@@ -26,7 +26,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.part.DrillDownComposite;
 import org.tigris.subversion.subclipse.core.ISVNRemoteFolder;
@@ -101,7 +101,7 @@ public class MoveRemoteResourceWizardMainPage extends SVNWizardPage {
 	public void createControl(Composite parent) {
 		Composite composite = createComposite(parent, 1);
 		// set F1 help
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, IHelpContextIds.MOVE_RENAME_REMOTE_RESOURCE_PAGE);
+		WorkbenchHelp.setHelp(composite, IHelpContextIds.MOVE_RENAME_REMOTE_RESOURCE_PAGE);
 
 		Listener listener = new Listener() {
 			public void handleEvent(Event event) {

@@ -1,18 +1,20 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
  * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
+ *     IBM Corporation - initial API and implementation
+ *     Cédric Chabanois (cchabanois@ifrance.com) - modified for Subversion 
+ *******************************************************************************/
 package org.tigris.subversion.subclipse.ui.history;
 
 import java.text.DateFormat;
 import java.util.Date;
 
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.ColumnWeightData;
@@ -53,6 +55,7 @@ public class HistoryTableProvider {
 	private SVNRevision.Number currentRevision;
 	private TableViewer viewer;
 	private Font currentRevisionFont;
+	private IResource resource;
 		
 	/**
 	 * Constructor for HistoryTableProvider.
@@ -267,7 +270,6 @@ public class HistoryTableProvider {
 		HistorySorter sorter = new HistorySorter(COL_REVISION);
 		sorter.setReversed(true);
 		viewer.setSorter(sorter);
-		table.setSortDirection(SWT.DOWN);
 
         table.addDisposeListener(new DisposeListener() {
             public void widgetDisposed(DisposeEvent e) {
@@ -292,7 +294,6 @@ public class HistoryTableProvider {
 		col.setText(Policy.bind("HistoryView.revision")); //$NON-NLS-1$
 		col.addSelectionListener(headerListener);
 		layout.addColumnData(new ColumnWeightData(10, true));
-		table.setSortColumn(col);
 		
 		// tags
 		col = new TableColumn(table, SWT.NONE);
@@ -354,11 +355,6 @@ public class HistoryTableProvider {
 				} else {
 					tableViewer.setSorter(new HistorySorter(column));
 				}
-				tableViewer.getTable().setSortColumn((TableColumn)e.widget);
-				if (tableViewer.getTable().getSortDirection() == SWT.UP)
-					tableViewer.getTable().setSortDirection(SWT.DOWN);
-				else
-					tableViewer.getTable().setSortDirection(SWT.UP);
 			}
 		};
 	}
@@ -387,5 +383,9 @@ public class HistoryTableProvider {
      */
 	public ISVNRemoteResource getRemoteResource() {
 		return this.currentRemoteResource;
+	}
+
+	public void setResource(IResource resource) {
+		this.resource = resource;
 	}
 }

@@ -1,13 +1,3 @@
-/*******************************************************************************
- * Copyright (c) 2005, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
 package org.tigris.subversion.subclipse.ui.wizards;
 
 import java.util.Arrays;
@@ -98,7 +88,7 @@ public class CheckoutWizardLocationPage extends WizardPage {
 	}
 	
 	public void refreshLocations() {
-        ISVNRepositoryLocation[] locations = SVNUIPlugin.getPlugin().getRepositoryManager().getKnownRepositoryLocations(null);
+        ISVNRepositoryLocation[] locations = SVNUIPlugin.getPlugin().getRepositoryManager().getKnownRepositoryLocations();
         Arrays.sort(locations, new RepositoryComparator());
         AdaptableList input = new AdaptableList(locations);
         table.setInput(input);
@@ -106,7 +96,6 @@ public class CheckoutWizardLocationPage extends WizardPage {
             newButton.setSelection(true); 
             existingButton.setSelection(false);
             table.getTable().setEnabled(false);
-            setPageComplete(true);
         } else {
             existingButton.setSelection(true); 
             newButton.setSelection(false);
@@ -141,9 +130,9 @@ public class CheckoutWizardLocationPage extends WizardPage {
      */
 	public void setVisible(boolean visible) {
 		super.setVisible(visible);
-//		if (visible) {
-//			existingButton.setFocus();
-//		}
+		if (visible) {
+			existingButton.setFocus();
+		}
 	}
 	
 	public boolean createNewLocation() {

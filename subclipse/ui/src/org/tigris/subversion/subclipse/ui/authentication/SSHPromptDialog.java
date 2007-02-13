@@ -1,18 +1,8 @@
-/*******************************************************************************
- * Copyright (c) 2005, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
 package org.tigris.subversion.subclipse.ui.authentication;
 
 import java.util.Properties;
 
-import org.eclipse.jface.dialogs.TrayDialog;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
@@ -32,12 +22,12 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.tigris.subversion.subclipse.ui.IHelpContextIds;
 import org.tigris.subversion.subclipse.ui.Policy;
 import org.tigris.subversion.subclipse.ui.SVNUIPlugin;
 
-public class SSHPromptDialog extends TrayDialog {
+public class SSHPromptDialog extends Dialog {
     private String realm;
     private String username;
     private String password;
@@ -216,7 +206,7 @@ public class SSHPromptDialog extends TrayDialog {
 		keyFileButton.addSelectionListener(selectionListener);
 		
 		// set F1 help
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(rtnGroup, IHelpContextIds.SSH_PROMPT_DIALOG);	
+		WorkbenchHelp.setHelp(rtnGroup, IHelpContextIds.SSH_PROMPT_DIALOG);	
 
 		if (username != null) passwordText.setFocus();
 		else userText.setFocus();

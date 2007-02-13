@@ -1,13 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
  * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
+ *     IBM Corporation - initial API and implementation
+ *     Cédric Chabanois (cchabanois@ifrance.com) - modified for Subversion 
+ *******************************************************************************/
 package org.tigris.subversion.subclipse.ui.actions;
 
 import java.io.File;
@@ -21,23 +22,17 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.window.Window;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.internal.core.subscribers.ActiveChangeSet;
-import org.eclipse.team.internal.core.subscribers.ChangeSet;
 import org.tigris.subversion.subclipse.core.ISVNLocalResource;
 import org.tigris.subversion.subclipse.core.SVNException;
-import org.tigris.subversion.subclipse.core.SVNProviderPlugin;
 import org.tigris.subversion.subclipse.core.commands.GetStatusCommand;
 import org.tigris.subversion.subclipse.core.resources.SVNWorkspaceRoot;
 import org.tigris.subversion.subclipse.core.util.Util;
-import org.tigris.subversion.subclipse.ui.ISVNUIConstants;
 import org.tigris.subversion.subclipse.ui.Policy;
-import org.tigris.subversion.subclipse.ui.SVNUIPlugin;
 import org.tigris.subversion.subclipse.ui.dialogs.CommitDialog;
 import org.tigris.subversion.subclipse.ui.operations.CommitOperation;
 import org.tigris.subversion.subclipse.ui.settings.ProjectProperties;
@@ -51,7 +46,7 @@ import org.tigris.subversion.svnclientadapter.utils.SVNStatusUtils;
  * If selected, unversioned resources will be added to version control,
  * and committed.
  */
-public class CommitAction extends WorkbenchWindowAction {
+public class CommitAction extends WorkspaceAction {
 	protected String commitComment;
     protected IResource[] resourcesToCommit;
     protected String url;
@@ -59,17 +54,7 @@ public class CommitAction extends WorkbenchWindowAction {
     protected boolean commit;
     protected boolean keepLocks;
     protected IResource[] selectedResources;
-    private String proposedComment;
-    private boolean sharing;
 	
-    public CommitAction() {
-    	
-    }
-    
-	public CommitAction(String proposedComment) {
-		this.proposedComment = proposedComment;
-	}
-
 	/*
      * get non added resources and prompts for resources to be added
      * prompts for comments
@@ -81,51 +66,46 @@ public class CommitAction extends WorkbenchWindowAction {
 		final IResource[] resources = getSelectedResources();
 	    final List resourcesToBeAdded = new ArrayList();
 	    final List resourcesToBeDeleted = new ArrayList();
-            if (action != null && !action.isEnabled()) { 
-            	action.setEnabled(true);
-            } 
-            else {
-            	run(new IRunnableWithProgress() {
-        			public void run(IProgressMonitor monitor) throws InvocationTargetException {
-        				try {
-        				    // search for modified or added, non-ignored resources in the selection.
-        				    IResource[] modified = getModifiedResources(resources, monitor);
-        					
-        				    // if no changes since last commit, do not show commit dialog.
-        				    if (modified.length == 0) {
-        					    MessageDialog.openInformation(getShell(), Policy.bind("CommitDialog.title"), Policy.bind("CommitDialog.noChanges")); //$NON-NLS-1$ //$NON-NLS-2$
-        					    commit = false;
-        					} else {
-        					    ProjectProperties projectProperties = ProjectProperties.getProjectProperties(modified[0]);
-        					    commit = confirmCommit(modified, projectProperties);
-        					}
+		run(new IRunnableWithProgress() {
+			public void run(IProgressMonitor monitor) throws InvocationTargetException {
+				try {
+				    // search for modified or added, non-ignored resources in the selection.
+				    IResource[] modified = getModifiedResources(resources, monitor);
+					
+				    // if no changes since last commit, do not show commit dialog.
+				    if (modified.length == 0) {
+					    MessageDialog.openInformation(getShell(), Policy.bind("CommitDialog.title"), Policy.bind("CommitDialog.noChanges")); //$NON-NLS-1$ //$NON-NLS-2$
+					    commit = false;
+					} else {
+					    ProjectProperties projectProperties = ProjectProperties.getProjectProperties(modified[0]);
+					    commit = confirmCommit(modified, projectProperties);
+					}
 
-        				    // if commit was not canceled, create a list of any
-        				    // unversioned resources that were selected and a list of any missing
-        				    // resources that were selected.
-        					if (commit) {
-        					    for (int i = 0; i < resourcesToCommit.length; i++) {
-        					        IResource resource = resourcesToCommit[i];
-        					        ISVNLocalResource svnResource = SVNWorkspaceRoot.getSVNResourceFor(resource);
-        					        if (!svnResource.isManaged()) resourcesToBeAdded.add(resource);
-        					        if (svnResource.getStatus().isMissing()) resourcesToBeDeleted.add(resource);
-        					    }
-        					}
-        				} catch (TeamException e) {
-        					throw new InvocationTargetException(e);
-        				}
-        			}
-        		}, true /* cancelable */, PROGRESS_BUSYCURSOR); //$NON-NLS-1$
-        		
-        		if (!commit) {
-        			return; // user canceled
-        		}
-        		
-        		new CommitOperation(getTargetPart(), resources, 
-        				(IResource[]) resourcesToBeAdded.toArray(new IResource[resourcesToBeAdded.size()]),
-        				(IResource[]) resourcesToBeDeleted.toArray(new IResource[resourcesToBeDeleted.size()]),
-        				resourcesToCommit, commitComment, keepLocks).run();
-            }
+				    // if commit was not canceled, create a list of any
+				    // unversioned resources that were selected and a list of any missing
+				    // resources that were selected.
+					if (commit) {
+					    for (int i = 0; i < resourcesToCommit.length; i++) {
+					        IResource resource = resourcesToCommit[i];
+					        ISVNLocalResource svnResource = SVNWorkspaceRoot.getSVNResourceFor(resource);
+					        if (!svnResource.isManaged()) resourcesToBeAdded.add(resource);
+					        if (svnResource.getStatus().isMissing()) resourcesToBeDeleted.add(resource);
+					    }
+					}
+				} catch (TeamException e) {
+					throw new InvocationTargetException(e);
+				}
+			}
+		}, true /* cancelable */, PROGRESS_BUSYCURSOR); //$NON-NLS-1$
+		
+		if (!commit) {
+			return; // user canceled
+		}
+		
+		new CommitOperation(getTargetPart(), resources, 
+				(IResource[]) resourcesToBeAdded.toArray(new IResource[resourcesToBeAdded.size()]),
+				(IResource[]) resourcesToBeDeleted.toArray(new IResource[resourcesToBeDeleted.size()]),
+				resourcesToCommit, commitComment, keepLocks).run();
 	}
 	
 	/**
@@ -138,11 +118,6 @@ public class CommitAction extends WorkbenchWindowAction {
 	    for (int i = 0; i < resources.length; i++) {
 			 IResource resource = resources[i];
 			 ISVNLocalResource svnResource = SVNWorkspaceRoot.getSVNResourceFor(resource);
-			 
-			 // This check is for when the action is called with unmanaged resources
-			 if (svnResource.getRepository() == null) {
-				 continue;
-			 }
 			 
 			 // if only one resource selected, get url.  Commit dialog displays this.
 			 if (resources.length == 1) {
@@ -164,11 +139,8 @@ public class CommitAction extends WorkbenchWindowAction {
 			                 	hasUnaddedResources = true;
 			                 	if ((currentResource.getType() != IResource.FILE) && !isSymLink(currentResource))
 			                 		unversionedFolders.add(currentResource);
-			                 	else {
-			                 		if (sharing || SVNUIPlugin.getPlugin().getPreferenceStore().getBoolean(ISVNUIConstants.PREF_SHOW_UNADDED_RESOURCES_ON_COMMIT)) {
-			                 			if (!modified.contains(currentResource)) modified.add(currentResource);
-			                 		}
-			                 	}
+			                 	else
+					                if (!modified.contains(currentResource)) modified.add(currentResource);
 			                 } else
 			                	 if (!modified.contains(currentResource)) modified.add(currentResource);
 			             }
@@ -177,11 +149,9 @@ public class CommitAction extends WorkbenchWindowAction {
 			 }
 	    }
 	    // get unadded resources and add them to the list.
-	    if (sharing || SVNUIPlugin.getPlugin().getPreferenceStore().getBoolean(ISVNUIConstants.PREF_SHOW_UNADDED_RESOURCES_ON_COMMIT)) {
-		    IResource[] unaddedResources = getUnaddedResources(unversionedFolders, iProgressMonitor);
-		    for (int i = 0; i < unaddedResources.length; i++)
-		    	if (!modified.contains(unaddedResources[i])) modified.add(unaddedResources[i]);
-	    }
+	    IResource[] unaddedResources = getUnaddedResources(unversionedFolders, iProgressMonitor);
+	    for (int i = 0; i < unaddedResources.length; i++)
+	    	if (!modified.contains(unaddedResources[i])) modified.add(unaddedResources[i]);
 	    return (IResource[]) modified.toArray(new IResource[modified.size()]);
 	}
 
@@ -196,12 +166,6 @@ public class CommitAction extends WorkbenchWindowAction {
 	           return false;	       
 	   }
 	   CommitDialog dialog = new CommitDialog(getShell(), modifiedResources, url, hasUnaddedResources, projectProperties);
-	   dialog.setSharing(sharing);
-	   if (proposedComment == null || proposedComment.length() == 0) {
-		   dialog.setComment(getProposedComment(modifiedResources));
-	   } else {
-		   dialog.setComment(proposedComment);
-	   }
 	   boolean commitOK = (dialog.open() == Window.OK);
 	   url = null;
 	   commitComment = dialog.getComment();
@@ -310,63 +274,4 @@ public class CommitAction extends WorkbenchWindowAction {
     public void setSelectedResources(IResource[] selectedResources) {
         this.selectedResources = selectedResources;
     }
-    
-    /*
-     * Get a proposed comment by looking at the active change sets
-     */
-    private String getProposedComment(IResource[] resourcesToCommit) {
-    	StringBuffer comment = new StringBuffer();
-    	ChangeSet[] sets = SVNProviderPlugin.getPlugin().getChangeSetManager().getSets();
-    	int numMatchedSets = 0;
-    	for (int i = 0; i < sets.length; i++) {
-    		ChangeSet set = sets[i];
-    		if (isUserSet(set) && containsOne(set, resourcesToCommit)) {
-    			if(numMatchedSets > 0) comment.append(System.getProperty("line.separator")); //$NON-NLS-1$
-    			comment.append(set.getComment());
-    			numMatchedSets++;
-    		}
-    	}
-    	return comment.toString();
-    }
-
-    private boolean isUserSet(ChangeSet set) {
-    	if (set instanceof ActiveChangeSet) {
-    		ActiveChangeSet acs = (ActiveChangeSet) set;
-    		return acs.isUserCreated();
-    	}
-    	return false;
-    }
-
-    private boolean containsOne(ChangeSet set, IResource[] resourcesToCommit) {
-    	for (int j = 0; j < resourcesToCommit.length; j++) {
-    		IResource resource = resourcesToCommit[j];
-    		if (set.contains(resource)) {
-    			return true;
-    		}
-    		if (set instanceof ActiveChangeSet) {
-    			ActiveChangeSet acs = (ActiveChangeSet) set;
-    			if (acs.getDiffTree().members(resource).length > 0)
-    				return true;
-    		}
-    	}
-    	return false;
-    }
-    
-    public boolean hasOutgoingChanges() {
-    	try {
-    		return getModifiedResources(selectedResources, new NullProgressMonitor()).length > 0;
-    	} catch (SVNException e) {
-    	}
-    	return false;
-    }
-
-	public void setSharing(boolean sharing) {
-		this.sharing = sharing;
-	}    
-
-	protected String getImageId()
-	{
-		return ISVNUIConstants.IMG_MENU_COMMIT;
-	}
-    
 }

@@ -1,13 +1,3 @@
-/*******************************************************************************
- * Copyright (c) 2005, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
 package org.tigris.subversion.subclipse.ui.subscriber;
 
 import java.util.ArrayList;
@@ -29,8 +19,6 @@ import org.tigris.subversion.subclipse.core.ISVNLocalResource;
 import org.tigris.subversion.subclipse.core.SVNException;
 import org.tigris.subversion.subclipse.core.commands.GetStatusCommand;
 import org.tigris.subversion.subclipse.core.resources.SVNWorkspaceRoot;
-import org.tigris.subversion.subclipse.ui.ISVNUIConstants;
-import org.tigris.subversion.subclipse.ui.SVNUIPlugin;
 import org.tigris.subversion.svnclientadapter.ISVNStatus;
 import org.tigris.subversion.svnclientadapter.utils.SVNStatusUtils;
 
@@ -43,10 +31,9 @@ public class OverrideAndUpdateSynchronizeAction extends SynchronizeModelAction {
 	protected FastSyncInfoFilter getSyncInfoFilter() {
 		return new FastSyncInfoFilter() {
 			public boolean select(SyncInfo info) {
-				SyncInfoDirectionFilter filter = new SyncInfoDirectionFilter(new int[] {SyncInfo.OUTGOING,SyncInfo.CONFLICTING});
+				SyncInfoDirectionFilter filter = new SyncInfoDirectionFilter(new int[] {SyncInfo.CONFLICTING});
 				if (!filter.select(info)) return false;
 			    IStructuredSelection selection = getStructuredSelection();
-			    boolean removeUnAdded  = SVNUIPlugin.getPlugin().getPreferenceStore().getBoolean(ISVNUIConstants.PREF_REMOVE_UNADDED_RESOURCES_ON_REPLACE);
 			    Iterator iter = selection.iterator();
 			    while (iter.hasNext()) {
 			    	ISynchronizeModelElement element = (ISynchronizeModelElement)iter.next();
@@ -55,7 +42,7 @@ public class OverrideAndUpdateSynchronizeAction extends SynchronizeModelAction {
 			    	ISVNLocalResource svnResource = SVNWorkspaceRoot.getSVNResourceFor(resource);			    
 	                try {
 	                	if (svnResource.isAdded()) return false;
-	                	if (!removeUnAdded && !svnResource.isManaged()) return false;
+	                	if (!svnResource.isManaged()) return false;
 	                } catch (SVNException e) {
 	                    return false;
 	                }			    		
@@ -96,8 +83,7 @@ public class OverrideAndUpdateSynchronizeAction extends SynchronizeModelAction {
 			 command.run(iProgressMonitor);
 			 ISVNStatus[] statuses = command.getStatuses();
 			 for (int j = 0; j < statuses.length; j++) {
-			     if (SVNStatusUtils.isReadyForRevert(statuses[j])  ||
-			   		  !SVNStatusUtils.isManaged(statuses[j])) {
+			     if (SVNStatusUtils.isReadyForRevert(statuses[j])) {
 			         IResource currentResource = SVNWorkspaceRoot.getResourceFor(statuses[j]);
 			         if (currentResource != null)
 			             modified.add(currentResource);

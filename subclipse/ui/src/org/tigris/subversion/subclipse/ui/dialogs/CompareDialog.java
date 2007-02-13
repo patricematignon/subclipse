@@ -17,7 +17,7 @@ package org.tigris.subversion.subclipse.ui.dialogs;
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.compare.CompareEditorInput;
-import org.eclipse.jface.dialogs.TrayDialog;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -28,13 +28,13 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.tigris.subversion.subclipse.ui.IHelpContextIds;
 import org.tigris.subversion.subclipse.ui.Policy;
 import org.tigris.subversion.subclipse.ui.SVNUIPlugin;
 
 
-public class CompareDialog extends TrayDialog {
+public class CompareDialog extends Dialog {
 		
 	private CompareEditorInput compareEditorInput;
     private IDialogSettings settings;
@@ -124,7 +124,7 @@ public class CompareDialog extends TrayDialog {
 		Shell shell= c.getShell();
 		shell.setText(compareEditorInput.getTitle());
 		shell.setImage(compareEditorInput.getTitleImage());
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, IHelpContextIds.COMPARE_DIALOG);
+		WorkbenchHelp.setHelp(parent, IHelpContextIds.COMPARE_DIALOG);
 
 		applyDialogFont(parent);
 		return parent;

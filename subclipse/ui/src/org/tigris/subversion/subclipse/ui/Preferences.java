@@ -1,18 +1,18 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
  * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
+ *     IBM Corporation - initial API and implementation
+ *     Cédric Chabanois (cchabanois@ifrance.com) - modified for Subversion 
+ *******************************************************************************/
 package org.tigris.subversion.subclipse.ui;
 
 import java.io.File;
 
-import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -48,14 +48,11 @@ private IPreferenceStore store;
         store.setDefault(ISVNUIConstants.PREF_SHOW_COMMENTS, true);
         store.setDefault(ISVNUIConstants.PREF_WRAP_COMMENTS, true);
         store.setDefault(ISVNUIConstants.PREF_SHOW_PATHS, true);
-        store.setDefault(ISVNUIConstants.PREF_AFFECTED_PATHS_MODE, ISVNUIConstants.MODE_FLAT);
-        store.setDefault(ISVNUIConstants.PREF_AFFECTED_PATHS_LAYOUT, ISVNUIConstants.LAYOUT_HORIZONTAL);
+        store.setDefault(ISVNUIConstants.PREF_AFFECTED_PATHS_LAYOUT, ISVNUIConstants.LAYOUT_FLAT);
         
-        store.setDefault(ISVNUIConstants.PREF_CONSOLE_SHOW_ON_MESSAGE, false);
+        store.setDefault(ISVNUIConstants.PREF_CONSOLE_SHOW_ON_MESSAGE, true);
         store.setDefault(ISVNUIConstants.PREF_CONSOLE_SHOW_ON_ERROR, true);
-		store.setDefault(ISVNUIConstants.PREF_CONSOLE_LIMIT_OUTPUT, true);	
-		store.setDefault(ISVNUIConstants.PREF_CONSOLE_HIGH_WATER_MARK, 500000);	
-		
+        
         store.setDefault(ISVNUIConstants.PREF_FILETEXT_DECORATION, SVNDecoratorConfiguration.DEFAULT_FILETEXTFORMAT);
         store.setDefault(ISVNUIConstants.PREF_FOLDERTEXT_DECORATION, SVNDecoratorConfiguration.DEFAULT_FOLDERTEXTFORMAT);
         store.setDefault(ISVNUIConstants.PREF_PROJECTTEXT_DECORATION, SVNDecoratorConfiguration.DEFAULT_PROJECTTEXTFORMAT);
@@ -69,17 +66,13 @@ private IPreferenceStore store;
         store.setDefault(ISVNUIConstants.PREF_SHOW_DIRTY_DECORATION, true);
         store.setDefault(ISVNUIConstants.PREF_SHOW_NEWRESOURCE_DECORATION, true);
         store.setDefault(ISVNUIConstants.PREF_CALCULATE_DIRTY, true);
-        store.setDefault(ISVNUIConstants.PREF_USE_FONT_DECORATORS, false);
         store.setDefault(ISVNUIConstants.PREF_SHOW_SYNCINFO_AS_TEXT, false);        
         store.setDefault(ISVNUIConstants.PREF_PROMPT_ON_MIXED_TAGS, true);
         store.setDefault(ISVNUIConstants.PREF_PROMPT_ON_SAVING_IN_SYNC, true);
         store.setDefault(ISVNUIConstants.PREF_SAVE_DIRTY_EDITORS, ISVNUIConstants.OPTION_PROMPT);
         
         store.setDefault(ISVNUIConstants.PREF_SHOW_COMPARE_REVISION_IN_DIALOG, false);
-        store.setDefault(ISVNUIConstants.PREF_SHOW_UNADDED_RESOURCES_ON_COMMIT, true);
         store.setDefault(ISVNUIConstants.PREF_SELECT_UNADDED_RESOURCES_ON_COMMIT, false);
-		store.setDefault(ISVNUIConstants.PREF_REMOVE_UNADDED_RESOURCES_ON_REPLACE, true);
-        store.setDefault(ISVNUIConstants.PREF_COMMIT_SET_DEFAULT_ENABLEMENT, false);
         
         store.setDefault(ISVNUIConstants.PREF_SVNINTERFACE, JhlClientAdapterFactory.JAVAHL_CLIENT);
         store.setDefault(ISVNUIConstants.PREF_SVNCONFIGDIR, ""); //$NON-NLS-1$
@@ -91,10 +84,6 @@ private IPreferenceStore store;
         store.setDefault(ISVNUIConstants.PREF_MERGE_USE_EXTERNAL, false);
         store.setDefault(ISVNUIConstants.PREF_MERGE_PROGRAM_LOCATION,""); //$NON-NLS-1$
         store.setDefault(ISVNUIConstants.PREF_MERGE_PROGRAM_PARAMETERS,""); //$NON-NLS-1$
-        
-        store.setDefault(ISVNUIConstants.PREF_USE_QUICKDIFFANNOTATE, MessageDialogWithToggle.PROMPT);
-
-        store.setDefault(ISVNUIConstants.PREF_MENU_ICON_SET, ISVNUIConstants.MENU_ICON_SET_DEFAULT);
         
         setSvnClientInterface(store.getString(ISVNUIConstants.PREF_SVNINTERFACE));
         setSvnClientConfigDir(store.getString(ISVNUIConstants.PREF_SVNCONFIGDIR));

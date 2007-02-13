@@ -1,13 +1,3 @@
-/*******************************************************************************
- * Copyright (c) 2005, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
 package org.tigris.subversion.subclipse.ui.actions;
 
 import java.io.File;
@@ -36,7 +26,6 @@ import org.tigris.subversion.subclipse.ui.WorkspacePathValidator;
 import org.tigris.subversion.subclipse.ui.operations.CheckoutAsProjectOperation;
 import org.tigris.subversion.subclipse.ui.util.IPromptCondition;
 import org.tigris.subversion.subclipse.ui.util.PromptingDialog;
-import org.tigris.subversion.svnclientadapter.SVNRevision;
 
 /**
  * Add a remote resource to the workspace. Current implementation:
@@ -45,7 +34,6 @@ import org.tigris.subversion.svnclientadapter.SVNRevision;
  */
 public class CheckoutUsingProjectWizardAction extends SVNAction {
 	ISVNRemoteFolder[] folders;
-	private SVNRevision svnRevision = SVNRevision.HEAD;
 
     public CheckoutUsingProjectWizardAction(ISVNRemoteFolder[] folders) {
 		super();
@@ -122,9 +110,7 @@ public class CheckoutUsingProjectWizardAction extends SVNAction {
 				}
 			}
 		}, true /* cancelable */, PROGRESS_DIALOG);
-		CheckoutAsProjectOperation checkoutAsProjectOperation = new CheckoutAsProjectOperation(getTargetPart(), new ISVNRemoteFolder[] { remoteFolder }, new IProject[] { project });
-		checkoutAsProjectOperation.setSvnRevision(svnRevision);
-		checkoutAsProjectOperation.run();
+		new CheckoutAsProjectOperation(getTargetPart(), new ISVNRemoteFolder[] { remoteFolder }, new IProject[] { project }).run();
 	}
 
 	
@@ -248,9 +234,5 @@ public class CheckoutUsingProjectWizardAction extends SVNAction {
             }
         };
     }
-
-	public void setSvnRevision(SVNRevision svnRevision) {
-		this.svnRevision = svnRevision;
-	}
 
 }

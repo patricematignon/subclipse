@@ -1,19 +1,21 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
  * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
+ *     IBM Corporation - initial API and implementation
+ *     Cédric Chabanois (cchabanois@ifrance.com) - modified for Subversion  
+ *******************************************************************************/
+
 package org.tigris.subversion.subclipse.ui.preferences;
 
 import java.io.File;
 
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
@@ -32,13 +34,14 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.tigris.subversion.subclipse.core.ISVNCoreConstants;
 import org.tigris.subversion.subclipse.core.SVNProviderPlugin;
 import org.tigris.subversion.subclipse.ui.IHelpContextIds;
 import org.tigris.subversion.subclipse.ui.ISVNUIConstants;
 import org.tigris.subversion.subclipse.ui.Policy;
 import org.tigris.subversion.subclipse.ui.SVNUIPlugin;
+import org.tigris.subversion.subclipse.ui.history.HistoryView;
 import org.tigris.subversion.svnclientadapter.SVNClientAdapterFactory;
 import org.tigris.subversion.svnclientadapter.commandline.CmdLineClientAdapterFactory;
 import org.tigris.subversion.svnclientadapter.javahl.JhlClientAdapterFactory;
@@ -58,9 +61,7 @@ public class SVNPreferencesPage extends PreferencePage implements IWorkbenchPref
     private Button fetchChangePathOnDemand;
     private Button showTagsInRemoteHistory;
     private Button showOutOfDateFolders;
-    private Button showUnadded;
     private Button selectUnadded;
-    private Button removeOnReplace;
     private Text logEntriesToFetchText;
     private Button defaultConfigLocationRadio;
     private Button useDirectoryLocationRadio;
@@ -68,9 +69,6 @@ public class SVNPreferencesPage extends PreferencePage implements IWorkbenchPref
     private Button browseConfigDirButton;
     
     private boolean javahlErrorShown = false;
-	private Button quickDiffAnnotateYes;
-	private Button quickDiffAnnotateNo;
-	private Button quickDiffAnnotatePrompt;
 
 	public SVNPreferencesPage() {
 		// sort the options by display text
@@ -137,11 +135,7 @@ public class SVNPreferencesPage extends PreferencePage implements IWorkbenchPref
 		
 		showCompareRevisionInDialog = createCheckBox(composite, Policy.bind("SVNPreferencePage.showCompareMergeInSync")); //$NON-NLS-1$
 		
-		showUnadded = createCheckBox(composite, Policy.bind("SVNPreferencePage.showUnadded")); //$NON-NLS-1$
-		
 		selectUnadded = createCheckBox(composite, Policy.bind("SVNPreferencePage.selectUnadded")); //$NON-NLS-1$
-		
-		removeOnReplace = createCheckBox(composite, Policy.bind("SVNPreferencePage.removeOnReplace")); //$NON-NLS-1$
 		
 		fetchChangePathOnDemand = createCheckBox(composite, Policy.bind("SVNPreferencePage.fetchChangePathOnDemand")); //$NON-NLS-1$
 		
@@ -158,19 +152,8 @@ public class SVNPreferencesPage extends PreferencePage implements IWorkbenchPref
 		
 		createLabel(composite, "", 2); //$NON-NLS-1$
 		
-		Group group = new Group(composite, SWT.NONE);
-		group.setText(Policy.bind("SVNPreferencePage.useQuickdiffAnnotateGroup")); //$NON-NLS-1$
-		group.setLayout(new GridLayout(3, true));
-		group.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 2, 1));
-		
-		quickDiffAnnotateYes = createRadio(group, Policy.bind("yes"), 1);
-		quickDiffAnnotateNo = createRadio(group, Policy.bind("no"), 1);
-		quickDiffAnnotatePrompt = createRadio(group, Policy.bind("prompt"), 1);
-		
-		createLabel(composite, "", 2); //$NON-NLS-1$
-		
 		// group javahl/command line
-		group = new Group(composite, SWT.NULL);
+		Group group = new Group(composite, SWT.NULL);
 		group.setText(Policy.bind("SVNPreferencePage.svnClientInterface")); //$NON-NLS-1$
 		gridData = new GridData(GridData.FILL_HORIZONTAL);
 		gridData.horizontalSpan = 2;
@@ -235,7 +218,7 @@ public class SVNPreferencesPage extends PreferencePage implements IWorkbenchPref
 		initializeValues();
 		verifyValidation();
 
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IHelpContextIds.SVN_PREFERENCE_DIALOG);
+		WorkbenchHelp.setHelp(getControl(), IHelpContextIds.SVN_PREFERENCE_DIALOG);
 
 		return composite;
 	}
@@ -254,25 +237,9 @@ public class SVNPreferencesPage extends PreferencePage implements IWorkbenchPref
 		
 		showOutOfDateFolders.setSelection(SVNProviderPlugin.getPlugin().getPluginPreferences().getBoolean(ISVNCoreConstants.PREF_SHOW_OUT_OF_DATE_FOLDERS));
 		
-		showUnadded.setSelection(store.getBoolean(ISVNUIConstants.PREF_SHOW_UNADDED_RESOURCES_ON_COMMIT));
-		
 		selectUnadded.setSelection(store.getBoolean(ISVNUIConstants.PREF_SELECT_UNADDED_RESOURCES_ON_COMMIT));
-
-		if (!showUnadded.getSelection()) selectUnadded.setVisible(false);
-		
-		showUnadded.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent se) {
-				selectUnadded.setVisible(showUnadded.getSelection());
-			}			
-		});
-		
-		removeOnReplace.setSelection(store.getBoolean(ISVNUIConstants.PREF_REMOVE_UNADDED_RESOURCES_ON_REPLACE));
 		
 		logEntriesToFetchText.setText(Integer.toString(store.getInt(ISVNUIConstants.PREF_LOG_ENTRIES_TO_FETCH)));
-		
-		quickDiffAnnotateYes.setSelection(MessageDialogWithToggle.ALWAYS.equals(store.getString(ISVNUIConstants.PREF_USE_QUICKDIFFANNOTATE)));
-		quickDiffAnnotateNo.setSelection(MessageDialogWithToggle.NEVER.equals(store.getString(ISVNUIConstants.PREF_USE_QUICKDIFFANNOTATE)));
-		quickDiffAnnotatePrompt.setSelection(MessageDialogWithToggle.PROMPT.equals(store.getString(ISVNUIConstants.PREF_USE_QUICKDIFFANNOTATE)));
 		
 		String clientInterface = store.getString(ISVNUIConstants.PREF_SVNINTERFACE);
 		if (CmdLineClientAdapterFactory.COMMANDLINE_CLIENT.equals(clientInterface))
@@ -322,22 +289,9 @@ public class SVNPreferencesPage extends PreferencePage implements IWorkbenchPref
 			SVNUIPlugin.getPlugin().getShowOutOfDateFoldersAction().setChecked(showOutOfDateFolders.getSelection());
 		}
 		
-		store.setValue(ISVNUIConstants.PREF_SHOW_UNADDED_RESOURCES_ON_COMMIT, showUnadded.getSelection());
-		
         // save select unadded resources on commit pref
 		store.setValue(ISVNUIConstants.PREF_SELECT_UNADDED_RESOURCES_ON_COMMIT, selectUnadded.getSelection());
-		
-		 // save remove unadded resources on replace
-		store.setValue(ISVNUIConstants.PREF_REMOVE_UNADDED_RESOURCES_ON_REPLACE, removeOnReplace.getSelection());
 
-		if (quickDiffAnnotateYes.getSelection()) {
-			store.setValue(ISVNUIConstants.PREF_USE_QUICKDIFFANNOTATE, MessageDialogWithToggle.ALWAYS);
-		} else if (quickDiffAnnotateNo.getSelection()) {
-			store.setValue(ISVNUIConstants.PREF_USE_QUICKDIFFANNOTATE, MessageDialogWithToggle.NEVER);
-		} else if (quickDiffAnnotatePrompt.getSelection()) {
-			store.setValue(ISVNUIConstants.PREF_USE_QUICKDIFFANNOTATE, MessageDialogWithToggle.PROMPT);
-		}
-		
 		int entriesToFetch = store.getInt(ISVNUIConstants.PREF_LOG_ENTRIES_TO_FETCH);
 		try {
 			entriesToFetch = Integer.parseInt(logEntriesToFetchText.getText().trim());
@@ -345,17 +299,17 @@ public class SVNPreferencesPage extends PreferencePage implements IWorkbenchPref
 		
 		store.setValue(ISVNUIConstants.PREF_LOG_ENTRIES_TO_FETCH, entriesToFetch);
 		
-//		HistoryView historyView = HistoryView.getView();
-//		if (historyView != null) {
-//			IAction getNextAction = historyView.getGetNextAction();
-//			if (getNextAction != null) {
-//				if (entriesToFetch <= 0) getNextAction.setEnabled(false);
-//				else {
-//					getNextAction.setEnabled(true);
-//					getNextAction.setToolTipText(Policy.bind("HistoryView.getNext") + " " + entriesToFetch);
-//				}
-//			}
-//		}
+		HistoryView historyView = HistoryView.getView();
+		if (historyView != null) {
+			IAction getNextAction = historyView.getGetNextAction();
+			if (getNextAction != null) {
+				if (entriesToFetch <= 0) getNextAction.setEnabled(false);
+				else {
+					getNextAction.setEnabled(true);
+					getNextAction.setToolTipText(Policy.bind("HistoryView.getNext") + " " + entriesToFetch);
+				}
+			}
+		}
 		
         // save svn interface pref
         if (javahlRadio.getSelection() ){

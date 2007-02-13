@@ -1,19 +1,17 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * Copyright (c) 2003, 2004 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
  * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.tigris.subversion.subclipse.ui.console;
 
 import java.io.File;
-import java.io.IOException;
 
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -25,13 +23,13 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.console.ConsolePlugin;
 import org.eclipse.ui.console.IConsole;
 import org.eclipse.ui.console.IConsoleManager;
 import org.eclipse.ui.console.IConsoleView;
-import org.eclipse.ui.console.IOConsole;
-import org.eclipse.ui.console.IOConsoleOutputStream;
+import org.eclipse.ui.console.MessageConsole;
+import org.eclipse.ui.console.MessageConsoleStream;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.part.IPageBookViewPage;
 import org.eclipse.ui.part.IPageSite;
 import org.tigris.subversion.subclipse.core.SVNProviderPlugin;
@@ -50,19 +48,16 @@ import org.tigris.subversion.svnclientadapter.SVNNodeKind;
  * 
  * @since 3.0 
  */
-public class SVNOutputConsole extends IOConsole implements IConsoleListener, IPropertyChangeListener {
-	
-	/** Constant used to define consoles that have the ability to output subversion information */
-	public static final String SVN_CONSOLE_TYPE = "SVN";
+public class SVNOutputConsole extends MessageConsole implements IConsoleListener, IPropertyChangeListener {
 	// created colors for each line type - must be disposed at shutdown
 	private Color commandColor;
 	private Color messageColor;
 	private Color errorColor;
 	
 	// streams for each command type - each stream has its own color
-	private IOConsoleOutputStream commandStream;
-	private IOConsoleOutputStream messageStream;
-	private IOConsoleOutputStream errorStream;
+	private MessageConsoleStream commandStream;
+	private MessageConsoleStream messageStream;
+	private MessageConsoleStream errorStream;
 	
 	// preferences for showing the SVN console when SVN output is provided
     private boolean showOnError;
@@ -105,13 +100,14 @@ public class SVNOutputConsole extends IOConsole implements IConsoleListener, IPr
 	 * page yet.
 	 */
 	public SVNOutputConsole() {
-		super("SVN", SVN_CONSOLE_TYPE, SVNUIPlugin.getPlugin().getImageDescriptor(ISVNUIConstants.IMG_SVN_CONSOLE)); //$NON-NLS-1$
+		super("SVN", SVNUIPlugin.getPlugin().getImageDescriptor(ISVNUIConstants.IMG_SVN_CONSOLE)); //$NON-NLS-1$
 		// setup console showing preferences
 		showOnMessage = SVNUIPlugin.getPlugin().getPreferenceStore().getBoolean(ISVNUIConstants.PREF_CONSOLE_SHOW_ON_MESSAGE);
         showOnError = SVNUIPlugin.getPlugin().getPreferenceStore().getBoolean(ISVNUIConstants.PREF_CONSOLE_SHOW_ON_ERROR);  
 		document = new ConsoleDocument();
 		SVNProviderPlugin.getPlugin().setConsoleListener(SVNOutputConsole.this);
 		SVNUIPlugin.getPlugin().getPreferenceStore().addPropertyChangeListener(SVNOutputConsole.this);
+		showConsole(false);
 	}
 	
 	/* (non-Javadoc)
@@ -120,9 +116,6 @@ public class SVNOutputConsole extends IOConsole implements IConsoleListener, IPr
 	protected void init() {
 		// Called when console is added to the console view
 		super.init();	
-		
-		initLimitOutput();
-		
 		//	Ensure that initialization occurs in the ui thread
 		SVNUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
 			public void run() {
@@ -133,15 +126,6 @@ public class SVNOutputConsole extends IOConsole implements IConsoleListener, IPr
 		});
 	}
 	
-	private void initLimitOutput() {
-		IPreferenceStore store = SVNUIPlugin.getPlugin().getPreferenceStore();
-		if(store.getBoolean(ISVNUIConstants.PREF_CONSOLE_LIMIT_OUTPUT)) {
-			setWaterMarks(1000, store.getInt(ISVNUIConstants.PREF_CONSOLE_HIGH_WATER_MARK));
-		} else {
-			setWaterMarks(-1, 0);
-		}
-	}
-	
 	/*
 	 * Initialize thre streams of the console. Must be 
 	 * called from the UI thread.
@@ -149,9 +133,9 @@ public class SVNOutputConsole extends IOConsole implements IConsoleListener, IPr
 	private void initializeStreams() {
 		synchronized(document) {
 			if (!initialized) {
-				commandStream = newOutputStream();
-				errorStream = newOutputStream();
-				messageStream = newOutputStream();
+				commandStream = newMessageStream();
+				errorStream = newMessageStream();
+				messageStream = newMessageStream();
 				// install colors
 				commandColor = createColor(SVNUIPlugin.getStandardDisplay(), ISVNUIConstants.PREF_CONSOLE_COMMAND_COLOR);
 				commandStream.setColor(commandColor);
@@ -166,14 +150,7 @@ public class SVNOutputConsole extends IOConsole implements IConsoleListener, IPr
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.console.AbstractConsole#getHelpContextId()
-	 */
-	public String getHelpContextId() {
-		return IHelpContextIds.CONSOLE_VIEW;
-	}
     /* (non-Javadoc)
-     * TODO remove this method when Eclipse 3.2 is required
      * @see org.eclipse.ui.console.IConsole#createPage(org.eclipse.ui.console.IConsoleView)
      */
     public IPageBookViewPage createPage(IConsoleView view) {
@@ -186,7 +163,7 @@ public class SVNOutputConsole extends IOConsole implements IConsoleListener, IPr
              */
             public void createControl(Composite parent) {
                 delegate.createControl(parent);
-                PlatformUI.getWorkbench().getHelpSystem().setHelp(delegate.getControl(), IHelpContextIds.CONSOLE_VIEW);
+                WorkbenchHelp.setHelp(delegate.getControl(), IHelpContextIds.CONSOLE_VIEW);
             }
             
             public void dispose() {
@@ -234,23 +211,16 @@ public class SVNOutputConsole extends IOConsole implements IConsoleListener, IPr
 	private void appendLine(int type, String line) {
 		synchronized(document) {
 			if(visible) {
-				try {
-					switch(type) {
-						case ConsoleDocument.COMMAND:
-							commandStream.write(line);
-							commandStream.write('\n');
-							break;
-						case ConsoleDocument.MESSAGE:
-							messageStream.write("  " + line); //$NON-NLS-1$
-							messageStream.write('\n');
-							break;
-						case ConsoleDocument.ERROR:
-							errorStream.write("  " + line); //$NON-NLS-1$
-							errorStream.write('\n');
-							break;
-					}
-				} catch (IOException e) {
-					SVNUIPlugin.log(0, e.getMessage(), e);
+				switch(type) {
+					case ConsoleDocument.COMMAND:
+						commandStream.println(line);
+						break;
+					case ConsoleDocument.MESSAGE:
+						messageStream.println("  " + line); //$NON-NLS-1$
+						break;
+					case ConsoleDocument.ERROR:
+						errorStream.println("  " + line); //$NON-NLS-1$
+						break;
 				}
 			} else {
 				document.appendConsoleLine(type, line);
@@ -258,6 +228,18 @@ public class SVNOutputConsole extends IOConsole implements IConsoleListener, IPr
 		}
 	}
 	
+	private void showConsole(boolean show) {
+		if(showOnMessage) {
+			IConsoleManager manager = ConsolePlugin.getDefault().getConsoleManager();
+			if(! visible) {
+				manager.addConsoles(new IConsole[] {this});
+			}
+			if (show) {
+				manager.showConsoleView(this);
+			}
+		} 
+	}
+
     private void bringConsoleToFront() {
         IConsoleManager manager = ConsolePlugin.getDefault().getConsoleManager();
         if(! visible) {
@@ -323,8 +305,6 @@ public class SVNOutputConsole extends IOConsole implements IConsoleListener, IPr
 				// font
 			} else if (property.equals(ISVNUIConstants.PREF_CONSOLE_FONT)) {
 				setFont(JFaceResources.getFontRegistry().get(ISVNUIConstants.PREF_CONSOLE_FONT));
-			} else if(property.equals(ISVNUIConstants.PREF_CONSOLE_LIMIT_OUTPUT)) {
-				initLimitOutput();
 			}
 		}
 		// show preferences
@@ -334,6 +314,13 @@ public class SVNOutputConsole extends IOConsole implements IConsoleListener, IPr
 				showOnMessage = Boolean.getBoolean((String)event.getNewValue());
 			} else {
 				showOnMessage = ((Boolean)value).booleanValue();
+			}
+			if(showOnMessage) {
+				showConsole(true);
+			} else {
+				IConsoleManager manager = ConsolePlugin.getDefault().getConsoleManager();
+				manager.removeConsoles(new IConsole[] {this});
+				ConsolePlugin.getDefault().getConsoleManager().addConsoleListener(new MyLifecycle());
 			}
 		}
 
@@ -357,28 +344,19 @@ public class SVNOutputConsole extends IOConsole implements IConsoleListener, IPr
 	}
 
     public void logCommandLine(String commandLine) {
-    	if (showOnMessage) {
-    		bringConsoleToFront();
-    	}
         appendLine(ConsoleDocument.DELIMITER, Policy.bind("Console.preExecutionDelimiter")); //$NON-NLS-1$
         appendLine(ConsoleDocument.COMMAND, commandLine);
     }
     public void logMessage(String message) {
-    	if (showOnMessage) {
-    		bringConsoleToFront();
-    	}
         appendLine(ConsoleDocument.MESSAGE, "  " + message); //$NON-NLS-1$
     }
     public void logRevision(long revision, String path) {
     }
     public void logCompleted(String message) {
-    	if (showOnMessage) {
-    		bringConsoleToFront();
-    	}
         appendLine(ConsoleDocument.MESSAGE, "  " + message); //$NON-NLS-1$
     }
     public void logError(String message) {
-        if (showOnMessage || showOnError) {
+        if (showOnError) {
         	bringConsoleToFront();
         }
         appendLine(ConsoleDocument.ERROR, "  " + message); //$NON-NLS-1$

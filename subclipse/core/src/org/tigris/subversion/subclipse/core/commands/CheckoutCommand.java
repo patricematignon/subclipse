@@ -1,13 +1,12 @@
-/*******************************************************************************
- * Copyright (c) 2004, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+/******************************************************************************
+ * This program and the accompanying materials are made available under
+ * the terms of the Common Public License v1.0 which accompanies this
+ * distribution, and is available at the following URL:
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * Copyright(c) 2003-2005 by the authors indicated in the @author tags.
  *
- * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
+ * All Rights are Reserved by the various authors.
+ *******************************************************************************/
 package org.tigris.subversion.subclipse.core.commands;
 
 import java.io.File;
@@ -59,8 +58,6 @@ public class CheckoutCommand implements ISVNCommand {
 	private IProject[] projects;
 	
 	private IPath projectRoot;
-	
-	private SVNRevision svnRevision = SVNRevision.HEAD;
 
 	public CheckoutCommand(ISVNRemoteFolder[] resources, IProject[] projects) {
 		this(resources, projects, null);
@@ -190,7 +187,7 @@ public class CheckoutCommand implements ISVNCommand {
 			subPm.beginTask("", Policy.INFINITE_PM_GUESS_FOR_CHECKOUT);
 //			subPm.setTaskName("");
 			OperationManager.getInstance().beginOperation(svnClient, new OperationProgressNotifyListener(subPm));
-			svnClient.checkout(resource.getUrl(), destPath, svnRevision, true);
+			svnClient.checkout(resource.getUrl(), destPath, SVNRevision.HEAD, true);
 		} catch (SVNClientException e) {
 			throw new SVNException("cannot checkout");
 		} finally {
@@ -335,10 +332,6 @@ public class CheckoutCommand implements ISVNCommand {
 				monitor.done();
 			}
 		}
-	}
-
-	public void setSvnRevision(SVNRevision svnRevision) {
-		this.svnRevision = svnRevision;
 	}
 
 }

@@ -1,13 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
  * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
+ *     IBM Corporation - initial API and implementation
+ *     Cédric Chabanois (cchabanois@ifrance.com) - modified for Subversion  
+ *******************************************************************************/
 package org.tigris.subversion.subclipse.core.resources;
 
 import java.io.InputStream;
@@ -15,6 +16,8 @@ import java.io.InputStream;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.eclipse.core.internal.resources.ResourceInfo;
+import org.eclipse.core.internal.resources.Workspace;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -368,8 +371,9 @@ public class SVNWorkspaceRoot {
 	public static int getResourceType(IPath aResourcePath)
 	{
 		if (aResourcePath == null) return 0;
-		IResource r = ResourcesPlugin.getWorkspace().getRoot().findMember(aResourcePath);
-		return r == null ? 0 : r.getType();	
+		//TODO This code is using eclipse internal classes !		
+		ResourceInfo resourceInfo = ((Workspace) ResourcesPlugin.getWorkspace()).getResourceInfo(aResourcePath, true, false);
+		return (resourceInfo != null) ? resourceInfo.getType() : 0;
 	}
 	
     /**
@@ -385,24 +389,23 @@ public class SVNWorkspaceRoot {
 		IPath resourcePath = pathForLocation(status.getIPath());
 		if (resourcePath == null) 
 		{
-			return null;
-//			if(status.getFile() != null && status.getFile().getName().equals(".metadata"))  //$NON-NLS-1$
-//				return null;
-//		    if (!nullResourceLogged) {
-//		        String errorMsg = Policy.bind("SVNWorkspaceRoot.nullResource", status.getPathString());
-//			    IConsoleListener console = SVNProviderPlugin.getPlugin().getConsoleListener();
-//			    if (console != null) {
-//			        console.logError(errorMsg);
-//			        console.logError(Policy.bind("SVNWorkspaceRoot.nullResource.2"));
-//			        console.logError(Policy.bind("SVNWorkspaceRoot.nullResource.3"));
-//			        console.logError(Policy.bind("SVNWorkspaceRoot.nullResource.4"));
-//			        console.logError(Policy.bind("SVNWorkspaceRoot.nullResource.5"));
-//			        console.logError(Policy.bind("SVNWorkspaceRoot.nullResource.6"));
-//			    }
-//			    nullResourceLogged = true;
-//			    throw new SVNException(errorMsg);
-//		    }
-//		    throw new SVNException("");
+			if(status.getFile() != null && status.getFile().getName().equals(".metadata"))  //$NON-NLS-1$
+				return null;
+		    if (!nullResourceLogged) {
+		        String errorMsg = Policy.bind("SVNWorkspaceRoot.nullResource", status.getPath());
+			    IConsoleListener console = SVNProviderPlugin.getPlugin().getConsoleListener();
+			    if (console != null) {
+			        console.logError(errorMsg);
+			        console.logError(Policy.bind("SVNWorkspaceRoot.nullResource.2"));
+			        console.logError(Policy.bind("SVNWorkspaceRoot.nullResource.3"));
+			        console.logError(Policy.bind("SVNWorkspaceRoot.nullResource.4"));
+			        console.logError(Policy.bind("SVNWorkspaceRoot.nullResource.5"));
+			        console.logError(Policy.bind("SVNWorkspaceRoot.nullResource.6"));
+			    }
+			    nullResourceLogged = true;
+			    throw new SVNException(errorMsg);
+		    }
+		    throw new SVNException("");
 		}
 		int kind = getResourceType(resourcePath);			
 

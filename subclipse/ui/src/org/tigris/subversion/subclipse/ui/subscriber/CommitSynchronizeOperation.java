@@ -1,13 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
  * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.tigris.subversion.subclipse.ui.subscriber;
 
 import java.io.File;
@@ -49,14 +49,12 @@ public class CommitSynchronizeOperation extends SVNSynchronizeOperation {
     private String url;
     private boolean commit;
     private boolean keepLocks;
-    private String proposedComment;
     private ISynchronizePageConfiguration configuration;
 
-	protected CommitSynchronizeOperation(ISynchronizePageConfiguration configuration, IDiffElement[] elements, String url, String proposedComment) {
+	protected CommitSynchronizeOperation(ISynchronizePageConfiguration configuration, IDiffElement[] elements, String url) {
 		super(configuration, elements);
 		this.configuration = configuration;
 		this.url = url;
-		this.proposedComment = proposedComment;
 	}
 	
 	private boolean confirmCommit(SyncInfoSet set) {
@@ -67,7 +65,6 @@ public class CommitSynchronizeOperation extends SVNSynchronizeOperation {
                 ProjectProperties projectProperties = ProjectProperties.getProjectProperties(modified[0]);
                 IResource[] unaddedResources = getUnaddedResources(set);
                 final CommitDialog dialog = new CommitDialog(getShell(), modified, url, unaddedResources.length > 0, projectProperties);
-                dialog.setComment(proposedComment);
         		getShell().getDisplay().syncExec(new Runnable() {
         			public void run() {
         				commit = (dialog.open() == CommitDialog.OK);

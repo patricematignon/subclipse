@@ -1,13 +1,3 @@
-/*******************************************************************************
- * Copyright (c) 2004, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
 package org.tigris.subversion.subclipse.ui.dialogs;
 
 import java.io.File;
@@ -15,7 +5,7 @@ import java.net.MalformedURLException;
 import java.text.ParseException;
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.jface.dialogs.TrayDialog;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
@@ -36,7 +26,7 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.tigris.subversion.subclipse.core.ISVNLocalResource;
 import org.tigris.subversion.subclipse.core.ISVNRemoteResource;
 import org.tigris.subversion.subclipse.core.SVNException;
@@ -50,7 +40,7 @@ import org.tigris.subversion.svnclientadapter.SVNClientException;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
 import org.tigris.subversion.svnclientadapter.SVNUrl;
 
-public class MergeDialog extends TrayDialog {
+public class MergeDialog extends Dialog {
     
     private static final int URL_WIDTH_HINT = 450;
     private static final int REVISION_WIDTH_HINT = 40;
@@ -68,9 +58,6 @@ public class MergeDialog extends TrayDialog {
     private Button toHeadButton;
     private Button toRevisionButton;
     
-    private Button ignoreAncestryButton;
-    private Button forceButton;
-    
     private Button okButton;
     private Button diffButton;
     private Button dryRunButton;
@@ -81,8 +68,6 @@ public class MergeDialog extends TrayDialog {
     private SVNRevision fromRevision;
     private SVNUrl toUrl;
     private SVNRevision toRevision;
-    private boolean force;
-    private boolean ignoreAncestry;
     private ISVNLocalResource svnResource;
     private File diffFile;
     private File file;
@@ -287,18 +272,6 @@ public class MergeDialog extends TrayDialog {
 		fromRevisionText.addModifyListener(modifyListener);
 		toUrlCombo.getCombo().addModifyListener(modifyListener);
 		toRevisionText.addModifyListener(modifyListener);
-
-		Composite ignoreComposite = new Composite(composite, SWT.NULL);
-		GridLayout ignoreLayout = new GridLayout();
-		ignoreLayout.numColumns = 2;
-		ignoreComposite.setLayout(ignoreLayout);
-		data = new GridData(GridData.FILL_HORIZONTAL);
-		ignoreComposite.setLayoutData(data);
-		
-		ignoreAncestryButton = new Button(ignoreComposite, SWT.CHECK);
-		ignoreAncestryButton.setText(Policy.bind("MergeDialog.ignoreAncestry")); //$NON-NLS-1$
-		forceButton = new Button(ignoreComposite, SWT.CHECK);
-		forceButton.setText(Policy.bind("MergeDialog.force")); //$NON-NLS-1$
 		
 		Group workingGroup = new Group(composite, SWT.NULL);
 		GridLayout workingLayout = new GridLayout();
@@ -341,7 +314,7 @@ public class MergeDialog extends TrayDialog {
 		});		
 		
 		fromUrlCombo.getCombo().setFocus();
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, IHelpContextIds.MERGE_DIALOG);
+		WorkbenchHelp.setHelp(composite, IHelpContextIds.MERGE_DIALOG);
 
 		return composite;
 	}
@@ -377,7 +350,7 @@ public class MergeDialog extends TrayDialog {
             BusyIndicator.showWhile(Display.getCurrent(), new Runnable() {
                 public void run() {
                     try {
-                        svnClient.merge(fromUrl, fromRevision, toUrl, toRevision, file, forceButton.getSelection(), true, true, ignoreAncestryButton.getSelection());
+                        svnClient.merge(fromUrl, fromRevision, toUrl, toRevision, file, false, true, true);
                     } catch (SVNClientException e) {
                         MessageDialog.openError(getShell(), Policy.bind("MergeDialog.dryRun"), e.toString()); //$NON-NLS-1$
                     }
@@ -449,6 +422,7 @@ public class MergeDialog extends TrayDialog {
             dialog = new HistoryDialog(getShell(), remoteResource);
         else
             dialog = new HistoryDialog(getShell(), resource);
+        dialog.setSelectedResource(resource);
         if (dialog.open() == HistoryDialog.CANCEL) return;
         ILogEntry[] selectedEntries = dialog.getSelectedLogEntries();
         if (selectedEntries.length == 0) return;
@@ -478,8 +452,6 @@ public class MergeDialog extends TrayDialog {
     }
 	
     protected void okPressed() {
-    	force = forceButton.getSelection();
-    	ignoreAncestry = ignoreAncestryButton.getSelection();
         fromUrlCombo.saveUrl();
         if (!toUrlCombo.getText().equals(fromUrlCombo.getText())) toUrlCombo.saveUrl();
         try {
@@ -542,11 +514,4 @@ public class MergeDialog extends TrayDialog {
     public SVNUrl getToUrl() {
         return toUrl;
     }
-	public boolean isForce() {
-		return force;
-	}
-	public boolean isIgnoreAncestry() {
-		return ignoreAncestry;
-	}
-
 }

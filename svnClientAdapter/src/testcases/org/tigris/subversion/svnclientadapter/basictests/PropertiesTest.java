@@ -16,7 +16,6 @@ import java.util.Map;
 
 import org.tigris.subversion.svnclientadapter.ISVNProperty;
 import org.tigris.subversion.svnclientadapter.SVNKeywords;
-import org.tigris.subversion.svnclientadapter.SVNRevision;
 import org.tigris.subversion.svnclientadapter.SVNUrl;
 import org.tigris.subversion.svnclientadapter.testUtils.OneTest;
 import org.tigris.subversion.svnclientadapter.testUtils.SVNTest;
@@ -68,23 +67,10 @@ public class PropertiesTest extends SVNTest {
         assertEquals(fileUrl, prop.getUrl());
         assertNull(prop.getFile());
         
-        // delete properties
+        // delete property
         client.propertyDel(dir,"myProp2",true);
         prop = client.propertyGet(file, "myProp2");
         assertNull(prop);
-        
-        //commit with deleteted property so we can test the properties on URL and revisions
-        client.commit(new File[] {dir}, "Commited properties", true);
-
-        long lastChangedRevision = client.getInfo(file).getLastChangedRevision().getNumber();
-        
-        //the last changed revision of the file does not have the property
-        prop = client.propertyGet(fileUrl, SVNRevision.getRevision("" +lastChangedRevision), SVNRevision.HEAD, "myProp2");
-        assertNull(prop);
-
-        //the revision before has the property
-        prop = client.propertyGet(fileUrl, SVNRevision.getRevision("" + --lastChangedRevision), SVNRevision.HEAD, "myProp2");
-        assertNotNull(prop);
     }
 
     public void testBasicKeywords() throws Throwable {

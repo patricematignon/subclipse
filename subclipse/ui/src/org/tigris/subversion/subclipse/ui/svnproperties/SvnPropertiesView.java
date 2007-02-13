@@ -1,13 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
  * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
+ *     Cédric Chabanois (cchabanois@ifrance.com) - modified for Subversion 
+ *******************************************************************************/
 package org.tigris.subversion.subclipse.ui.svnproperties;
 
 import org.eclipse.core.resources.IProject;
@@ -50,8 +50,8 @@ import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.part.ViewPart;
 import org.tigris.subversion.subclipse.core.IResourceStateChangeListener;
 import org.tigris.subversion.subclipse.core.ISVNLocalResource;
@@ -64,6 +64,7 @@ import org.tigris.subversion.subclipse.ui.Policy;
 import org.tigris.subversion.subclipse.ui.SVNUIPlugin;
 import org.tigris.subversion.subclipse.ui.actions.SVNPropertyDeleteAction;
 import org.tigris.subversion.subclipse.ui.actions.SVNPropertyModifyAction;
+import org.tigris.subversion.subclipse.ui.dialogs.AddKeywordsDialog;
 import org.tigris.subversion.svnclientadapter.ISVNProperty;
 import org.tigris.subversion.svnclientadapter.SVNStatusKind;
 
@@ -83,6 +84,7 @@ public class SvnPropertiesView extends ViewPart {
 	private Action addPropertyAction;
 	private Action modifyPropertyAction;
 	private Action deletePropertyAction;
+	private Action setKeywordsAction;
 	private Label statusLabel;
 	private ISelectionListener pageSelectionListener;
 	private IResourceStateChangeListener resourceStateChangeListener;
@@ -290,7 +292,7 @@ public class SvnPropertiesView extends ViewPart {
 	private Action getAddPropertyAction() {
 		if (addPropertyAction == null) {
 			SVNUIPlugin plugin = SVNUIPlugin.getPlugin();
-			addPropertyAction = new Action(Policy.bind("SvnPropertiesView.addPropertyLabel"), plugin.getImageDescriptor(ISVNUIConstants.IMG_MENU_PROPSET)) { //$NON-NLS-1$
+			addPropertyAction = new Action(Policy.bind("SvnPropertiesView.addPropertyLabel"), plugin.getImageDescriptor(ISVNUIConstants.IMG_ADD_PROPERTY)) { //$NON-NLS-1$
 				public void run() {
 					SetSvnPropertyDialog dialog = new SetSvnPropertyDialog(getSite().getShell(),resource);
 					if (dialog.open() != SetSvnPropertyDialog.OK) return;
@@ -316,8 +318,32 @@ public class SvnPropertiesView extends ViewPart {
 		return addPropertyAction;
 	}
 
+	private Action getSetKeywordsAction() {
+		if (setKeywordsAction == null) {
+			SVNUIPlugin plugin = SVNUIPlugin.getPlugin();
+			setKeywordsAction = new Action(Policy.bind("SvnPropertiesView.addKeywordsLabel")) { //$NON-NLS-1$
+				public void run() {
+					try {
+						AddKeywordsDialog dialog = new AddKeywordsDialog(getSite().getShell(),new IResource[] { resource.getIResource() });
+						if (dialog.open() != AddKeywordsDialog.OK) return;
+						dialog.updateKeywords();
+					} catch (SVNException e) {
+						SVNUIPlugin.openError(
+						getSite().getShell(), 
+						Policy.bind("SvnPropertiesView.errorAddKeywordsTitle"), //$NON-NLS-1$
+						Policy.bind("SvnPropertiesView.errorAddKeywordsMessage"),//$NON-NLS-1$ 
+						e);
+					}
+				}
+			};
+			setKeywordsAction.setToolTipText(Policy.bind("SvnPropertiesView.addKeywordsTooltip")); //$NON-NLS-1$
+		}
+		return setKeywordsAction;		
+	}
+
 	private Action getModifyPropertyAction() {
 		if (modifyPropertyAction == null) {
+			SVNUIPlugin plugin = SVNUIPlugin.getPlugin();
 			modifyPropertyAction = new Action(Policy.bind("SvnPropertiesView.modifyPropertyLabel")) { //$NON-NLS-1$
 				public void run() {
 					SVNPropertyModifyAction delegate = new SVNPropertyModifyAction();
@@ -332,6 +358,7 @@ public class SvnPropertiesView extends ViewPart {
 
 	private Action getDeletePropertyAction() {
 		if (deletePropertyAction == null) {
+			SVNUIPlugin plugin = SVNUIPlugin.getPlugin();
 			deletePropertyAction = new Action(Policy.bind("SvnPropertiesView.deletePropertyLabel")) { //$NON-NLS-1$
 				public void run() {
 					SVNPropertyDeleteAction delegate = new SVNPropertyDeleteAction();
@@ -369,7 +396,7 @@ public class SvnPropertiesView extends ViewPart {
 		tbm.update(false);
         
 		// set F1 help
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(tableViewer.getControl(), IHelpContextIds.PROPERTIES_VIEW);
+		WorkbenchHelp.setHelp(tableViewer.getControl(), IHelpContextIds.PROPERTIES_VIEW);
 
 		tableViewer.addDoubleClickListener(new IDoubleClickListener() {
 			public void doubleClick(DoubleClickEvent e) {
@@ -423,6 +450,14 @@ public class SvnPropertiesView extends ViewPart {
 		}
 		manager.add(action);
 
+		action = getSetKeywordsAction();
+		try { 		
+			action.setEnabled(resource.isManaged());
+		} catch (SVNException e) {
+			action.setEnabled(false);
+		}
+		manager.add(action);		
+		
 		manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 	}
     

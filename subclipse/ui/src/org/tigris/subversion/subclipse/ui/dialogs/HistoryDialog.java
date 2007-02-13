@@ -1,20 +1,10 @@
-/*******************************************************************************
- * Copyright (c) 2005, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
 package org.tigris.subversion.subclipse.ui.dialogs;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.jface.dialogs.TrayDialog;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.Document;
@@ -42,7 +32,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.tigris.subversion.subclipse.core.ISVNLocalResource;
 import org.tigris.subversion.subclipse.core.ISVNRemoteResource;
 import org.tigris.subversion.subclipse.core.commands.GetLogsCommand;
@@ -58,7 +48,8 @@ import org.tigris.subversion.subclipse.ui.history.ChangePathsTableProvider;
 import org.tigris.subversion.subclipse.ui.history.HistoryTableProvider;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
 
-public class HistoryDialog extends TrayDialog {
+public class HistoryDialog extends Dialog {
+	private IResource selectedResource;
     private IResource resource;
     private ISVNRemoteResource remoteResource;
     private SashForm sashForm;
@@ -120,6 +111,7 @@ public class HistoryDialog extends TrayDialog {
 		
 		historyTableProvider = new HistoryTableProvider();
 		historyTableProvider.setRemoteResource(remoteResource);
+		historyTableProvider.setResource(selectedResource);
 		tableHistoryViewer = historyTableProvider.createTable(historyGroup);
 		data = new GridData(GridData.FILL_BOTH);
 		data.widthHint = WIDTH_HINT;
@@ -175,22 +167,23 @@ public class HistoryDialog extends TrayDialog {
         pathGroup.setLayout(new GridLayout());
         pathGroup.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
-		changePathsTableProvider = new ChangePathsTableProvider(pathGroup, 
-            new IStructuredContentProvider() {
-                public Object[] getElements(Object inputElement) {
-                  if ((inputElement == null) || (!(inputElement instanceof ILogEntry))) {
-                      return null;
-                  }
-                  ILogEntry logEntry = (ILogEntry)inputElement;
-                    return logEntry.getLogEntryChangePaths();
+		changePathsTableProvider = new ChangePathsTableProvider(pathGroup);
+        changePathsTableProvider.setContentProvider(new IStructuredContentProvider() {
+
+			public Object[] getElements(Object inputElement) {
+                if ((inputElement == null) || (!(inputElement instanceof ILogEntry))) {
+                    return null;
                 }
-    
-                public void dispose() {
-                }
-    
-                public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-                }
-          });
+                ILogEntry logEntry = (ILogEntry)inputElement;
+				return logEntry.getLogEntryChangePaths();
+			}
+
+			public void dispose() {
+			}
+
+			public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+			}
+        });
 		
 		stopOnCopyButton = new Button(composite, SWT.CHECK);
 		stopOnCopyButton.setText(Policy.bind("HistoryView.stopOnCopy"));
@@ -213,7 +206,7 @@ public class HistoryDialog extends TrayDialog {
 		} catch (Exception e) {}
 		
 		// set F1 help
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, IHelpContextIds.HISTORY_DIALOG);	
+		WorkbenchHelp.setHelp(composite, IHelpContextIds.HISTORY_DIALOG);	
 
 		return composite;
 	}
@@ -416,4 +409,8 @@ public class HistoryDialog extends TrayDialog {
     public ILogEntry[] getSelectedLogEntries() {
         return selectedEntries;
     }
+
+	public void setSelectedResource(IResource selectedResource) {
+		this.selectedResource = selectedResource;
+	}
 }

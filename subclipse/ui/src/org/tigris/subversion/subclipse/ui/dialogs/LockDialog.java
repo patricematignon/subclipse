@@ -1,17 +1,7 @@
-/*******************************************************************************
- * Copyright (c) 2005, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
 package org.tigris.subversion.subclipse.ui.dialogs;
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.jface.dialogs.TrayDialog;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -35,7 +25,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.tigris.subversion.subclipse.core.SVNException;
 import org.tigris.subversion.subclipse.ui.IHelpContextIds;
 import org.tigris.subversion.subclipse.ui.Policy;
@@ -44,7 +34,7 @@ import org.tigris.subversion.subclipse.ui.comments.CommitCommentArea;
 import org.tigris.subversion.subclipse.ui.settings.CommentProperties;
 import org.tigris.subversion.subclipse.ui.util.TableSetter;
 
-public class LockDialog extends TrayDialog {
+public class LockDialog extends Dialog {
 	private static final int WIDTH_HINT = 500;
 	private final static int SELECTION_HEIGHT_HINT = 100;
     
@@ -78,7 +68,7 @@ public class LockDialog extends TrayDialog {
 		if ((commentProperties != null) && (commentProperties.getMinimumLockMessageSize() != 0)) {
 		    ModifyListener modifyListener = new ModifyListener() {
                 public void modifyText(ModifyEvent e) {
-                    okButton.setEnabled(commitCommentArea.getComment().trim().length() >= commentProperties.getMinimumLockMessageSize());
+                    okButton.setEnabled(commitCommentArea.getText().getText().trim().length() >= commentProperties.getMinimumLockMessageSize());
                 }		        
 		    };
 		    commitCommentArea.setModifyListener(modifyListener);
@@ -124,7 +114,7 @@ public class LockDialog extends TrayDialog {
 		
 
 		// set F1 help
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, IHelpContextIds.LOCK_DIALOG);	
+		WorkbenchHelp.setHelp(composite, IHelpContextIds.LOCK_DIALOG);	
 		
 		return composite;
 	}

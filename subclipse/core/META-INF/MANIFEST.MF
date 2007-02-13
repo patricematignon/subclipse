@@ -1,8 +1,8 @@
-Bundle-ManifestVersion: 2
+Manifest-Version: 1.0
 Bundle-Name: %pluginName
-Bundle-SymbolicName: org.tigris.subversion.subclipse.core; singleton:=true
-Bundle-Version: 1.2.0
-Bundle-ClassPath: .,
+Bundle-SymbolicName: org.tigris.subversion.subclipse.core; singleton=true
+Bundle-Version: 1.0.5
+Bundle-ClassPath: SVNPluginCore.jar,
  lib/svnClientAdapter.jar,
  lib/svnjavahl.jar,
  lib/svnkit.jar,
@@ -10,17 +10,16 @@ Bundle-ClassPath: .,
 Bundle-Activator: org.tigris.subversion.subclipse.core.SVNProviderPlugin
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
-Require-Bundle: org.eclipse.core.resources;bundle-version="3.2.0",
- org.eclipse.team.core;bundle-version="3.2.0",
- org.eclipse.core.runtime;bundle-version="3.2.0",
+Require-Bundle: org.eclipse.core.resources,
+ org.eclipse.team.core,
+ org.eclipse.core.runtime,
  org.eclipse.osgi
-Eclipse-LazyStart: true
-Export-Package: org.tigris.subversion.subclipse.core,
+Eclipse-AutoStart: true
+Provide-Package: org.tigris.subversion.subclipse.core,
  org.tigris.subversion.subclipse.core.client,
  org.tigris.subversion.subclipse.core.commands,
  org.tigris.subversion.subclipse.core.history,
  org.tigris.subversion.subclipse.core.internal,
- org.tigris.subversion.subclipse.core.mapping,
  org.tigris.subversion.subclipse.core.properties,
  org.tigris.subversion.subclipse.core.repo,
  org.tigris.subversion.subclipse.core.resources,
@@ -34,4 +33,3 @@ Export-Package: org.tigris.subversion.subclipse.core,
  org.tigris.subversion.svnclientadapter.javahl,
  org.tigris.subversion.svnclientadapter.svnkit,
  org.tigris.subversion.svnclientadapter.utils
-Bundle-RequiredExecutionEnvironment: J2SE-1.4

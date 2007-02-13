@@ -1,13 +1,3 @@
-/*******************************************************************************
- * Copyright (c) 2005, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
 package org.tigris.subversion.subclipse.ui.wizards;
 
 import org.eclipse.core.resources.IProject;
@@ -30,7 +20,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.tigris.subversion.subclipse.ui.IHelpContextIds;
 import org.tigris.subversion.subclipse.ui.ISVNUIConstants;
@@ -60,7 +50,7 @@ public class RelocateWizardWarningPage extends WizardPage {
 		
 		Composite outerContainer = new Composite(parent,SWT.NONE);
 		// set F1 help
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(outerContainer, IHelpContextIds.RELOCATE_REPOSITORY_PAGE);
+		WorkbenchHelp.setHelp(outerContainer, IHelpContextIds.RELOCATE_REPOSITORY_PAGE);
 		GridLayout outerLayout = new GridLayout();
 		outerLayout.numColumns = 2;
 		outerContainer.setLayout(outerLayout);

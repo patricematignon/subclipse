@@ -1,13 +1,15 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
  * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
+ *     IBM Corporation - initial API and implementation
+ *     Cédric Chabanois (cchabanois@ifrance.com) - modified for Subversion 
+ *******************************************************************************/
+
 package org.tigris.subversion.subclipse.ui;
 
 import java.io.IOException;
@@ -27,9 +29,7 @@ import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.TeamException;
@@ -60,10 +60,7 @@ public class SVNUIPlugin extends AbstractUIPlugin {
 	public static final String ID = "org.tigris.subversion.subclipse.ui"; //$NON-NLS-1$
 	public static final String DECORATOR_ID = "org.tigris.subversion.subclipse.ui.decorator"; //$NON-NLS-1$
 	public static final String PROVIDER_ID="org.tigris.subversion.subclipse.core.svnnature"; //$NON-NLS-1$
-	/**
-	 * Property constant indicating the decorator configuration has changed. 
-	 */
-	public static final String P_DECORATORS_CHANGED = SVNUIPlugin.ID  + ".P_DECORATORS_CHANGED";	 //$NON-NLS-1$
+
 	/**
 	 * The singleton plug-in instance
 	 */
@@ -459,8 +456,7 @@ public class SVNUIPlugin extends AbstractUIPlugin {
     public ImageDescriptor getImageDescriptor(String id) {
         if (imageDescriptors == null) {
             imageDescriptors = new ImageDescriptors();
-            imageDescriptors.initializeImages(baseURL,
-            		getPreferenceStore().getInt(ISVNUIConstants.PREF_MENU_ICON_SET));
+            imageDescriptors.initializeImages(baseURL);
         }
         return imageDescriptors.getImageDescriptor(id);
     }
@@ -511,20 +507,4 @@ public class SVNUIPlugin extends AbstractUIPlugin {
 	public ShowOutOfDateFoldersAction getShowOutOfDateFoldersAction() {
 		return showOutOfDateFoldersAction;
 	}
-	
-	public static Image getImage(String key) {
-		return getPlugin().getImageRegistry().get(key);
-	}	
-	
-	protected void initializeImageRegistry(ImageRegistry reg) {
-		super.initializeImageRegistry(reg);
-		reg.put(ISVNUIConstants.IMG_FILEADD_PENDING, getImageDescriptor(ISVNUIConstants.IMG_FILEADD_PENDING));
-		reg.put(ISVNUIConstants.IMG_FILEDELETE_PENDING, getImageDescriptor(ISVNUIConstants.IMG_FILEDELETE_PENDING));
-		reg.put(ISVNUIConstants.IMG_FILEMODIFIED_PENDING, getImageDescriptor(ISVNUIConstants.IMG_FILEMODIFIED_PENDING));
-		reg.put(ISVNUIConstants.IMG_FOLDERADD_PENDING, getImageDescriptor(ISVNUIConstants.IMG_FOLDERADD_PENDING));
-		reg.put(ISVNUIConstants.IMG_FOLDERDELETE_PENDING, getImageDescriptor(ISVNUIConstants.IMG_FOLDERDELETE_PENDING));
-		reg.put(ISVNUIConstants.IMG_FOLDERMODIFIED_PENDING, getImageDescriptor(ISVNUIConstants.IMG_FOLDERMODIFIED_PENDING));
-		reg.put(ISVNUIConstants.IMG_FOLDER, getImageDescriptor(ISVNUIConstants.IMG_FOLDER));
-	}
-	
 }

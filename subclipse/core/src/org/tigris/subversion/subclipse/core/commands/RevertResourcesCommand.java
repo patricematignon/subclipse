@@ -1,13 +1,3 @@
-/*******************************************************************************
- * Copyright (c) 2005, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
 package org.tigris.subversion.subclipse.core.commands;
 
 import java.io.File;
@@ -73,13 +63,14 @@ public class RevertResourcesCommand implements ISVNCommand {
         	final OperationManager operationManager = OperationManager.getInstance();
             ISVNClientAdapter svnClient = root.getRepository().getSVNClient();
             operationManager.beginOperation(svnClient);
+            
             for (int i = 0; i < resources.length; i++) {
                 LocalResourceStatus status = SVNWorkspaceRoot.getSVNResourceFor( resources[i] ).getStatus();
 				// If a folder add is reverted, all the adds underneath it will be reverted too.
                 // Don't try to revert them. Because the resources are sorted by path we can just
                 // keep going along the IResource array until we find one that doesn't have the 
                 // current as a base path. 
-                if (resources[i].getType() == IResource.FOLDER && status.isAdded()) {
+                if (resources[i].getType() == IResource.FOLDER && SVNWorkspaceRoot.getSVNResourceFor( resources[i] ).getStatus().isAdded()) {
                     svnClient.revert(resources[i].getLocation().toFile(), true);
                     monitor.worked(100);
 
@@ -122,7 +113,6 @@ public class RevertResourcesCommand implements ISVNCommand {
 	                    monitor.worked(100);
                 	}
                 }
-                	
             }
         } catch (SVNClientException e) {
             throw SVNException.wrapException(e);

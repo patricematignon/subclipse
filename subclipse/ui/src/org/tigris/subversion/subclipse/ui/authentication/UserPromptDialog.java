@@ -10,7 +10,7 @@
  ******************************************************************************/
 package org.tigris.subversion.subclipse.ui.authentication;
 
-import org.eclipse.jface.dialogs.TrayDialog;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -21,11 +21,11 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.tigris.subversion.subclipse.ui.IHelpContextIds;
 import org.tigris.subversion.subclipse.ui.Policy;
 
-public class UserPromptDialog extends TrayDialog {
+public class UserPromptDialog extends Dialog {
     private String realm;
     private String username;
     private boolean save;
@@ -79,7 +79,7 @@ public class UserPromptDialog extends TrayDialog {
 		}
 		
 		// set F1 help
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(rtnGroup, IHelpContextIds.USER_PROMPT_DIALOG);	
+		WorkbenchHelp.setHelp(rtnGroup, IHelpContextIds.USER_PROMPT_DIALOG);	
  
         userText.setFocus();
 		

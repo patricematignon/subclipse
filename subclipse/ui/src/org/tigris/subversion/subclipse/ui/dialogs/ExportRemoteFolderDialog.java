@@ -1,18 +1,8 @@
-/*******************************************************************************
- * Copyright (c) 2005, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
 package org.tigris.subversion.subclipse.ui.dialogs;
 
 import java.io.File;
 
-import org.eclipse.jface.dialogs.TrayDialog;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
@@ -31,8 +21,8 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.PlatformUI;
 import org.tigris.subversion.subclipse.core.ISVNRemoteResource;
 import org.tigris.subversion.subclipse.core.history.ILogEntry;
 import org.tigris.subversion.subclipse.ui.IHelpContextIds;
@@ -40,18 +30,19 @@ import org.tigris.subversion.subclipse.ui.Policy;
 import org.tigris.subversion.subclipse.ui.operations.ExportRemoteFolderOperation;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
 
-public class ExportRemoteFolderDialog extends TrayDialog {
-	private ISVNRemoteResource remoteResource;
+public class ExportRemoteFolderDialog extends Dialog {
+	private ISVNRemoteResource remoteFolder;
 	private IWorkbenchPart targetPart;
 	private Text directoryText;
 	private Text revisionText;
     private Button logButton;
     private Button headButton;
     private Button revisionButton;
+	private Button okButton;
 
-	public ExportRemoteFolderDialog(Shell parentShell, ISVNRemoteResource remoteResource, IWorkbenchPart targetPart) {
+	public ExportRemoteFolderDialog(Shell parentShell, ISVNRemoteResource remoteFolder, IWorkbenchPart targetPart) {
 		super(parentShell);
-		this.remoteResource = remoteResource;
+		this.remoteFolder = remoteFolder;
 		this.targetPart = targetPart;
 	}
 	
@@ -83,7 +74,7 @@ public class ExportRemoteFolderDialog extends TrayDialog {
 		data.widthHint = 300;
 		urlText.setLayoutData(data);
 		urlText.setEditable(false);
-		urlText.setText(remoteResource.getUrl().toString());
+		urlText.setText(remoteFolder.getUrl().toString());
 		
 		new Label(repositoryGroup, SWT.NONE);
 		
@@ -134,12 +125,20 @@ public class ExportRemoteFolderDialog extends TrayDialog {
 		revisionButton = new Button(revisionGroup, SWT.RADIO);
 		revisionButton.setText(Policy.bind("SwitchDialog.revision")); //$NON-NLS-1$
 		
+		headButton.setSelection(true);
+		
 		revisionText = new Text(revisionGroup, SWT.BORDER);
 		data = new GridData();
 		data.widthHint = 40;
 		revisionText.setLayoutData(data);
 		revisionText.setEnabled(false);
-
+		
+		revisionText.addModifyListener(new ModifyListener() {
+            public void modifyText(ModifyEvent e) {
+                setOkButtonStatus();
+            }		    
+		});
+		
 		logButton = new Button(revisionGroup, SWT.PUSH);
 		logButton.setText(Policy.bind("MergeDialog.showLog")); //$NON-NLS-1$
 		logButton.setEnabled(false);
@@ -149,21 +148,6 @@ public class ExportRemoteFolderDialog extends TrayDialog {
             }
 		});	
 		
-        if(SVNRevision.HEAD.equals(remoteResource.getRevision())) {
-          headButton.setSelection(true);
-        } else {
-          revisionButton.setSelection(true);
-          revisionText.setText(remoteResource.getRevision().toString());
-          revisionText.setEnabled(true);
-          logButton.setEnabled(true);
-        }
-        
-        revisionText.addModifyListener(new ModifyListener() {
-          public void modifyText(ModifyEvent e) {
-              setOkButtonStatus();
-          }         
-        });
-        
 		SelectionListener listener = new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 revisionText.setEnabled(revisionButton.getSelection());
@@ -175,24 +159,33 @@ public class ExportRemoteFolderDialog extends TrayDialog {
                 }
             }
 		};
-        
+		
 		headButton.addSelectionListener(listener);
 		revisionButton.addSelectionListener(listener);
 		
 		// set F1 help
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, IHelpContextIds.EXPORT_REMOTE_FOLDER_DIALOG);	
+		WorkbenchHelp.setHelp(composite, IHelpContextIds.EXPORT_REMOTE_FOLDER_DIALOG);	
 
 		directoryText.setFocus();
 		
 		return composite;
 	}
+	
+    protected Button createButton(Composite parent, int id, String label, boolean defaultButton) {
+        Button button = super.createButton(parent, id, label, defaultButton);
+		if (id == IDialogConstants.OK_ID) {
+			okButton = button; 
+			okButton.setEnabled(false);
+		}
+        return button;
+    }
     
     private void setOkButtonStatus() {
-        getButton(IDialogConstants.OK_ID).setEnabled((directoryText.getText().trim().length() > 0) && (headButton.getSelection() || (revisionText.getText().trim().length() > 0)));
+        okButton.setEnabled((directoryText.getText().trim().length() > 0) && (headButton.getSelection() || (revisionText.getText().trim().length() > 0)));
     }
     
 	protected void showLog() {
-        HistoryDialog dialog = new HistoryDialog(getShell(), remoteResource);
+        HistoryDialog dialog = dialog = new HistoryDialog(getShell(), remoteFolder);
         if (dialog.open() == HistoryDialog.CANCEL) return;
         ILogEntry[] selectedEntries = dialog.getSelectedLogEntries();
         if (selectedEntries.length == 0) return;
@@ -209,9 +202,9 @@ public class ExportRemoteFolderDialog extends TrayDialog {
 			long revisionLong = revisionNumber;
 			revision = new SVNRevision.Number(revisionLong);
 		}
-		File directory = new File(directoryText.getText().trim() + File.separator + remoteResource.getName());
+		File directory = new File(directoryText.getText().trim() + File.separator + remoteFolder.getName());
 		try {
-			new ExportRemoteFolderOperation(targetPart, remoteResource, directory, revision).run();
+			new ExportRemoteFolderOperation(targetPart, remoteFolder, directory, revision).run();
 		} catch (Exception e) {
 			MessageDialog.openError(getShell(), Policy.bind("ExportRemoteFolderAction.directoryDialogText"), e.getMessage()); //$NON-NLS-1$
 			success = false;

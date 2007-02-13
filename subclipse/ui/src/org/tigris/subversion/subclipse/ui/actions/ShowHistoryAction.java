@@ -1,13 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
  * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
+ *     IBM Corporation - initial API and implementation
+ *     Cédric Chabanois (cchabanois@ifrance.com) - modified for Subversion 
+ *******************************************************************************/
 package org.tigris.subversion.subclipse.ui.actions;
 
 import java.lang.reflect.InvocationTargetException;
@@ -15,10 +16,9 @@ import java.lang.reflect.InvocationTargetException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.team.ui.history.IHistoryView;
 import org.tigris.subversion.subclipse.core.ISVNRemoteResource;
-import org.tigris.subversion.subclipse.ui.ISVNUIConstants;
 import org.tigris.subversion.subclipse.ui.Policy;
+import org.tigris.subversion.subclipse.ui.history.HistoryView;
 
 /**
  * Show history for selected remote file
@@ -34,9 +34,9 @@ public class ShowHistoryAction extends SVNAction {
 				ISVNRemoteResource[] resources = getSelectedRemoteResources();
 				if (resources.length == 0)
 					resources = getSelectedRemoteFolders();
-				IHistoryView view = (IHistoryView)showView(ISVNUIConstants.HISTORY_VIEW_ID);
+				HistoryView view = (HistoryView)showView(HistoryView.VIEW_ID);
 				if (view != null) {
-					view.showHistoryFor(resources[0]);
+					view.showHistory(resources[0], null /* no current revision */);
 				}
 			}
 		}, false /* cancelable */, PROGRESS_BUSYCURSOR);
@@ -55,13 +55,6 @@ public class ShowHistoryAction extends SVNAction {
 	 */
 	protected String getErrorTitle() {
 		return Policy.bind("ShowHistoryAction.showHistory"); //$NON-NLS-1$
-	}
-
-	/*
-	 * @see org.tigris.subversion.subclipse.ui.actions.ReplaceableIconAction#getImageId()
-	 */
-	protected String getImageId() {
-		return ISVNUIConstants.IMG_MENU_SHOWHISTORY;
 	}
 
 }

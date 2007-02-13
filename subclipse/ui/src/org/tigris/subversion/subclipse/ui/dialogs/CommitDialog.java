@@ -1,13 +1,3 @@
-/*******************************************************************************
- * Copyright (c) 2004, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
 package org.tigris.subversion.subclipse.ui.dialogs;
 
 import java.util.ArrayList;
@@ -18,7 +8,7 @@ import java.util.List;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.jface.dialogs.TrayDialog;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -53,7 +43,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.tigris.subversion.subclipse.core.ISVNLocalResource;
 import org.tigris.subversion.subclipse.core.SVNException;
 import org.tigris.subversion.subclipse.core.resources.SVNWorkspaceRoot;
@@ -68,7 +58,7 @@ import org.tigris.subversion.subclipse.ui.settings.ProjectProperties;
 import org.tigris.subversion.subclipse.ui.util.TableSetter;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
 
-public class CommitDialog extends TrayDialog {
+public class CommitDialog extends Dialog {
     
 	private static final int WIDTH_HINT = 500;
 	private final static int SELECTION_HEIGHT_HINT = 100;
@@ -77,6 +67,7 @@ public class CommitDialog extends TrayDialog {
     private CommitCommentArea commitCommentArea;
     private IResource[] resourcesToCommit;
     private String url;
+    private boolean unaddedResources;
     private ProjectProperties projectProperties;
     private Object[] selectedResources;
     private CheckboxTableViewer listViewer;
@@ -92,8 +83,6 @@ public class CommitDialog extends TrayDialog {
     
     private Button okButton;
     private CommentProperties commentProperties;
-    
-    private boolean sharing;
 
     public CommitDialog(Shell parentShell, IResource[] resourcesToCommit, String url, boolean unaddedResources, ProjectProperties projectProperties) {
         super(parentShell);
@@ -108,13 +97,14 @@ public class CommitDialog extends TrayDialog {
 		if ((commentProperties != null) && (commentProperties.getMinimumLogMessageSize() != 0)) {
 		    ModifyListener modifyListener = new ModifyListener() {
                 public void modifyText(ModifyEvent e) {
-                    okButton.setEnabled(commitCommentArea.getComment().length() >= commentProperties.getMinimumLogMessageSize());
+                    okButton.setEnabled(commitCommentArea.getText().getText().trim().length() >= commentProperties.getMinimumLogMessageSize());
                 }		        
 		    };
 		    commitCommentArea.setModifyListener(modifyListener);
 		}
 		this.resourcesToCommit = resourcesToCommit;
 		this.url = url;
+		this.unaddedResources = unaddedResources;
 		this.projectProperties = projectProperties;
 		settings = SVNUIPlugin.getPlugin().getDialogSettings();
 		setter = new TableSetter();
@@ -171,7 +161,7 @@ public class CommitDialog extends TrayDialog {
 		addResourcesArea(cBottom2);
 				
 		// set F1 help
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, IHelpContextIds.COMMIT_DIALOG);	
+		WorkbenchHelp.setHelp(composite, IHelpContextIds.COMMIT_DIALOG);	
 		
 		return composite;
 	}
@@ -521,6 +511,7 @@ public class CommitDialog extends TrayDialog {
 	}
 	
 	private void setChecks() {
+	    boolean selectUnadded = SVNUIPlugin.getPlugin().getPreferenceStore().getBoolean(ISVNUIConstants.PREF_SELECT_UNADDED_RESOURCES_ON_COMMIT);
 	    listViewer.setAllChecked(true);
 	    deselect();
 		selectedResources = listViewer.getCheckedElements();
@@ -533,7 +524,7 @@ public class CommitDialog extends TrayDialog {
              IResource resource = (IResource)items[i].getData();
              ISVNLocalResource svnResource = SVNWorkspaceRoot.getSVNResourceFor(resource);
              try {
-              if (!sharing && !selectUnadded && !svnResource.isManaged()) items[i].setChecked(false);
+              if (!selectUnadded && !svnResource.isManaged()) items[i].setChecked(false);
               else if (svnResource.getStatus().isMissing()) items[i].setChecked(false);
              } catch (SVNException e1) {}
           }    
@@ -542,12 +533,4 @@ public class CommitDialog extends TrayDialog {
     public boolean isKeepLocks() {
         return keepLocks;
     }
-
-	public void setComment(String proposedComment) {
-		commitCommentArea.setProposedComment(proposedComment);
-	}
-
-	public void setSharing(boolean sharing) {
-		this.sharing = sharing;
-	}
 }

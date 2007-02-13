@@ -1,13 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
  * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
+ *     IBM Corporation - initial API and implementation
+ *     Cédric Chabanois (cchabanois@ifrance.com) - modified for Subversion 
+ *******************************************************************************/
 package org.tigris.subversion.subclipse.ui.annotations;
 
 import java.io.IOException;
@@ -33,7 +34,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.team.ui.history.IHistoryView;
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorRegistry;
@@ -42,7 +42,7 @@ import org.eclipse.ui.IReusableEditor;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.registry.EditorDescriptor;
 import org.eclipse.ui.part.ViewPart;
@@ -50,10 +50,9 @@ import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.tigris.subversion.subclipse.core.ISVNRemoteFile;
 import org.tigris.subversion.subclipse.ui.IHelpContextIds;
-import org.tigris.subversion.subclipse.ui.ISVNUIConstants;
 import org.tigris.subversion.subclipse.ui.Policy;
 import org.tigris.subversion.subclipse.ui.SVNUIPlugin;
-import org.tigris.subversion.subclipse.ui.history.SVNHistoryPage;
+import org.tigris.subversion.subclipse.ui.history.HistoryView;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
 
 /**
@@ -64,7 +63,7 @@ import org.tigris.subversion.svnclientadapter.SVNRevision;
 public class AnnotateView extends ViewPart implements ISelectionChangedListener {
 
 	ITextEditor editor;
-	IHistoryView historyView;
+	HistoryView historyView;
 	IWorkbenchPage page;
 
 	ListViewer viewer;
@@ -150,7 +149,7 @@ public class AnnotateView extends ViewPart implements ISelectionChangedListener 
 		viewer.addSelectionChangedListener(this);
 		viewer.getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
 
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(viewer.getControl(), IHelpContextIds.ANNOTATIONS_VIEW);
+		WorkbenchHelp.setHelp(viewer.getControl(), IHelpContextIds.ANNOTATIONS_VIEW);
 
 		top.layout();
 		
@@ -171,10 +170,8 @@ public class AnnotateView extends ViewPart implements ISelectionChangedListener 
 		}
 
 		// Get hook to the HistoryView
-		historyView = (IHistoryView)page.showView(ISVNUIConstants.HISTORY_VIEW_ID);
-		if (historyView != null) {
-			historyView.showHistoryFor(svnFile);
-		}
+		historyView = (HistoryView) page.showView(HistoryView.VIEW_ID);
+		historyView.showHistory(svnFile, false /* don't refetch */);
 	}
 	
 	protected void disconnect() {
@@ -311,8 +308,7 @@ public class AnnotateView extends ViewPart implements ISelectionChangedListener 
 		
 		// Select the revision in the history view.
 		if(historyView != null) {
-			SVNHistoryPage page = (SVNHistoryPage)historyView.getHistoryPage();
-			page.selectRevision(new SVNRevision.Number(listSelection.getRevision()));
+			historyView.selectRevision(new SVNRevision.Number(listSelection.getRevision()));
 		}
 		lastSelectionWasText = false;			
 	}

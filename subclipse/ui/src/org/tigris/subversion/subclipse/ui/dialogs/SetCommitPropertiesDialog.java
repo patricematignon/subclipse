@@ -1,17 +1,7 @@
-/*******************************************************************************
- * Copyright (c) 2005, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
 package org.tigris.subversion.subclipse.ui.dialogs;
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.jface.dialogs.TrayDialog;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -29,7 +19,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.tigris.subversion.subclipse.core.SVNException;
 import org.tigris.subversion.subclipse.ui.IHelpContextIds;
 import org.tigris.subversion.subclipse.ui.Policy;
@@ -39,7 +29,7 @@ import org.tigris.subversion.subclipse.ui.settings.CommentProperties;
 import org.tigris.subversion.subclipse.ui.settings.ProjectProperties;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
 
-public class SetCommitPropertiesDialog extends TrayDialog {
+public class SetCommitPropertiesDialog extends Dialog {
     
 	private CommitCommentArea commitCommentArea;
     private ProjectProperties projectProperties;
@@ -69,7 +59,7 @@ public class SetCommitPropertiesDialog extends TrayDialog {
 		if ((commentProperties != null) && (commentProperties.getMinimumLogMessageSize() != 0)) {
 		    ModifyListener modifyListener = new ModifyListener() {
                 public void modifyText(ModifyEvent e) {
-                    okButton.setEnabled(commitCommentArea.getComment().trim().length() >= commentProperties.getMinimumLogMessageSize());
+                    okButton.setEnabled(commitCommentArea.getText().getText().trim().length() >= commentProperties.getMinimumLogMessageSize());
                 }		        
 		    };
 		    commitCommentArea.setModifyListener(modifyListener);
@@ -104,7 +94,7 @@ public class SetCommitPropertiesDialog extends TrayDialog {
 	    if (author != null) committerText.setText(author);
 
 		// set F1 help
-	    PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, IHelpContextIds.CHANGE_REVPROPS);	
+		WorkbenchHelp.setHelp(composite, IHelpContextIds.CHANGE_REVPROPS);	
 		
 		return composite;
 	}
@@ -245,7 +235,7 @@ public class SetCommitPropertiesDialog extends TrayDialog {
 	}
 
 	public void setOldComment(String comment) {
-		commitCommentArea.setProposedComment(comment);
+		commitCommentArea.setOldComment(comment);
 	}
 
 	public void setOldAuthor(String oldAuthor) {
