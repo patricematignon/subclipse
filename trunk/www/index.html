@@ -27,17 +27,8 @@
 </ul>
 <div class="app">
 
-<div class="h2" id="callisto" title="callisto">
-<h2>Eclipse 3.2/Callisto</h2>
-
- <p>The Subclipse 1.0.x release will work in Eclipse 3.2, but we are also working on a new
- release of Subclipse that is targeted specifically at Eclipse 3.2/Callisto.  We encourage
- users to install this release.  <a href="callisto.html">Details are here.</a></p>
-</div>
-
 <div class="h2" id="license" title="license">
 <h2>License Change/Eclipse Proposal</h2>
-
  <p>The license for Subclipse has been changed from the CPL to the EPL.  The license for svnClientAdapter has been
  changed from the Apache License to the EPL.  These changes come in anticipation of moving this project to the Eclipse
  Foundation.  Information on our proposal can be <a href="http://www.eclipse.org/proposals/svn/">found here.</a></p>
@@ -46,13 +37,45 @@
 <div class="h2" id="subclipse" title="subclipse">
 <h2>Current Release</h2>
   <img align="right" src="images/eclipse_ready.jpg">
-  <p><b>Subclipse 1.0.5 is now available!</b></p>
+
+<div class="h3" id="callisto" title="callisto">
+<h3>Eclipse 3.2/Callisto</h3>
+  <p><b>Subclipse 1.2.0 is now available for Eclipse 3.2!</b></p>
+  <p>See the <a href="http://subclipse.tigris.org/subclipse_1.2.x/changes.html#1.2.0">changelog</a>
+  for details.  Existing Subclipse users should read the <a href="http://subclipse.tigris.org/upgrade.html">
+  upgrade instructions</a> for important information on changes you to need to make to your Eclipse preferences
+  to see the new version in the update manager.</p>
+  <p><b>Links for 1.2.x Release:</b><br />
+  Changelog: <a href="http://subclipse.tigris.org/subclipse_1.2.x/changes.html">http://subclipse.tigris.org/subclipse_1.2.x/changes.html</a><br />
+  Eclipse update site URL: <a href="http://subclipse.tigris.org/update_1.2.x">http://subclipse.tigris.org/update_1.2.x</a><br />
+  Zipped downloads: <a href="http://subclipse.tigris.org/servlets/ProjectDocumentList?folderID=2240">http://subclipse.tigris.org/servlets/ProjectDocumentList?folderID=2240</a>
+  </p>
+</div>
+
+<div class="h3" id="eclipse3.x" title="eclipse3.x">
+<h3>Eclipse 3.0/3.1</h3>
+  <p><b>Subclipse 1.0.5 is now available for Eclipse 3.0/3.1!</b></p>
   <p>See the <a href="http://subclipse.tigris.org/subclipse/changes.html#1.0.5">changelog</a>
   for details.  Existing Subclipse users should read the <a href="http://subclipse.tigris.org/servlets/NewsItemView?newsItemID=1514">
-  1.0.0 release announcement</a> for details on how to
-  upgrade to the 1.0.x release.</p>
+  1.0.0 release announcement</a> for details on how to upgrade to the 1.0.x release.</p>
+  <p><b>Links for 1.0.x Release:</b><br />
+  Changelog: <a href="http://subclipse.tigris.org/subclipse_1.0.x/changes.html">http://subclipse.tigris.org/subclipse_1.0.x/changes.html</a><br />
+  Eclipse update site URL: <a href="http://subclipse.tigris.org/update_1.0.x">http://subclipse.tigris.org/update_1.0.x</a><br />
+  Zipped downloads: <a href="http://subclipse.tigris.org/servlets/ProjectDocumentList?folderID=2240">http://subclipse.tigris.org/servlets/ProjectDocumentList?folderID=2240</a>
+  </p>
+</div>
+
+<div class="h3" id="eclipse2.x" title="eclipse2.x">
+<h3>Eclipse 2.1.3</h3>
+  <p>Subclipse 0.9.3.3 is linked against Subversion 1.1.4.  Binaries for Windows are included.</p>
+  <p>Development for this version of Eclipse is no longer active.  There are no new releases planned.</p>
+  <p><a href=
+  "http://subclipse.tigris.org/files/documents/906/22688/org.tigris.subversion.subclipse_0.9.3.3.zip"
+  target="new">Download the Eclipse 2.x version</a></p>
+</div> 
+ 
   <p>Be sure to check the <a href="http://subclipse.tigris.org/servlets/ProjectNewsList">announcements</a> for information on the latest release.
-  We also maintain a <a href="http://subclipse.tigris.org/subclipse/changes.html">Subclipse changelog</a> that contains information about all changes, including those that have not been released yet.
+  We also maintain a <a href="http://subclipse.tigris.org/subclipse/changes_1.2.x.html">Subclipse changelog</a> that contains information about all changes, including those that have not been released yet.
   Finally, you can also subscribe to the announcements <a href="http://subclipse.tigris.org/servlets/ProjectMailingListList">mailing list</a> to be notified of new releases.</p>
 
   <p><b>NOTE:</b> Subclipse requires a Subversion client "adapter" to communicate with your repository.  Subclipse includes a 100% pure Java
@@ -63,38 +86,6 @@
   The SVNKit client adapter should work for most users and the current version now includes support for the file:// protocol with fsfs repositories.  SVNKit
   offers a few additional features to Subclipse users that JavaHL does not offer, and it probably performs slightly faster than JavaHL.  That being said,
   JavaHL uses the standard Subversion libraries which insures it will be compatible with other Subversion clients.</p>
-</div>
-
-<div class="h2" id="eclipse3.x" title="eclipse3.x">
-<h2>Eclipse 3.x</h2>
-
-  <p>Subclipse releases for Eclipse 3.x are hosted at
-      our update site. Add <a href=
-  "http://subclipse.tigris.org/update_1.0.x">http://subclipse.tigris.org/update_1.0.x</a>
-  as an update site in Eclipse's update manager (which you can find
-  in the Help menu).</p>
-
-  <p>The update site itself can be <a
-  href="http://subclipse.tigris.org/servlets/ProjectDocumentList?folderID=2240">downloaded</a>
-  and used as a local update site as well. Simply unzip the site archive,
-  and add the path as a new "Local Site" in the Eclipse
-  update manager.  You can also host your own internal Subclipse update
-  site by placing the site on your own HTTP server (be sure to update
-  site.xml appropriately).</p>
-  
-  <p>We also provide <a href="install.html">instructions for installing Subclipse in Eclipse 3.x</a></p>
-
-</div>
-
-<div class="h2" id="eclipse2.x" title="eclipse2.x">
-<h2>Eclipse 2.1.3</h2>
-
-  <p>Subclipse 0.9.3.3 is linked against Subversion 1.1.4.  Binaries for Windows are included.</p>
-  <p>Development for this version of Eclipse is no longer active.  There are no new releases planned.</p>
-
-  <p><a href=
-  "http://subclipse.tigris.org/files/documents/906/22688/org.tigris.subversion.subclipse_0.9.3.3.zip"
-  target="new">Download the Eclipse 2.x version</a></p>
 </div>
 
 <div class="h2" id="blogs" title="blogs">
