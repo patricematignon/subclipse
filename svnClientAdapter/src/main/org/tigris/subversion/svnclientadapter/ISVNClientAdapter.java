@@ -1,13 +1,57 @@
-/*******************************************************************************
- * Copyright (c) 2003, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+/* ====================================================================
+ * The Apache Software License, Version 1.1
  *
- * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
+ * Copyright (c) 2000 The Apache Software Foundation.  All rights
+ * reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ *
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in
+ *    the documentation and/or other materials provided with the
+ *    distribution.
+ *
+ * 3. The end-user documentation included with the redistribution,
+ *    if any, must include the following acknowledgment:
+ *       "This product includes software develby the
+ *        Apache Software Foundation (http://www.apache.org/)."
+ *    Alternately, this acknowledgment may appear in the software itself,
+ *    if and wherever such third-party acknowledgments normally appear.
+ *
+ * 4. The names "Apache" and "Apache Software Foundation" must
+ *    not be used to endorse or promote products derived from this
+ *    software without prior written permission. For written
+ *    permission, please contact apache@apache.org.
+ *
+ * 5. Products derived from this software may not be called "Apache",
+ *    nor may "Apache" appear in their name, without prior written
+ *    permission of the Apache Software Foundation.
+ *
+ * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
+ * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+ * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
+ * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF
+ * USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
+ * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+ * SUCH DAMAGE.
+ * ====================================================================
+ *
+ * This software consists of voluntary contributions made by many
+ * individuals on behalf of the Apache Software Foundation.  For more
+ * information on the Apache Software Foundation, please see
+ * <http://www.apache.org/>.
+ *
+ */ 
 package org.tigris.subversion.svnclientadapter;
 
 import java.io.File;
@@ -15,78 +59,43 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
-/**
- * High level API for Subversion
- * 
- */
-public interface ISVNClientAdapter {
 
-	/** constant identifying the "bdb"  repository type */
-    public final static String REPOSITORY_FSTYPE_BDB = "bdb";
-	/** constant identifying the "fsfs"  repository type */
-    public final static String REPOSITORY_FSTYPE_FSFS = "fsfs";
-	
+public interface ISVNClientAdapter {
 	/**
 	 * Add a notification listener
-	 * @param listener
 	 */
 	public abstract void addNotifyListener(ISVNNotifyListener listener);
-	
 	/**
-	 * Remove a notification listener
-	 * @param listener 
+	 * Remove a notification listener 
 	 */
 	public abstract void removeNotifyListener(ISVNNotifyListener listener);
-
-	/**
-	 * @return the notification handler
-	 */
-	public abstract SVNNotificationHandler getNotificationHandler();
-	
 	/**
 	 * Sets the username.
-	 * @param username
 	 */
 	public abstract void setUsername(String username);
-	
 	/**
 	 * Sets the password.
-	 * @param password
 	 */
 	public abstract void setPassword(String password);
 	
-	/**
-	 * Add a callback for prompting for username, password SSL etc...
-	 * @param callback
+    
+    /**
+	 * Register callback interface to supply username and password on demand
 	 */
-	public abstract void addPasswordCallback(ISVNPromptUserPassword callback);   
+//	public abstract void setPromptUserPassword(PromptUserPassword prompt);
+    
     
 	/**
 	 * Adds a file (or directory) to the repository.
-	 * @param file
-	 * @throws SVNClientException
+	 * @exception ClientException
 	 */
 	public abstract void addFile(File file) throws SVNClientException;
-	
 	/**
 	 * Adds a directory to the repository.
-	 * @param dir
-	 * @param recurse
-	 * @throws SVNClientException
+	 * @exception ClientException
 	 */
 	public abstract void addDirectory(File dir, boolean recurse)
 		throws SVNClientException;
-
-	/**
-	 * Adds a directory to the repository.
-	 * @param dir
-	 * @param recurse
-	 * @param force
-	 * @throws SVNClientException
-	 */
-	public abstract void addDirectory(File dir, boolean recurse, boolean force)
-		throws SVNClientException;
-	
 	/**
 	 * Executes a revision checkout.
 	 * @param moduleName name of the module to checkout.
@@ -94,7 +103,7 @@ public interface ISVNClientAdapter {
 	 * @param revision the revision number to checkout. If the number is -1
 	 *                 then it will checkout the latest revision.
 	 * @param recurse whether you want it to checkout files recursively.
-	 * @exception SVNClientException
+	 * @exception ClientException
 	 */
 	public abstract void checkout(
 		SVNUrl moduleName,
@@ -102,108 +111,47 @@ public interface ISVNClientAdapter {
 		SVNRevision revision,
 		boolean recurse)
 		throws SVNClientException;
-	
 	/**
 	 * Commits changes to the repository. This usually requires
 	 * authentication, see Auth.
 	 * @return Returns a long representing the revision. It returns a
 	 *         -1 if the revision number is invalid.
-	 * @param paths files to commit.
+	 * @param path files to commit.
 	 * @param message log message.
 	 * @param recurse whether the operation should be done recursively.
-	 * @exception SVNClientException
+	 * @exception ClientException
 	 */
 	public abstract long commit(File[] paths, String message, boolean recurse)
 		throws SVNClientException;
-	
-    /**
-     * Commits changes to the repository. This usually requires
-     * authentication, see Auth.
-     * @return Returns a long representing the revision. It returns a
-     *         -1 if the revision number is invalid.
-     * @param paths files to commit.
-     * @param message log message.
-     * @param recurse whether the operation should be done recursively.
-     * @param keepLocks
-     * @exception SVNClientException
-     */
-	public abstract long commit(File[] paths, String message, boolean recurse, boolean keepLocks)
-		throws SVNClientException;
-	
-	/**
-	 * Commits changes to the repository. This usually requires
-	 * authentication, see Auth.
-	 * 
-	 * This differs from the normal commit method in that it can accept paths from
-	 * more than one working copy.
-	 * 
-	 * @return Returns an array of longs representing the revisions. It returns a
-	 *         -1 if the revision number is invalid.
-	 * @param paths files to commit.
-	 * @param message log message.
-	 * @param recurse whether the operation should be done recursively.
-	 * @param keepLocks whether to keep locks on files that are committed.
-	 * @param atomic  whether to attempt to perform the commit from multiple
-	 * working copies atomically.  Files from the same repository will be
-	 * processed with one commit operation.  If files span multiple repositories
-	 * they will be processed in multiple commits.
-	 * When atomic is false, you will get one commit per WC.
-	 * @exception SVNClientException
-	 */
-	public abstract long[] commitAcrossWC(File[] paths, String message, boolean recurse, boolean keepLocks, boolean atomic)
-		throws SVNClientException;
-	
 	/**
 	 * List directory entries of a URL
 	 * @param url
 	 * @param revision
 	 * @param recurse
-	 * @return an array of ISVNDirEntries 
-	 * @throws SVNClientException
+	 * @return
+	 * @throws ClientException
 	 */
 	public abstract ISVNDirEntry[] getList(
 		SVNUrl url,
 		SVNRevision revision,
 		boolean recurse)
 		throws SVNClientException;
-
-	/**
-	 * List directory entries of a directory
-	 * @param path
-	 * @param revision
-	 * @param recurse
-	 * @return an array of ISVNDirEntries 
-	 * @throws SVNClientException
-	 */	
-	public ISVNDirEntry[] getList(File path, SVNRevision revision, boolean recurse) 
-    	throws SVNClientException;	
 	
 	/**
 	 * get the dirEntry for the given url
 	 * @param url
 	 * @param revision
-	 * @return an ISVNDirEntry
+	 * @return
 	 * @throws SVNClientException
 	 */
 	public ISVNDirEntry getDirEntry(SVNUrl url, SVNRevision revision)
 			throws SVNClientException;
-
-	/**
-	 * get the dirEntry for the given directory 
-	 * @param path
-	 * @param revision
-	 * @return an ISVNDirEntry
-	 * @throws SVNClientException
-	 */
-	public ISVNDirEntry getDirEntry(File path, SVNRevision revision)
-			throws SVNClientException;
-	
+		
 	/**
 	 * Returns the status of a single file in the path.
 	 *
 	 * @param path File to gather status.
 	 * @return a Status
-	 * @throws SVNClientException
 	 */
     public abstract ISVNStatus getSingleStatus(File path)
         throws SVNClientException;
@@ -211,12 +159,11 @@ public interface ISVNClientAdapter {
     /**
      * Returns the status of given resources
      * @param path
-     * @return the status of given resources
+     * @return
      * @throws SVNClientException
      */    
 	public abstract ISVNStatus[] getStatus(File[] path)
 		throws SVNClientException;
-	
 	/**
 	 * Returns the status of path and its children.
      * If descend is true, recurse fully, else do only immediate children.
@@ -224,85 +171,39 @@ public interface ISVNClientAdapter {
      * "interesting" entries (local mods and/or out-of-date).
      *
 	 * @param path File to gather status.
-     * @param descend get recursive status information
-     * @param getAll get status information for all files
 	 * @return a Status
-     * @throws SVNClientException
 	 */
 	public abstract ISVNStatus[] getStatus(File path, boolean descend, boolean getAll)
 		throws SVNClientException;
-
-	/**
-	 * Returns the status of path and its children.
-     * If descend is true, recurse fully, else do only immediate children.
-     * If getAll is set, retrieve all entries; otherwise, retrieve only 
-     * "interesting" entries (local mods and/or out-of-date). Use the
-     * contactServer option to get server change information.
-     *
-	 * @param path File to gather status.
-     * @param descend get recursive status information
-     * @param getAll get status information for all files
-     * @param contactServer contact server to get remote changes
-	 * @return a Status
-     * @throws SVNClientException
-	 */
-	public abstract ISVNStatus[] getStatus(File path, boolean descend, boolean getAll, boolean contactServer)
-	throws SVNClientException;
-
-	/**
-	 * Returns the status of path and its children.
-     * If descend is true, recurse fully, else do only immediate children.
-     * If getAll is set, retrieve all entries; otherwise, retrieve only 
-     * "interesting" entries (local mods and/or out-of-date). Use the
-     * contactServer option to get server change information.
-     *
-	 * @param path File to gather status.
-     * @param descend get recursive status information
-     * @param getAll get status information for all files
-     * @param contactServer contact server to get remote changes
-     * @param ignoreExternals if externals are ignored during status
-	 * @return a Status
-     * @throws SVNClientException
-	 */
-	public abstract ISVNStatus[] getStatus(File path, boolean descend, boolean getAll, boolean contactServer, boolean ignoreExternals)
-	throws SVNClientException;
-
 	/**
 	 * copy and schedule for addition (with history)
 	 * @param srcPath
 	 * @param destPath
-	 * @throws SVNClientException
+	 * @throws ClientException
 	 */
 	public abstract void copy(File srcPath, File destPath)
 		throws SVNClientException;
-	
 	/**
 	 * immediately commit a copy of WC to URL
 	 * @param srcPath
 	 * @param destUrl
-	 * @param message
-	 * @throws SVNClientException
+	 * @throws ClientException
 	 */
 	public abstract void copy(File srcPath, SVNUrl destUrl, String message)
 		throws SVNClientException;
-	
 	/**
 	 * check out URL into WC, schedule for addition
 	 * @param srcUrl
 	 * @param destPath
-	 * @param revision
-	 * @throws SVNClientException
+	 * @throws ClientException
 	 */
 	public abstract void copy(SVNUrl srcUrl, File destPath, SVNRevision revision)
 		throws SVNClientException;
-	
 	/**
 	 * complete server-side copy;  used to branch & tag
 	 * @param srcUrl
 	 * @param destUrl
-	 * @param message
-	 * @param revision
-	 * @throws SVNClientException
+	 * @throws ClientException
 	 */
 	public abstract void copy(
 		SVNUrl srcUrl,
@@ -310,16 +211,14 @@ public interface ISVNClientAdapter {
 		String message,
 		SVNRevision revision)
 		throws SVNClientException;
-	
 	/**
 	 * item is deleted from the repository via an immediate commit.
 	 * @param url
 	 * @param message
-	 * @throws SVNClientException
+	 * @throws ClientException
 	 */
 	public abstract void remove(SVNUrl url[], String message)
 		throws SVNClientException;
-	
 	/**
 	 * the item is scheduled for deletion upon the next commit.  
 	 * Files, and directories that have not been committed, are immediately 
@@ -328,19 +227,17 @@ public interface ISVNClientAdapter {
 	 * use the force option to override this behaviour.
 	 * @param file
 	 * @param force
-	 * @throws SVNClientException
+	 * @throws ClientException
 	 */
 	public abstract void remove(File file[], boolean force)
 		throws SVNClientException;
-	
 	/**
 	 * Exports a clean directory tree from the repository specified by
 	 * srcUrl, at revision revision 
 	 * @param srcUrl
 	 * @param destPath
 	 * @param revision
-	 * @param force
-	 * @throws SVNClientException
+	 * @throws ClientException
 	 */
 	public abstract void doExport(
 		SVNUrl srcUrl,
@@ -348,26 +245,25 @@ public interface ISVNClientAdapter {
 		SVNRevision revision,
 		boolean force)
 		throws SVNClientException;
-	
 	/**
 	 * Exports a clean directory tree from the working copy specified by
 	 * PATH1 into PATH2.  all local changes will be preserved, but files
 	 * not under revision control will not be copied.
 	 * @param srcPath
 	 * @param destPath
-	 * @param force
-	 * @throws SVNClientException
+	 * @throws ClientException
 	 */
 	public abstract void doExport(File srcPath, File destPath, boolean force)
 		throws SVNClientException;
-
 	/**
 	 * Import file or directory PATH into repository directory URL at head
 	 * @param path
 	 * @param url
+	 * @param newEntry new directory in which the contents of <i>path</i> are imported.
+	 * 		  if null, copy top-level contents of PATH into URL directly
 	 * @param message
 	 * @param recurse
-	 * @throws SVNClientException
+	 * @throws ClientException
 	 */
 	public abstract void doImport(
 		File path,
@@ -375,50 +271,33 @@ public interface ISVNClientAdapter {
 		String message,
 		boolean recurse)
 		throws SVNClientException;
-
 	/**
 	 * Creates a directory directly in a repository
 	 * @param url
 	 * @param message
-	 * @throws SVNClientException
+	 * @throws ClientException
 	 */
 	public abstract void mkdir(SVNUrl url, String message)
 		throws SVNClientException;
-
-	/**
-	 * Creates a directory directly in a repository
-	 * @param url
-	 * @param makeParents
-	 * @param message
-	 * @throws SVNClientException
-	 */
-	public abstract void mkdir(SVNUrl url, boolean makeParents, String message)
-		throws SVNClientException;
-
 	/**
 	 * creates a directory on disk and schedules it for addition.
 	 * @param file
-	 * @throws SVNClientException
+	 * @throws ClientException
 	 */
 	public abstract void mkdir(File file) throws SVNClientException;
-
 	/**
 	 * Moves or renames a file.
 	 * @param srcPath
 	 * @param destPath
-	 * @param force
-	 * @throws SVNClientException
+	 * @throws ClientException
 	 */
 	public abstract void move(File srcPath, File destPath, boolean force)
 		throws SVNClientException;
-
 	/**
 	 * Moves or renames a file.
-	 * @param srcUrl
-	 * @param destUrl
-	 * @param message
-	 * @param revision
-	 * @throws SVNClientException
+	 * @param srcPath
+	 * @param destPath
+	 * @throws ClientException
 	 */
 	public abstract void move(
 		SVNUrl srcUrl,
@@ -426,42 +305,20 @@ public interface ISVNClientAdapter {
 		String message,
 		SVNRevision revision)
 		throws SVNClientException;
-	
 	/**
 	 * Update a file or a directory
 	 * @param path
 	 * @param revision
 	 * @param recurse
-     * @return Returns a long representing the revision. It returns a
-     *         -1 if the revision number is invalid.
-	 * @throws SVNClientException
+	 * @throws ClientException
 	 */
-	public abstract long update(File path, SVNRevision revision, boolean recurse)
+	public abstract void update(File path, SVNRevision revision, boolean recurse)
 		throws SVNClientException;
-
-    /**
-     * Updates the directories or files from repository
-     * @param path array of target files.
-     * @param revision the revision number to update.
-     * @param recurse recursively update.
-     * @param ignoreExternals if externals are ignored during update
-     * @return Returns an array of longs representing the revision. It returns a
-     *         -1 if the revision number is invalid.
-     * @throws SVNClientException
-     * @since 1.2
-     */
-    public abstract long[] update(
-    	File[] path, 
-		SVNRevision revision, 
-		boolean recurse,
-		boolean ignoreExternals) 
-    	throws SVNClientException;	
-	
 	/**
 	 * Restore pristine working copy file (undo all local edits)
 	 * @param path
 	 * @param recurse
-	 * @throws SVNClientException
+	 * @throws ClientException
 	 */
 	public abstract void revert(File path, boolean recurse)
 		throws SVNClientException;
@@ -470,158 +327,29 @@ public interface ISVNClientAdapter {
 	 * @param url
 	 * @param revisionStart
 	 * @param revisionEnd
-	 * @return The list of log messages.
-	 * @throws SVNClientException
+	 * @return
 	 */
 	public abstract ISVNLogMessage[] getLogMessages(
 		SVNUrl url,
 		SVNRevision revisionStart,
 		SVNRevision revisionEnd)
 		throws SVNClientException;
-	
-	/**
-	 * Get the log messages for a set of revision(s) 
-	 * @param url
-	 * @param revisionStart
-	 * @param revisionEnd
-	 * @param fetchChangePath Whether or not to interogate the
-	 * repository for the verbose log information containing the list
-	 * of paths touched by the delta specified by
-	 * <code>revisionStart</code> and <code>revisionEnd</code>.
-	 * Setting this to <code>false</code> results in a more performant
-	 * and memory efficient operation.
-	 * @return The list of log messages.
-	 * @throws SVNClientException
-	 */
-	public abstract ISVNLogMessage[] getLogMessages(
-		SVNUrl url,
-		SVNRevision revisionStart,
-		SVNRevision revisionEnd,
-		boolean fetchChangePath)
-		throws SVNClientException;
-	
-	/**
-	 * Get the log messages for a set paths and revision(s)
-	 * @param url
-	 * @param paths
-	 * @param revStart
-	 * @param revEnd
-	 * @param stopOnCopy
-	 * @param fetchChangePath
-	 * @return The list of log messages.
-	 * @throws SVNClientException
-	 */
-	public ISVNLogMessage[] getLogMessages(final SVNUrl url, final String [] paths,
-			SVNRevision revStart, SVNRevision revEnd,
-			boolean stopOnCopy, boolean fetchChangePath)
-	throws SVNClientException;
-    
 	/**
 	 * Get the log messages for a set of revision(s)
 	 * @param path
 	 * @param revisionStart
 	 * @param revisionEnd
-	 * @return The list of log messages.
-	 * @throws SVNClientException
+	 * @return
 	 */
 	public abstract ISVNLogMessage[] getLogMessages(
 		File path,
 		SVNRevision revisionStart,
 		SVNRevision revisionEnd)
 		throws SVNClientException;
-	
-	/**
-	 * Get the log messages for a set of revision(s)
-	 * @param path
-	 * @param revisionStart
-	 * @param revisionEnd
-	 * @param fetchChangePath Whether or not to interogate the
-	 * repository for the verbose log information containing the list
-	 * of paths touched by the delta specified by
-	 * <code>revisionStart</code> and <code>revisionEnd</code>.
-	 * Setting this to <code>false</code> results in a more performant
-	 * and memory efficient operation.
-	 * @return The list of log messages.
-	 * @throws SVNClientException
-	 */
-	public abstract ISVNLogMessage[] getLogMessages(
-		File path,
-		SVNRevision revisionStart,
-		SVNRevision revisionEnd,
-		boolean fetchChangePath)
-		throws SVNClientException;
-	
-    /**
-     * Retrieve the log messages for an item
-     * @param path          path or url to get the log message for.
-     * @param revisionStart first revision to show
-     * @param revisionEnd   last revision to show
-     * @param stopOnCopy    do not continue on copy operations
-     * @param fetchChangePath  returns the paths of the changed items in the
-     *                      returned objects
-     * @return array of LogMessages
-	 * @throws SVNClientException
-     */
-    public abstract ISVNLogMessage[] getLogMessages(
-            File path,
-            SVNRevision revisionStart,
-            SVNRevision revisionEnd,
-            boolean stopOnCopy,
-            boolean fetchChangePath)
-            throws SVNClientException;
-    
-    /**
-     * Retrieve the log messages for an item
-     * @param path          path to get the log message for.
-     * @param revisionStart first revision to show
-     * @param revisionEnd   last revision to show
-     * @param stopOnCopy    do not continue on copy operations
-     * @param fetchChangePath  returns the paths of the changed items in the
-     *                      returned objects
-     * @param limit         limit the number of log messages (if 0 or less no
-     *                      limit)
-     * @return array of LogMessages
-	 * @throws SVNClientException
-     */
-    public abstract ISVNLogMessage[] getLogMessages(
-            File path, 
-            SVNRevision revisionStart,
-            SVNRevision revisionEnd,
-            boolean stopOnCopy,
-            boolean fetchChangePath,
-            long limit)
-            throws SVNClientException;
-    
-    /**
-     * Retrieve the log messages for an item
-     * @param url           url to get the log message for.
-     * @param pegRevision   peg revision for URL
-     * @param revisionStart first revision to show
-     * @param revisionEnd   last revision to show
-     * @param stopOnCopy    do not continue on copy operations
-     * @param fetchChangePath  returns the paths of the changed items in the
-     *                      returned objects
-     * @param limit         limit the number of log messages (if 0 or less no
-     *                      limit)
-     * @return array of LogMessages
-	 * @throws SVNClientException
-     */
-    public abstract ISVNLogMessage[] getLogMessages(
-            SVNUrl url, 
-            SVNRevision pegRevision,
-            SVNRevision revisionStart,
-            SVNRevision revisionEnd,
-            boolean stopOnCopy,
-            boolean fetchChangePath,
-            long limit)
-            throws SVNClientException;
-    
 	/**
 	 * get the content of a file
 	 * @param url
 	 * @param revision
-	 * @return the input stream with a content of the file
-	 * @throws SVNClientException
 	 */
 	public abstract InputStream getContent(SVNUrl url, SVNRevision revision)
 		throws SVNClientException;
@@ -630,7 +358,7 @@ public interface ISVNClientAdapter {
 	 * get the content of a file
 	 * @param path
 	 * @param revision
-	 * @return the input stream with a content of the file
+	 * @return
 	 * @throws SVNClientException
 	 */
 	public InputStream getContent(File path, SVNRevision revision) 
@@ -642,7 +370,7 @@ public interface ISVNClientAdapter {
 	 * @param propertyName
 	 * @param propertyValue
 	 * @param recurse
-	 * @throws SVNClientException
+	 * @throws ClientException
 	 */
 	public abstract void propertySet(
 		File path,
@@ -650,15 +378,8 @@ public interface ISVNClientAdapter {
 		String propertyValue,
 		boolean recurse)
 		throws SVNClientException;
-
 	/**
 	 * set a property using the content of a file 
-	 * @param path
-	 * @param propertyName
-	 * @param propertyFile
-	 * @param recurse
-	 * @throws SVNClientException
-	 * @throws IOException
 	 */
 	public abstract void propertySet(
 		File path,
@@ -666,103 +387,46 @@ public interface ISVNClientAdapter {
 		File propertyFile,
 		boolean recurse)
 		throws SVNClientException, IOException;
-	
 	/**
 	 * get a property or null if property is not found
 	 * @param path
 	 * @param propertyName
-	 * @return a property or null
-	 * @throws SVNClientException
+	 * @param propertyValue
+	 * @return
+	 * @throws ClientException
 	 */
 	public abstract ISVNProperty propertyGet(File path, String propertyName)
 		throws SVNClientException;
-
-	/**
-	 * get a property or null if property is not found
-	 * @param url
-	 * @param propertyName
-	 * @return a property or null
-	 * @throws SVNClientException
-	 */
-	public abstract ISVNProperty propertyGet(SVNUrl url, String propertyName)
-		throws SVNClientException;
-	
-	/**
-	 * get a property or null if property is not found
-	 * @param url
-	 * @param revision
-	 * @param peg
-	 * @param propertyName
-	 * @return a property or null
-	 * @throws SVNClientException
-	 */
-	public abstract ISVNProperty propertyGet(SVNUrl url, SVNRevision revision,
-			SVNRevision peg, String propertyName)
-		throws SVNClientException;
-	
 	/**
 	 * delete a property
 	 * @param path
 	 * @param propertyName
 	 * @param recurse
-	 * @throws SVNClientException
+	 * @throws ClientException
 	 */
 	public abstract void propertyDel(
 		File path,
 		String propertyName,
 		boolean recurse)
 		throws SVNClientException;
-	
-	/**
-     * set the revision property for a given revision
-     * @param path
-     * @param revisionNo
-     * @param propName
-     * @param propertyData
-     * @param force
-     * @throws SVNClientException
-     */    
-    public abstract void setRevProperty(SVNUrl path,
-			SVNRevision.Number revisionNo, String propName,
-			String propertyData, boolean force) throws SVNClientException;
-    
 	/**
 	 * get the ignored patterns for the given directory
-	 * if path is not a directory, returns null
-	 * @param path
-	 * @return list of ignored patterns 
-	 * @throws SVNClientException
+	 * if path is not a directory, returns null 
 	 */
 	public abstract List getIgnoredPatterns(File path)
 		throws SVNClientException;
-	
 	/**
 	 * add a pattern to svn:ignore property 
-	 * @param path
-	 * @param pattern 
-	 * @throws SVNClientException
 	 */
 	public abstract void addToIgnoredPatterns(File path, String pattern)
 		throws SVNClientException;
-	
 	/**
 	 * set the ignored patterns for the given directory 
-	 * @param path
-	 * @param patterns
-	 * @throws SVNClientException
 	 */
 	public abstract void setIgnoredPatterns(File path, List patterns)
 		throws SVNClientException;
-	
 	/**
-	 * display the differences between two paths.
-	 * @param oldPath
-	 * @param oldPathRevision
-	 * @param newPath
-	 * @param newPathRevision
-	 * @param outFile
-	 * @param recurse
-	 * @throws SVNClientException
+	 * display the differences between two paths. 
 	 */
 	public abstract void diff(
 		File oldPath,
@@ -772,51 +436,10 @@ public interface ISVNClientAdapter {
 		File outFile,
 		boolean recurse)
 		throws SVNClientException;
-
-	/**
-	 * display the differences between two paths.
-	 * @param oldPath
-	 * @param oldPathRevision
-	 * @param newPath
-	 * @param newPathRevision
-	 * @param outFile
-	 * @param recurse
-	 * @throws SVNClientException
-	 */
-	public abstract void diff(
-		File oldPath,
-		SVNRevision oldPathRevision,
-		File newPath,
-		SVNRevision newPathRevision,
-		File outFile,
-		boolean recurse,
-		boolean ignoreAncestry, 
-		boolean noDiffDeleted, 
-		boolean force)		
+	public abstract void diff(File path, File outFile, boolean recurse)
 		throws SVNClientException;
-
 	/**
-	 * display the differences between two paths.
-	 * @param path
-	 * @param outFile
-	 * @param recurse
-	 * @throws SVNClientException
-	 */
-	public abstract void diff(
-		File path, 
-		File outFile, 
-		boolean recurse)
-		throws SVNClientException;
-	
-	/**
-	 * display the differences between two urls.
-	 * @param oldUrl
-	 * @param oldUrlRevision
-	 * @param newUrl
-	 * @param newUrlRevision
-	 * @param outFile
-	 * @param recurse
-	 * @throws SVNClientException
+	 * display the differences between two urls. 
 	 */
 	public abstract void diff(
 		SVNUrl oldUrl,
@@ -826,59 +449,10 @@ public interface ISVNClientAdapter {
 		File outFile,
 		boolean recurse)
 		throws SVNClientException;
-
-	/**
-	 * display the differences between two urls.
-	 * @param oldUrl
-	 * @param oldUrlRevision
-	 * @param newUrl
-	 * @param newUrlRevision
-	 * @param outFile
-	 * @param recurse
-	 * @throws SVNClientException
-	 */
-	public abstract void diff(
-		SVNUrl oldUrl,
-		SVNRevision oldUrlRevision,
-		SVNUrl newUrl,
-		SVNRevision newUrlRevision,
-		File outFile,
-		boolean recurse,
-		boolean ignoreAncestry, 
-		boolean noDiffDeleted, 
-		boolean force)		
-		throws SVNClientException;
-
-	/**
-	 * display the differences between two urls.
-	 * @param url
-	 * @param oldUrlRevision
-	 * @param newUrlRevision
-	 * @param outFile
-	 * @param recurse
-	 * @throws SVNClientException
-	 */
 	public abstract void diff(
 		SVNUrl url,
 		SVNRevision oldUrlRevision,
 		SVNRevision newUrlRevision,
-		File outFile,
-		boolean recurse)
-		throws SVNClientException;
-	
-	/**
-	 * display the differences between WC and url. 
-	 * @param path
-	 * @param url
-	 * @param urlRevision
-	 * @param outFile
-	 * @param recurse
-	 * @throws SVNClientException
-	 */
-	public abstract void diff(
-		File path,
-		SVNUrl url,
-		SVNRevision urlRevision,
 		File outFile,
 		boolean recurse)
 		throws SVNClientException;
@@ -886,7 +460,7 @@ public interface ISVNClientAdapter {
     /**
      * returns the keywords used for substitution for the given resource
      * @param path
-     * @return the keywords used for substitution 
+     * @return
      * @throws SVNClientException
      */         
     public abstract SVNKeywords getKeywords(File path) throws SVNClientException;    
@@ -904,7 +478,7 @@ public interface ISVNClientAdapter {
      * add some keyword to the keywords substitution list
      * @param path
      * @param keywords
-     * @return keywords valid after this method call 
+     * @return
      * @throws SVNClientException
      */    
     public abstract SVNKeywords addKeywords(File path, SVNKeywords keywords) throws SVNClientException;
@@ -913,50 +487,30 @@ public interface ISVNClientAdapter {
      * remove some keywords to the keywords substitution list
      * @param path
      * @param keywords
-     * @return keywords valid after this method call 
+     * @return
      * @throws SVNClientException
      */    
     public SVNKeywords removeKeywords(File path, SVNKeywords keywords) throws SVNClientException;
 
     /**
-     * Output the content of specified url with revision and 
-     * author information in-line. 
-     * @param url
-     * @param revisionStart
-     * @param revisionEnd
-     * @return annotations for the given url
-	 * @throws SVNClientException
+     * Output the content of specified files or URLs with revision and author 
+     * information in-line. 
+     * @param svnurl
+     * @param svnrevision
+     * @param svnrevision1
+     * @return
+     * @throws SVNClientException
      */
-    public ISVNAnnotations annotate(SVNUrl url, SVNRevision revisionStart, SVNRevision revisionEnd)
+    public abstract SVNAnnotations blame(SVNUrl svnurl, SVNRevision revisionStart, SVNRevision revisionEnd)
         throws SVNClientException;
-
-    /**
-     * Output the content of specified file with revision and 
-     * author information in-line.
-     * @param file
-     * @param revisionStart
-     * @param revisionEnd
-     * @return annotations for the given file
-	 * @throws SVNClientException
-     */
-    public ISVNAnnotations annotate(File file, SVNRevision revisionStart, SVNRevision revisionEnd)
-        throws SVNClientException;
-    
+        
     /**
      * Get all the properties for the given file or dir
      * @param path
-     * @return the properties for the given url
+     * @return
      * @throws SVNClientException
      */    
 	public abstract ISVNProperty[] getProperties(File path) throws SVNClientException;
-    
-    /**
-     * Get all the properties for the given url
-     * @param url
-     * @return the properties for the given url
-     * @throws SVNClientException
-     */    
-	public abstract ISVNProperty[] getProperties(SVNUrl url) throws SVNClientException;
 
 	/**
 	 * Remove 'conflicted' state on working copy files or directories
@@ -964,214 +518,5 @@ public interface ISVNClientAdapter {
 	 * @throws SVNClientException
 	 */ 	
 	public abstract void resolved(File path) throws SVNClientException;
-    
-	/**
-	 * Create a new, empty repository at path 
-	 * 
-	 * @param path
-	 * @param repositoryType either {@link ISVNClientAdapter#REPOSITORY_FSTYPE_BDB} or
-	 *        {@link ISVNClientAdapter#REPOSITORY_FSTYPE_FSFS} or null (will use svnadmin default)
-	 * @throws SVNClientException
-	 */
-	public abstract void createRepository(File path, String repositoryType) throws SVNClientException;
-	
-	/**
-	 * Cancel the current operation
-	 * 
-	 * @throws SVNClientException
-	 */
-	public void cancelOperation() throws SVNClientException;
-
-	/**
-	 * Get information about a file or directory from working copy.
-	 * Uses info() call which does NOT contact the repository
-	 * @param file
-	 * @return information about a file or directory from working copy.
-	 * @throws SVNClientException
-	 */
-	public ISVNInfo getInfoFromWorkingCopy(File file) throws SVNClientException;
-
-	/**
-	 * Get information about a file or directory.
-	 * Uses info2() call which contacts the repository
-	 * @param file
-	 * @return information about a file or directory.
-	 * @throws SVNClientException
-	 */
-	public ISVNInfo getInfo(File file) throws SVNClientException;
-
-	/**
-	 * Get information about an URL.
-	 * Uses info2() call which contacts the repository
-	 * @param url
-	 * @return information about an URL.
-	 * @throws SVNClientException
-	 */
-	public ISVNInfo getInfo(SVNUrl url) throws SVNClientException;
-
-	/**
-	 * Get information about an URL.
-	 * Uses info2() call which contacts the repository
-	 * @param url
-	 * @param revision
-	 * @param peg
-	 * @return information about an URL.
-	 * @throws SVNClientException
-	 */
-	public ISVNInfo getInfo(SVNUrl url, SVNRevision revision, SVNRevision peg) throws SVNClientException;
-    
-    /**
-     * Update the working copy to mirror a new URL within the repository.
-     * This behaviour is similar to 'svn update', and is the way to
-     * move a working copy to a branch or tag within the same repository.
-     * @param url
-     * @param path
-     * @param revision
-     * @param recurse
-     * @throws SVNClientException
-     */
-    public void switchToUrl(File path, SVNUrl url, SVNRevision revision, boolean recurse) throws SVNClientException;
-    
-    /**
-     * Set the configuration directory.
-     * @param dir
-     * @throws SVNClientException
-     */
-    public void setConfigDirectory(File dir) throws SVNClientException;
-    
-    /**
-     * Perform a clanup on the working copy.  This will remove any stale transactions
-     * @param dir
-     * @throws SVNClientException
-     */
-    public abstract void cleanup(File dir) throws SVNClientException;
-
-    /**
-     * Merge changes from two paths into a new local path.
-     * @param path1         first path or url
-     * @param revision1     first revision
-     * @param path2         second path or url
-     * @param revision2     second revision
-     * @param localPath     target local path
-     * @param force         overwrite local changes
-     * @param recurse       traverse into subdirectories
-     * @exception SVNClientException
-     */
-    public abstract void merge(SVNUrl path1, SVNRevision revision1, SVNUrl path2,
-               SVNRevision revision2, File localPath, boolean force,
-               boolean recurse) throws SVNClientException;
-
-    /**
-     * Merge changes from two paths into a new local path.
-     * @param path1         first path or url
-     * @param revision1     first revision
-     * @param path2         second path or url
-     * @param revision2     second revision
-     * @param localPath     target local path
-     * @param force         overwrite local changes
-     * @param recurse       traverse into subdirectories
-     * @param dryRun        do not update working copy
-     * @exception SVNClientException
-     */
-    public abstract void merge(SVNUrl path1, SVNRevision revision1, SVNUrl path2,
-               SVNRevision revision2, File localPath, boolean force,
-               boolean recurse, boolean dryRun) throws SVNClientException;    
-
-    /**
-     * Merge changes from two paths into a new local path.
-     * @param path1         first path or url
-     * @param revision1     first revision
-     * @param path2         second path or url
-     * @param revision2     second revision
-     * @param localPath     target local path
-     * @param force         overwrite local changes
-     * @param recurse       traverse into subdirectories
-     * @param dryRun        do not update working copy
-     * @param ignoreAncestry ignore ancestry when calculating merges
-     * @exception SVNClientException
-     */
-    public abstract void merge(SVNUrl path1, SVNRevision revision1, SVNUrl path2,
-               SVNRevision revision2, File localPath, boolean force,
-               boolean recurse, boolean dryRun, boolean ignoreAncestry) throws SVNClientException;    
-
-    /**
-     * Lock a working copy item
-     * @param paths  path of the items to lock
-     * @param comment
-     * @param force break an existing lock
-     * @throws SVNClientException
-     */
-    public abstract void lock(SVNUrl[] paths, String comment, boolean force)
-            throws SVNClientException;
-
-    /**
-     * Unlock a working copy item
-     * @param paths  path of the items to unlock
-     * @param force break an existing lock
-     * @throws SVNClientException
-     */
-    public abstract void unlock(SVNUrl[] paths, boolean force)
-            throws SVNClientException;
-
-    /**
-     * Lock a working copy item
-     * @param paths  path of the items to lock
-     * @param comment
-     * @param force break an existing lock
-     * @throws SVNClientException
-     */
-    public abstract void lock(File[] paths, String comment, boolean force)
-            throws SVNClientException;
-
-    /**
-     * Unlock a working copy item
-     * @param paths  path of the items to unlock
-     * @param force break an existing lock
-     * @throws SVNClientException
-     */
-    public abstract void unlock(File[] paths, boolean force)
-            throws SVNClientException;
-
-    /**
-     * Indicates whether a status call that contacts the
-     * server includes the remote info in the status object
-     * @return true when the client adapter implementation delivers remote info within status
-     */
-    public abstract boolean statusReturnsRemoteInfo();
-
-    /**
-     * Indicates whether the commitAcrossWC method is
-     * supported in the adapter
-     * @return true when the client adapter implementation supports commitAcrossWC 
-     */
-    public abstract boolean canCommitAcrossWC();
-
-    /**
-     * Returns the name of the Subversion administrative 
-     * working copy directory.  Typically will be ".svn".
-     * @return the name of the Subversion administrative wc dir
-     */
-    public abstract String getAdminDirectoryName();
-
-    /**
-     * Returns whether the passed folder name is a Subversion
-     * administrative working copy directory.  Will always return
-     * true if ".svn" is passed.  Otherwise, will be based on the
-     * Subversion runtime
-     * @param name
-     * @return true whether the folder is a Subversion administrative dir
-     */
-    public abstract boolean isAdminDirectory(String name);
-
-    /**
-     * Rewrite the url's in the working copy
-     * @param from      old url
-     * @param to        new url
-     * @param path      working copy path
-     * @param recurse   recurse into subdirectories
-     * @throws SVNClientException
-     */
-    public abstract void relocate(String from, String to, String path, boolean recurse)
-            throws SVNClientException;
-
+        
 }

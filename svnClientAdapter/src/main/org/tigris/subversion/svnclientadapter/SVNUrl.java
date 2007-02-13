@@ -1,293 +1,167 @@
-/*******************************************************************************
- * Copyright (c) 2003, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+/* ====================================================================
+ * The Apache Software License, Version 1.1
  *
- * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
+ * Copyright (c) 2000 The Apache Software Foundation.  All rights
+ * reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ *
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in
+ *    the documentation and/or other materials provided with the
+ *    distribution.
+ *
+ * 3. The end-user documentation included with the redistribution,
+ *    if any, must include the following acknowledgment:
+ *       "This product includes software developed by the
+ *        Apache Software Foundation (http://www.apache.org/)."
+ *    Alternately, this acknowledgment may appear in the software itself,
+ *    if and wherever such third-party acknowledgments normally appear.
+ *
+ * 4. The names "Apache" and "Apache Software Foundation" must
+ *    not be used to endorse or promote products derived from this
+ *    software without prior written permission. For written
+ *    permission, please contact apache@apache.org.
+ *
+ * 5. Products derived from this software may not be called "Apache",
+ *    nor may "Apache" appear in their name, without prior written
+ *    permission of the Apache Software Foundation.
+ *
+ * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
+ * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+ * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
+ * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF
+ * USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
+ * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+ * SUCH DAMAGE.
+ * ====================================================================
+ *
+ * This software consists of voluntary contributions made by many
+ * individuals on behalf of the Apache Software Foundation.  For more
+ * information on the Apache Software Foundation, please see
+ * <http://www.apache.org/>.
+ *
+ */ 
 package org.tigris.subversion.svnclientadapter;
 
 import java.net.MalformedURLException;
 
-import org.tigris.subversion.svnclientadapter.utils.StringUtils;
-
 /**
- * We could have used URL, using custom protocols (svn, svn+ssl) 
+ *
+ * we could have used URL, using custom protocols (svn, svn+ssl) 
  * (@see http://developer.java.sun.com/developer/onlineTraining/protocolhandlers/)
  * but this is not really necessary as we don't want to open a connection 
  * directly with this class.
  * We just want a string which represent a SVN url which can be used with our JNI
  * methods.
  *
- * An SVNUrl is immutable. 
  *
- * @author Cï¿½dric Chabanois 
+ * @author Cédric Chabanois 
  *         <a href="mailto:cchabanois@ifrance.com">cchabanois@ifrance.com</a>
  *
  */
 public class SVNUrl {
-	
-	private static final String SVN_PROTOCOL = "svn";
-	private static final String SVNSSH_PROTOCOL = "svn+";
-	private static final String HTTP_PROTOCOL = "http";
-	private static final String HTTPS_PROTOCOL = "https";
-	private static final String FILE_PROTOCOL = "file";
-	
-	protected static final char SEGMENT_SEPARATOR = '/'; 
-	
+    private String svnUrl;
     private String protocol; // http, file, svn or svn+ssh
     private String[] segments;
-    private String host;
-    private int port;
 
-    /**
-     * Constructor
-     * @param svnUrl a string to parse url from
-     * @throws MalformedURLException when parsing failed
-     */
     public SVNUrl(String svnUrl) throws MalformedURLException {
         if(svnUrl == null)
-            throw new MalformedURLException("Svn url cannot be null. Is this a versioned resource?");
-   
-        parseUrl(svnUrl.trim());
-    }
-    
-    private SVNUrl(String protocol, String host, int port, String[] segments)
-    {
-    	super();
-    	this.protocol = protocol;
-    	this.host = host;
-    	this.port = port;
-    	this.segments = segments;
+            throw new MalformedURLException("Svn url cannot be null. Is this  a versioned resource?");
+        this.svnUrl = svnUrl;
+        
+        // we make sure the url does not end with "/" because
+        // in svn 1.0.2 (at least) if a non-canonical path is passed to 
+        // svn_path_join(base, component, pool), the assertion "assert (is_canonical (base, blen));" will fail
+        if (svnUrl.endsWith("/")) { // remove ending "/" if any
+        	svnUrl = svnUrl.substring(0,svnUrl.length()-1);
+		}
+        
+        parseUrl();
     }
 
-    /**
-     * Asnwer a new SVNUrl with added segments
-     * @param path a String of path segment(s) to ba appended to receiver
-     * @return new SVNUrl 
-     */
-    public SVNUrl appendPath(String path)
-    {
-    	String[] segmentsToAdd = StringUtils.split(path, SEGMENT_SEPARATOR);
-    	//Skip the starting slash
-    	if ((segmentsToAdd.length > 0) && (segmentsToAdd[0].equals("")))
-    	{
-    		String[] newSegmentsToAdd = new String[segmentsToAdd.length - 1];
-    		System.arraycopy(segmentsToAdd, 1, newSegmentsToAdd, 0, segmentsToAdd.length - 1);
-    		segmentsToAdd = newSegmentsToAdd;    		
-    	}
-    	
-    	String[] newSegments = new String[segments.length + segmentsToAdd.length];
-    	System.arraycopy(segments, 0, newSegments, 0, segments.length);
-   		System.arraycopy(segmentsToAdd, 0, newSegments, segments.length, segmentsToAdd.length);
-    	return new SVNUrl(this.protocol, this.host, this.port, newSegments);
-    }
-    
     /**
      * verifies that the url is correct
      * @throws MalformedURLException
      */
-    private void parseUrl(String svnUrl) throws MalformedURLException{
-        String parsed = svnUrl;
+    private void parseUrl() throws MalformedURLException{
+        // for now, we don't verify the url, we let subversion do it
+        // we just make sure the protocol is one we support
+        // (scheme)://(optional_stuff)
 
-        // SVNUrl have this format :
-        // scheme://host[:port]/path
-        
-        // parse protocol
-        int i = parsed.indexOf("://");
+        int i = svnUrl.indexOf("://");
         if (i == -1)
             throw new MalformedURLException("Invalid svn url :"+svnUrl);
-        protocol = parsed.substring(0,i).toLowerCase();
-        if ((!protocol.equalsIgnoreCase(HTTP_PROTOCOL)) &&
-            (!protocol.equalsIgnoreCase(HTTPS_PROTOCOL)) &&
-            (!protocol.equalsIgnoreCase(FILE_PROTOCOL)) &&
-            (!protocol.equalsIgnoreCase(SVN_PROTOCOL)) &&
-            (!protocol.startsWith(SVNSSH_PROTOCOL)) ) {
+        protocol = svnUrl.substring(0,i).toLowerCase();
+        if ((!protocol.equalsIgnoreCase("http")) &&
+            (!protocol.equalsIgnoreCase("https")) &&
+            (!protocol.equalsIgnoreCase("file")) &&
+            (!protocol.equalsIgnoreCase("svn")) &&
+            (!protocol.equalsIgnoreCase("svn+ssh")) ) {
             throw new MalformedURLException("Invalid svn url :"+svnUrl);
         }
-        parsed = parsed.substring(i+3);
-		if (parsed.length() == 0) {
+        String toSplit = svnUrl.substring(i+3);
+		if (toSplit.length() == 0) {
 			throw new MalformedURLException("Invalid svn url :"+svnUrl);
-		}
-
-        // parse host & port        
-        i = parsed.indexOf("/");
-        if (i == -1) {
-            i = parsed.length();
-        }
-        if (!protocol.equalsIgnoreCase(FILE_PROTOCOL)) {
-	        String hostPort = parsed.substring(0,i).toLowerCase();
-	        String[] hostportArray = StringUtils.split(hostPort,':');
-	        if (hostportArray.length == 0) {
-	        	throw new MalformedURLException("Invalid svn url :"+svnUrl);                    
-	        } else if (hostportArray.length == 2) {
-	            this.host = hostportArray[0];
-	            try {
-	                this.port = Integer.parseInt(hostportArray[1]);
-	            } catch (NumberFormatException e) {
-	                throw new MalformedURLException("Invalid svn url :"+svnUrl);
-	            }
-	        } else {
-	            this.host = hostportArray[0];
-	            this.port = getDefaultPort(protocol);
-	        }
-        } else {
-            this.port = -1;
-            // parse path
-            if (i == 0) {
-                this.host = "";
-            } else {
-                this.host = parsed.substring(0,i);
-            }
-        }
-        // parse path
-        if (i < parsed.length()) {
-            parsed = parsed.substring(i+1);
-        } else {
-            parsed = "";
-        }
-        segments = StringUtils.split(parsed,'/');
+		}        
+        segments = StringUtils.split(toSplit,'/');
     }
 
-    /**
-     * get the default port for given protocol
-     * @param protocol
-     * @return port number or -1 if protocol is unknown
-     */
-    public static int getDefaultPort(String protocol) {
-        int port = -1;
-        if (SVN_PROTOCOL.equals(protocol)) {
-            port = 3690;
-        } else if (HTTP_PROTOCOL.equals(protocol)) {
-            port = 80;
-        } else if (HTTPS_PROTOCOL.equals(protocol)) {
-            port = 443;
-        } else if (protocol != null && protocol.startsWith(SVNSSH_PROTOCOL)) {
-            port = 22;
-        }
-        return port;
+    public String get() {
+        return svnUrl;
     }
     
-    /**
-     * Get the url as String. The url returned never ends with "/"
-     * @return String representation of this url instance
-     */
-    private String get() {
-    	//Be sofisticated and compute the StringBuffer size up-front. 
-    	StringBuffer buffer = new StringBuffer(calculateUrlLength());
-        buffer.append(getProtocol());
-        buffer.append("://");
-        buffer.append(getHost()); 
-        if (getPort() != getDefaultPort(getProtocol())) {
-        	buffer.append(":");
-        	buffer.append(getPort());
-        }
-
-        for (int i = 0; i < segments.length;i++) {
-        	buffer.append(SEGMENT_SEPARATOR);
-        	buffer.append(segments[i]);
-        }
-        return buffer.toString(); 
-    }
-    
-    private int calculateUrlLength()
-    {
-    	int result = 3; // Size of "://"
-    	if (getProtocol() != null) result += getProtocol().length();
-    	if (getHost() != null) result += getHost().length();
-        if (getPort() != getDefaultPort(getProtocol())) {
-        	result++; //Add one for ":"
-        	result += String.valueOf(getPort()).length();
-        }
-        for (int i = 0; i < segments.length;i++) {
-            result++; // Add 1 for separator
-            result += segments[i].length();
-        }
-        return result;
-    }
-    
-    /**
-     * get the protocol
-     * @return either http, https, file, svn or svn+ssh
-     */
     public String getProtocol() {
         return protocol;
     }
     
-    /**
-     * @return Returns the host.
-     */
-    public String getHost() {
-        return host;
-    }
-    /**
-     * @return Returns the port.
-     */
-    public int getPort() {
-        return port;
-    }
-    
-    /**
-     * get the path of the url. 
-     * @return an arrray of url path segments
-     */
-    public String[] getPathSegments() {
-    	return segments;
-    }
-    
-    /**
-     * @return the "file" name, i.e. the element after last /
-     */
-    public String getLastPathSegment() {
-        if (segments.length == 0)
-            return "";
-    	return segments[segments.length-1];
-    }
-    
-    /**
-     * Return new SVNUrl which represents parent of the receiver 
-     * @return the parent url or null if no parent
-     */
-    public SVNUrl getParent() {
-    	if ((segments.length == 0) ||
-    		((segments.length == 1) && ((host == null) || (host.length() == 0))))
-    	{
-    		return null;
-    	}
-    	String[] parentSegments = new String[segments.length - 1];
-    	System.arraycopy(segments, 0, parentSegments, 0, segments.length - 1);
-    	return new SVNUrl(this.protocol, this.host, this.port, parentSegments);
-    }
-    
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
-	public boolean equals(Object target) {
-	    // this method is not very accurate because :
-	    // url before repository is not always case sensitive
-		if (this == target)
-			return true;
-		if (!(target instanceof SVNUrl))
-			return false;
-		SVNUrl url = (SVNUrl) target;
-		return get().equals(url.get());
-	}
-	
-	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
-	public int hashCode()
-	{
-		return get().hashCode();
-	}
-	
-    /* (non-Javadoc)
-     * @see java.lang.Object#toString()
-     */
     public String toString() {
         return get();
     }
+    
+    public String getSegment(int i) {
+    	return segments[i];
+    }
+    
+    public String[] getSegments() {
+    	return segments;
+    }
+    
+    public String getLastSegment() {
+    	return segments[segments.length-1];
+    }
+    
+    
+    // we cannot easily code an "equals" method because :
+    // protocol is not case-sensitive
+    // url before repository is not always case sensitive
+    // url after repository is case sensitive
+    
+    /**
+     * 
+     * @return the parent url or null if no parent
+     */
+    public SVNUrl getParent() {
+    	try {
+    		String url = svnUrl;
+    		if (url.endsWith("/")) { // remove ending "/" if any
+    			url = url.substring(0,url.length()-1);
+    		}
+    		
+    		return new SVNUrl(url.substring(0,url.lastIndexOf('/')));
+    	} catch (MalformedURLException e) {
+    		return null;
+    	}
+    }
+   
 }

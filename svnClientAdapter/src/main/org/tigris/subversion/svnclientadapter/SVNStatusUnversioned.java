@@ -1,20 +1,70 @@
-/*******************************************************************************
- * Copyright (c) 2004, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+/* ====================================================================
+ * The Apache Software License, Version 1.1
  *
- * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
+ * Copyright (c) 2000 The Apache Software Foundation.  All rights
+ * reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ *
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in
+ *    the documentation and/or other materials provided with the
+ *    distribution.
+ *
+ * 3. The end-user documentation included with the redistribution,
+ *    if any, must include the following acknowledgment:
+ *       "This product includes software developed by the
+ *        Apache Software Foundation (http://www.apache.org/)."
+ *    Alternately, this acknowledgment may appear in the software itself,
+ *    if and wherever such third-party acknowledgments normally appear.
+ *
+ * 4. The names "Apache" and "Apache Software Foundation" must
+ *    not be used to endorse or promote products derived from this
+ *    software without prior written permission. For written
+ *    permission, please contact apache@apache.org.
+ *
+ * 5. Products derived from this software may not be called "Apache",
+ *    nor may "Apache" appear in their name, without prior written
+ *    permission of the Apache Software Foundation.
+ *
+ * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
+ * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+ * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
+ * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF
+ * USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
+ * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+ * SUCH DAMAGE.
+ * ====================================================================
+ *
+ * This software consists of voluntary contributions made by many
+ * individuals on behalf of the Apache Software Foundation.  For more
+ * information on the Apache Software Foundation, please see
+ * <http://www.apache.org/>.
+ *
+ */
 package org.tigris.subversion.svnclientadapter;
 
 import java.io.File;
 import java.util.Date;
 
+import org.tigris.subversion.svnclientadapter.ISVNStatus;
+import org.tigris.subversion.svnclientadapter.SVNNodeKind;
+import org.tigris.subversion.svnclientadapter.SVNRevision;
+import org.tigris.subversion.svnclientadapter.SVNUrl;
+
 /**
- * A special {@link ISVNStatus} implementation that is used if a File/Folder is not versioned or is ignored.
+ * <p>
+ * A special status class that is used if a File/Folder is not versioned.</p>
  * 
  * @author Philip Schatz (schatz at tigris)
  * @author Cédric Chabanois (cchabanois at no-log.org)
@@ -23,195 +73,75 @@ public class SVNStatusUnversioned implements ISVNStatus {
     private File file;
     private boolean isIgnored = false;
 	
-    /**
-     * Constructor.
-     * @param file
-     * @param isIgnored true when creating {@link SVNStatusKind#IGNORED}, otherwise {@link SVNStatusKind#UNVERSIONED}
-     */
     public SVNStatusUnversioned(File file, boolean isIgnored) {
         this.file = file;
-        // A file can be both unversioned and ignored.
-        this.isIgnored = isIgnored;
+        this.isIgnored = isIgnored; // a file can be unversioned and ignored ...
     }
     
-	/**
-	 * Constructor.
-	 * Creates an unversioned status (i.e. not ignored)
-	 * @param file
-	 */
 	public SVNStatusUnversioned(File file) {
 		this.file = file;
 	}
     
-	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.ISVNStatus#getPath()
-	 */
+    public boolean isIgnored() {
+		return isIgnored;
+	}
+	public boolean isManaged() {
+		return false;
+	}
+	public boolean hasRemote() {
+		return false;
+	}
+	public SVNUrl getUrl() {
+		return null;
+	}
+	public SVNRevision.Number getLastChangedRevision() {
+		return null;
+	}
+	public Date getLastChangedDate() {
+		return null;
+	}
+	public String getLastCommitAuthor() {
+		return null;
+	}
+	public ISVNStatus.Kind getTextStatus() {
+		return ISVNStatus.Kind.UNVERSIONED;
+	}
+	
+	public ISVNStatus.Kind getPropStatus() {
+		return ISVNStatus.Kind.NORMAL;
+	}
+	
+	public boolean isMerged() {
+		return false;
+	}
+	public boolean isDeleted() {
+		return false;
+	}
+	public boolean isModified() {
+		return false;
+	}
+	public boolean isAdded() {
+		return false;
+	}
+	public SVNRevision.Number getRevision() {
+		return SVNRevision.INVALID_REVISION;
+	}
+	public boolean isCopied() {
+		return false;
+	}
 	public String getPath() {
 		return file.getPath();
 	}
-
-    /* (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNStatus#getFile()
-     */
     public File getFile() {
         return file.getAbsoluteFile();
     }
     
-	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.ISVNStatus#getUrl()
-	 */
-	public SVNUrl getUrl() {
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.ISVNStatus#getUrlString()
-	 */
-	public String getUrlString()
-	{
-		return null;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.ISVNStatus#getLastChangedRevision()
-	 */
-	public SVNRevision.Number getLastChangedRevision() {
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.ISVNStatus#getLastChangedDate()
-	 */
-	public Date getLastChangedDate() {
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.ISVNStatus#getLastCommitAuthor()
-	 */
-	public String getLastCommitAuthor() {
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.ISVNStatus#getTextStatus()
-	 */
-	public SVNStatusKind getTextStatus() {
-        if (isIgnored) {
-        	return SVNStatusKind.IGNORED;
-        }
-    	return SVNStatusKind.UNVERSIONED;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.ISVNStatus#getPropStatus()
-	 */
-	public SVNStatusKind getPropStatus() {
-	     //As this status does not describe a managed resource, we
-	     //cannot pretend that there is property status, and thus always
-	     //{@link SVNStatusKind#NONE}.
-		return SVNStatusKind.NONE;
-	}
-	
-    /* (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNStatus#getRepositoryTextStatus()
-     */
-    public SVNStatusKind getRepositoryTextStatus() {
-        return SVNStatusKind.UNVERSIONED;
-    }
-
-    /* (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNStatus#getRepositoryPropStatus()
-     */
-    public SVNStatusKind getRepositoryPropStatus() {
-        return SVNStatusKind.UNVERSIONED;
-    }
-
-	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.ISVNStatus#getRevision()
-	 */
-	public SVNRevision.Number getRevision() {
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.ISVNStatus#isCopied()
-	 */
-	public boolean isCopied() {
-		return false;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.ISVNStatus#isWcLocked()
-	 */
-	public boolean isWcLocked() {
-		return false;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.ISVNStatus#isSwitched()
-	 */
-	public boolean isSwitched() {
-		return false;
-	}
-
-	/* (non-Javadoc)
-	 * @see
-	 * @see org.tigris.subversion.svnclientadapter.ISVNStatus#getNodeKind()
-	 */
 	public SVNNodeKind getNodeKind() {
-		//As this status does not describe a managed resource, we
-	    //cannot pretend to know the node kind, and thus always return
-	    //{@link SVNNodeKind#UNKNOWN}.
+        // getNodeKind returns the kind of the managed resource. If file is
+        // not managed we must return UNKNOWN
         return SVNNodeKind.UNKNOWN;
 	}
-
-	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.ISVNStatus#getUrlCopiedFrom()
-	 */
-	public SVNUrl getUrlCopiedFrom() {
+	public String getUrlCopiedFrom() {
 		return null;
 	}
-
-    /* (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNStatus#getConflictNew()
-     */
-    public File getConflictNew() {
-        return null;
-    }
-
-    /* (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNStatus#getConflictOld()
-     */
-    public File getConflictOld() {
-        return null;
-    }
-
-    /* (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNStatus#getConflictWorking()
-     */
-    public File getConflictWorking() {
-        return null;
-    }
-
-    /* (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNStatus#getLockComment()
-     */
-    public String getLockComment() {
-        return null;
-    }
-
-    /* (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNStatus#getLockCreationDate()
-     */
-    public Date getLockCreationDate() {
-        return null;
-    }
-
-    /* (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNStatus#getLockOwner()
-     */
-    public String getLockOwner() {
-        return null;
-    }
 }

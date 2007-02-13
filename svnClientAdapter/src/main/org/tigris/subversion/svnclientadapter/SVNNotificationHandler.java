@@ -1,16 +1,61 @@
-/*******************************************************************************
- * Copyright (c) 2003, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+/* ====================================================================
+ * The Apache Software License, Version 1.1
  *
- * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
+ * Copyright (c) 2000 The Apache Software Foundation.  All rights
+ * reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ *
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in
+ *    the documentation and/or other materials provided with the
+ *    distribution.
+ *
+ * 3. The end-user documentation included with the redistribution,
+ *    if any, must include the following acknowledgment:
+ *       "This product includes software developed by the
+ *        Apache Software Foundation (http://www.apache.org/)."
+ *    Alternately, this acknowledgment may appear in the software itself,
+ *    if and wherever such third-party acknowledgments normally appear.
+ *
+ * 4. The names "Apache" and "Apache Software Foundation" must
+ *    not be used to endorse or promote products derived from this
+ *    software without prior written permission. For written
+ *    permission, please contact apache@apache.org.
+ *
+ * 5. Products derived from this software may not be called "Apache",
+ *    nor may "Apache" appear in their name, without prior written
+ *    permission of the Apache Software Foundation.
+ *
+ * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
+ * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+ * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
+ * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF
+ * USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
+ * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+ * SUCH DAMAGE.
+ * ====================================================================
+ *
+ * This software consists of voluntary contributions made by many
+ * individuals on behalf of the Apache Software Foundation.  For more
+ * information on the Apache Software Foundation, please see
+ * <http://www.apache.org/>.
+ *
+ */ 
 package org.tigris.subversion.svnclientadapter;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -27,29 +72,25 @@ public abstract class SVNNotificationHandler {
         
     /**
      * Add a notification listener
-     * @param listener
      */
     public void add(ISVNNotifyListener listener) {
         notifylisteners.add(listener);
     }
 
     /**
-     * Remove a notification listener
-     * @param listener 
+     * Remove a notification listener 
      */
     public void remove(ISVNNotifyListener listener) {
         notifylisteners.remove(listener);
     }
     
-    /**
-     * restore logging 
-     */
     public void enableLog() {
         logEnabled = true;
     }
     
     /**
-     * disable all logging 
+     * disable logging. calls to logMessage, logCompleted, logCommandLine do nothing 
+     * Note that errors and exceptions are not disabled
      */
     public void disableLog() {
         logEnabled = false;
@@ -65,22 +106,11 @@ public abstract class SVNNotificationHandler {
     }
 
     public void logError(String message) {
-        if (logEnabled) {
-	        for(Iterator it=notifylisteners.iterator(); it.hasNext();) {
-	            ISVNNotifyListener listener = (ISVNNotifyListener)it.next();
-	            listener.logError(message);
-	        }
-        }
-    }
-
-    public void logRevision(long revision, String path) {
-        if (logEnabled) {
-            for(Iterator it=notifylisteners.iterator(); it.hasNext();) {
-                ISVNNotifyListener listener = (ISVNNotifyListener)it.next();
-                listener.logRevision(revision, path);
-            }
+        for(Iterator it=notifylisteners.iterator(); it.hasNext();) {
+            ISVNNotifyListener listener = (ISVNNotifyListener)it.next();
+            listener.logError(message);
         }                        
-    }    
+    }
 
     public void logCompleted(String message) {
         if (logEnabled) {
@@ -94,6 +124,7 @@ public abstract class SVNNotificationHandler {
 	/**
 	 * set the command
 	 * @param command
+	 * @param files
 	 */
     public void setCommand(int command) {
 		this.command = command;        
@@ -108,7 +139,7 @@ public abstract class SVNNotificationHandler {
      * @param commandLine
      */
     public void logCommandLine(String commandLine) {
-        if (logEnabled && !skipCommand()) {
+        if (logEnabled) {
             for(Iterator it=notifylisteners.iterator(); it.hasNext();) {
                 ISVNNotifyListener listener = (ISVNNotifyListener)it.next();
                 listener.logCommandLine(commandLine);
@@ -118,16 +149,9 @@ public abstract class SVNNotificationHandler {
 
     /**
      * To call when a method of ClientAdapter throw an exception
-     * @param clientException
      */        
     public void logException(Exception clientException) {
-        if (logEnabled) {
-	        Throwable e = clientException;
-	        while (e != null) {
-	            logError(e.getMessage());
-	            e = e.getCause();                
-	        }
-        }
+		logError(clientException.getMessage());
     }
     
     /**
@@ -142,20 +166,23 @@ public abstract class SVNNotificationHandler {
 		this.baseDir = new File(".");
 	}
     
-    private File getAbsoluteFile(String path) {
-        if (path == null)
-            return null;
-		File f = new File(path);
-		if (!f.isAbsolute()) {
-			f = new File(baseDir,path);
+    private File getCanonicalFile(String path) {
+		File f;
+		try {
+			f = new File(path);
+			if (f.isAbsolute()) {
+				f = f.getCanonicalFile();
+			} else {
+				f = new File(baseDir,path).getCanonicalFile();
+			}
+			return f;
+		} catch (IOException e) {
+			return null;
 		}
-		return f;
     }
     
     public void notifyListenersOfChange(String path) {
-        if (path == null)
-            return;
-		File f = getAbsoluteFile(path);
+		File f = getCanonicalFile(path);
 		if (f == null) {
 			// this should not happen
 			logMessage("Warning : invalid path :"+path);
@@ -180,9 +207,7 @@ public abstract class SVNNotificationHandler {
     }
     
     public void notifyListenersOfChange(String path, SVNNodeKind kind) {
-        if (path == null)
-            return;
-		File f = getAbsoluteFile(path);
+		File f = getCanonicalFile(path);
 		if (f == null) {
 			// this should not happen
 			logMessage("Warning : invalid path :"+path);
@@ -193,23 +218,6 @@ public abstract class SVNNotificationHandler {
             ISVNNotifyListener listener = (ISVNNotifyListener)it.next();
             listener.onNotify(f, kind);
         }  
-    }
-    
-    /**
-     * For certain commands we just want to skip the logging of the
-     * command line
-     */
-    protected boolean skipCommand() {
-        if (command == ISVNNotifyListener.Command.CAT ||
-                command == ISVNNotifyListener.Command.INFO ||
-                command == ISVNNotifyListener.Command.LOG ||
-                command == ISVNNotifyListener.Command.LS ||
-                command == ISVNNotifyListener.Command.PROPGET ||
-                command == ISVNNotifyListener.Command.PROPLIST ||
-                command == ISVNNotifyListener.Command.STATUS )
-            return true;
-        else
-            return false;
     }
     
 }

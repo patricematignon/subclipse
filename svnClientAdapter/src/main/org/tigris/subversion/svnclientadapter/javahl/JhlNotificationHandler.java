@@ -1,24 +1,63 @@
-/*******************************************************************************
- * Copyright (c) 2003, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+/* ====================================================================
+ * The Apache Software License, Version 1.1
  *
- * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
+ * Copyright (c) 2000 The Apache Software Foundation.  All rights
+ * reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ *
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in
+ *    the documentation and/or other materials provided with the
+ *    distribution.
+ *
+ * 3. The end-user documentation included with the redistribution,
+ *    if any, must include the following acknowledgment:
+ *       "This product includes software developed by the
+ *        Apache Software Foundation (http://www.apache.org/)."
+ *    Alternately, this acknowledgment may appear in the software itself,
+ *    if and wherever such third-party acknowledgments normally appear.
+ *
+ * 4. The names "Apache" and "Apache Software Foundation" must
+ *    not be used to endorse or promote products derived from this
+ *    software without prior written permission. For written
+ *    permission, please contact apache@apache.org.
+ *
+ * 5. Products derived from this software may not be called "Apache",
+ *    nor may "Apache" appear in their name, without prior written
+ *    permission of the Apache Software Foundation.
+ *
+ * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
+ * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+ * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
+ * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF
+ * USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
+ * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+ * SUCH DAMAGE.
+ * ====================================================================
+ *
+ * This software consists of voluntary contributions made by many
+ * individuals on behalf of the Apache Software Foundation.  For more
+ * information on the Apache Software Foundation, please see
+ * <http://www.apache.org/>.
+ *
+ */ 
 package org.tigris.subversion.svnclientadapter.javahl;
 
-import org.tigris.subversion.javahl.Lock;
 import org.tigris.subversion.javahl.NodeKind;
-import org.tigris.subversion.javahl.Notify2;
-import org.tigris.subversion.javahl.NotifyAction;
-import org.tigris.subversion.javahl.NotifyInformation;
-import org.tigris.subversion.javahl.NotifyStatus;
+import org.tigris.subversion.javahl.Notify;
 import org.tigris.subversion.svnclientadapter.ISVNNotifyListener;
 import org.tigris.subversion.svnclientadapter.SVNNotificationHandler;
-import org.tigris.subversion.svnclientadapter.utils.Messages;
 
 
 
@@ -34,40 +73,9 @@ import org.tigris.subversion.svnclientadapter.utils.Messages;
  *         <a href="mailto:cchabanois@ifrance.com">cchabanois@ifrance.com</a>
  *
  */
-public class JhlNotificationHandler extends SVNNotificationHandler implements Notify2 {
+public class JhlNotificationHandler extends SVNNotificationHandler implements Notify {
     private boolean receivedSomeChange;
     private boolean sentFirstTxdelta;
-    
-    private int updates;
-    private int adds;
-    private int deletes;
-    private int conflicts;
-    private int merges;
-    private int propConflicts;
-    private int propMerges;
-    private int propUpdates;
-    private boolean inExternal;
-    private boolean holdStats;
-    private String lastUpdate;
-    private String lastExternalUpdate;
-    
-    private static final int COMMIT_ACROSS_WC_COMPLETED = -11;
-    private static final int ENDED_ABNORMAL = -1;
-
-    /* (non-Javadoc)
-     * @see org.tigris.subversion.javahl.Notify2#onNotify(org.tigris.subversion.javahl.NotifyInformation)
-     */
-    public void onNotify(NotifyInformation info) {
-        this.onNotify(info.getPath(),
-                      info.getAction(),
-                      info.getKind(),
-                      info.getMimeType(),
-                      info.getContentState(),
-                      info.getPropState(),
-                      info.getRevision(),
-                      info.getLock(),
-					 info.getErrMsg());
-    }
     
     /**
      * Handler for Subversion notifications.
@@ -81,218 +89,135 @@ public class JhlNotificationHandler extends SVNNotificationHandler implements No
      * @param propState state of properties after action occurred
      * @param revision revision number  after action occurred
      */
-    private void onNotify(
+    public void onNotify(
         String path,
         int action,
         int kind,
         String mimeType,
         int contentState,
         int propState,
-        long revision,
-        Lock lock,
-		String errorMsg) {
+        long revision) {
 
         // for some actions, we don't want to call notifyListenersOfChange :
         // when the status of the target has not been modified 
         boolean notify = true;
 
         switch (action) {
-        		case ENDED_ABNORMAL:
-        		   if (command == ISVNNotifyListener.Command.COMMIT)
-         		   logError(Messages.bind("notify.commit.abnormal")); //$NON-NLS-1$
-        		   else
-        		       logError(Messages.bind("notify.end.abnormal")); //$NON-NLS-1$
-        		   if (errorMsg != null)
-        			  logError(errorMsg); 
+            case Notify.Action.skip :
+                logMessage("Skipped " + path);
                 notify = false;                                
                 break;
-            case NotifyAction.skip :
-                logMessage(Messages.bind("notify.skipped", path)); //$NON-NLS-1$
-                notify = false;                                
+            case Notify.Action.update_delete :
+                logMessage("D  " + path);
+                receivedSomeChange = true;
                 break;
-            case NotifyAction.failed_lock: 
-            	if (errorMsg == null)
-            		logError(Messages.bind("notify.lock.failed", path)); //$NON-NLS-1$
-            	else
-            		logError(errorMsg);
+            case Notify.Action.update_add :
+                logMessage("A  " + path);
+                receivedSomeChange = true;
+                break;
+            case Notify.Action.restore :
+                logMessage("Restored " + path);
+                break;
+            case Notify.Action.revert :
+                logMessage("Reverted " + path);
+                break;
+            case Notify.Action.failed_revert :
+                logError("Failed to revert " + path + " -- try updating instead.");
                 notify = false;
                 break;
-            case NotifyAction.failed_unlock:
-            	if (errorMsg == null)
-            		logError(Messages.bind("notify.unlock.failed", path)); //$NON-NLS-1$
-            	else
-            		logError(errorMsg);
-            	notify = false;
-            	break;
-            case NotifyAction.locked:
-                if (lock != null && lock.getOwner() != null)
-                    logMessage(Messages.bind("notify.lock.other", lock.getPath(), lock.getOwner())); //$NON-NLS-1$
-                else
-                    logMessage(Messages.bind("notify.lock", path)); //$NON-NLS-1$
-        	    notify = false; // for JavaHL bug
-            	break;
-            case NotifyAction.unlocked:
-                logMessage(Messages.bind("notify.unlock", path)); //$NON-NLS-1$
-            	notify = false; // for JavaHL bug
-            	break;
-            case NotifyAction.update_delete :
-                logMessage("D  " + path); //$NON-NLS-1$
-                receivedSomeChange = true;
-                deletes += 1;
+            case Notify.Action.resolved :
+                logMessage("Resolved conflicted state of " + path);
                 break;
-            case NotifyAction.update_add :
-                logMessage("A  " + path); //$NON-NLS-1$
-                receivedSomeChange = true;
-                adds += 1;
+            case Notify.Action.add :
+                logMessage("A         " + path);
                 break;
-            case NotifyAction.restore :
-                logMessage(Messages.bind("notify.restored", path)); //$NON-NLS-1$
-                break;
-            case NotifyAction.revert :
-                logMessage(Messages.bind("notify.reverted", path)); //$NON-NLS-1$
-                break;
-            case NotifyAction.failed_revert :
-                logError(Messages.bind("notify.revert.failed", path)); //$NON-NLS-1$
-                notify = false;
-                break;
-            case NotifyAction.resolved :
-                logMessage(Messages.bind("notify.resolved", path)); //$NON-NLS-1$
-                break;
-            case NotifyAction.add :
-                logMessage("A         " + path); //$NON-NLS-1$
-                break;
-            case NotifyAction.delete :
-                logMessage("D         " + path); //$NON-NLS-1$
+            case Notify.Action.delete :
+                logMessage("D         " + path);
                 receivedSomeChange = true;
                 break;
-            case NotifyAction.update_update :
-                boolean error = false;
+            case Notify.Action.update_update :
                 if (!((kind == NodeKind.dir)
-                    && ((propState == NotifyStatus.inapplicable)
-                        || (propState == NotifyStatus.unknown)
-                        || (propState == NotifyStatus.unchanged)))) {
+                    && ((propState == Notify.Status.inapplicable)
+                        || (propState == Notify.Status.unknown)
+                        || (propState == Notify.Status.unchanged)))) {
                     receivedSomeChange = true;
                     char[] statecharBuf = new char[] { ' ', ' ' };
                     if (kind == NodeKind.file) {
-                        if (contentState == NotifyStatus.conflicted) {
+                        if (contentState == Notify.Status.conflicted)
                             statecharBuf[0] = 'C';
-                            conflicts += 1;
-                            error = true;
-                        }
-                        else if (contentState == NotifyStatus.merged) {
+                        else if (contentState == Notify.Status.merged)
                             statecharBuf[0] = 'G';
-                            merges += 1;
-                            error = true;
-                        }
-                        else if (contentState == NotifyStatus.changed) {
+                        else if (contentState == Notify.Status.changed)
                             statecharBuf[0] = 'U';
-                            updates += 1;
-                        }
-                        else if (contentState == NotifyStatus.unchanged && command == ISVNNotifyListener.Command.MERGE
-                                && propState < NotifyStatus.obstructed)
-                            break;
                     }
-                    if (propState == NotifyStatus.conflicted) {
+                    if (propState == Notify.Status.conflicted)
                         statecharBuf[1] = 'C';
-                        propConflicts += 1;
-                        error = true;
-                    }
-                    else if (propState == NotifyStatus.merged) {
+                    else if (propState == Notify.Status.merged)
                         statecharBuf[1] = 'G';
-                        propMerges += 1;
-                        error = true;
-                    }
-                    else if (propState == NotifyStatus.changed) {
+                    else if (propState == Notify.Status.changed)
                         statecharBuf[1] = 'U';
-                        propUpdates += 1;
-                    }
-                    if (error)
-                        logError("" + statecharBuf[0] + statecharBuf[1] + " " + path);                       //$NON-NLS-1$ //$NON-NLS-2$
-                    else
-                        logMessage("" + statecharBuf[0] + statecharBuf[1] + " " + path);                       //$NON-NLS-1$ //$NON-NLS-2$
+                    logMessage("" + statecharBuf[0]+statecharBuf[1]+" "+path);                      
                 }
                 break;
-            case NotifyAction.update_external :
-                logMessage(Messages.bind("notify.update.external", path)); //$NON-NLS-1$
-            	inExternal = true;
-                break;
-            case NotifyAction.update_completed :
+            case Notify.Action.update_completed :
                 notify = false;
                 if (revision >= 0) {
-                    logRevision( revision, path );
-
                     if (command == ISVNNotifyListener.Command.EXPORT) {
-                        logCompleted(Messages.bind("notify.export", Long.toString(revision))); //$NON-NLS-1$
+                        logCompleted("Exported revision "+revision+".");
                     }                       
                     else 
                     if (command == ISVNNotifyListener.Command.CHECKOUT) {
-                        logCompleted(Messages.bind("notify.checkout", Long.toString(revision))); //$NON-NLS-1$
+                        logCompleted("Checked out revision "+revision+".");
                     }                       
                     else
                     if (receivedSomeChange) {
-                        if (holdStats) {
-                        // Hold off until the releaseStats() method
-                        // is executed.  Keeps noise out of the log.
-                            if (inExternal)
-                                lastExternalUpdate = Messages.bind("notify.update", Long.toString(revision)); //$NON-NLS-1$
-                            else
-                                lastUpdate = Messages.bind("notify.update", Long.toString(revision)); //$NON-NLS-1$
-                            
-                        } else
-                            logCompleted(Messages.bind("notify.update", Long.toString(revision))); //$NON-NLS-1$
+                        logCompleted("Updated to revision "+revision+".");
                     }
                     else {
-                        logCompleted(Messages.bind("notify.at", Long.toString(revision))); //$NON-NLS-1$
+                        logCompleted("At revision "+revision+".");
                     }
                 } else
                 {
                     if (command == ISVNNotifyListener.Command.EXPORT) {
-                        logCompleted(Messages.bind("notify.export.complete")); //$NON-NLS-1$
+                        logCompleted("Export complete.");
                     }
                     else
                     if (command == ISVNNotifyListener.Command.CHECKOUT) {
-                        logCompleted(Messages.bind("notify.checkout.complete")); //$NON-NLS-1$
+                        logCompleted("Checkout complete.");
                     }
                     else {
-                        logCompleted(Messages.bind("notify.update.complete")); //$NON-NLS-1$
+                        logCompleted("Update complete.");
                     }  
                 }
                 break;
-            case NotifyAction.status_external :
-              if (!skipCommand())
-                logMessage(Messages.bind("notify.status.external", path)); //$NON-NLS-1$
+            case Notify.Action.status_external :
+              logMessage("Performing status on external item at "+path);
               notify = false;
               break;
-            case NotifyAction.status_completed :
+            case Notify.Action.status_completed :
               notify = false;
-              if (revision >= 0) {
-                logRevision(revision, path);
-                if (!skipCommand())
-                    logMessage(Messages.bind("notify.status.revision", Long.toString(revision))); //$NON-NLS-1$
-              }
+              if (revision >= 0)
+                logMessage("Status against revision: "+ revision);
               break;                
-            case NotifyAction.commit_modified :
-                logMessage(Messages.bind("notify.commit.modified", path)); //$NON-NLS-1$
+            case Notify.Action.commit_modified :
+                logMessage("Sending        "+path);
                 break;
-            case NotifyAction.commit_added :
-                logMessage(Messages.bind("notify.commit.add", path)); //$NON-NLS-1$
+            case Notify.Action.commit_added :
+                logMessage("Adding         "+path);
                 break;
-            case NotifyAction.commit_deleted :
-                logMessage(Messages.bind("notify.commit.delete", path)); //$NON-NLS-1$
+            case Notify.Action.commit_deleted :
+                logMessage("Deleting       "+path);
                 break;
-            case NotifyAction.commit_replaced :
-                logMessage(Messages.bind("notify.commit.replace", path)); //$NON-NLS-1$
+            case Notify.Action.commit_replaced :
+                logMessage("Replacing      "+path);
                 break;
-            case NotifyAction.commit_postfix_txdelta :
+            case Notify.Action.commit_postfix_txdelta :
                 notify = false;
                 if (!sentFirstTxdelta) {
-                    logMessage(Messages.bind("notify.commit.transmit")); //$NON-NLS-1$
+                    logMessage("Transmitting file data ...");
                     sentFirstTxdelta = true;
                 }
                 break;                              
-            case COMMIT_ACROSS_WC_COMPLETED :
-                notify = false;
-                logCompleted(Messages.bind("notify.commit", Long.toString(revision))); //$NON-NLS-1$
         }
         if (notify) {
             // only when the status changed
@@ -303,110 +228,6 @@ public class JhlNotificationHandler extends SVNNotificationHandler implements No
     public void setCommand(int command) {
         receivedSomeChange = false;
         sentFirstTxdelta = false;
-        clearStats();
         super.setCommand(command);
-    }
-    
-    /* (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.SVNNotificationHandler#logCompleted(java.lang.String)
-     */
-    public void logCompleted(String message) {
-        super.logCompleted(message);
-        if (inExternal)
-            inExternal = false;
-        else
-            logStats();
-    }
-
-    private void clearStats(){
-        adds = 0;
-        updates = 0;
-        deletes = 0;
-        conflicts = 0;
-        merges = 0;
-        propConflicts = 0;
-        propMerges = 0;
-        propUpdates = 0;
-        inExternal = false;
-        holdStats = false;
-        lastUpdate = null;
-        lastExternalUpdate = null;
-    }
-    
-    private void logStats() {
-        if (holdStats)
-            return;
-        if (command == ISVNNotifyListener.Command.UPDATE
-                || command == ISVNNotifyListener.Command.MERGE
-                || command == ISVNNotifyListener.Command.SWITCH) {
-	        if (fileStats()) {
-	            logMessage(Messages.bind("notify.stats.file.head")); //$NON-NLS-1$
-		        if (conflicts > 0)
-		            logMessage(Messages.bind("notify.stats.conflict", Integer.toString(conflicts))); //$NON-NLS-1$
-		        if (merges > 0)
-		            logMessage(Messages.bind("notify.stats.merge", Integer.toString(merges))); //$NON-NLS-1$
-		        if (deletes > 0)
-		            logMessage(Messages.bind("notify.stats.delete", Integer.toString(deletes))); //$NON-NLS-1$
-		        if (adds > 0)
-		            logMessage(Messages.bind("notify.stats.add", Integer.toString(adds))); //$NON-NLS-1$
-		        if (updates > 0)
-		            logMessage(Messages.bind("notify.stats.update", Integer.toString(updates))); //$NON-NLS-1$
-	        }
-	        if (propStats()){
-	            logMessage(Messages.bind("notify.stats.prop.head")); //$NON-NLS-1$
-		        if (propConflicts > 0)
-		            logMessage(Messages.bind("notify.stats.conflict", Integer.toString(propConflicts))); //$NON-NLS-1$
-		        if (propMerges > 0)
-		            logMessage(Messages.bind("notify.stats.merge", Integer.toString(propMerges))); //$NON-NLS-1$
-		        if (propUpdates > 0)
-		            logMessage(Messages.bind("notify.stats.update", Integer.toString(propUpdates))); //$NON-NLS-1$
-	        }
-        }
-        clearStats();
-    }
-    
-    private boolean fileStats() {
-        if (updates > 0 || adds > 0 || deletes > 0 
-                || conflicts > 0 || merges > 0)
-            return true;
-        return false;
-    }
-    
-    private boolean propStats() {
-        if (propUpdates > 0
-                || propConflicts > 0
-                || propMerges > 0)
-            return true;
-        return false;
-    }
-
-   
-    /**
-     * Put a hold on the logging of stats.  This method allows
-     * the update method to hold off logging stats until all of
-     * a set of updates are completed.
-     */
-    public void holdStats() {
-        this.holdStats = true;
-    }
-    
-    
-    /**
-     * Perform the logging of any accumulated stats.
-     * The update method will call this after the command completes
-     * so that the stats logging can wait until the very end.
-     */
-    public void releaseStats() {
-        this.holdStats = false;
-        if (command == ISVNNotifyListener.Command.UPDATE) {
-            // In addition to the stats, need to send the 
-            // Updated to revision N. messages that normally
-            // appear in the log.
-            if (lastExternalUpdate != null)
-                logCompleted(lastExternalUpdate);
-            if (lastUpdate != null)
-                logCompleted(lastUpdate);
-        }
-        logStats();
     }
 }

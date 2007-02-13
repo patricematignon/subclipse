@@ -1,151 +1,163 @@
-/*******************************************************************************
- * Copyright (c) 2003, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+/* ====================================================================
+ * The Apache Software License, Version 1.1
  *
- * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
+ * Copyright (c) 2000 The Apache Software Foundation.  All rights
+ * reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ *
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in
+ *    the documentation and/or other materials provided with the
+ *    distribution.
+ *
+ * 3. The end-user documentation included with the redistribution,
+ *    if any, must include the following acknowledgment:
+ *       "This product includes software developed by the
+ *        Apache Software Foundation (http://www.apache.org/)."
+ *    Alternately, this acknowledgment may appear in the software itself,
+ *    if and wherever such third-party acknowledgments normally appear.
+ *
+ * 4. The names "Apache" and "Apache Software Foundation" must
+ *    not be used to endorse or promote products derived from this
+ *    software without prior written permission. For written
+ *    permission, please contact apache@apache.org.
+ *
+ * 5. Products derived from this software may not be called "Apache",
+ *    nor may "Apache" appear in their name, without prior written
+ *    permission of the Apache Software Foundation.
+ *
+ * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
+ * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+ * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
+ * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF
+ * USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
+ * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+ * SUCH DAMAGE.
+ * ====================================================================
+ *
+ * This software consists of voluntary contributions made by many
+ * individuals on behalf of the Apache Software Foundation.  For more
+ * information on the Apache Software Foundation, please see
+ * <http://www.apache.org/>.
+ *
+ */ 
 package org.tigris.subversion.svnclientadapter;
 
 import java.io.File;
 import java.util.Date;
 
 /**
- * An interface defining the status of one subversion item (file or directory) in
- * the working copy or repository.
  * 
  * @author philip schatz
  */
 public interface ISVNStatus {
 
     /**
-     * @return the SVNUrl instance of url of the resource on repository
+     * <p>
+     * Base class for enumerating the possible types for a <code>Status</code>.
+     * </p>
      */
-	SVNUrl getUrl();
-	
-	/**
-	 * @return the url (String) of the resource in repository
-	 */
-	String getUrlString();
+    public static class Kind {
+        private final String _Name;
 
-	/**
-	 * @return the last changed revision or null if resource is not managed 
-	 */
+        public static Kind NONE = new Kind("non-svn");
+        public static Kind NORMAL = new Kind("normal");
+        public static Kind ADDED = new Kind("added");
+        public static Kind MISSING = new Kind("missing");
+        public static Kind INCOMPLETE = new Kind("incomplete");
+        public static Kind DELETED = new Kind("deleted");
+        public static Kind REPLACED = new Kind("replaced");
+        public static Kind MODIFIED = new Kind("modified");
+        public static Kind MERGED = new Kind("merged");
+        public static Kind CONFLICTED = new Kind("conflicted");
+        public static Kind OBSTRUCTED = new Kind("obstructed");
+        public static Kind IGNORED = new Kind("ignored");
+        public static Kind EXTERNAL = new Kind("external");
+        public static Kind UNVERSIONED = new Kind("unversioned");
+        
+        
+        //Constructors
+        /**
+         * <p>
+         * Constructs a <code>Type</code> for the given a type name.</p>
+         *
+         *
+         * @param type Name of the type.
+         * @throws IllegalArgumentException If the parameter is invalid.
+         */
+        private Kind(String name) throws IllegalArgumentException {
+            _Name = name;
+        }
+        
+        public String toString() {
+            return _Name;
+        }
+
+    }
+
+	boolean isIgnored();
+
+	boolean isManaged();
+
+	boolean hasRemote();
+
+	SVNUrl getUrl();
+
 	SVNRevision.Number getLastChangedRevision();
 
-    /**
-     * @return date this resource last changed
-     */
 	Date getLastChangedDate();
 
-	/**
-	 * get the last commit author or null if resource is not versionned
-	 * or if last commit author is unknown
-	 * @return the last commit author or null 
-	 */
 	String getLastCommitAuthor();
 
-    /**
-     * @return the file or directory status
-     */
-	SVNStatusKind getTextStatus();
-
-    /**
-     * @return the file or directory status of base
-     */
-	SVNStatusKind getRepositoryTextStatus();
+	Kind getTextStatus();
 	
 	/**
-     * @return status of properties (either Kind.NORMAL, Kind.CONFLICTED or Kind.MODIFIED)
+	 * will return either Kind.NORMAL, Kind.CONFLICTED or Kind.MODIFIED
+	 * 
 	 */
-	SVNStatusKind getPropStatus();
+	Kind getPropStatus();
 
-    /**
-     * @return the status of the properties base (either Kind.NORMAL, Kind.CONFLICTED or Kind.MODIFIED)
-     */
-	SVNStatusKind getRepositoryPropStatus();
+	boolean isMerged();
+
+	boolean isDeleted();
 
 	/**
-	 * @return the revision of the resource or null if not managed 
+	 * returns true if the resource has been modified.
+	 * modifications to properties are not taken into account.
 	 */
+	boolean isModified();
+
+	boolean isAdded();
+
 	SVNRevision.Number getRevision();
 
-    /**
-     * @return The path to this item relative to the directory from
-     * which <code>status</code> was run.
-     */
+	boolean isCopied();
+	
 	String getPath();
     
     /**
-     * @return The absolute path to this item.
+     * 
+     * @return the absolute file corresponding to this resource
      */
     File getFile();
 
     /**
-     * @return The node kind of the managed resource, or {@link
-     * SVNNodeKind#UNKNOWN} not managed.
+     * @return return the nodekind of the managed resource
+     * if resource is not managed, SVNNodeKind.UNKNOWN is returned 
      */
 	SVNNodeKind getNodeKind();
 
-    /**
-     * @return true when the resource was copied
-     */
-    boolean isCopied();    
-    
-    /**
-     * @return true when the working copy directory is locked. 
-     */
-    boolean isWcLocked();
-    
-    /**
-     * @return true when the resource was switched relative to its parent.
-     */
-    boolean isSwitched();
-    
-    /**
-     * @return the url of the copy source if copied, null otherwise
-     */
-	SVNUrl getUrlCopiedFrom();
-
-    /**
-     * Returns in case of conflict, the file of the most recent repository
-     * version
-     * @return the filename of the most recent repository version
-     */
-    public File getConflictNew();
-
-    /**
-     * Returns in case of conflict, the file of the common base version
-     * @return the filename of the common base version
-     */
-    public File getConflictOld();
-
-    /**
-     * Returns in case of conflict, the file of the former working copy
-     * version
-     * @return the filename of the former working copy version
-     */
-    public File getConflictWorking();
-
-    /**
-     * Returns the lock  owner
-     * @return the lock owner
-     */
-    public String getLockOwner();
-
-    /**
-     * Returns the lock creation date
-     * @return the lock creation date
-     */
-    public Date getLockCreationDate();
-
-    /**
-     * Returns the lock  comment
-     * @return the lock comment
-     */
-    public String getLockComment();
-
+	String getUrlCopiedFrom();
+	
 }

@@ -1,32 +1,70 @@
-/*******************************************************************************
- * Copyright (c) 2003, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+/* ====================================================================
+ * The Apache Software License, Version 1.1
  *
- * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
+ * Copyright (c) 2000 The Apache Software Foundation.  All rights
+ * reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ *
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in
+ *    the documentation and/or other materials provided with the
+ *    distribution.
+ *
+ * 3. The end-user documentation included with the redistribution,
+ *    if any, must include the following acknowledgment:
+ *       "This product includes software developed by the
+ *        Apache Software Foundation (http://www.apache.org/)."
+ *    Alternately, this acknowledgment may appear in the software itself,
+ *    if and wherever such third-party acknowledgments normally appear.
+ *
+ * 4. The names "Apache" and "Apache Software Foundation" must
+ *    not be used to endorse or promote products derived from this
+ *    software without prior written permission. For written
+ *    permission, please contact apache@apache.org.
+ *
+ * 5. Products derived from this software may not be called "Apache",
+ *    nor may "Apache" appear in their name, without prior written
+ *    permission of the Apache Software Foundation.
+ *
+ * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
+ * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+ * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
+ * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF
+ * USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
+ * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+ * SUCH DAMAGE.
+ * ====================================================================
+ *
+ * This software consists of voluntary contributions made by many
+ * individuals on behalf of the Apache Software Foundation.  For more
+ * information on the Apache Software Foundation, please see
+ * <http://www.apache.org/>.
+ *
+ */ 
 package org.tigris.subversion.svnclientadapter.commandline;
 
-import java.io.ByteArrayInputStream;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.List;
 import java.util.StringTokenizer;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.tigris.subversion.svnclientadapter.ISVNLogMessage;
-import org.tigris.subversion.svnclientadapter.ISVNLogMessageChangePath;
-import org.tigris.subversion.svnclientadapter.SVNClientException;
-import org.tigris.subversion.svnclientadapter.SVNLogMessageChangePath;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
@@ -36,25 +74,18 @@ import org.xml.sax.InputSource;
  * 
  * @author Philip Schatz (schatz at tigris)
  */
-class CmdLineLogMessage extends CmdLineXmlCommand implements ISVNLogMessage {
+class CmdLineLogMessage implements ISVNLogMessage {
 
 	private SVNRevision.Number rev;
 	private String author;
 	private Date date;
 	private String msg;
-    private ISVNLogMessageChangePath[] logMessageChangePaths;
 	
-	CmdLineLogMessage(
-            SVNRevision.Number rev, 
-            String author, 
-            Date date, 
-            String msg,
-            ISVNLogMessageChangePath[] logMessageChangePaths){
+	CmdLineLogMessage(SVNRevision.Number rev, String author, Date date, String msg){
         this.rev = rev;
         this.author = author;
         this.date = date;
         this.msg = msg;
-        this.logMessageChangePaths = logMessageChangePaths;
     }
 
     /**
@@ -137,20 +168,12 @@ class CmdLineLogMessage extends CmdLineXmlCommand implements ISVNLogMessage {
 		return msg;
 	}
 	
-    /* (non-Javadoc)
-     * @see java.lang.Object#toString()
-     */
-    public String toString() {
-        return getMessage();
-    }
-
     /**
-     * creates CmdLineLogMessages from a xml string (see svn log --xml -v) 
+     * creates CmdLineLogMessages from a xml string (see svn log --xml) 
      * @param cmdLineResults
-     * @return CmdLineLogMessage[] array created from the supplied xml
-     * @throws SVNClientException
+     * @return
      */
-	public static CmdLineLogMessage[] createLogMessages(byte[] cmdLineResults) throws SVNClientException {
+	public static CmdLineLogMessage[] createLogMessages(String cmdLineResults){
 		Collection logMessages = new ArrayList();
 		
 		try {
@@ -159,95 +182,40 @@ class CmdLineLogMessage extends CmdLineXmlCommand implements ISVNLogMessage {
 			factory.setValidating(false);
     
 			// Create the builder and parse the file
-			InputSource source = new InputSource(new ByteArrayInputStream(cmdLineResults));
+			InputSource source = new InputSource(new StringReader(cmdLineResults));
 
 			Document doc = factory.newDocumentBuilder().parse(source);
 			
-			// This is the XML we need to parse
-			// --verbose mode:
-			//			<logentry revision="5">
-			//				<author>Jesper</author>
-			//				<date>2005-06-18T10:42:52.338920Z</date>
-			//				<paths>
-			//					<path action="A">/trunk/Subclipse-test/org</path>
-			//					<path action="A">/trunk/Subclipse-test/org/tigris</path>
-			//				</paths>
-			//				<msg>This one is really really cool, too!</msg>
-			//			</logentry>
-			
-			// Not --verbose mode:
-			//			<logentry revision="5">
-			//				<author>Jesper</author>
-			//				<date>2005-06-18T10:42:52.338920Z</date>
-			//				<msg>This one is really really cool, too!</msg>
-			//			</logentry>
-
-			
 			NodeList nodes = doc.getElementsByTagName("logentry");
 			
-			for(int i = 0; i < nodes.getLength(); i++) {
+			for(int i = 0; i < nodes.getLength(); i++){
 				Node logEntry = nodes.item(i);
 				
-				Element authorNode = getFirstNamedElement(logEntry, "author");
-
-				Element dateNode;				
-				if (authorNode == null) {
-					dateNode = getFirstNamedElement(logEntry, "date");
-				} else {
-					dateNode = getNextNamedElement(authorNode, "date");	
-				}							
-				if (dateNode == null) throw new Exception("'date' tag expected under 'logentry'");
-
-				Element pathsNode = getNextNamedElement(dateNode, "paths");
-				Element msgNode = getNextNamedElement(pathsNode != null ? pathsNode : dateNode, "msg");
+				Node authorNode = logEntry.getFirstChild();
+				Node dateNode = authorNode.getNextSibling();
+				Node msgNode = dateNode.getNextSibling();
 				Node revisionAttribute = logEntry.getAttributes().getNamedItem("revision");
 
-                SVNRevision.Number rev = (revisionAttribute != null) ? Helper.toRevNum(revisionAttribute.getNodeValue()) : null;
-				String author = (authorNode != null) ? authorNode.getFirstChild().getNodeValue() : "";
+                SVNRevision.Number rev = Helper.toRevNum(revisionAttribute.getNodeValue());
+				String author = authorNode.getFirstChild().getNodeValue();
 				Date date = Helper.convertXMLDate(dateNode.getFirstChild().getNodeValue());
 				Node msgTextNode = msgNode.getFirstChild();
-                String msg = (msgTextNode != null) ? msgTextNode.getNodeValue() : "";
-
-                List paths = new ArrayList();
-				Element pathNode = getFirstNamedElement(pathsNode, "path");
-				while (pathNode != null) {
-                	String path = pathNode.getFirstChild().getNodeValue();
-
-                	NamedNodeMap attributes = pathNode.getAttributes();
-                	char action = attributes.getNamedItem("action").getNodeValue().charAt(0);
-                	Node copyFromPathNode = attributes.getNamedItem("copyfrom-path");
-                	Node copyFromRevNode = attributes.getNamedItem("copyfrom-rev");
-                	String copyFromPath = null;
-                	if (copyFromPathNode != null) {
-                		copyFromPath = copyFromPathNode.getNodeValue();
-                	}
-                	SVNRevision.Number copyFromRev = null;
-                	if (copyFromRevNode != null) {
-                		copyFromRev = Helper.toRevNum(copyFromRevNode.getNodeValue());
-                	}
-                    paths.add(new SVNLogMessageChangePath(
-                            path, copyFromRev, copyFromPath, action));
-					
-                    pathNode = getNextNamedElement(pathNode, "path");
-                }
-				ISVNLogMessageChangePath[] logMessageChangePath = (ISVNLogMessageChangePath[])paths.toArray(new ISVNLogMessageChangePath[paths.size()]);
-					
-                CmdLineLogMessage logMessage = new CmdLineLogMessage(rev, author, date, msg, logMessageChangePath);
+                String msg;
+				if(msgTextNode != null)
+					msg = msgTextNode.getNodeValue();
+				else
+					msg = "";
+                    
+                CmdLineLogMessage logMessage = new CmdLineLogMessage(rev, author, date, msg);     
 
 				logMessages.add(logMessage);				
 			}
+			
 		} catch (Exception e) {
-			throw new SVNClientException(e);
+			e.printStackTrace();
 		} 
 		
 		return (CmdLineLogMessage[]) logMessages.toArray(new CmdLineLogMessage[logMessages.size()]);		
 	
-	}
-
-	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.ISVNLogMessage#getChangedPaths()
-	 */
-	public ISVNLogMessageChangePath[] getChangedPaths() {
-		return logMessageChangePaths;
 	}
 }

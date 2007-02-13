@@ -1,33 +1,68 @@
-/*******************************************************************************
- * Copyright (c) 2004, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+/* ====================================================================
+ * The Apache Software License, Version 1.1
  *
- * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
+ * Copyright (c) 2000 The Apache Software Foundation.  All rights
+ * reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ *
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in
+ *    the documentation and/or other materials provided with the
+ *    distribution.
+ *
+ * 3. The end-user documentation included with the redistribution,
+ *    if any, must include the following acknowledgment:
+ *       "This product includes software developed by the
+ *        Apache Software Foundation (http://www.apache.org/)."
+ *    Alternately, this acknowledgment may appear in the software itself,
+ *    if and wherever such third-party acknowledgments normally appear.
+ *
+ * 4. The names "Apache" and "Apache Software Foundation" must
+ *    not be used to endorse or promote products derived from this
+ *    software without prior written permission. For written
+ *    permission, please contact apache@apache.org.
+ *
+ * 5. Products derived from this software may not be called "Apache",
+ *    nor may "Apache" appear in their name, without prior written
+ *    permission of the Apache Software Foundation.
+ *
+ * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
+ * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+ * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
+ * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF
+ * USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
+ * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+ * SUCH DAMAGE.
+ * ====================================================================
+ *
+ * This software consists of voluntary contributions made by many
+ * individuals on behalf of the Apache Software Foundation.  For more
+ * information on the Apache Software Foundation, please see
+ * <http://www.apache.org/>.
+ *
+ */ 
 package org.tigris.subversion.svnclientadapter.javahl;
 
-import java.util.logging.Logger;
-
-import org.tigris.subversion.javahl.ChangePath;
 import org.tigris.subversion.javahl.DirEntry;
-import org.tigris.subversion.javahl.Lock;
 import org.tigris.subversion.javahl.LogMessage;
 import org.tigris.subversion.javahl.NodeKind;
 import org.tigris.subversion.javahl.Revision;
-import org.tigris.subversion.javahl.RevisionKind;
-import org.tigris.subversion.javahl.ScheduleKind;
 import org.tigris.subversion.javahl.Status;
-import org.tigris.subversion.javahl.StatusKind;
-import org.tigris.subversion.svnclientadapter.ISVNLogMessageChangePath;
-import org.tigris.subversion.svnclientadapter.SVNLogMessageChangePath;
+import org.tigris.subversion.svnclientadapter.ISVNLogMessage;
+import org.tigris.subversion.svnclientadapter.ISVNStatus;
 import org.tigris.subversion.svnclientadapter.SVNNodeKind;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
-import org.tigris.subversion.svnclientadapter.SVNScheduleKind;
-import org.tigris.subversion.svnclientadapter.SVNStatusKind;
 
 /**
  * Convert from javahl types to subversion.svnclientadapter.* types 
@@ -36,17 +71,10 @@ import org.tigris.subversion.svnclientadapter.SVNStatusKind;
  */
 public class JhlConverter {
 
-	private static final Logger log = Logger.getLogger(JhlConverter.class.getName());	
-	
 	private JhlConverter() {
 		//non-instantiable
 	}
 	
-	/**
-	 * Convert clientAdapter's {@link SVNRevision} into JavaHL's {@link Revision}
-	 * @param svnRevision
-	 * @return a {@link Revision} representing suppplied SVNRevision
-	 */
     public static Revision convert(SVNRevision svnRevision) {
         switch(svnRevision.getKind()) {
             case SVNRevision.Kind.base : return Revision.BASE;
@@ -57,48 +85,27 @@ public class JhlConverter {
             case SVNRevision.Kind.previous : return Revision.PREVIOUS;
             case SVNRevision.Kind.unspecified : return Revision.START;
             case SVNRevision.Kind.working : return Revision.WORKING;
-            default: {
-        		log.severe("unknown revision kind :"+svnRevision.getKind());
-            	return Revision.START; // should never go here
-            }
+            default: return Revision.START; // should never go here
         }
     }
 
-	/**
-	 * Convert JavaHL's {@link Revision} into clientAdapter's {@link SVNRevision} 
-	 * @param rev
-	 * @return a {@link SVNRevision} representing suppplied Revision
-	 */
-	public static SVNRevision convert(Revision rev) {
+	static SVNRevision convert(Revision rev) {
 		switch (rev.getKind()) {
-			case RevisionKind.base :
+			case Revision.Kind.base :
 				return SVNRevision.BASE;
-			case RevisionKind.committed :
+			case Revision.Kind.committed :
 				return SVNRevision.COMMITTED;
-			case RevisionKind.number :
+			case Revision.Kind.number :
 				Revision.Number n = (Revision.Number) rev;
-				if (n.getNumber() == -1) {
-					// we return null when resource is not managed ...
-					return null;
-				} else {
-					return new SVNRevision.Number(n.getNumber());
-				}
-			case RevisionKind.previous :
+				return new SVNRevision.Number(n.getNumber());
+			case Revision.Kind.previous :
 				return SVNRevision.PREVIOUS;
-			case RevisionKind.working :
+			case Revision.Kind.working :
 				return SVNRevision.WORKING;
 			default :
 				return SVNRevision.HEAD;
 		}
 	}
-    
-    static SVNRevision.Number convertRevisionNumber(long revisionNumber) {
-    	if (revisionNumber == -1) {
-    		return null;
-        } else {
-        	return new SVNRevision.Number(revisionNumber); 
-        }
-    }
 
     public static SVNNodeKind convertNodeKind(int javahlNodeKind) {
         switch(javahlNodeKind) {
@@ -106,10 +113,7 @@ public class JhlConverter {
             case NodeKind.file : return SVNNodeKind.FILE; 
             case NodeKind.none : return SVNNodeKind.NONE; 
             case NodeKind.unknown : return SVNNodeKind.UNKNOWN;
-            default: {
-            	log.severe("unknown node kind :"+javahlNodeKind);
-            	return SVNNodeKind.UNKNOWN; // should never go here
-            }
+            default: return SVNNodeKind.UNKNOWN; // should never go here
         }
     }
 
@@ -117,40 +121,39 @@ public class JhlConverter {
 		return new JhlStatus(status);
 	}
 
-    public static SVNStatusKind convertStatusKind(int kind) {
+    public static ISVNStatus.Kind convertStatusKind(int kind) {
         switch (kind) {
-            case StatusKind.none :
-                return SVNStatusKind.NONE;
-            case StatusKind.normal :
-                return SVNStatusKind.NORMAL;                
-            case StatusKind.added :
-                return SVNStatusKind.ADDED;
-            case StatusKind.missing :
-                return SVNStatusKind.MISSING;
-            case StatusKind.incomplete :
-                return SVNStatusKind.INCOMPLETE;
-            case StatusKind.deleted :
-                return SVNStatusKind.DELETED;
-            case StatusKind.replaced :
-                return SVNStatusKind.REPLACED;                                                
-            case StatusKind.modified :
-                return SVNStatusKind.MODIFIED;
-            case StatusKind.merged :
-                return SVNStatusKind.MERGED;                
-            case StatusKind.conflicted :
-                return SVNStatusKind.CONFLICTED;
-            case StatusKind.obstructed :
-                return SVNStatusKind.OBSTRUCTED;
-            case StatusKind.ignored :
-                return SVNStatusKind.IGNORED;  
-            case StatusKind.external:
-                return SVNStatusKind.EXTERNAL;
-            case StatusKind.unversioned :
-                return SVNStatusKind.UNVERSIONED;
-            default : {
-            	log.severe("unknown status kind :"+kind);
-                return SVNStatusKind.NONE;
-            }
+            case Status.Kind.none :
+                return ISVNStatus.Kind.NONE;
+            case Status.Kind.normal :
+                return ISVNStatus.Kind.NORMAL;                
+            case Status.Kind.added :
+                return ISVNStatus.Kind.ADDED;
+            case Status.Kind.missing :
+                return ISVNStatus.Kind.MISSING;
+            case Status.Kind.incomplete :
+                return ISVNStatus.Kind.INCOMPLETE;
+            case Status.Kind.deleted :
+                return ISVNStatus.Kind.DELETED;
+            case Status.Kind.replaced :
+                return ISVNStatus.Kind.REPLACED;                                                
+            case Status.Kind.modified :
+                return ISVNStatus.Kind.MODIFIED;
+            case Status.Kind.merged :
+                return ISVNStatus.Kind.MERGED;                
+            case Status.Kind.conflicted :
+                return ISVNStatus.Kind.CONFLICTED;
+            case Status.Kind.obstructed :
+                return ISVNStatus.Kind.OBSTRUCTED;
+            case Status.Kind.ignored :
+                return ISVNStatus.Kind.IGNORED;  
+            // Status.Kind.external should be added to javahl ...              
+//            case Status.Kind.external:
+//                return ISVNStatus.Kind.EXTERNAL;
+            case Status.Kind.unversioned :
+                return ISVNStatus.Kind.UNVERSIONED;
+            default :
+                return ISVNStatus.Kind.NONE;
         }
     }
 
@@ -158,7 +161,7 @@ public class JhlConverter {
 	/**
 	 * Wrap everything up.
 	 * @param dirEntry
-	 * @return an JhlDirEntry[] array constructed from the given DirEntry[] 
+	 * @return
 	 */
 	static JhlDirEntry[] convert(DirEntry[] dirEntry) {
 		JhlDirEntry[] entries = new JhlDirEntry[dirEntry.length];
@@ -172,7 +175,7 @@ public class JhlConverter {
 		return new JhlDirEntry(dirEntry);
 	}
 
-	static JhlLogMessage[] convert(LogMessage[] msg) {
+	static ISVNLogMessage[] convert(LogMessage[] msg) {
 		JhlLogMessage[] messages = new JhlLogMessage[msg.length];
 		for(int i=0; i < msg.length; i++) {
 			messages[i] = new JhlLogMessage(msg[i]);
@@ -180,43 +183,11 @@ public class JhlConverter {
 		return messages;
 	}
     
-    public static JhlStatus[] convert(Status[] status) {
+    static ISVNStatus[] convert(Status[] status) {
         JhlStatus[] jhlStatus = new JhlStatus[status.length];
         for(int i=0; i < status.length; i++) {
             jhlStatus[i] = new JhlStatus(status[i]);
         }
         return jhlStatus;
-    }
-    
-    static ISVNLogMessageChangePath[] convert(ChangePath[] changePaths) {
-        if (changePaths == null)
-            return new SVNLogMessageChangePath[0];
-        SVNLogMessageChangePath[] jhlChangePaths = new SVNLogMessageChangePath[changePaths.length];
-        for(int i=0; i < changePaths.length; i++) {
-        	jhlChangePaths[i] = new JhlLogMessageChangePath(changePaths[i]);
-        }
-        return jhlChangePaths;
-    }
-    
-    public static SVNScheduleKind convertScheduleKind(int kind) {
-        switch (kind) {
-        	case ScheduleKind.normal:
-        		return SVNScheduleKind.NORMAL;
-        	case ScheduleKind.delete:
-        		return SVNScheduleKind.DELETE;
-        	case ScheduleKind.add:
-        		return SVNScheduleKind.ADD;
-        	case ScheduleKind.replace:
-        		return SVNScheduleKind.REPLACE;        	
-        	default : {
-        		log.severe("unknown schedule kind :"+kind);
-        		return SVNScheduleKind.NORMAL;
-        	}
-        }
-    }
-    
-    public static JhlLock convertLock(Lock lock) {
-        return new JhlLock(lock);
-    }
-    
+    }    
 }

@@ -1,13 +1,57 @@
-/*******************************************************************************
- * Copyright (c) 2003, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+/* ====================================================================
+ * The Apache Software License, Version 1.1
  *
- * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
+ * Copyright (c) 2000 The Apache Software Foundation.  All rights
+ * reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ *
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in
+ *    the documentation and/or other materials provided with the
+ *    distribution.
+ *
+ * 3. The end-user documentation included with the redistribution,
+ *    if any, must include the following acknowledgment:
+ *       "This product includes software developed by the
+ *        Apache Software Foundation (http://www.apache.org/)."
+ *    Alternately, this acknowledgment may appear in the software itself,
+ *    if and wherever such third-party acknowledgments normally appear.
+ *
+ * 4. The names "Apache" and "Apache Software Foundation" must
+ *    not be used to endorse or promote products derived from this
+ *    software without prior written permission. For written
+ *    permission, please contact apache@apache.org.
+ *
+ * 5. Products derived from this software may not be called "Apache",
+ *    nor may "Apache" appear in their name, without prior written
+ *    permission of the Apache Software Foundation.
+ *
+ * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
+ * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+ * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
+ * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF
+ * USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
+ * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+ * SUCH DAMAGE.
+ * ====================================================================
+ *
+ * This software consists of voluntary contributions made by many
+ * individuals on behalf of the Apache Software Foundation.  For more
+ * information on the Apache Software Foundation, please see
+ * <http://www.apache.org/>.
+ *
+ */ 
 package org.tigris.subversion.svnclientadapter;
 
 import java.text.DateFormat;
@@ -22,10 +66,8 @@ import java.util.Locale;
  * the static method getRevision has then been added to the class
  *
  */
-public class SVNRevision 
+public class SVNRevision
 {
-	// See chapter 3 section 3.3 of the SVN book for valid date strings 
-	protected static final DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd'T'HHmmssZ");
     protected int revKind;
 
     public SVNRevision(int kind)
@@ -41,7 +83,6 @@ public class SVNRevision
     public String toString()
     {
         switch(revKind) {
-            case Kind.unspecified : return "START";
             case Kind.base : return "BASE";
             case Kind.committed : return "COMMITTED";
             case Kind.head : return "HEAD";
@@ -58,14 +99,6 @@ public class SVNRevision
             return false;
 
         return ((SVNRevision)target).revKind == revKind;        
-    }
-    
-    /* (non-Javadoc)
-     * @see java.lang.Object#hashCode()
-     */
-    public int hashCode()
-    {
-    	return revKind;
     }
 
     public static final SVNRevision HEAD = new SVNRevision(Kind.head);
@@ -103,11 +136,6 @@ public class SVNRevision
 
             return ((SVNRevision.Number)target).revNumber == revNumber;        
         }
-        
-        public int hashCode()
-        {
-        	return (int) revNumber;
-        }
     }
 
     public static class DateSpec extends SVNRevision
@@ -118,35 +146,22 @@ public class SVNRevision
             super(Kind.date);
             revDate = date;
         }
-        
         public Date getDate()
         {
             return revDate;
         }
 
-        /* (non-Javadoc)
-         * @see java.lang.Object#toString()
-         */
         public String toString() {
-            return '{' + dateFormat.format(revDate)+ '}';
+            
+            SimpleDateFormat dateFormat = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss Z", Locale.US); 
+            return '{'+dateFormat.format(revDate)+'}';
         }
 
-        /* (non-Javadoc)
-         * @see java.lang.Object#equals(java.lang.Object)
-         */
         public boolean equals(Object target) {
             if (!super.equals(target))
                 return false;
 
             return ((SVNRevision.DateSpec)target).revDate.equals(revDate);        
-        }
-        
-        /* (non-Javadoc)
-         * @see java.lang.Object#hashCode()
-         */
-        public int hashCode()
-        {
-        	return revDate.hashCode();
         }
         
     }
@@ -192,20 +207,15 @@ public class SVNRevision
     /**
      * get a revision from a string
      * revision can be :
-     * - a date with the format according to <code>dateFormat</code>
+     * - a date with the following format : MM/DD/YYYY HH:MM AM_PM
      * - a revision number
      * - HEAD, BASE, COMMITED or PREV
      * 
      * @param revision
-     * @param aDateFormat
      * @return Revision
-     * @throws ParseException when the revision string cannot be parsed
      */
-    public static SVNRevision getRevision(String revision, SimpleDateFormat aDateFormat) throws ParseException {
-
-    	if ((revision == null) || (revision.equals("")))
-    		return null;
-    	
+    public static SVNRevision getRevision(String revision) throws ParseException {
+        
         // try special KEYWORDS
         if (revision.compareToIgnoreCase("HEAD") == 0)
             return SVNRevision.HEAD; // latest in repository
@@ -228,10 +238,9 @@ public class SVNRevision
         } catch (NumberFormatException e)
         {
         }
-
+        
         // try date
-        SimpleDateFormat df = (aDateFormat != null) ? aDateFormat : new SimpleDateFormat("MM/dd/yyyy hh:mm a", Locale.US);
-
+        DateFormat df = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT, Locale.US);
         try
         {
             Date revisionDate = df.parse(revision);
@@ -240,22 +249,7 @@ public class SVNRevision
         {
         }
         
-        throw new ParseException("Invalid revision. Revision should be a number, a date in " + df.toPattern() + " format or HEAD, BASE, COMMITED or PREV",0);
-    }    
-
-    /**
-     * get a revision from a string
-     * revision can be :
-     * - a date with the following format : MM/DD/YYYY HH:MM AM_PM
-     * - a revision number
-     * - HEAD, BASE, COMMITED or PREV
-     * 
-     * @param revision
-     * @return Revision
-     * @throws ParseException when the revision string cannot be parsed
-     */
-    public static SVNRevision getRevision(String revision) throws ParseException {
-    	return getRevision(revision, new SimpleDateFormat("MM/dd/yyyy hh:mm a", Locale.US));
+        throw new ParseException("Invalid revision. Revision should be a number, a date in MM/DD/YYYY HH:MM AM_PM format or HEAD, BASE, COMMITED or PREV",0);
     }    
     
 }

@@ -1,275 +1,181 @@
-/*******************************************************************************
- * Copyright (c) 2004, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+/* ====================================================================
+ * The Apache Software License, Version 1.1
  *
- * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
+ * Copyright (c) 2000 The Apache Software Foundation.  All rights
+ * reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ *
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in
+ *    the documentation and/or other materials provided with the
+ *    distribution.
+ *
+ * 3. The end-user documentation included with the redistribution,
+ *    if any, must include the following acknowledgment:
+ *       "This product includes software developed by the
+ *        Apache Software Foundation (http://www.apache.org/)."
+ *    Alternately, this acknowledgment may appear in the software itself,
+ *    if and wherever such third-party acknowledgments normally appear.
+ *
+ * 4. The names "Apache" and "Apache Software Foundation" must
+ *    not be used to endorse or promote products derived from this
+ *    software without prior written permission. For written
+ *    permission, please contact apache@apache.org.
+ *
+ * 5. Products derived from this software may not be called "Apache",
+ *    nor may "Apache" appear in their name, without prior written
+ *    permission of the Apache Software Foundation.
+ *
+ * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
+ * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+ * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
+ * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF
+ * USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
+ * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+ * SUCH DAMAGE.
+ * ====================================================================
+ *
+ * This software consists of voluntary contributions made by many
+ * individuals on behalf of the Apache Software Foundation.  For more
+ * information on the Apache Software Foundation, please see
+ * <http://www.apache.org/>.
+ *
+ */
 package org.tigris.subversion.svnclientadapter.commandline;
 
 import java.io.File;
 
-import org.tigris.subversion.svnclientadapter.SVNStatusKind;
-import org.tigris.subversion.svnclientadapter.utils.SVNStatusUtils;
+import org.tigris.subversion.svnclientadapter.ISVNStatus;
 
-abstract class CmdLineStatusPart {
+/**
+ * Represents one line in the result of a "svn status -v --no-ignore"command
+ */
+class CmdLineStatusPart {
 
-	protected SVNStatusKind textStatus;
-	protected SVNStatusKind propStatus;
+	//"Constants"
+	public static final int STATUS_FILE_WIDTH = 40;
+
+	//Fields
+	private char textStatus;
+	private char propStatus;
 	
-	protected CmdLineStatusPart(SVNStatusKind textStatus, SVNStatusKind propStatus) {
-		super();
-		this.textStatus = textStatus;
-		this.propStatus = propStatus;
+	private char history;
+    private File file;
+
+
+    //Constructors
+    /**
+     * here are some statusLine samples :
+     * A               0       ?   ?           added.txt
+     * I                                       ignored.txt
+     * Note that there is not output for files that do not exist and are not deleted
+     */    
+	CmdLineStatusPart(String statusLine) {
+		setStatus(statusLine);
 	}
 
-	public boolean isManaged()
-	{
-		return SVNStatusUtils.isManaged(textStatus);
+	//Methods
+	private void setStatus(String statusLine) {
+		textStatus = statusLine.charAt(0);
+		propStatus = statusLine.charAt(1);
+		history = statusLine.charAt(3);
+        file = new File(statusLine.substring(STATUS_FILE_WIDTH));
+	}
+
+	public boolean isIgnored() {
+		return (textStatus == 'I');
+	}
+
+	public boolean isManaged() {
+		return textStatus != '?';
 	}
 
 	/**
-	 * @return Whether this item was copied from another location.
-	 */
-	public abstract boolean isCopied();
-
-	/**
-	 * @return Whether this item's wc directory is locked.
-	 */
-	public abstract boolean isWcLocked();
-
-	/**
-	 * @return Whether this item was switched.
-	 */
-	public abstract boolean isSwitched();
-
-	/**
-	 * @return true if the resource has a remote counter-part 
+	 * tells if the resource has a remote counter-part
+	 * @return
 	 */
 	public boolean hasRemote() {
-		return (isManaged() && getTextStatus() != SVNStatusKind.ADDED);
+		ISVNStatus.Kind textStatus = getTextStatus();
+		return ((isManaged()) && (textStatus != ISVNStatus.Kind.ADDED));
 	}
 
-	/**
-	 * @return The status of the item itself (e.g. directory or file).
-	 */
-	public SVNStatusKind getTextStatus()
-	{
-		return textStatus;
+	public ISVNStatus.Kind getTextStatus() {
+		switch (textStatus) {
+			case ' ' : // none or normal
+				return ISVNStatus.Kind.NORMAL;
+			case 'A' :
+				return ISVNStatus.Kind.ADDED;
+            case '!' : // missing or incomplete
+                return ISVNStatus.Kind.MISSING;
+			case 'D' :
+				return ISVNStatus.Kind.DELETED;
+            case 'R' :
+                return ISVNStatus.Kind.REPLACED;
+			case 'M' :
+				return ISVNStatus.Kind.MODIFIED;
+            case 'G' :
+                return ISVNStatus.Kind.MERGED;
+			case 'C' :
+				return ISVNStatus.Kind.CONFLICTED;
+            case '~' :
+                return ISVNStatus.Kind.OBSTRUCTED;
+			case 'I' :
+				return ISVNStatus.Kind.IGNORED;
+            case 'X' :
+                return ISVNStatus.Kind.EXTERNAL;
+			case '?' :
+				return ISVNStatus.Kind.UNVERSIONED;
+			default :
+				return ISVNStatus.Kind.NONE;
+		}
 	}
-	
-	/* package */ void setTextStatus(SVNStatusKind textSt)
-	{
-		this.textStatus = textSt;
+
+	public ISVNStatus.Kind getPropStatus() {
+		switch (textStatus) {
+			case ' ' : // no modifications
+				return ISVNStatus.Kind.NORMAL;
+			case 'C' :
+				return ISVNStatus.Kind.CONFLICTED;
+			case 'M' :
+				return ISVNStatus.Kind.MODIFIED;
+			default :
+				return ISVNStatus.Kind.NORMAL;
+		}		
 	}
-	
-	public SVNStatusKind getPropStatus()
-	{
-		return propStatus;
+
+	public boolean isMerged() {
+		return (textStatus == 'G');
 	}
 
-    public abstract SVNStatusKind getRepositoryTextStatus();
-
-    public abstract SVNStatusKind getRepositoryPropStatus();
-
-	/**
-	 * @return The absolute path to this item.
-	 */
-	public abstract File getFile();
-
-	public abstract String getPath();
-
-	static class CmdLineStatusPartFromStdout extends CmdLineStatusPart {
-
-		public static final int STATUS_FILE_WIDTH = 40;
-		protected String path;
-		protected File file;
-		protected char history;
-		protected boolean wcLocked;
-		protected boolean switched;
-
-		/**
-	     * here are some statusLine samples :
-	     * A               0       ?   ?           added.txt
-	     * I                                       ignored.txt
-	     * Note that there is not output for files that do not exist and are not deleted
-	     */    
-		CmdLineStatusPartFromStdout(String statusLine) {
-			super(getTextStatus(statusLine.charAt(0)), getPropStatus(statusLine.charAt(1)));
-			wcLocked = getWcLockStatus(statusLine.charAt(2));
-			history = statusLine.charAt(3);
-			switched = getSwitchedStatus(statusLine.charAt(4));
-			path = statusLine.substring(STATUS_FILE_WIDTH).trim();	                
-	        file = new File(path);
-		}
-
-		/**
-		 * @return Whether this item was copied from another location.
-		 */
-		public boolean isCopied() {
-			return (history == '+');
-		}
-
- 		/**
-		 * @return Whether this item's wc directory is locked.
-		 */
-		public boolean isWcLocked() {
-			return wcLocked;
-		}
-
- 		/**
-		 * @return Whether this item was switched relative to its parent
-		 */
-		public boolean isSwitched() {
-			return switched;
-		}
-
-		/**
-		 * @return The status of the item itself (e.g. directory or file).
-		 */
-		private static SVNStatusKind getTextStatus(char statusChar) {
-			switch (statusChar) {
-				case ' ' : // none or normal
-					return SVNStatusKind.NORMAL;
-				case 'A' :
-					return SVNStatusKind.ADDED;
-		        case '!' : // missing or incomplete
-		            return SVNStatusKind.MISSING;
-				case 'D' :
-					return SVNStatusKind.DELETED;
-		        case 'R' :
-		            return SVNStatusKind.REPLACED;
-				case 'M' :
-					return SVNStatusKind.MODIFIED;
-		        case 'G' :
-		            return SVNStatusKind.MERGED;
-				case 'C' :
-					return SVNStatusKind.CONFLICTED;
-		        case '~' :
-		            return SVNStatusKind.OBSTRUCTED;
-				case 'I' :
-					return SVNStatusKind.IGNORED;
-		        case 'X' :
-		            return SVNStatusKind.EXTERNAL;
-				case '?' :
-					return SVNStatusKind.UNVERSIONED;
-				default :
-					return SVNStatusKind.NONE;
-			}
-		}
-
-		private static SVNStatusKind getPropStatus(char statusChar) {
-			switch (statusChar) {
-				case ' ' : // no modifications
-					return SVNStatusKind.NONE;
-				case 'C' :
-					return SVNStatusKind.CONFLICTED;
-				case 'M' :
-					return SVNStatusKind.MODIFIED;
-				default :
-					return SVNStatusKind.NORMAL;
-			}		
-		}
-
-		private static boolean getWcLockStatus(char statusChar) {
-			switch (statusChar) {
-				case ' ': // no lock
-					return false;
-				case 'L':
-					return true;
-				default:
-					return false;
-			}
-		}			
-
-		private static boolean getSwitchedStatus(char statusChar) {
-			switch (statusChar) {
-				case ' ': // no switch
-					return false;
-				case 'S':
-					return true;
-				default:
-					return false;
-			}
-		}			
-
-		/**
-		 * @return The absolute path to this item.
-		 */
-		public File getFile() {
-		    return file.getAbsoluteFile();
-		}
-
-		public String getPath() {
-		    return path;
-		}
-
-	    public SVNStatusKind getRepositoryTextStatus()
-	    {
-	    	//Not available from cmdLine's stdout
-	    	return null;
-	    }
-
-	    public SVNStatusKind getRepositoryPropStatus()
-	    {
-	    	//Not available from cmdLine's stdout
-	    	return null;
-	    }
-
+	public boolean isDeleted() {
+		return (textStatus == 'D');
 	}
-	
-	static class CmdLineStatusPartFromXml extends CmdLineStatusPart {
 
-		private CmdLineStatusFromXml status;
-		
-		private CmdLineStatusPartFromXml(CmdLineStatusFromXml status)
-		{
-			super(status.getTextStatus(), status.getPropStatus());
-			this.status = status;
-		}
-		
-		public static CmdLineStatusPartFromXml[] createStatusParts(byte[] cmdLineResults) throws CmdLineException {
-			CmdLineStatusFromXml[] statuses = CmdLineStatusFromXml.createStatuses(cmdLineResults);
-			CmdLineStatusPartFromXml[] result = new CmdLineStatusPartFromXml[statuses.length];
-			for (int i = 0; i < statuses.length; i++) {
-				result[i] = new CmdLineStatusPartFromXml(statuses[i]);
-			}
-			return result;
-		}
-
-		public File getFile() {
-			return status.getFile();
-		}
-
-		public boolean isCopied() {
-			return status.isCopied();
-		}
-
-		public boolean isWcLocked() {
-			return status.isWcLocked();
-		}
-
-		public boolean isSwitched() {
-			return status.isSwitched();
-		}
-
-	    public SVNStatusKind getRepositoryTextStatus()
-	    {
-	    	return status.getRepositoryTextStatus();
-	    }
-
-	    public SVNStatusKind getRepositoryPropStatus()
-	    {
-	    	return status.getRepositoryPropStatus();
-	    }
-
-		public String getPath() {
-		    return status.getPath();
-		}
-
+	public boolean isModified() {
+		return (textStatus == 'M');
 	}
+
+	public boolean isAdded() {
+		return (textStatus == 'A');
+	}
+
+	public boolean isCopied() {
+		return (history == '+');
+	}
+
+    public File getFile() {
+        return file.getAbsoluteFile();
+    }
+
 }
-

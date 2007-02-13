@@ -1,230 +1,780 @@
-/*******************************************************************************
- * Copyright (c) 2003, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+/* ====================================================================
+ * The Apache Software License, Version 1.1
  *
- * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
+ * Copyright (c) 2000 The Apache Software Foundation.  All rights
+ * reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ *
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in
+ *    the documentation and/or other materials provided with the
+ *    distribution.
+ *
+ * 3. The end-user documentation included with the redistribution,
+ *    if any, must include the following acknowledgment:
+ *       "This product includes software developed by the
+ *        Apache Software Foundation (http://www.apache.org/)."
+ *    Alternately, this acknowledgment may appear in the software itself,
+ *    if and wherever such third-party acknowledgments normally appear.
+ *
+ * 4. The names "Apache" and "Apache Software Foundation" must
+ *    not be used to endorse or promote products derived from this
+ *    software without prior written permission. For written
+ *    permission, please contact apache@apache.org.
+ *
+ * 5. Products derived from this software may not be called "Apache",
+ *    nor may "Apache" appear in their name, without prior written
+ *    permission of the Apache Software Foundation.
+ *
+ * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
+ * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+ * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
+ * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF
+ * USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
+ * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+ * SUCH DAMAGE.
+ * ====================================================================
+ *
+ * This software consists of voluntary contributions made by many
+ * individuals on behalf of the Apache Software Foundation.  For more
+ * information on the Apache Software Foundation, please see
+ * <http://www.apache.org/>.
+ *
+ */
 package org.tigris.subversion.svnclientadapter.commandline;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
+import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Iterator;
 import java.util.StringTokenizer;
 
+import org.tigris.subversion.svnclientadapter.ISVNNotifyListener;
+
 /**
- * Common superclass for both SvnCommandLine and SvnAdminCommandLine 
+ * <p>
+ * Performs the gruntwork of calling "svn".
+ * Is a bare-bones interface to using the Subversion commandline client.</p>
  *  
  * @author Philip Schatz (schatz at tigris)
- * @author Cédric Chabanois (cchabanois at no-log.org)
- * @author Daniel Rall
  */
-abstract class CommandLine {
+class CommandLine {
 
-	protected String commandName;
-    protected CmdLineNotificationHandler notificationHandler;
-    protected Process process;
+	private String CMD;
+    private CmdLineNotificationHandler notificationHandler;
     
-	protected CommandLine(String commandName, CmdLineNotificationHandler notificationHandler) {
-		this.commandName = commandName;
+	private static String user;
+	private static String pass;
+
+	//Constructors
+	CommandLine(String svnPath,CmdLineNotificationHandler notificationHandler) {
+		CMD = svnPath;
         this.notificationHandler = notificationHandler;
 	}
 
+	//Methods
 	String version() throws CmdLineException {
-		CmdArguments args = new CmdArguments();
+		ArrayList args = new ArrayList();
 		args.add("--version");
 		return execString(args,false);
 	}
 
+	/**
+	 * <p>
+	 * Adds an unversioned file into the repository.</p>
+	 * 
+	 * @param resource Local path of resource to add.
+	 * @param recursive true if this is a directory
+	 *   and its children should be traversed
+	 *   recursively.
+	 */
+	String add(String path, boolean recursive) throws CmdLineException {
+		notificationHandler.setCommand(ISVNNotifyListener.Command.ADD);
+		ArrayList args = new ArrayList();
+		args.add("add");
+		if (!recursive)
+			args.add("-N");
+		args.add(path);
+		return execString(args,false);
+	}
+
+	private ArrayList addAuthInfo(ArrayList arguments) {
+		if (user != null && pass != null && user.length() > 0) {
+			arguments.add("--username");
+			arguments.add(user);
+			arguments.add("--password");
+			arguments.add(pass);
+			arguments.add("--non-interactive");			
+		}
+		return arguments;
+	}
+
+	/**
+	 * <p>
+	 * Output the content of specified file or URL.</p>
+	 * 
+	 * @param url Either the local path to a file, or URL
+	 *   to print the contents of.
+	 * @return An stream containing the contents of the file.
+	 */
+	InputStream cat(String url, String revision) throws CmdLineException {
+        notificationHandler.setCommand(ISVNNotifyListener.Command.CAT);
+		ArrayList args = new ArrayList();
+		args.add("cat");
+		args.add("-r");
+		args.add(validRev(revision));
+		args.add(url);
+		addAuthInfo(args);
+		
+		Process proc =
+			execProcess(args);
+
+		InputStream content = proc.getInputStream();
+		return content;
+	}
+
+	/**
+	 * <p>
+	 * Send changes from your working copy to the 
+	 * repository.</p>
+	 *   
+	 * @param path The local path to the folder(s)/file(s)
+	 *   to commit.
+	 * @param message The message associated with the
+	 *   committed resources.
+	 * @throws CmdLineException
+	 */
+	String checkin(String[] path, String message) throws CmdLineException {
+        notificationHandler.setCommand(ISVNNotifyListener.Command.COMMIT);
+		ArrayList args = new ArrayList();
+		args.add("ci");
+		args.add("-m");
+		args.add(message);
+		addAuthInfo(args);
+		        
+        for (int i = 0; i < path.length;i++) {
+        	args.add(path[i]);
+        }
+        
+		return execString(args,false);
+	}
+
+	/**
+	 * <p>
+	 * Recursively clean up the working copy, 
+	 * removing locks, resuming unfinished operations.</p>
+	 * 
+	 * @param path The local path to clean up.
+	 */
+	void cleanup(String path) throws CmdLineException {
+//        notificationHandler.setCommand(ISVNNotifyListener.Command.CLEANUP);
+		ArrayList args = new ArrayList();
+		args.add("cleanup");
+		args.add(path);
+		execVoid(args);
+	}
+
+	/**
+	 * <p>
+	 * Check out a working copy from a repository.</p>
+	 *
+	 * @param url The URL to check out from.
+	 * @param destination The local directory to check out to.
+	 * @param revision The revision to check out.
+	 *   Defaults to <tt>"HEAD"</tt>.
+	 * @param recursive true if subdirs should be checked out recursively.
+	 * @throws CmdLineException
+	 */
+	String checkout(String url, String destination, String revision, boolean recursive)
+		throws CmdLineException {
+        notificationHandler.setCommand(ISVNNotifyListener.Command.CHECKOUT);
+		ArrayList args = new ArrayList();
+		args.add("co");
+		args.add("-r");
+		args.add(validRev(revision));
+		args.add(url);
+		args.add(destination);
+		
+		if (!recursive)
+			args.add("-N");
+		addAuthInfo(args);
+
+		return execString(args,false);
+	}
+
+	/**
+	 * <p>
+	 * Duplicate something in working copy or repos,
+	 * remembering history.</p>
+	 * 
+	 * <p>
+	 * <tt>src</tt> and <tt>dest</tt> can each be either a working copy (WC) path or URL.</p>
+	 * <dl>
+	 * <dt>WC -&gt; WC</dt>
+	 * <dd>copy and schedule for addition (with history)</dd>
+	 * 
+	 * <dt>WC -&gt; URL</dt>
+	 * <dd>immediately commit a copy of WC to URL</dd>
+	 * 
+	 * <dt>URL -&gt; WC</dt>
+	 * <dd>check out URL into WC, schedule for addition</dd>
+	 * 
+	 * <dt>URL -&gt; URL</dt>
+	 * <dd>complete server-side copy;  used to branch and tag</dd>
+	 * </dl>
+	 * 
+	 * @param src Local path or URL to copy from.
+	 * @param dest Local path or URL to copy to.
+	 * @param message Commit message.
+	 * @param revision Optional revision to copy from. 
+	 */
+	void copy(String src, String dest, String message, String revision) throws CmdLineException {
+        notificationHandler.setCommand(ISVNNotifyListener.Command.COPY);        
+		ArrayList args = new ArrayList();
+		args.add("cp");
+		args.add("-r");
+		args.add(validRev(revision));
+		args.add("-m");
+		args.add(message);
+		args.add(src);
+		args.add(dest);
+		addAuthInfo(args);
+		
+		execVoid(args);
+	}
+
+	/**
+	 * <p>
+	 * Duplicate a resource in local file system.</p>
+	 * 
+	 * @param src Local path to copy from.
+	 * @param dest Local destination path.
+	 * @throws CmdLineException
+	 */
+	void copy(String src, String dest) throws CmdLineException {
+        notificationHandler.setCommand(ISVNNotifyListener.Command.COPY);
+		ArrayList args = new ArrayList();
+		args.add("cp");
+		args.add(src);
+		args.add(dest);
+		addAuthInfo(args);
+		execVoid(args);
+	}
+
+	/**
+	 * <p>
+	 * Remove files and directories from version control.</p>
+	 *   
+	 * @param target Local path or URL to remove.
+	 * @param message Associated message when deleting from
+	 *   URL.
+	 */
+	String delete(String[] target, String message) throws CmdLineException {
+        notificationHandler.setCommand(ISVNNotifyListener.Command.REMOVE);
+		ArrayList args = new ArrayList();
+		args.add("rm");
+		if (message != null) {
+			args.add("-m");
+			args.add(message);
+		}
+		for (int i = 0;i < target.length;i++) {
+			args.add(target[i]);
+		}
+        addAuthInfo(args);
+        
+		return execString(args,false);
+	}
+
+	/**
+	 * <p>
+	 * Display the differences between two paths.</p>
+	 * 
+	 */
+	InputStream diff(String oldPath, String oldRev, String newPath, String newRev, boolean recurse)
+		throws CmdLineException {
+        notificationHandler.setCommand(ISVNNotifyListener.Command.DIFF);
+		ArrayList args = new ArrayList();
+		args.add("diff");
+		args.add("-r");
+		if (newRev.equals("WORKING")) { // "WORKING" is not a valid revision argument at least in 0,35,1
+			args.add(oldRev);
+		} else {
+			args.add(oldRev+":"+newRev);			
+		}
+		args.add("--old");
+		args.add(oldPath);
+		args.add("--new");
+		args.add(newPath);
+		        
+		Process proc = execProcess(args);
+  
+  		InputStream content = proc.getInputStream();
+		return content;
+	}
+
+	/**
+	 * <p>
+	 * export files and directories from remote URL.</p>
+	 * 
+	 */
+	void export(String url, String path, String revision, boolean force) throws CmdLineException {
+        notificationHandler.setCommand(ISVNNotifyListener.Command.EXPORT);        
+		ArrayList args = new ArrayList();
+		args.add("export");
+		args.add("-r");
+		args.add(validRev(revision));
+		args.add(url);
+		args.add(path);
+		if (force)
+			args.add("--force");
+			
+		execVoid(args);
+	}
+
+	/**
+	 * <p>
+	 * Commit an unversioned file or directory into the repository.</p>
+	 * 
+	 * @param url Remote URL to import to.
+	 * @param path Local path to import from.
+	 * @param module Remote module name.
+	 * @param message optional. can be null
+	 */
+	String importFiles(String url, String path, String module, String message)
+		throws CmdLineException {
+        notificationHandler.setCommand(ISVNNotifyListener.Command.IMPORT);
+		ArrayList args = new ArrayList();
+		args.add("import");
+		args.add(url);
+		args.add(path);
+		args.add(module);
+		args.add("-m");
+		args.add(message);
+		addAuthInfo(args);
+		return execString(args,false);
+	}
+
+	/**
+	 * info: Display info about a resource.
+	 * usage: info [PATH [PATH ... ]]
+	 *
+	 *   Print information about PATHs.
+	 *
+	 * Valid options:
+	 *   --targets arg            : pass contents of file ARG as additional args
+	 *   -R [--recursive]         : descend recursively
+	 * 
+	 * @param path
+	 * @return
+	 */
+	String info(String[] target) throws CmdLineException {
+        if (target.length == 0) {
+            // otherwise we would do a "svn info" without args
+            return ""; 
+        }
+        
+        notificationHandler.setCommand(ISVNNotifyListener.Command.INFO);
+		ArrayList args = new ArrayList();
+		args.add("info");
+
+        for (int i = 0;i < target.length;i++) {
+            args.add(target[i]);
+        }
+
+		return execString(args,false);
+	}
+
+	/**
+	 * <p>
+	 * List directory entries of a URL.</p>
+	 * 
+	 * @param url Remote URL.
+	 * @param revision Revision to use. can be <tt>null</tt>
+	 *   Defaults to <tt>HEAD</tt>.
+	 */
+	String list(String url, String revision) throws CmdLineException {
+        notificationHandler.setCommand(ISVNNotifyListener.Command.LS);
+		ArrayList args = new ArrayList();
+		args.add("list");
+		args.add("-v");
+		args.add("-r");
+		args.add(revision);
+		args.add(url);
+		addAuthInfo(args);
+		
+		return execString(args,false);
+	}
+
+	/**
+	 * <p>
+	 * Show the log messages for a set of revision(s) and/or file(s).</p>
+	 * 
+	 * @param target Local path or URL.
+	 * @param revision Optional revision range to get log
+	 *   messages from.
+	 */
+	String log(String target, String revision) throws CmdLineException {
+        notificationHandler.setCommand(ISVNNotifyListener.Command.LOG);		
+		ArrayList args = new ArrayList();
+		args.add("log");
+		args.add("-r");
+		args.add(validRev(revision));
+		args.add(target);
+		args.add("--xml");
+		addAuthInfo(args);
+
+        return execString(args,true);
+	}
+
+	/**
+	 * <p>
+	 * Create a new directory under revision control.</p>
+	 * 
+	 * @param url URL to create. (contains existing url, 
+	 *   followed by "/newDirectoryName").
+	 * @param message Commit message to send.
+	 */
+	void mkdir(String url, String message) throws CmdLineException {
+        notificationHandler.setCommand(ISVNNotifyListener.Command.MKDIR);
+		ArrayList args = new ArrayList();
+		args.add("mkdir");
+		args.add("-m");
+		args.add(message);
+		args.add(url);
+		addAuthInfo(args);
+		execVoid(args);
+	}
+    
+	void mkdir(String localPath) throws CmdLineException {
+        notificationHandler.setCommand(ISVNNotifyListener.Command.MKDIR);
+		ArrayList args = new ArrayList();
+		args.add("mkdir");
+		args.add(localPath);
+		execVoid(args);
+	}
+
+	/**
+	 * <p>
+	 * Move/rename something in working copy or repository.</p>
+	 * 
+	 * <p>
+	 * <tt>source</tt> and <tt>dest</tt> can both be working copy (WC) paths or URLs.</p>
+	 * <dl>
+	 * <dt>WC -&gt; WC</dt>
+	 * <dd>move and schedule for addition (with history)</dd>
+	 * <dt>URL -&gt; URL</dt>
+	 * <dd>complete server-side rename.</dd>
+	 * 
+	 * @param source Local path or URL to move from.
+	 * @param dest Local path or URL to move to.
+	 * @param message Optional message to send with URL.
+	 */
+	String move(String source, String dest, String message, String revision)
+		throws CmdLineException {
+        notificationHandler.setCommand(ISVNNotifyListener.Command.MOVE);            
+		ArrayList args = new ArrayList();
+		args.add("mv");
+		args.add("-r");
+		args.add(validRev(revision));
+		args.add(source);
+		args.add(dest);
+		if (message != null) {
+			args.add("-m");
+			args.add(message);
+		}
+		addAuthInfo(args);				
+	
+		return execString(args,false);
+	}
+
+	/**
+	 * <p>
+	 * Print value of <tt>propName</tt> on files, dirs, or revisions.</p>
+	 *
+	 * @param Local path of resource.
+	 * @param propName Property name whose value we wish to find.
+	 */
+	InputStream propget(String path, String propName) throws CmdLineException {
+        notificationHandler.setCommand(ISVNNotifyListener.Command.PROPGET);
+		ArrayList args = new ArrayList();
+		args.add("propget");
+		args.add(propName);
+		args.add(path);
+        Process proc =
+			execProcess(args);
+		return proc.getInputStream();
+	}
+
+
+
+	/**
+	 * <p>
+	 * Set <tt>propName</tt> to <tt>propVal</tt> on files, dirs, or revisions.</p>
+	 * 
+	 * @param propName name of the property.
+	 * @param propValue New value to set <tt>propName</tt> to.
+	 * @param target Local path to resource.
+	 */
+	void propset(String propName, String propValue, String target, boolean recurse)
+		throws CmdLineException {
+        notificationHandler.setCommand(ISVNNotifyListener.Command.PROPSET);
+		ArrayList args = new ArrayList();
+		args.add("propset");
+		if (recurse)
+			args.add("-R");
+		args.add(propName);
+		args.add(propValue);
+		args.add(target);        
+		execVoid(args);
+	}
+    
     /**
-     * Executes the given svn command and returns the corresponding
-     * <code>Process</code> object.
-     *
-     * @param svnArguments The command-line arguments to execute.
+     * List the properties for the given file or dir
+     * 
+     * @param target
+     * @return
+     * @throws CmdLineException
      */
-	private Process execProcess(CmdArguments svnArguments)
-        throws CmdLineException {
-		// We add "svn" or "svnadmin" to the arguments (as
-		// appropriate), and convert it to an array of strings.
-        int svnArgsLen = svnArguments.size();
-        String[] cmdline = new String[svnArgsLen + 1];
-        cmdline[0] = commandName;
+    String proplist(String target, boolean recurse) throws CmdLineException {
+		notificationHandler.setCommand(ISVNNotifyListener.Command.PROPLIST);
+		ArrayList args = new ArrayList();
+		args.add("proplist");
+		if (recurse)
+			args.add("-R");
+		args.add(target);
+		return execString(args,false);
+    }
+    
+    /**
+     * Remove <tt>propName</tt> from files, dirs. 
+     * 
+     * @param propName
+     * @param target
+     * @param recurse
+     * @throws CmdLineException
+     */
+    void propdel(String propName, String target, boolean recurse) throws CmdLineException {
+        notificationHandler.setCommand(ISVNNotifyListener.Command.PROPDEL);
+		ArrayList args = new ArrayList();
+		args.add("propdel");
+		if (recurse)
+			args.add("-R");
+		args.add(propName);
+		args.add(target);	
+        execVoid(args);
+    }
+    
+	/**
+	 * <p>
+	 * Sets a binary file as the value of a property.</p>
+	 * 
+	 * @param propName name of the property.
+	 * @param propFile Local path to binary file.
+	 * @param target Local path to resource.
+	 */
+	void propsetFile(String propName, String propFile, String target, boolean recurse)
+		throws CmdLineException {
+        notificationHandler.setCommand(ISVNNotifyListener.Command.PROPSET);
+		ArrayList args = new ArrayList();
+		args.add("propset");
+		if (recurse)
+			args.add("-R");
+		args.add(propName);
+		args.add("-F");
+		args.add(propFile);
+		args.add(target);	
+		execVoid(args);
+	}
 
-		StringBuffer svnCommand = new StringBuffer();
+	/**
+	 * <p>
+	 * Restore pristine working copy file (undo all local edits)</p>
+	 * 
+	 * @param paths Local paths to revert.
+	 * @param recursive <tt>true</tt> if reverting subdirectories. 
+	 */
+	String revert(String[] paths, boolean recursive) throws CmdLineException {
+        notificationHandler.setCommand(ISVNNotifyListener.Command.REVERT);
+		ArrayList args = new ArrayList();
+		args.add("revert");
+		if (recursive)
+			args.add("-R");
+		for (int i = 0; i < paths.length;i++) {
+			args.add(paths[i]);
+		}
+		
+		return execString(args,false);
+	}
+
+	/**
+	 * Remove 'conflicted' state on working copy files or directories.
+	 *
+	 * @param paths
+	 * @param recursive
+	 * @return
+	 * @throws CmdLineException
+	 */
+	String resolved(String[] paths, boolean recursive) throws CmdLineException {
+		notificationHandler.setCommand(ISVNNotifyListener.Command.RESOLVED);
+		ArrayList args = new ArrayList();
+		args.add("resolved");
+		if (recursive)
+			args.add("-R");
+		for (int i = 0; i < paths.length;i++) {
+			args.add(paths[i]);
+		}
+		
+		return execString(args,false);		
+	}
+
+
+	/**
+	 * <p>
+	 * Print the status of working copy files and directories.</p>
+	 *   
+	 * @param path Local path of resource to get status of.
+	 * @param allEntries if false, only interesting entries will be get (local mods and/or out-of-date).
+	 * @param checkUpdates Check for updates on server.
+	 */
+	String status(String path[], boolean descend, boolean allEntries, boolean checkUpdates) throws CmdLineException {
+        if (path.length == 0) {
+            // otherwise we would do a "svn status" without args
+            return ""; 
+        }
+
+        notificationHandler.setCommand(ISVNNotifyListener.Command.STATUS);
+		ArrayList args = new ArrayList();
+		args.add("status");
+        args.add("-v");
+        if (!allEntries)
+        	args.add("-q");
+		if (!descend) 
+            args.add("-N");
+		if (checkUpdates)
+			args.add("-u");
+        args.add("--no-ignore"); // disregard default and svn:ignore property ignores
+		
+        for (int i = 0; i < path.length;i++) { 
+            args.add(path[i]);
+        }
+		
+        addAuthInfo(args);      
+		return execString(args,false);
+	}
+
+	/**
+	 * <p>
+	 * Bring changes from the repository into the working copy.</p>
+	 * 
+	 * @param path Local path to possibly update.
+	 * @param revision Optional revision to update to.
+	 */
+	String update(String path, String revision) throws CmdLineException {
+        notificationHandler.setCommand(ISVNNotifyListener.Command.UPDATE);
+		ArrayList args = new ArrayList();
+		args.add("up");
+		args.add("-r");
+		args.add(validRev(revision));
+		args.add(path);
+		addAuthInfo(args);
+		return execString(args,false);
+	}
+
+	/**
+	 * <p>
+	 * Sets the username used by this client.</p>
+	 * 
+	 * @param username The username to use for authentication.
+	 */
+	void setUsername(String username) {
+		user = username;
+	}
+
+	/**
+	 * <p>
+	 * Sets the password used by this client.</p>
+	 * 
+	 * @param password The password to use for authentication.
+	 */
+	void setPassword(String password) {
+		pass = password;
+	}
+
+    /**
+     * execute the given svn command and returns the corresponding process  
+     */
+	private Process execProcess(ArrayList svnArguments) throws CmdLineException {
+		Runtime rt = Runtime.getRuntime();
+
+		String svnCommand = "";
 		boolean nextIsPassword = false;
-
-		for (int i = 0; i < svnArgsLen; i++) {
-			if (i != 0)
-				svnCommand.append(' ');
-			
-			Object arg = svnArguments.get(i);
-            if (arg != null)
-                arg = arg.toString();
-			
-			if ("".equals(arg)) {
-				arg = "\"\"";
-			}
+		for (Iterator it = svnArguments.iterator();it.hasNext();) {
+			String arg = (String)it.next();
 			
 			if (nextIsPassword) {
-				// Avoid showing the password on the console.
-				svnCommand.append("*******");
+				svnCommand += "*******";
 				nextIsPassword = false;	
 			} else {
-				svnCommand.append(arg);
+				svnCommand += arg;
 			}
-			
-			if ("--password".equals(arg)) {
+			if (it.hasNext())
+				svnCommand += " ";
+			if (arg.equals("--password")) {
+				// we don't want to show the password in the console ...
 				nextIsPassword = true;
-			}
-
-            // Regardless of the data type passed in via svnArguments,
-            // at this point we expect to have a String object.
-            cmdline[i + 1] = (String) arg;
+			}				
 		}
-        notificationHandler.logCommandLine(svnCommand.toString());
+        notificationHandler.logCommandLine(svnCommand);
 
-		// Run the command, and return the associated Process object.
+		// we add "svn" to  the arguments and convert it to an array of strings
+		ArrayList argsArrayList = new ArrayList(svnArguments);
+		argsArrayList.add(0,CMD);
+		String[] argsArray = new String[argsArrayList.size()];
+		argsArrayList.toArray(argsArray);
+
+		/* run the process */
+		Process proc = null;
 		try {
-            return process = Runtime.getRuntime().exec(cmdline, getEnvironmentVariables());
+			proc = rt.exec(argsArray);
 		} catch (IOException e) {
 			throw new CmdLineException(e);
 		}
+
+		return proc;
 	}
 
-    /**
-     * Get environment variables to be set when invoking the command-line.
-     * Includes <code>LANG</code> and <code>LC_ALL</code> so Subversion's output is not localized.
-     * <code>Systemroot</code> is required on windows platform. 
-     * Without this variable present, the windows' DNS resolver does not work.
-     * <code>APR_ICONV_PATH</code> is required on windows platform for UTF-8 translation.
-     * The <code>PATH</code> is there, well, just to be sure ;-)
-     */
-	protected String[] getEnvironmentVariables()
-	{
-		final String path = CmdLineClientAdapter.getEnvironmentVariable("PATH");
-		final String systemRoot = CmdLineClientAdapter.getEnvironmentVariable("SystemRoot");
-		final String aprIconv = CmdLineClientAdapter.getEnvironmentVariable("APR_ICONV_PATH");
-		int i = 3;
-		if (path != null)
-			i++;
-		if (systemRoot != null)
-			i++;
-		if (aprIconv != null)
-			i++;
-		String[] lcVars = getLocaleVariables();
-		String[] env = new String[i + lcVars.length];
-		i = 0;
-		//Clear the LC_ALL, we're going to override the LC_MESSAGES and LC_TIME
-		env[i] = "LC_ALL=";
-		i++;
-		//Set the LC_MESSAGES to "C" to avoid translated svn output. (We're parsing the english one)
-		env[i] = "LC_MESSAGES=C";
-		i++;
-		env[i] = "LC_TIME=C";
-		i++;
-		if (path != null) {
-			env[i] = "PATH=" + path;
-			i++;
-		}
-		if (systemRoot != null) {
-			env[i] = "SystemRoot=" + systemRoot;
-			i++;
-		}
-		if (aprIconv != null) {
-			env[i] = "APR_ICONV_PATH=" + aprIconv;
-			i++;
-		}
-		//Add the remaining LC vars
-		for (int j = 0; j < lcVars.length; j++) {
-			env[i] = lcVars[j];
-			i++;
-		}
-		return env;
-	}
-	
-	private String[] getLocaleVariables()
-	{
-		String LC_ALL = CmdLineClientAdapter.getEnvironmentVariable("LC_ALL");
-		if ((LC_ALL == null) || (LC_ALL.length() == 0)) {
-			LC_ALL = CmdLineClientAdapter.getEnvironmentVariable("LANG");
-			if (LC_ALL == null) {
-				LC_ALL="";
-			}
-		}
-		
-		final String[] lcVarNames = new String[] {			
-				"LC_CTYPE", 
-				"LC_NUMERIC",
-				"LC_COLLATE",
-				"LC_MONETARY",
-				"LC_PAPER",
-				"LC_NAME",
-				"LC_ADDRESS",
-				"LC_TELEPHONE",
-				"LC_MEASUREMENT",
-				"LC_IDENTIFICATION" };
-		
-		List variables = new ArrayList(lcVarNames.length);
-		for (int i = 0; i < lcVarNames.length; i++) {
-			String varValue = CmdLineClientAdapter.getEnvironmentVariable(lcVarNames[i]);
-			variables.add(lcVarNames[i] + "=" + ((varValue != null) ? varValue : LC_ALL));
-		}
-		return (String[]) variables.toArray(new String[variables.size()]);
-	}
-	
-    /**
-     * Pumps the output from both provided streams, blocking until
-     * complete.
-     *
-     * @param proc 
-     * @param outPumper The process output stream.
-     * @param outPumper The process error stream.
-     */
-    private void pumpProcessStreams(Process proc, StreamPumper outPumper,
-                                    StreamPumper errPumper) {
-        new Thread(outPumper).start();
-        new Thread(errPumper).start();
+	/**
+	 * runs the process and returns the results.
+	 * @param cmd
+	 * @return String
+	 */
+	private String execString(ArrayList svnArguments, boolean coalesceLines) throws CmdLineException {
+		Process proc = execProcess(svnArguments);
 
+        CmdLineStreamPumper outPumper = new CmdLineStreamPumper(proc.getInputStream(),coalesceLines);
+        CmdLineStreamPumper errPumper = new CmdLineStreamPumper(proc.getErrorStream());
+
+        Thread threadOutPumper = new Thread(outPumper);
+        Thread threadErrPumper = new Thread(errPumper);
+        threadOutPumper.start();         
+        threadErrPumper.start();
         try {
             outPumper.waitFor();
             errPumper.waitFor();
-        } catch (InterruptedException ignored) {
-        	notificationHandler.logError("Command output processing interrupted !");
-        } finally {
-        	try {
-        		proc.getInputStream().close();
-        		proc.getOutputStream().close();
-        		proc.getErrorStream().close();
-        	} catch (IOException ioex) {
-        		//Just ignore. Exception when closing the stream.
-        	}
+        } catch (InterruptedException e) {
         }
-    }
-
-	/**
-	 * Runs the process and returns the results.
-     *
-	 * @param svnArguments The command-line arguments to execute.
-     * @param coalesceLines
-	 * @return Any output returned from execution of the command-line.
-	 */
-	protected String execString(CmdArguments svnArguments, boolean coalesceLines)
-        throws CmdLineException {
-		Process proc = execProcess(svnArguments);
-        StreamPumper outPumper =
-            new CharacterStreamPumper(proc.getInputStream(), coalesceLines);
-        StreamPumper errPumper =
-            new CharacterStreamPumper(proc.getErrorStream(), false);
-        pumpProcessStreams(proc, outPumper, errPumper);
-
+        
 		try {
             String errMessage = errPumper.toString();
             if (errMessage.length() > 0) {
@@ -232,53 +782,8 @@ abstract class CommandLine {
             }
             String outputString = outPumper.toString(); 
 
-            notifyFromSvnOutput(outputString);
+			logMessageAndCompleted(outputString);
 			return outputString;
-		} catch (CmdLineException e) {
-            notificationHandler.logException(e);
-			throw e;
-		}
-	}
-
-	/**
-	 * Runs the process and returns the results.
-	 * @param svnArguments The arguments to pass to the command-line
-	 * binary.
-     * @param assumeUTF8 Whether the output of the command should be
-     * treated as UTF-8 (as opposed to the JVM's default encoding).
-	 * @return String
-	 */
-	protected byte[] execBytes(CmdArguments svnArguments, boolean assumeUTF8)
-        throws CmdLineException {
-		Process proc = execProcess(svnArguments);
-        ByteStreamPumper outPumper =
-            new ByteStreamPumper(proc.getInputStream());
-        StreamPumper errPumper =
-            new CharacterStreamPumper(proc.getErrorStream(), false);
-        pumpProcessStreams(proc, outPumper, errPumper);
-        
-		try {
-            String errMessage = errPumper.toString();
-            if (errMessage.length() > 0) {
-                throw new CmdLineException(errMessage);        
-            }
-            byte[] bytes = outPumper.getBytes(); 
-
-            String notifyMessage = "";
-            if (assumeUTF8) {
-            	try {
-            		notifyMessage = new String(bytes, "UTF-8");
-				} catch (UnsupportedEncodingException e) {
-					// It is guaranteed to be there!
-				}
-            } else {
-            	// This uses the default charset, which is likely
-            	// wrong if we are trying to get the bytes, anyway...
-            	notifyMessage = new String(bytes);
-            }
-			notifyFromSvnOutput(notifyMessage);
-			
-			return bytes;
 		} catch (CmdLineException e) {
             notificationHandler.logException(e);
 			throw e;
@@ -287,41 +792,15 @@ abstract class CommandLine {
 
     /**
      * runs the command (returns nothing)
-     * @param svnArguments
+     * @param svnCommand
      * @throws CmdLineException
      */
-	protected void execVoid(CmdArguments svnArguments) throws CmdLineException {
+	private void execVoid(ArrayList svnArguments) throws CmdLineException {
 		execString(svnArguments,false);
 	}
 
-	//TODO check the deprecation
-    /**
-	 * Runs the process and returns the results.
-	 * @param svnArguments The arguments to pass to the command-line
-	 * binary.
-	 * @return the InputStream on commads result. Caller has to close it explicitelly().
-	 * @deprecated this does not sound as a good idea. Check if we're able to live without it.
-     */
-	protected InputStream execInputStream(CmdArguments svnArguments)
-        throws CmdLineException {
-		Process proc = execProcess(svnArguments);
-		try {
-			proc.getOutputStream().close();
-			proc.getErrorStream().close();
-			//InputStream has to be closed by caller !
-		} catch (IOException ioex) {
-    		//Just ignore. Exception when closing the stream.
-		}		
-		return proc.getInputStream();
-	}
-	
-	/**
-	 * notify the listeners from the output. This is the default implementation
-     *
-	 * @param svnOutput
-	 */
-    protected void notifyFromSvnOutput(String svnOutput) {
-		StringTokenizer st = new StringTokenizer(svnOutput, Helper.NEWLINE);
+	private void logMessageAndCompleted(String messages) {
+		StringTokenizer st = new StringTokenizer(messages, Helper.NEWLINE);
 		int size = st.countTokens();
 		//do everything but the last line
 		for (int i = 1; i < size; i++) {
@@ -331,226 +810,16 @@ abstract class CommandLine {
 		//log the last line as the completed message.
 		if (size > 0)
             notificationHandler.logCompleted(st.nextToken());
-    }
-    	
+	}
 
-    protected void stopProcess() {
-    	try {
-    		process.getInputStream().close();
-    		process.getOutputStream().close();
-    		process.getErrorStream().close();
-    	} catch (IOException ioex) {
-    		//Just ignore. Closing streams.
-    	}
-        process.destroy();
-    }
 
     /**
-     * Pulls all the data out of a stream.  Inspired by Ant's
-     * StreamPumper (by Robert Field).
+     * 
+     * @param revision
+     * @return "HEAD" if revision is a null or empty string, return revision otherwise
      */
-    private static abstract class StreamPumper implements Runnable {
-        private boolean finished;
+	private static String validRev(String revision) {
+		return (revision == null || "".equals(revision)) ? "HEAD" : revision;
+	}
 
-        /**
-         * Constructor
-         *
-         */
-        protected StreamPumper()
-        {
-        	super();
-        }
-        
-        /**
-         * Copies data from the input stream to the internal buffer.
-         * Terminates as soon as the input stream is closed, or an
-         * error occurs.
-         */
-        public void run() {
-            synchronized (this) {
-                // Just in case this object is reused in the future.
-                this.finished = false;
-            }
-
-            try {
-                pumpStream();
-            } finally {
-                synchronized (this) {
-                    this.finished = true;
-                    notify();
-                }
-            }
-        }
-
-        /**
-         * Called by {@link #run()} to pull the data out of the
-         * stream.
-         */
-        protected abstract void pumpStream();
-
-        /**
-         * Tells whether the end of the stream has been reached.
-         * @return true is the stream has been exhausted.
-         **/
-        public synchronized boolean isFinished() {
-            return this.finished;
-        }
-
-        /**
-         * This method blocks until the stream pumper finishes.
-         * @see #isFinished()
-         * @throws InterruptedException
-         **/
-        public synchronized void waitFor()
-            throws InterruptedException {
-            while (!isFinished()) {
-                wait();
-            }
-        }
-    }
-
-    /** Extracts character data from streams. */
-    private static class CharacterStreamPumper extends StreamPumper {
-        private BufferedReader reader;
-        private StringBuffer sb = new StringBuffer();
-        private boolean coalesceLines = false;
-
-        /**
-         * @param is Input stream from which to read the data.
-         * @param coalesceLines Whether to coalesce lines.
-         */
-        public CharacterStreamPumper(InputStream is, boolean coalesceLines) {
-            this.reader = new BufferedReader(new InputStreamReader(is));
-            this.coalesceLines = coalesceLines;
-        }
-
-        /**
-         * Copies data from the input stream to the internal string
-         * buffer.
-         */
-        protected void pumpStream() {
-			try {
-				String line;
-				while ((line = this.reader.readLine()) != null) {
-					if (this.coalesceLines) {
-						this.sb.append(line);
-					} else {
-						this.sb.append(line).append(Helper.NEWLINE);
-					}
-				}
-			} catch (IOException ex) {
-				System.err
-						.println("Problem occured during fetching the command output: "
-								+ ex.getMessage());
-			} finally {
-				try {
-					reader.close();
-				} catch (IOException e) {
-					// Exception during closing the stream. Just ignore.
-				}
-			}
-		}
-
-        public synchronized String toString() {
-            return this.sb.toString();
-        }
-    }
-
-    /** Extracts byte data from streams. */
-    private static class ByteStreamPumper extends StreamPumper {
-        private InputStream bis;
-        private ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        private final static int BUFFER_LENGTH = 1024;
-        private byte[] inputBuffer = new byte[BUFFER_LENGTH];
-
-        /**
-         * Create a new stream pumper.
-         *
-         * @param is input stream to read data from
-         */
-        public ByteStreamPumper(InputStream is) {
-            this.bis = is;
-        }
-
-        /**
-         * Copies data from the input stream to the string buffer
-         *
-         * Terminates as soon as the input stream is closed or an error occurs.
-         */
-        protected void pumpStream() {
-			try {
-				int bytesRead;
-				while ((bytesRead = this.bis.read(this.inputBuffer)) != -1) {
-					this.bytes.write(this.inputBuffer, 0, bytesRead);
-				}
-			} catch (IOException ex) {
-				System.err
-						.println("Problem occured during fetching the command output: "
-								+ ex.getMessage());
-			} finally {
-				try {
-					this.bytes.flush();
-					this.bytes.close();
-					this.bis.close();
-				} catch (IOException e) {
-					// Exception during closing the stream. Just ignore.
-				}
-			}
-		}
-    
-        /**
-		 * @return A byte array contaning the raw bytes read from the input
-		 *         stream.
-		 */
-        public synchronized byte[] getBytes() {
-            return bytes.toByteArray();
-        }
-    }
-    
-    protected static class CmdArguments
-    {
-    	private List args = new ArrayList();
-    	
-    	protected void add(Object arg)
-    	{
-    		this.args.add(arg);
-    	}
-
-    	protected void addAuthInfo(String user, String pass) {
-    		if (user != null && user.length() > 0) {
-    			add("--username");
-    			add(user);
-            }
-
-            if (pass != null && pass.length() > 0) {
-    			add("--password");
-    			add(pass);
-    		}
-
-    		add("--non-interactive");
-    	}
-
-        protected void addConfigInfo(String configDir) {
-        	if (configDir != null) {
-        		add("--config-dir");
-                add(configDir);
-            }
-        }
-
-        protected void addLogMessage(String message) {
-			add("--force-log");
-       		add("-m");
-            add((message != null) ? message : "");
-        }
-
-    	private int size()
-    	{
-    		return this.args.size();
-    	}
-    	
-    	private Object get(int index)
-    	{
-    		return this.args.get(index);
-    	}
-    }
 }
