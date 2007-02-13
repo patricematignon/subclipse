@@ -1,30 +1,12 @@
-/*******************************************************************************
- * Copyright (c) 2005, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
 package org.tigris.subversion.svnclientadapter.javahl;
 
 import org.tigris.subversion.javahl.PromptUserPassword3;
 import org.tigris.subversion.svnclientadapter.ISVNPromptUserPassword;
 
-/**
- * A JavaHL's PromptUserPassword3 implementation.
- * Actually an adapter to {@link ISVNPromptUserPassword}  
- */
 public class JhlPromptUserPassword implements PromptUserPassword3 {
 
     private ISVNPromptUserPassword worker;
     
-    /**
-     * Constructor
-     * @param arg0
-     */
     public JhlPromptUserPassword(ISVNPromptUserPassword arg0) {
         super();
         this.worker = arg0;
@@ -92,4 +74,5 @@ public class JhlPromptUserPassword implements PromptUserPassword3 {
     public String getPassword() {
         return this.worker.getPassword();
     }
+
 }

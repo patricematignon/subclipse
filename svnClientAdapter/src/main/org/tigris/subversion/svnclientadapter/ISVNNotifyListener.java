@@ -1,30 +1,31 @@
-/*******************************************************************************
- * Copyright (c) 2003, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+/*
+ *  Copyright(c) 2003-2004 by the authors indicated in the @author tags.
  *
- * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
 package org.tigris.subversion.svnclientadapter;
 
 import java.io.File;
 
 
 /**
- * A callback interface used for receiving notifications of a progress of
- * a subversion command invocation.
  * 
- * @author Cédric Chabanois <a
- *         href="mailto:cchabanois@ifrance.com">cchabanois@ifrance.com</a>
+ * @author Cédric Chabanois 
+ *         <a href="mailto:cchabanois@ifrance.com">cchabanois@ifrance.com</a>
  */
 public interface ISVNNotifyListener {
     
-	/**
-	 * An enumeration class representing the supported subversion commands/actions.
-	 */
+    
     public static final class Command {
         public static final int UNDEFINED = 0;
         public static final int ADD = 1;
@@ -54,15 +55,8 @@ public interface ISVNNotifyListener {
 		public static final int ANNOTATE = 25;
         public static final int SWITCH = 26;
         public static final int MERGE = 27;
-        public static final int LOCK = 28;
-        public static final int UNLOCK = 29;
-        public static final int RELOCATE = 30;
     }    
 
-    /**
-     * Tell the callback the command to be executed
-     * @param command one of {@link Command}.* constants
-     */
     public void setCommand(int command);
 
     /**
@@ -88,10 +82,9 @@ public interface ISVNNotifyListener {
      * that the command completed against the specified
      * revision.
      *  
-     * @param revision 
-     * @param path - path to folder which revision is reported (either root, or some of svn:externals)
+     * @param commandLine
      */
-    public void logRevision(long revision, String path);
+    public void logRevision(long revision);
 
     /**
      * called when a command has completed

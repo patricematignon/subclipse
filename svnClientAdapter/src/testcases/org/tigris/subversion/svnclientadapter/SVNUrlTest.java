@@ -1,13 +1,3 @@
-/*******************************************************************************
- * Copyright (c) 2003, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
 package org.tigris.subversion.svnclientadapter;
 
 import java.net.MalformedURLException;
@@ -27,7 +17,7 @@ public class SVNUrlTest extends TestCase
    {
         try
         {
-            new SVNUrl(null);
+            SVNUrl svnurl= new SVNUrl(null);
             fail("should have thrown malformed url exeption.");
         }
         catch (MalformedURLException e)
@@ -35,20 +25,7 @@ public class SVNUrlTest extends TestCase
 
         }
     }
-
-   public void testNullSegmentsThrowsInvalidURLException() throws Exception
-   {
-        try
-        {
-            new SVNUrl("http:///");
-            fail("should have thrown malformed url exeption.");
-        }
-        catch (MalformedURLException e)
-        {
-
-        }
-    }
-
+    
     public void testHostPortUrl() throws Exception {
         SVNUrl svnurl= new SVNUrl("https://svn.collab.net");
         assertEquals("https://svn.collab.net",svnurl.toString());
@@ -64,9 +41,7 @@ public class SVNUrlTest extends TestCase
     
     public void testCaseInsensitiveHttpProtocols() throws Exception {
        SVNUrl https = new SVNUrl("HTTPS://svn.collab.net/repos/subclipse/");
-       assertEquals("https://svn.collab.net/repos/subclipse",https.toString());
        SVNUrl http = new SVNUrl("HTTP://svn.collab.net/repos/subclipse/");
-       assertEquals("http://svn.collab.net/repos/subclipse",http.toString());
     }
     
     public void testGetParent() throws Exception {
@@ -120,28 +95,4 @@ public class SVNUrlTest extends TestCase
 		assertEquals("file:///repos",url1.getParent().getParent().toString());		  		
 		assertEquals(null,url1.getParent().getParent().getParent());
    }
-    
-	public void testUtilGetLastSegment() throws Exception 
-	{
-        SVNUrl http1 = new SVNUrl("HTTP://SVN.collab.net/repos/subclipse/");
-        SVNUrl http2 = new SVNUrl("http://svn.collab.net:80/repos/subclipse");
-        SVNUrl http3 = new SVNUrl("http://svn.collab.net/");
-        SVNUrl svn1 = new SVNUrl("svn://svn.collab.net/repos/subclipse");
-        SVNUrl svn2 = new SVNUrl("svn://svn.collab.net/");
-		assertEquals("subclipse", http1.getLastPathSegment());
-		assertEquals("subclipse", http2.getLastPathSegment());
-		assertEquals("", http3.getLastPathSegment());
-		assertEquals("subclipse", svn1.getLastPathSegment());
-		assertEquals("", svn2.getLastPathSegment());
-	}
-
-	public void testAppendPath() throws Exception
-	{
-        SVNUrl http1 = new SVNUrl("HTTP://SVN.collab.net/repos/subclipse/");
-        SVNUrl http2 = new SVNUrl("HTTP://SVN.collab.net/repos/subclipse/mydirectory/myfile.txt");
-		assertEquals(http2, http1.appendPath("/mydirectory/myfile.txt"));
-		assertEquals(http2, http1.appendPath("mydirectory/myfile.txt"));
-		assertEquals(http1, http1.appendPath(""));
-	}
-
 }

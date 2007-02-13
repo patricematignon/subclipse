@@ -1,13 +1,18 @@
-/*******************************************************************************
- * Copyright (c) 2003, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+/*
+ *  Copyright(c) 2003-2004 by the authors indicated in the @author tags.
  *
- * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
 package org.tigris.subversion.svnclientadapter;
 
 import java.io.File;
@@ -27,29 +32,25 @@ public abstract class SVNNotificationHandler {
         
     /**
      * Add a notification listener
-     * @param listener
      */
     public void add(ISVNNotifyListener listener) {
         notifylisteners.add(listener);
     }
 
     /**
-     * Remove a notification listener
-     * @param listener 
+     * Remove a notification listener 
      */
     public void remove(ISVNNotifyListener listener) {
         notifylisteners.remove(listener);
     }
     
-    /**
-     * restore logging 
-     */
     public void enableLog() {
         logEnabled = true;
     }
     
     /**
-     * disable all logging 
+     * disable logging. calls to logMessage, logCompleted, logCommandLine do nothing 
+     * Note that errors and exceptions are not disabled
      */
     public void disableLog() {
         logEnabled = false;
@@ -65,19 +66,17 @@ public abstract class SVNNotificationHandler {
     }
 
     public void logError(String message) {
-        if (logEnabled) {
-	        for(Iterator it=notifylisteners.iterator(); it.hasNext();) {
-	            ISVNNotifyListener listener = (ISVNNotifyListener)it.next();
-	            listener.logError(message);
-	        }
-        }
+        for(Iterator it=notifylisteners.iterator(); it.hasNext();) {
+            ISVNNotifyListener listener = (ISVNNotifyListener)it.next();
+            listener.logError(message);
+        }                        
     }
 
-    public void logRevision(long revision, String path) {
+    public void logRevision(long revision) {
         if (logEnabled) {
             for(Iterator it=notifylisteners.iterator(); it.hasNext();) {
                 ISVNNotifyListener listener = (ISVNNotifyListener)it.next();
-                listener.logRevision(revision, path);
+                listener.logRevision(revision);
             }
         }                        
     }    
@@ -94,6 +93,7 @@ public abstract class SVNNotificationHandler {
 	/**
 	 * set the command
 	 * @param command
+	 * @param files
 	 */
     public void setCommand(int command) {
 		this.command = command;        
@@ -118,15 +118,12 @@ public abstract class SVNNotificationHandler {
 
     /**
      * To call when a method of ClientAdapter throw an exception
-     * @param clientException
      */        
     public void logException(Exception clientException) {
-        if (logEnabled) {
-	        Throwable e = clientException;
-	        while (e != null) {
-	            logError(e.getMessage());
-	            e = e.getCause();                
-	        }
+        Throwable e = clientException;
+        while (e != null) {
+            logError(e.getMessage());
+            e = e.getCause();                
         }
     }
     
@@ -143,8 +140,6 @@ public abstract class SVNNotificationHandler {
 	}
     
     private File getAbsoluteFile(String path) {
-        if (path == null)
-            return null;
 		File f = new File(path);
 		if (!f.isAbsolute()) {
 			f = new File(baseDir,path);
@@ -153,8 +148,6 @@ public abstract class SVNNotificationHandler {
     }
     
     public void notifyListenersOfChange(String path) {
-        if (path == null)
-            return;
 		File f = getAbsoluteFile(path);
 		if (f == null) {
 			// this should not happen
@@ -180,8 +173,6 @@ public abstract class SVNNotificationHandler {
     }
     
     public void notifyListenersOfChange(String path, SVNNodeKind kind) {
-        if (path == null)
-            return;
 		File f = getAbsoluteFile(path);
 		if (f == null) {
 			// this should not happen
@@ -199,7 +190,7 @@ public abstract class SVNNotificationHandler {
      * For certain commands we just want to skip the logging of the
      * command line
      */
-    protected boolean skipCommand() {
+    private boolean skipCommand() {
         if (command == ISVNNotifyListener.Command.CAT ||
                 command == ISVNNotifyListener.Command.INFO ||
                 command == ISVNNotifyListener.Command.LOG ||

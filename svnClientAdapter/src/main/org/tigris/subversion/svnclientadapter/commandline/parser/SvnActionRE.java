@@ -1,42 +1,45 @@
-/*******************************************************************************
- * Copyright (c) 2004, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+/*
+ *  Copyright(c) 2003-2004 by the authors indicated in the @author tags.
  *
- * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
 package org.tigris.subversion.svnclientadapter.commandline.parser;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import org.tigris.subversion.svnclientadapter.SVNRevision;
-import org.tigris.subversion.svnclientadapter.commandline.CmdLineNotifyStatus;
+import org.apache.regexp.RE;
+import org.tigris.subversion.javahl.Notify;
+import org.tigris.subversion.javahl.Revision;
 
 /**
  * regular expression to parse an svn notification line 
  * 
- * @author Cï¿½dric Chabanois (cchabanois at no-log.org) 
+ * @author Cédric Chabanois (cchabanois at no-log.org) 
  */
 class SvnActionRE {
 	public static final String PATH = "path";
 	public static final String CONTENTSTATE = "contentState";
 	public static final String PROPSTATE = "propState";
 	public static final String REVISION = "revision";
-
-	private Pattern pattern;
-	private Matcher matcher;
+	
+	private RE re;
 	private int action;
-	private int contentStatus = CmdLineNotifyStatus.unknown;
-	private int propStatus = CmdLineNotifyStatus.unknown;
+	private int contentStatus = Notify.Status.unknown;
+	private int propStatus = Notify.Status.unknown;
 	private String[] notificationProperties;
 	
 	/**
 	 * each parenthesized subexpression in the regular expression can be associated to a notificationProperty
 	 * which is either PATH, CONTENTSTATE, PROPSTATE or REVISION
+	 * @see Notify#Action
 	 * @see SvnOutputParser
 	 * @param re the regular expression to parse the svn line
 	 * @param action the action corresponding to this line
@@ -44,19 +47,19 @@ class SvnActionRE {
 	 * PATH, CONTENTSTATE, PROPSTATE, REVISION
 	 */
 	public SvnActionRE(String re, int action, String[] notificationProperties) {
-		this.pattern = Pattern.compile('^'+re+'$');
+		this.re = new RE('^'+re+'$');
 		this.action = action;
 		this.notificationProperties = notificationProperties;
 	}
 
 	public SvnActionRE(String re, int action, String notificationProperty) {
-		this.pattern = Pattern.compile('^'+re+'$');
+		this.re = new RE('^'+re+'$');
 		this.action = action;
 		this.notificationProperties = new String[] { notificationProperty };
 	}
 
 	public SvnActionRE(String re, int action) {
-		this.pattern = Pattern.compile('^'+re+'$');
+		this.re = new RE('^'+re+'$');
 		this.action = action;
 		this.notificationProperties = new String[] { };
 	}
@@ -80,12 +83,17 @@ class SvnActionRE {
 	}
 	
 	/**
-	 * @return the action
+	 * get the action
+	 * @see Notify#Action
 	 */
 	public int getAction() {
 		return action;
 	}
 	
+	private RE getRE() {
+		return re;
+	}
+
 	private int getIndex(String notificationProperty) {
 		for (int i = 0; i < notificationProperties.length;i++) {
 			if (notificationProperties[i].equals(notificationProperty)) {
@@ -96,79 +104,80 @@ class SvnActionRE {
 	}
 	
 	public boolean match(String line) {
-		this.matcher = pattern.matcher(line);
-		return this.matcher.matches();
+		return re.match(line);
 	}
 	
 	/**
-	 * @return the path on which action happen or null
+	 * get the path on which action happen or null
 	 */
 	public String getPath() {
 		int index = getIndex(PATH); 
 		if (index == -1) {
 			return null;
 		} else {
-			return matcher.group(index+1);
+			return re.getParen(index+1);
 		}
 	}
 
 	private int getStatus(char statusChar) {
 		if (statusChar == ' ')
-			return CmdLineNotifyStatus.unchanged;
+			return Notify.Status.unchanged;
 		else
 	    if (statusChar == 'C')
-	    	return CmdLineNotifyStatus.conflicted;
+	    	return Notify.Status.conflicted;
 	    else
 		if (statusChar == 'G')
-		   	return CmdLineNotifyStatus.merged;		    
+		   	return Notify.Status.merged;		    
 	    else
 	    if (statusChar == 'U')
-		   	return CmdLineNotifyStatus.changed;
+		   	return Notify.Status.changed;
 	    else
-	    	return CmdLineNotifyStatus.unknown;
+	    	return Notify.Status.unknown;
 	}
 
 	/**
-	 * @return the content state
+	 * get the content state
+	 * @see Notify#Status
 	 */
 	public int getContentState() {
-		if (contentStatus != CmdLineNotifyStatus.unknown) {
+		if (contentStatus != Notify.Status.unknown) {
 			return contentStatus;
 		}
 		int index = getIndex(CONTENTSTATE);
 		if (index == -1) {
-			return CmdLineNotifyStatus.unknown;
+			return Notify.Status.unknown;
 		} else {
-			String stateChar = matcher.group(index+1);
+			String stateChar = re.getParen(index+1);
 			return getStatus(stateChar.charAt(0));
 		}			
 	}
 	
 	/**
-	 * @return the prop status
+	 * get the prop status
+	 * @see Notify#Status
 	 */
 	public int getPropStatus() {
-		if (propStatus != CmdLineNotifyStatus.unknown) {
+		if (propStatus != Notify.Status.unknown) {
 			return propStatus;
 		}
 		int index = getIndex(PROPSTATE);
 		if (index == -1) {
-			return CmdLineNotifyStatus.unknown;
+			return Notify.Status.unknown;
 		} else {
-			String stateChar = matcher.group(index+1);
+			String stateChar = re.getParen(index+1);
 			return getStatus(stateChar.charAt(0));
 		}			
 	}
 
 	/**
-	 * @return the revision or null
+	 * get the revision or null
 	 */
 	public long getRevision() {
 		int index = getIndex(REVISION);
 		if (index == -1) {
-			return SVNRevision.SVN_INVALID_REVNUM;
+			return Revision.SVN_INVALID_REVNUM;
 		} else {
-			String revisionString = matcher.group(index+1);
+			String revisionString = re.getParen(index+1);
 			return Long.parseLong(revisionString);
 		}					
 	}

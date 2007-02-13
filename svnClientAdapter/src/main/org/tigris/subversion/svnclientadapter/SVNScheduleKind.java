@@ -1,17 +1,22 @@
-/*******************************************************************************
- * Copyright (c) 2004, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+/*
+ *  Copyright(c) 2003-2004 by the authors indicated in the @author tags.
  *
- * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
 package org.tigris.subversion.svnclientadapter;
 
 /**
- * Schedule kind an entry can be in.
+ * kind of a schedule
  * @see ISVNInfo#getSchedule()
  */
 public class SVNScheduleKind {
@@ -38,19 +43,10 @@ public class SVNScheduleKind {
          this.kind = kind;
     }
 
-    /**
-     * @return an integer value representation of the scheduleKind
-     */
     public int toInt() {
     	return kind;
     }
     
-    /**
-     * Returns the SVNScheduleKind corresponding to the given int representation.
-     * (As returned by {@link SVNScheduleKind#toInt()} method)
-     * @param scheduleKind
-     * @return SVNScheduleKind representing the int value
-     */
     public SVNScheduleKind fromInt(int scheduleKind) {
         switch(scheduleKind) 
         {
@@ -67,10 +63,26 @@ public class SVNScheduleKind {
         }
     }
     
+    public String toString() {
+        switch(kind) 
+        {
+            case normal: 
+                return "normal";
+            case add: 
+                return "add";
+            case delete: 
+                return "delete";
+            case replace: 
+                return "replace";
+            default:
+                return "";
+        }
+    }
+    
     /**
      * returns the ScheduleKind corresponding to the given string or null
      * @param scheduleKind
-     * @return SVNScheduleKind representing the supplied string value 
+     * @return
      */
     public static SVNScheduleKind fromString(String scheduleKind) {
     	if (NORMAL.toString().equals(scheduleKind)) {
@@ -88,25 +100,6 @@ public class SVNScheduleKind {
         	return null;
     }
 
-    /* (non-Javadoc)
-     * @see java.lang.Object#toString()
-     */
-    public String toString() {
-        switch(kind) 
-        {
-            case normal: 
-                return "normal";
-            case add: 
-                return "add";
-            case delete: 
-                return "delete";
-            case replace: 
-                return "replace";
-            default:
-                return "";
-        }
-    }
-    
     /* (non-Javadoc)
      * @see java.lang.Object#equals(java.lang.Object)
      */

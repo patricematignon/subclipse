@@ -1,13 +1,18 @@
-/*******************************************************************************
- * Copyright (c) 2003, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+/*
+ *  Copyright(c) 2003-2004 by the authors indicated in the @author tags.
  *
- * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
 package org.tigris.subversion.svnclientadapter.javahl;
 
 import java.util.Date;
@@ -18,9 +23,8 @@ import org.tigris.subversion.svnclientadapter.ISVNLogMessageChangePath;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
 
 /**
- * A JavaHL based implementation of {@link ISVNLogMessage}.
- * Actually just an adapter from {@link org.tigris.subversion.javahl.LogMessage}
- *  
+ * adapter : convert from LogMessage to ISVNLogMessage
+ * 
  * @author philip schatz
  */
 public class JhlLogMessage implements ISVNLogMessage {
@@ -28,54 +32,52 @@ public class JhlLogMessage implements ISVNLogMessage {
 	private LogMessage _m;
 
 	/**
-	 * Constructor
-	 * @param msg
+	 * 
 	 */
 	public JhlLogMessage(LogMessage msg) {
 		super();
 		_m = msg;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.ISVNLogMessage#getRevision()
-	 */
+
+    /*
+     * (non-Javadoc)
+     * @see org.tigris.subversion.svnclientadapter.ISVNLogMessage#getRevision()
+     */
 	public SVNRevision.Number getRevision() {
 		return (SVNRevision.Number)JhlConverter.convert(_m.getRevision());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.ISVNLogMessage#getAuthor()
-	 */
+    /*
+     *  (non-Javadoc)
+     * @see org.tigris.subversion.svnclientadapter.ISVNLogMessage#getAuthor()
+     */
 	public String getAuthor() {
 		return _m.getAuthor();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnclientadapter.ISVNLogMessage#getDate()
-	 */
+    /*
+     * (non-Javadoc)
+     * @see org.tigris.subversion.svnclientadapter.ISVNLogMessage#getDate()
+     */
 	public Date getDate() {
 		return _m.getDate();
 	}
 
-	/* (non-Javadoc)
+	/*
+     * (non-Javadoc)
 	 * @see org.tigris.subversion.svnclientadapter.ISVNLogMessage#getMessage()
 	 */
 	public String getMessage() {
 		return _m.getMessage();
 	}
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
      * @see org.tigris.subversion.svnclientadapter.ISVNLogMessage#getChangedPaths()
      */
     public ISVNLogMessageChangePath[] getChangedPaths() {
     	return JhlConverter.convert(_m.getChangedPaths());
     }
-
-    /* (non-Javadoc)
-     * @see java.lang.Object#toString()
-     */
-    public String toString() {
-        return getMessage();
-    }
-
+    
 }

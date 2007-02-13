@@ -1,33 +1,120 @@
-/*******************************************************************************
- * Copyright (c) 2004, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+/*
+ *  Copyright(c) 2003-2004 by the authors indicated in the @author tags.
  *
- * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
 package org.tigris.subversion.svnclientadapter.javahl;
 
+import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.tigris.subversion.javahl.BlameCallback;
-import org.tigris.subversion.svnclientadapter.Annotations;
+import org.tigris.subversion.svnclientadapter.AnnotateInputStream;
+import org.tigris.subversion.svnclientadapter.ISVNAnnotations;
 
 /**
- * JavaHL specific subclass of {@link Annotations}.
- * It implements a {@link org.tigris.subversion.javahl.BlameCallback}
- * as means of constructing the annotation records.  
+ * for now, we don't use this class because jhl blame method that takes
+ * a BlameCallback as parameter does not seem to work ...  
  * 
  */
-public class JhlAnnotations extends Annotations implements BlameCallback {
+public class JhlAnnotations implements ISVNAnnotations, BlameCallback {
+	private List annotations = new ArrayList();
+
+	private class Annotation {
+		long revision;
+		String author;
+		Date changed;
+		String line;
+	}
 	
-    /* (non-Javadoc)
-     * @see org.tigris.subversion.javahl.BlameCallback#singleLine(java.util.Date, long, java.lang.String, java.lang.String)
+	private Annotation getAnnotation(int i) {
+		if (i >= annotations.size()) {
+			return null;
+		}
+		return (Annotation)annotations.get(i);
+	}
+	
+	
+	/* (non-Javadoc)
+	 * @see org.tigris.subversion.svnclientadapter.ISVNAnnotations#getRevision(int)
+	 */
+	public long getRevision(int lineNumber) {
+		Annotation annotation = getAnnotation(lineNumber);
+		if (annotation == null) {
+			return -1;
+		} else {
+			return annotation.revision;
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.tigris.subversion.svnclientadapter.ISVNAnnotations#getAuthor(int)
+	 */
+	public String getAuthor(int lineNumber) {
+		Annotation annotation = getAnnotation(lineNumber);
+		if (annotation == null) {
+			return null;
+		} else {
+			return annotation.author;
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.tigris.subversion.svnclientadapter.ISVNAnnotations#getLine(int)
+	 */
+	public String getLine(int lineNumber) {
+		Annotation annotation = getAnnotation(lineNumber);
+		if (annotation == null) {
+			return null;
+		} else {
+			return annotation.line;
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.tigris.subversion.svnclientadapter.ISVNAnnotations#getInputStream()
+	 */
+	public InputStream getInputStream() {
+		return new AnnotateInputStream(this);
+	}
+
+	
+	
+    /**
+     * the method will be called for every line in a file.
+     * @param changed   the date of the last change.
+     * @param revision  the revision of the last change.
+     * @param author    the author of the last change.
+     * @param line      the line in the file
      */
     public void singleLine(Date changed, long revision, String author,
                            String line) {
-    	addAnnotation(new Annotation(revision, author, changed, line));
+    	Annotation annotation = new Annotation();
+    	annotation.author = author;
+    	annotation.changed = changed;
+    	annotation.revision = revision;
+    	annotation.line = line;
+    	annotations.add(annotation);
     }
+    
+    
+    
+	/* (non-Javadoc)
+	 * @see org.tigris.subversion.svnclientadapter.ISVNAnnotations#size()
+	 */
+	public int size() {
+		return annotations.size();
+	}
 }

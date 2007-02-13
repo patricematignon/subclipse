@@ -1,29 +1,34 @@
-/*******************************************************************************
- * Copyright (c) 2004, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+/**
+ * @copyright
+ * ====================================================================
+ * Copyright (c) 2003-2004 CollabNet.  All rights reserved.
  *
- * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
+ * This software is licensed as described in the file COPYING, which
+ * you should have received as part of this distribution.  The terms
+ * are also available at http://subversion.tigris.org/license-1.html.
+ * If newer versions of this license are posted there, you may use a
+ * newer version instead, at your option.
+ *
+ * This software consists of voluntary contributions made by many
+ * individuals.  For exact contribution history, see the revision
+ * history and logs, available at http://subversion.tigris.org/.
+ * ====================================================================
+ * @endcopyright
+ */
 package org.tigris.subversion.svnclientadapter.basictests;
 
 import java.io.File;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
 import org.tigris.subversion.svnclientadapter.SVNStatusKind;
 import org.tigris.subversion.svnclientadapter.SVNUrl;
-import org.tigris.subversion.svnclientadapter.testUtils.OneTest;
-import org.tigris.subversion.svnclientadapter.testUtils.SVNTest;
 
 
 public class MkdirTest extends SVNTest {
-    private static final Logger log = Logger.getLogger(MkdirTest.class.getName());
+    private static Log log = LogFactory.getLog(MkdirTest.class);
     
     
     /**
@@ -78,7 +83,7 @@ public class MkdirTest extends SVNTest {
 	    }
 	    catch(SVNClientException e)
 	    {
-			log.log(Level.FINE, e.getMessage(), e);
+            log.debug(e);
 	    }
 	
 	    // check the working copy status
@@ -102,7 +107,7 @@ public class MkdirTest extends SVNTest {
 	    }
 	    catch(SVNClientException e)
 	    {
-			log.log(Level.FINE, e.getMessage(), e);
+	        log.debug(e);
 	    }
 	
 	    // check the working copy status

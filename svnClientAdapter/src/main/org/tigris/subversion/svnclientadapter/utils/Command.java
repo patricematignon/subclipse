@@ -1,20 +1,10 @@
-/*******************************************************************************
- * Copyright (c) 2004, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
 package org.tigris.subversion.svnclientadapter.utils;
 
 import java.io.IOException;
 import java.io.OutputStream;
 
 /**
- * execute a command. Some parts of this class come from SVNKit
+ * execute a command. Some parts of this class come from javasvn
  */
 public class Command {
 	private Process process = null;
@@ -23,6 +13,7 @@ public class Command {
     private String[] parameters = new String[] {}; 
 
 	private OutputStream out = System.out;
+
 	private OutputStream err = System.err;
 
 	public Command(String command) {
@@ -74,7 +65,6 @@ public class Command {
 		if (process != null) {
 			new ReaderThread(process.getInputStream(), out).start();
 			new ReaderThread(process.getErrorStream(), err).start();
-			process.getOutputStream().close();
 		}
 	}
 
@@ -85,7 +75,6 @@ public class Command {
 	 * 
 	 * @return the exit value of the process. By convention, <code>0</code>
 	 *         indicates normal termination.
-	 * @throws InterruptedException
 	 */
 	public int waitFor() throws InterruptedException {
 		return process.waitFor();

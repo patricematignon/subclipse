@@ -1,21 +1,37 @@
-/*******************************************************************************
- * Copyright (c) 2004, 2006 Subclipse project and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+/**
+ * @copyright
+ * ====================================================================
+ * Copyright (c) 2003-2004 CollabNet.  All rights reserved.
  *
- * Contributors:
- *     Subclipse project committers - initial API and implementation
- ******************************************************************************/
+ * This software is licensed as described in the file COPYING, which
+ * you should have received as part of this distribution.  The terms
+ * are also available at http://subversion.tigris.org/license-1.html.
+ * If newer versions of this license are posted there, you may use a
+ * newer version instead, at your option.
+ *
+ * This software consists of voluntary contributions made by many
+ * individuals.  For exact contribution history, see the revision
+ * history and logs, available at http://subversion.tigris.org/.
+ * ====================================================================
+ * @endcopyright
+ */
+
 package org.tigris.subversion.svnclientadapter;
 
 /**
- * A generic implementation of the {@link ISVNLogMessageChangePath} interface.
- * 
+ * This class has been copied from javahl and modified a bit.
+ * We cannot use original ChangePath because constructor visibility is package
  */
 public class SVNLogMessageChangePath implements ISVNLogMessageChangePath
 {
+    public SVNLogMessageChangePath(String path, SVNRevision.Number copySrcRevision, String copySrcPath, char action)
+    {
+        this.path = path;
+        this.copySrcRevision = copySrcRevision;
+        this.copySrcPath = copySrcPath;
+        this.action = action;
+    }
+
     /** Path of commited item */
     private String path;
 
@@ -29,55 +45,41 @@ public class SVNLogMessageChangePath implements ISVNLogMessageChangePath
     private char action;
 
     /**
-     * Constructor
-     * @param path
-     * @param copySrcRevision
-     * @param copySrcPath
-     * @param action
-     */
-	public SVNLogMessageChangePath(String path, SVNRevision.Number copySrcRevision, String copySrcPath, char action)
-    {
-        this.path = path;
-        this.copySrcRevision = copySrcRevision;
-        this.copySrcPath = copySrcPath;
-        this.action = action;
-    }
-
-    /* (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNLogMessageChangePath#getPath()
+     * Retrieve the path to the commited item
+     * @return  the path to the commited item
      */
     public String getPath()
     {
         return path;
     }
 
-    /* (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNLogMessageChangePath#getCopySrcRevision()
+    /**
+     * Retrieve the copy source revision (if any)
+     * @return  the copy source revision (if any)
      */
     public SVNRevision.Number getCopySrcRevision()
     {
     	return copySrcRevision;    
     }
 
-    /* (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNLogMessageChangePath#getCopySrcPath()
+    /**
+     * Retrieve the copy source path (if any)
+     * @return  the copy source path (if any)
      */
     public String getCopySrcPath()
     {
         return copySrcPath;
     }
 
-    /* (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNLogMessageChangePath#getAction()
+    /**
+     * Retrieve action performed
+     * @return  action performed
      */
     public char getAction()
     {
         return action;
     }
     
-    /* (non-Javadoc)
-     * @see java.lang.Object#toString()
-     */
     public String toString() {
     	return getPath();
     }
