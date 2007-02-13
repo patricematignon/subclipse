@@ -1,0 +1,17 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: SVN Client - JavaSVN Implementation
+Bundle-SymbolicName: org.eclipse.subversion.client.javasvn;singleton:=true
+Bundle-Version: 1.1.0.qualifier
+Bundle-Activator: org.eclipse.subversion.client.javasvn.internal.Activator
+Bundle-Vendor: Subclipse + TMate
+Bundle-Localization: plugin
+Require-Bundle: org.eclipse.core.runtime,
+ org.eclipse.subversion.client;bundle-version="[1.3.0,1.4.0)"
+Eclipse-LazyStart: true
+Bundle-ClassPath: .,
+ lib/javasvn.jar,
+ lib/svnjavahl.jar,
+ lib/ganymed.jar
+Export-Package: org.eclipse.subversion.client.javasvn.internal
+Bundle-RequiredExecutionEnvironment: J2SE-1.4

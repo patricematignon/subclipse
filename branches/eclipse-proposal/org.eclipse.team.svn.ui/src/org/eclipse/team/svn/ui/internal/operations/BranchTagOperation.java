@@ -1,0 +1,94 @@
+package org.eclipse.team.svn.ui.internal.operations;
+
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.subversion.client.SVNRevision;
+import org.eclipse.subversion.client.SVNUrl;
+import org.eclipse.team.svn.core.internal.ISVNLocalResource;
+import org.eclipse.team.svn.core.internal.SVNException;
+import org.eclipse.team.svn.core.internal.SVNTeamProvider;
+import org.eclipse.team.svn.core.internal.commands.BranchTagCommand;
+import org.eclipse.team.svn.core.internal.history.Alias;
+import org.eclipse.team.svn.core.internal.history.AliasManager;
+import org.eclipse.team.svn.core.internal.resources.SVNWorkspaceRoot;
+import org.eclipse.team.svn.ui.internal.Policy;
+import org.eclipse.ui.IWorkbenchPart;
+
+public class BranchTagOperation extends RepositoryProviderOperation {
+    private SVNUrl sourceUrl;
+    private SVNUrl destinationUrl;
+    private SVNRevision revision;
+    private boolean createOnServer;
+    private String message;
+    private Alias newAlias;
+
+    public BranchTagOperation(IWorkbenchPart part, IResource[] resources, SVNUrl sourceUrl, SVNUrl destinationUrl, boolean createOnServer, SVNRevision revision, String message) {
+        super(part, resources);
+        this.sourceUrl = sourceUrl;
+        this.destinationUrl = destinationUrl;
+        this.createOnServer = createOnServer;
+        this.revision = revision;
+        this.message = message;
+    }
+    
+    protected String getTaskName() {
+        return Policy.bind("BranchTagOperation.taskName"); //$NON-NLS-1$;
+    }
+
+    protected String getTaskName(SVNTeamProvider provider) {
+        return Policy.bind("BranchTagOperation.0", provider.getProject().getName()); //$NON-NLS-1$  
+    }
+
+    protected void execute(SVNTeamProvider provider, IResource[] resources, IProgressMonitor monitor) throws SVNException, InterruptedException {
+        monitor.beginTask(null, 100);
+		try {			
+	    	BranchTagCommand command = new BranchTagCommand(provider.getSVNWorkspaceRoot(),resources[0], sourceUrl, destinationUrl, message, createOnServer, revision);
+	        command.run(Policy.subMonitorFor(monitor,1000));
+	        if (newAlias != null) updateBranchTagProperty(resources[0]);
+		} catch (SVNException e) {
+		    collectStatus(e.getStatus());
+		} finally {
+			monitor.done();
+		}         
+    }
+    
+    private void updateBranchTagProperty(IResource resource) {
+		AliasManager aliasManager = new AliasManager(resource, false);
+		Alias[] branchAliases = aliasManager.getBranches();
+		Alias[] tagAliases = aliasManager.getTags();
+		StringBuffer propertyValue = new StringBuffer();
+		for (int i = 0; i < branchAliases.length; i++) {
+			if (branchAliases[i].getRevision() > 0) {
+				if (propertyValue.length() > 0) propertyValue.append("\n"); //$NON-NLS-1$
+				Alias branch = branchAliases[i];
+				propertyValue.append(branch.getRevision() + "," + branch.getName()); //$NON-NLS-1$
+				if (branch.getRelativePath() != null) propertyValue.append("," + branch.getRelativePath()); //$NON-NLS-1$
+				if (branch.isBranch()) propertyValue.append(",branch"); //$NON-NLS-1$
+				else propertyValue.append(",tag"); //$NON-NLS-1$			
+			}
+		}
+		for (int i = 0; i < tagAliases.length; i++) {
+			if (tagAliases[i].getRevision() > 0) {
+				if (propertyValue.length() > 0) propertyValue.append("\n"); //$NON-NLS-1$
+				Alias tag = tagAliases[i];
+				propertyValue.append(tag.getRevision() + "," + tag.getName()); //$NON-NLS-1$
+				if (tag.getRelativePath() != null) propertyValue.append("," + tag.getRelativePath()); //$NON-NLS-1$
+				if (tag.isBranch()) propertyValue.append(",branch"); //$NON-NLS-1$
+				else propertyValue.append(",tag"); //$NON-NLS-1$
+			}
+		}
+		if (propertyValue.length() > 0) propertyValue.append("\n"); //$NON-NLS-1$
+		propertyValue.append(newAlias.getRevision() + "," + newAlias.getName() + "," + newAlias.getRelativePath());
+		if (newAlias.isBranch()) propertyValue.append(",branch"); //$NON-NLS-1$
+		else propertyValue.append(",tag"); //$NON-NLS-1$	
+		ISVNLocalResource svnResource = SVNWorkspaceRoot.getSVNResourceFor(resource);		
+		try {
+			svnResource.setSvnProperty("subclipse:tags", propertyValue.toString(), false); //$NON-NLS-1$	
+		} catch (SVNException e) {}    	
+    }
+
+	public void setNewAlias(Alias newAlias) {
+		this.newAlias = newAlias;
+	}
+
+}
