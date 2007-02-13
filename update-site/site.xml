@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+
+   <description url="http://www.loonsoft.com/2.1/updates">
+      LoonSoft Eclipse Plugins Update Site
+   </description>
+   <feature url="features/feature.win32_0.9.0.jar" id="feature.win32" version="0.9.0"/>
+   <feature url="features/featurelinux_0.9.0.jar" id="featurelinux" version="0.9.0"/>
+   <feature url="features/featureosx_0.9.0.jar" id="featureosx" version="0.9.0"/>
+</site>
