@@ -11,13 +11,11 @@
 
 package org.tigris.subversion.subclipse.mylar;
 
-import java.util.Iterator;
-import java.util.List;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.mylar.tasks.core.ILinkedTaskInfo;
 import org.eclipse.mylar.tasks.core.ITask;
-import org.eclipse.mylar.tasks.core.TaskRepository;
+import org.eclipse.mylar.tasks.core.TaskRepositoryManager;
 import org.eclipse.mylar.tasks.ui.TasksUiPlugin;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.synchronize.SyncInfoTree;
@@ -99,6 +97,8 @@ class SubclipseLinkedTaskInfo implements ILinkedTaskInfo {
   }
   
   private void init() {
+    TaskRepositoryManager repositoryManager = TasksUiPlugin.getRepositoryManager(); 
+
     String[] urls = null;
     ProjectProperties props = null;
     try {
@@ -110,12 +110,14 @@ class SubclipseLinkedTaskInfo implements ILinkedTaskInfo {
           if(svnres.getResource()!=null) {
             props = ProjectProperties.getProjectProperties(svnres.getResource());
           } else {
-            ISVNClientAdapter client = SVNProviderPlugin.getPlugin().getSVNClientManager().createSVNClient();
+            ISVNClientAdapter client = SVNProviderPlugin.getPlugin()
+                .getSVNClientManager().createSVNClient();
             ISVNProperty[] properties = client.getProperties(svnres.getUrl());
             for (int i = 0; i < properties.length; i++) {
               ISVNProperty property = properties[i];
-              if("bugtraq:url".equals(property.getName())) {
-                repositoryUrl = getRepositoryUrl(property.getValue());
+              if ("bugtraq:url".equals(property.getName())) {
+                repositoryUrl = SubclipseTeamPlugin.getRepository(
+                    property.getValue(), repositoryManager).getUrl();
                 // comments?
               }
             }
@@ -127,7 +129,10 @@ class SubclipseLinkedTaskInfo implements ILinkedTaskInfo {
     }
 
     if (props != null) {
-      repositoryUrl = getRepositoryUrl(props.getUrl());
+      if (repositoryUrl == null) {
+        repositoryUrl = SubclipseTeamPlugin.getRepository(props.getUrl(),
+            repositoryManager).getUrl();
+      }
       urls = props.getLinkList(getComment()).getUrls();
     }
     
@@ -137,17 +142,6 @@ class SubclipseLinkedTaskInfo implements ILinkedTaskInfo {
     if (urls != null && urls.length > 0) {
       taskFullUrl = urls[0];
     }
-  }
-
-  private String getRepositoryUrl(String url) {
-    List repositories = TasksUiPlugin.getRepositoryManager().getAllRepositories();
-    for (Iterator it = repositories.iterator(); it.hasNext();) {
-      TaskRepository repository = (TaskRepository) it.next();
-      if (url.startsWith(repository.getUrl())) {
-        return repository.getUrl();
-      }
-    }
-    return null;
   }
   
 }

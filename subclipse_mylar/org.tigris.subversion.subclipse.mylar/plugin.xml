@@ -18,5 +18,14 @@
       <adapter type="org.eclipse.mylar.tasks.core.ILinkedTaskInfo"/>
     </factory>
   </extension>
+  <extension
+        point="org.eclipse.mylar.tasks.ui.projectLinkProviders">
+     <linkProvider
+           class="org.tigris.subversion.subclipse.mylar.SubclipseTaskRepositoryLinkProvider"
+           id="org.tigris.subversion.subclipse.mylar.taskRepositoryLinkProvider"
+           name="Subclipse Link Provider"
+           order="100">
+     </linkProvider>
+  </extension>
     
 </plugin>
