@@ -11,6 +11,11 @@
 
 package org.tigris.subversion.subclipse.mylar;
 
+import java.util.Iterator;
+import java.util.List;
+
+import org.eclipse.mylar.tasks.core.TaskRepository;
+import org.eclipse.mylar.tasks.core.TaskRepositoryManager;
 import org.eclipse.ui.IStartup;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
@@ -51,7 +56,18 @@ public class SubclipseTeamPlugin extends AbstractUIPlugin implements IStartup {
     super.stop(context);
 	}
 
-	/**
+	public static TaskRepository getRepository(String url, TaskRepositoryManager repositoryManager) {
+    List repositories = repositoryManager.getAllRepositories();
+    for (Iterator it = repositories.iterator(); it.hasNext();) {
+      TaskRepository repository = (TaskRepository) it.next();
+      if (url.startsWith(repository.getUrl())) {
+        return repository;
+      }
+    }
+    return null;
+  }
+
+  /**
 	 * Returns the shared instance
 	 *
 	 * @return the shared instance
