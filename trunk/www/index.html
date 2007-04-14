@@ -12,34 +12,38 @@
   href="tigris-branding/css/print.css"/>
 <script type="text/javascript" src="tigris-branding/scripts/tigris.js"></script>
 <title></title>
+<!-- Custom stylations to hide the project info -->
+<style type="text/css">
+#projecthome .axial { display: none; }
+#apphead h1 { display: none; }
+#longdescription { border: none; }
+#longdescription h2 { display: none; }
+#customcontent h2 { display: block; }
+</style>
+<!-- End custom stylations -->
 </head>
 <body>
+<!-- The class h2 is included on the main div, because the HTML which the
+     server will wrap around the page includes a <div class="h2">.
+     Thus, we include one here so that the page looks right when previewed
+     locally, *but* we override the border which the CSS assigns to that
+     style, so that we do not get two borders on the live page. -->
+<div class="h2 app" style="border-left: 0px" id="customcontent">
 
-<p>There are three projects hosted on this site:</p>
-<ul>
-  <li><b><a href="#subclipse">Subclipse</a></b> is an <a href="http://www.eclipse.org">Eclipse</a> plugin that adds <a href=
-"http://subversion.tigris.org">Subversion</a> integration to the Eclipse IDE.  Subclipse is licensed
-        under the terms of the <a href="http://www.eclipse.org/legal/epl-v10.html">Eclipse Public License (EPL) 1.0.</a></li>
-  <li><b><a href="svnClientAdapter.html">svnClientAdapter</a></b> is a high-level Java API for Subversion and is used by Subclipse.
-        svnClientAdapter is licensed under the terms of the <a href="http://www.eclipse.org/legal/epl-v10.html">Eclipse Public License (EPL) 1.0.</a></li>
-  <li><b><a href="svnant.html">svnAnt</a></b> is an <a href="http://ant.apache.org/">Ant</a> task that uses svnClientAdapter and provides access to Subversion from Ant scripts.
-        svnAnt is licensed under the terms of the <a href="http://www.apache.org/licenses/LICENSE-1.1">Apache Software License 1.1</a></li>
-</ul>
-<div class="app">
-
-<div class="h2" id="license" title="license">
-<h2>License Change/Eclipse Proposal</h2>
- <p>The license for Subclipse has been changed from the CPL to the EPL.  The license for svnClientAdapter has been
- changed from the Apache License to the EPL.  These changes come in anticipation of moving this project to the Eclipse
- Foundation.  Information on our proposal can be <a href="http://www.eclipse.org/proposals/svn/">found here.</a></p>
+<img align="right" src="images/eclipse_ready.jpg">
+<div style="text-align: left;">
+  <font size="6">Subclipse</font>
 </div>
+<p>Subclipse is an Eclipse Team Provider plug-in providing support for
+   Subversion within the Eclipse IDE.  The software is released under the <a
+   href="http://www.eclipse.org/legal/epl-v10.html">Eclipse Public License
+   (EPL) 1.0</a> open source license.</p>
 
 <div class="h2" id="subclipse" title="subclipse">
 <h2>Current Release</h2>
 
 <div class="h3" id="callisto" title="callisto">
 <h3>Eclipse 3.2/Callisto and 3.3/Europa</h3>
-  <img align="right" src="images/eclipse_ready.jpg">
   <p><b>Subclipse 1.2.0 is now available for Eclipse 3.2+!</b></p>
   <p>See the <a href="http://subclipse.tigris.org/subclipse_1.2.x/changes.html#1.2.0">changelog</a>
   for details.  Existing Subclipse users should read the <a href="http://subclipse.tigris.org/upgrade.html">
@@ -122,6 +126,15 @@
  http://www.awprofessional.com/articles/article.asp?p=517206</a>
  </div>
 
+<div class="h2" id="other" title="other">
+<h2>Other Projects (svnClientAdapter and svnAnt)</h2>
+<p>In addition to Subclipse, there are two other projects hosted on this site:</p>
+<ul>
+  <li><b><a href="svnClientAdapter.html">svnClientAdapter</a></b> is a high-level Java API for Subversion and is used by Subclipse.
+        svnClientAdapter is licensed under the terms of the <a href="http://www.eclipse.org/legal/epl-v10.html">Eclipse Public License (EPL) 1.0.</a></li>
+  <li><b><a href="svnant.html">svnAnt</a></b> is an <a href="http://ant.apache.org/">Ant</a> task that uses svnClientAdapter and provides access to Subversion from Ant scripts.
+        svnAnt is licensed under the terms of the <a href="http://www.apache.org/licenses/LICENSE-1.1">Apache Software License 1.1</a></li>
+</ul>
 </div>
 
 </div>
