@@ -29,7 +29,7 @@
       <import plugin="org.eclipse.core.runtime" version="3.2.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.team.core" version="3.2.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.mylar.tasks.core" version="0.9.2" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.mylar.tasks.ui" version="0.9.2" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.mylar.tasks.ui" version="2.0.0.v20070221-0830" match="greaterOrEqual"/>
       <import plugin="org.eclipse.mylar.team" version="0.9.2" match="greaterOrEqual"/>
       <import plugin="org.tigris.subversion.subclipse.core" version="1.1.9" match="greaterOrEqual"/>
       <import plugin="org.tigris.subversion.subclipse.ui" version="1.1.9" match="greaterOrEqual"/>
