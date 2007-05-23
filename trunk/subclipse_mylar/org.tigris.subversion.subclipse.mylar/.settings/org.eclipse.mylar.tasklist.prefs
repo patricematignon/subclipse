@@ -1,4 +1,4 @@
-#Thu Dec 07 17:43:19 EST 2006
+#Wed May 23 09:33:35 EDT 2007
 eclipse.preferences.version=1
-project.repository.kind=web
-project.repository.url=http\://subclipse.tigris.org/issues
+project.repository.kind=issuezilla
+project.repository.url=http\://subclipse.tigris.org
