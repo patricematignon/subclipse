@@ -6,7 +6,7 @@
    <feature url="features/org.tigris.subversion.subclipse.mylar_1.0.1.jar" id="org.tigris.subversion.subclipse.mylar" version="1.0.1">
       <category name="Mylar Integration"/>
    </feature>
-   <feature url="features/org.tigris.subversion.subclipse_1.2.1.jar" id="org.tigris.subversion.subclipse" version="1.2.1">
+   <feature url="features/org.tigris.subversion.subclipse_1.2.2.jar" id="org.tigris.subversion.subclipse" version="1.2.2">
       <category name="Subclipse"/>
    </feature>
    <category-def name="Subclipse" label="Subclipse Plugin">
