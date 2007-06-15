@@ -13,10 +13,10 @@ package org.tigris.subversion.subclipse.mylar;
 
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.mylar.tasks.core.ILinkedTaskInfo;
-import org.eclipse.mylar.tasks.core.ITask;
-import org.eclipse.mylar.tasks.core.TaskRepositoryManager;
-import org.eclipse.mylar.tasks.ui.TasksUiPlugin;
+import org.eclipse.mylyn.tasks.core.AbstractTask;
+import org.eclipse.mylyn.tasks.core.ILinkedTaskInfo;
+import org.eclipse.mylyn.tasks.core.TaskRepositoryManager;
+import org.eclipse.mylyn.tasks.ui.TasksUiPlugin;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.synchronize.SyncInfoTree;
 import org.eclipse.team.internal.core.subscribers.CheckedInChangeSet;
@@ -70,7 +70,7 @@ class SubclipseLinkedTaskInfo implements ILinkedTaskInfo {
     return taskFullUrl;
   }
 
-  public ITask getTask() {
+  public AbstractTask getTask() {
     return null;
   }
 

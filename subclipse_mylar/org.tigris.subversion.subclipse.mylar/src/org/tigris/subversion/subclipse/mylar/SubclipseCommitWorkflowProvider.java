@@ -3,7 +3,7 @@ package org.tigris.subversion.subclipse.mylar;
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.mylar.internal.team.AbstractCommitWorkflowProvider;
+import org.eclipse.mylyn.internal.team.ui.AbstractCommitWorkflowProvider;
 import org.tigris.subversion.subclipse.ui.actions.CommitAction;
 
 public class SubclipseCommitWorkflowProvider extends

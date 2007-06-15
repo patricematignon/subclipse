@@ -11,7 +11,7 @@
 
 package org.tigris.subversion.subclipse.mylar;
 
-import org.eclipse.mylar.team.AbstractActiveChangeSetProvider;
+import org.eclipse.mylyn.team.ui.AbstractActiveChangeSetProvider;
 import org.eclipse.team.internal.core.subscribers.ActiveChangeSetManager;
 import org.tigris.subversion.subclipse.core.SVNProviderPlugin;
 
