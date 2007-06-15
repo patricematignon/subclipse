@@ -13,7 +13,7 @@ package org.tigris.subversion.subclipse.mylar;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdapterFactory;
-import org.eclipse.mylar.tasks.core.ILinkedTaskInfo;
+import org.eclipse.mylyn.tasks.core.ILinkedTaskInfo;
 import org.eclipse.team.internal.core.subscribers.CheckedInChangeSet;
 import org.tigris.subversion.subclipse.core.history.LogEntry;
 import org.tigris.subversion.subclipse.ui.subscriber.SVNChangeSetCollector;

@@ -3,7 +3,7 @@
 <plugin>
 
    <extension
-         point="org.eclipse.mylar.team.changeSets">
+         point="org.eclipse.mylyn.team.ui.changeSets">
       <activeChangeSetProvider 
       	class="org.tigris.subversion.subclipse.mylar.SubclipseTeamChangeSetProvider"/>
    </extension> 
@@ -19,7 +19,7 @@
     </factory>
   </extension>
   <extension
-        point="org.eclipse.mylar.tasks.ui.projectLinkProviders">
+        point="org.eclipse.mylyn.tasks.ui.projectLinkProviders">
      <linkProvider
            class="org.tigris.subversion.subclipse.mylar.SubclipseTaskRepositoryLinkProvider"
            id="org.tigris.subversion.subclipse.mylar.taskRepositoryLinkProvider"

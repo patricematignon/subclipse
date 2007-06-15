@@ -12,9 +12,9 @@
 package org.tigris.subversion.subclipse.mylar;
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.mylar.tasks.core.TaskRepository;
-import org.eclipse.mylar.tasks.core.TaskRepositoryManager;
-import org.eclipse.mylar.tasks.ui.AbstractTaskRepositoryLinkProvider;
+import org.eclipse.mylyn.tasks.core.TaskRepository;
+import org.eclipse.mylyn.tasks.core.TaskRepositoryManager;
+import org.eclipse.mylyn.tasks.ui.AbstractTaskRepositoryLinkProvider;
 import org.tigris.subversion.subclipse.core.SVNException;
 import org.tigris.subversion.subclipse.ui.settings.ProjectProperties;
 
