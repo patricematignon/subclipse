@@ -9,7 +9,7 @@
  *     Eugene Kuleshov - initial API and implementation
  ******************************************************************************/
 
-package org.tigris.subversion.subclipse.mylar;
+package org.tigris.subversion.subclipse.mylyn;
 
 import org.eclipse.mylyn.team.ui.AbstractActiveChangeSetProvider;
 import org.eclipse.team.internal.core.subscribers.ActiveChangeSetManager;

@@ -9,7 +9,7 @@
  *     Eugene Kuleshov - initial API and implementation
  ******************************************************************************/
 
-package org.tigris.subversion.subclipse.mylar;
+package org.tigris.subversion.subclipse.mylyn;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdapterFactory;
