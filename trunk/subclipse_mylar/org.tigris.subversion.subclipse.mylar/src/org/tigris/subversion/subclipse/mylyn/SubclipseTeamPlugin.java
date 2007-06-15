@@ -9,7 +9,7 @@
  *     Eugene Kuleshov - initial API and implementation
  ******************************************************************************/
 
-package org.tigris.subversion.subclipse.mylar;
+package org.tigris.subversion.subclipse.mylyn;
 
 import java.util.Iterator;
 import java.util.List;
@@ -27,7 +27,7 @@ import org.osgi.framework.BundleContext;
  */
 public class SubclipseTeamPlugin extends AbstractUIPlugin implements IStartup {
 
-	public static final String PLUGIN_ID = "org.tigris.subversion.subclipse.mylar";
+	public static final String PLUGIN_ID = "org.tigris.subversion.subclipse.mylyn";
 
 	private static SubclipseTeamPlugin plugin;
 	

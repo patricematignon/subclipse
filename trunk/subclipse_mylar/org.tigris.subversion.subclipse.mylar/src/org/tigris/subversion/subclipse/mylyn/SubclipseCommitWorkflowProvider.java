@@ -1,4 +1,4 @@
-package org.tigris.subversion.subclipse.mylar;
+package org.tigris.subversion.subclipse.mylyn;
 
 import java.lang.reflect.InvocationTargetException;
 
