@@ -16,7 +16,7 @@ import org.eclipse.team.internal.core.subscribers.ActiveChangeSetManager;
 import org.tigris.subversion.subclipse.core.SVNProviderPlugin;
 
 /**
- * Team repository provider for Mylar.
+ * Team repository provider for Mylyn.
  * 
  * @author Eugene Kuleshov
  */
