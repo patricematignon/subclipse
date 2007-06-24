@@ -63,7 +63,7 @@ class SubclipseLinkedTaskInfo implements ILinkedTaskInfo {
     return repositoryUrl;
   }
 
-  public String getTaskFullUrl() {
+  public String getTaskUrl() {
     if(taskFullUrl==null) {
       init();
     }          
