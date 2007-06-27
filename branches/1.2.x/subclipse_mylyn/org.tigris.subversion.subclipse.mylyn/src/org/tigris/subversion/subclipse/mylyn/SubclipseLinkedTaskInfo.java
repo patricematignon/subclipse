@@ -87,7 +87,7 @@ class SubclipseLinkedTaskInfo implements ILinkedTaskInfo {
         
         SVNRevision rev = remoteResource.getLastChangedRevision();
         ISVNLogMessage[] messages = remoteResource.getLogMessages(rev, rev,
-            SVNRevision.START, false, false, 1, false);
+            SVNRevision.START, false, false, 1);
         comment = messages[0].getMessage();
       } catch (TeamException ex) {
         comment = changeSet.getComment();
