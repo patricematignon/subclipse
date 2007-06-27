@@ -3,16 +3,26 @@
    <description url="http://subclipse.tigris.org/update_1.2.x">
       Eclipse Install/Update site for Subclipse
    </description>
-   <feature url="features/org.tigris.subversion.subclipse.mylar_1.0.1.jar" id="org.tigris.subversion.subclipse.mylar" version="1.0.1">
-      <category name="Mylar Integration"/>
-   </feature>
-   <feature url="features/org.tigris.subversion.subclipse_1.2.2.jar" id="org.tigris.subversion.subclipse" version="1.2.2">
+   <feature url="features/org.tigris.subversion.subclipse_1.2.3.jar" id="org.tigris.subversion.subclipse" version="1.2.3">
       <category name="Subclipse"/>
+   </feature>
+   <feature url="features/org.tigris.subversion.subclipse.mylar_1.0.1.jar" id="org.tigris.subversion.subclipse.mylar" version="1.0.1">
+      <category name="Integrations (Optional)"/>
+   </feature>
+   <feature url="features/org.eclipse.buckminster.svn.feature_0.1.0.v20070626.jar" id="org.eclipse.buckminster.svn.feature" version="0.1.0.v20070626">
+      <category name="Integrations (Optional)"/>
+   </feature>
+   <feature url="features/org.tigris.subversion.subclipse.mylyn_2.0.0.jar" id="org.tigris.subversion.subclipse.mylyn" version="2.0.0">
+      <category name="Integrations (Optional)"/>
    </feature>
    <category-def name="Subclipse" label="Subclipse Plugin">
       <description>
          The subclipse Subversion plugin
       </description>
    </category-def>
-   <category-def name="Mylar Integration" label="Mylar Integration"/>
+   <category-def name="Integrations (Optional)" label="Integrations (Optional)">
+      <description>
+         Optional Integrations between Subclipse and other plugins.
+      </description>
+   </category-def>
 </site>
