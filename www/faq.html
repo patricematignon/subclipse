@@ -144,24 +144,21 @@ Support for SVN Protocols</a> for more details on when one adapter might be bett
 <div class="h3" id="passwords" title="passwords">
 <h3>Usernames and passwords</h3>
 
-<p>When you define a repository connection to Subclipse there is an area to specify your
-username and password.  Since version 0.9.30 of Subclipse the best thing to do is always leave
-these fields empty.  The exception is if you are using the command line adapter.  As of version 0.9.100
-the dialogs no longer show the username and password fields.  
-Why should you leave them blank?  Because the JavaHL and JavaSVN
-adapters are intelligent enough to prompt you for this information when they need to.  You can also
-then allow the adapter to cache this information.  The adapters are also intelligent enough to prompt
-you when the password has changed.  Conversely, if you specify a username and password within Subclipse
-then we supply that username and password to the adapter.  If the password has changed on the server,
-then the adapter will prompt you for a new one.  Now we get to the problem.  Subclipse does not know
-that this exchange took place so it has no way to update its password.  Consequently you keep getting
-prompted by the adapter for your password.</p>
-<p>If you just leave these fields blank within Subclipse, then you never have to worry about it.  If
-you do provide a username and password to Subclipse, and your password changes, you can update the
-stored values by right-clicking on the connection in the SVN Repository view and choosing the Properties
-option.
+<p>Subclipse does not collect or store username and password credentials when defining a 
+repository.  This is because the JavaHL and SVNKit client adapters are intelligent enough
+to prompt you for this information when they need to -- including when your password has changed.
 </p>
-
+<p>You can also allow the adapter to cache this information and a common question is how do you
+delete this cached information so that you can be prompted again?  We have an open request to have
+an API added to JavaHL so that we could provide a UI to do this.  Currently, you have to manually
+delete the cache.  The location of the cache varies based on the client adapter used.
+</p>
+<p>JavaHL caches the information in the same location as the command line client -- in the Subversion runtime
+configuration area.  On Windows this is located in %APPDATA%\Subversion\auth.  On Linux and OSX it is located
+in ~/.subversion/auth.  Just find and delete the file with the cached information.</p>
+<p>SVNKit caches information in the Eclipse keyring.  By default this is a file named .keyring that is stored
+in the root of the Eclipse configuration folder.  Both of these values can be overriden with command line options.
+To clear the cache, you have to delete the file.  Eclipse will create a new empty keyring when you restart.</p>
 </div>
 
 </div>
