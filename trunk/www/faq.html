@@ -56,6 +56,7 @@ path does not match the filesystem?  Windows does not seem to care.</a></li>
 should I do?</a></li>
 <li><a href="#out-of-date">I am trying to commit some changes and I am getting an error message about the transaction being
 "out of date".  What does this mean and what should I do?</a></li>
+<li><a href="#win32-crash">As soon as I do something with Subclipse on Windows, Eclipse just crashes. Why does this happen?</a></li>
 </ul>
 
 </div>
@@ -489,6 +490,29 @@ files in that folder and until you have run an update, the folder is not really 
 <a href="http://svnbook.red-bean.com/en/1.2/svn.basic.in-action.html#svn.basic.in-action.mixedrevs">Subversion book</a>.</p>
 
 <p>In summary, the answer is always to do an update so that the folder or file is updated to its HEAD revision.</p>
+
+</div>
+
+<![CDATA[-----------------------------------------------------------]]>
+
+<div class="h3" id="win32-crash" title="win32-crash">
+<h3>As soon as I do something with Subclipse on Windows, Eclipse just crashes. Why does this happen?</h3>
+
+<p>This is a fairly recent problem that is caused by a DLL incompatibility.  Subversion uses a library called APR
+or the Apache Portable Runtime.  This library has a component called APR-ICONV which is used for translating characters
+in path and file names to/from UTF8 and the local character set.  The release of Apache 2.2 brought with it new releases
+of APR and APR-ICONV and these are not binary compatible with previous releases.  Subclipse ships with the Apache 2.0
+version of these libraries.  This crash occurs if you install an application that installs the Apache 2.2 version of
+these libraries <b>AND ALSO</b> sets the APR_ICONV_PATH environment variable to a path that contains the Apache 2.2
+version of the APR-ICONV .so objects.</p>
+
+<p>The fix is actually simple.  Change the name of the environment variable to APR_ICONV1_PATH.  The Apache 2.2
+library will look for this environment variable name first, and only fallback to the older name if it is not found.
+You can safely have an APR_ICONV_PATH environment variable pointing to the Apache 2.0 version of these libraries
+and the APR_ICONV1_PATH environment variable pointing to the Apache 2.2 version.</p>
+
+<p>Subversion 1.5 has resolved this problem by discontinuing the use of APR-ICONV.  Instead, Subversion will use
+translation routines that are provided by the Windows operating system.</p>
 
 </div>
 </div>
