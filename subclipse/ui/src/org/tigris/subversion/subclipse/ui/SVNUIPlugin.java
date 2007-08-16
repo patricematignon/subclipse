@@ -525,6 +525,8 @@ public class SVNUIPlugin extends AbstractUIPlugin {
 		reg.put(ISVNUIConstants.IMG_FOLDERDELETE_PENDING, getImageDescriptor(ISVNUIConstants.IMG_FOLDERDELETE_PENDING));
 		reg.put(ISVNUIConstants.IMG_FOLDERMODIFIED_PENDING, getImageDescriptor(ISVNUIConstants.IMG_FOLDERMODIFIED_PENDING));
 		reg.put(ISVNUIConstants.IMG_FOLDER, getImageDescriptor(ISVNUIConstants.IMG_FOLDER));
+		reg.put(ISVNUIConstants.IMG_UPDATE_ALL, getImageDescriptor(ISVNUIConstants.IMG_UPDATE_ALL));
+		reg.put(ISVNUIConstants.IMG_COMMIT_ALL, getImageDescriptor(ISVNUIConstants.IMG_COMMIT_ALL));
 	}
 	
 }
