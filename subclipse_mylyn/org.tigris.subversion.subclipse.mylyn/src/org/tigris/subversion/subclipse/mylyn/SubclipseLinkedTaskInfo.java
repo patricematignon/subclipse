@@ -112,7 +112,9 @@ class SubclipseLinkedTaskInfo implements ILinkedTaskInfo {
           } else {
             ISVNClientAdapter client = SVNProviderPlugin.getPlugin()
                 .getSVNClientManager().createSVNClient();
+            SVNProviderPlugin.disableConsoleLogging(); 
             ISVNProperty[] properties = client.getProperties(svnres.getUrl());
+            SVNProviderPlugin.enableConsoleLogging(); 
             for (int i = 0; i < properties.length; i++) {
               ISVNProperty property = properties[i];
               if ("bugtraq:url".equals(property.getName())) {
@@ -126,8 +128,8 @@ class SubclipseLinkedTaskInfo implements ILinkedTaskInfo {
       }
     } catch (Exception ex) {
       // ignore?
+        SVNProviderPlugin.enableConsoleLogging(); 
     }
-
     if (props != null) {
       if (repositoryUrl == null) {
         repositoryUrl = SubclipseTeamPlugin.getRepository(props.getUrl(),
