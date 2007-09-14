@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <description url="http://subclipse.tigris.org/update_1.4.x">
+      Eclipse Install/Update site for Subclipse
+   </description>
+   <feature url="features/org.tigris.subversion.clientadapter.feature_1.3.0.jar" id="org.tigris.subversion.clientadapter.feature" version="1.3.0">
+      <category name="Subclipse"/>
+   </feature>
+   <feature url="features/org.tigris.subversion.clientadapter.javahl.feature_1.3.0.jar" id="org.tigris.subversion.clientadapter.javahl.feature" version="1.3.0">
+      <category name="Subclipse"/>
+   </feature>
+   <feature url="features/org.tigris.subversion.subclipse.mylyn_2.0.0.jar" id="org.tigris.subversion.subclipse.mylyn" version="2.0.0">
+      <category name="Subclipse"/>
+   </feature>
+   <feature url="features/org.tigris.subversion.subclipse_1.3.1.jar" id="org.tigris.subversion.subclipse" version="1.3.1">
+      <category name="Subclipse"/>
+   </feature>
+   <category-def name="Subclipse" label="Subclipse Plugin">
+      <description>
+         The subclipse Subversion plugin
+      </description>
+   </category-def>
+</site>
