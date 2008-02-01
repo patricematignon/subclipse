@@ -1,0 +1,83 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<head>
+<style type="text/css"> /* <![CDATA[ */
+  @import "tigris-branding/css/tigris.css";
+  @import "tigris-branding/css/inst.css";
+  /* ]]> */</style>
+<link rel="stylesheet" type="text/css" media="print"
+  href="tigris-branding/css/print.css"/>
+<script type="text/javascript" src="tigris-branding/scripts/tigris.js"></script>
+<title>Status of Eclipse SVN Proposal</title>
+</head>
+
+<body>
+<div class="app">
+
+<h1 style="text-align: center;">Status of Eclipse SVN Proposal</h1>
+
+<p>The members of the team that proposed the SVN project at Eclipse.org
+   have decided to withdraw the proposal. There are a lot of factors that
+   have gone into this decision, so any answer or explanation will be
+   incomplete, but it is necessary to state some of the reasons we have
+   come to this decision.</p>
+
+<p>For most of the team members, our motivation in making this proposal
+   was to eventually make great Subversion support a part of the Eclipse
+   platform and also to work with the existing developers of the Team API
+   to make it better and offer more common functionality to team
+   providers. While we would not go so far as to say we were told neither
+   of these things were ever going to happen, it would be fair to say
+   that is the current feeling of most of our members. In other words,
+   Subversion support does not appear likely to ever become part of the
+   Eclipse Platform SDK component; it will always be a separate download
+   like Mylar or CDT. Certainly it would become part of some future
+   release train, like Europa, but it seems unlikely it would ever be
+   more than that. Likewise, we did not sense a great deal of interest
+   in enhancing the Team component to provide more functionality than
+   exists today. Again, let me be clear, these are just our perceptions.
+   We might be wrong, and they are certainly not aimed at any specific
+   individual working on Eclipse.</p>
+
+<p>It would be less than honest to not also mention the Subversive
+   proposal. We do not have any problems with their proposal or their
+   team. The fact that they exist, and that continuing with our proposal
+   would also mean having to contend with those issues, was just another
+   factor in not wanting to pursue our proposal. It was clear to our
+   team that the only way we could work together would be for one of our
+   teams to drop our existing code and join the other. We are not prepared
+   to do that and neither are they.</p>
+
+<p>One final factor in this decision was licensing. Any Subversion plug-in
+   is going to depend on either Subversion's JavaHL library or the SVNKit
+   pure Java library. SVNKit's license was rejected by Eclipse, and in the
+   case of Subversion they were planning to review all the code before
+   allowing us to use the library. Subversion has dependencies on libraries
+   like Neon and BDB that have licenses that are not typically accepted by
+   Eclipse. So we had some question as to whether we would be able to
+   include JavaHL or SVNKit with our plug-in. Again, maybe this will turn
+   out to not be an issue for Subversive. Also, we are not faulting the
+   Eclipse IP code review process wither. That review is one of the best
+   features of being part of Eclipse.org.</p> 
+
+<p>In the end, the only benefits we saw were being able to be listed on the
+   release train update site, and possibly getting some new participants in
+   the project. Those are real benefits without question, but they have to
+   be balanced against the negatives, of which we thought there were many. So
+   we have decided that we will stick with Subclipse and leave the project
+   right here on tigris.org.</p>
+
+<p>Moving forward we have a lot planned for Subclipse this year. We are
+   working more closely than ever with the Subversion development community
+   and we have a number of great enhancements coming to Subversion and JavaHL
+   in the Subversion 1.5 release. We will be updating the roadmap page in
+   the near future with some of our plans, but it should be an exciting
+   year for Subclipse.</p>
+
+<p>$LastChangedDate$</p>
+
+</div>
+
+</body>
+</html>
