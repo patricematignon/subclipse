@@ -57,13 +57,15 @@ public class SubclipseTeamPlugin extends AbstractUIPlugin implements IStartup {
 	}
 
 	public static TaskRepository getRepository(String url, TaskRepositoryManager repositoryManager) {
-    List repositories = repositoryManager.getAllRepositories();
-    for (Iterator it = repositories.iterator(); it.hasNext();) {
-      TaskRepository repository = (TaskRepository) it.next();
-      if (url.startsWith(repository.getUrl())) {
-        return repository;
+	  if(url!=null) {
+      List repositories = repositoryManager.getAllRepositories();
+      for (Iterator it = repositories.iterator(); it.hasNext();) {
+        TaskRepository repository = (TaskRepository) it.next();
+        if (url.startsWith(repository.getUrl())) {
+          return repository;
+        }
       }
-    }
+	  }
     return null;
   }
 
