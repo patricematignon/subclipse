@@ -2,7 +2,7 @@
 <feature
       id="org.tigris.subversion.subclipse.mylyn"
       label="Subclipse Integration for Mylyn (Optional)"
-      version="2.0.0"
+      version="2.0.1"
       provider-name="tigris.org"
       colocation-affinity="org.tigris.subversion.subclipse">
    <install-handler/>
@@ -41,7 +41,7 @@
          id="org.tigris.subversion.subclipse.mylyn"
          download-size="0"
          install-size="0"
-         version="2.0.0"
+         version="0.0.0"
          unpack="false"/>
 
 </feature>
