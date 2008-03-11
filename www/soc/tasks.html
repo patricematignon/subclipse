@@ -1,0 +1,51 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<style type="text/css"> /* <![CDATA[ */
+  @import "branding/css/tigris.css";
+  @import "branding/css/inst.css";
+  /* ]]> */</style>
+<link rel="stylesheet" type="text/css" media="print"
+  href="branding/css/print.css">
+<script type="text/javascript" src="branding/scripts/tigris.js"></script>
+<title>Subclipse Roadmap</title>
+</head>
+<body>
+
+<div class="app">
+<h1 style="text-align: center">Subclipse Ideas for Google Summer of Code</h1>
+
+<p>This page contains ideas for Google Summer of Code students.</p>
+
+<div class="h2" id="revision-graph" title="revision-graph">
+<h2>Revision Graph</h2>
+<p>
+Using technologies such as the Eclipse Graphical Editor Framework (GEF), create a revision graph
+feature for Subclipse.
+</p>
+</div>
+
+<div class="h2" id="changelists" title="changelists">
+<h2>Subversion 1.5 Changelists</h2>
+<p>
+Subversion 1.5 added support for a local changelist feature that is functionally very similar to the existing Subclipse change set support
+in the Synchronize view.  This task involves tying the two features together so that a user can switch between Subclipse and the
+command-line or other tools and still see the changelist membership for a given set of files.  The Subclipse change set support includes
+the ability to add folders to a change set, as well as associate a commit message.  Those features cannot be lost.
+</p>
+</div>
+
+<div class="h2" id="nested-projects" title="nested-projects">
+<h2>Nested Eclipse Projects</h2>
+<p>
+Eclipse 3.2 introduced the ability to have nested projects.  A master project that contains child projects that can also exist in your
+workspace.  Subclipse has problems with that feature and this task is about fixing those problems.  This problem is gaining more and more
+prominence as Maven users tend to use this feature and the popularity of Maven among Eclipse users seems to be on the rise.
+</p>
+</div>
+
+</div>
+
+</body>
+</html>
