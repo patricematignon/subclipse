@@ -85,6 +85,23 @@ write a test app to really know the API's work.<br />
 </p>
 </div>
 
+<div class="h2" id="flexible" title="flexible">
+<h2>Support Flexible Project Structures</h2>
+<p>
+Subclipse currently requires that the root of an Eclipse project be associated with a Subversion repository.  Users have asked for more flexibility.
+For example, a project might have its src folder shared with Subversion, but not the project itself or its other folders.  This feature would also
+allow us to make the checkout process more flexible as we could support checking out into existing projects.  A common use-case is someone that wants
+to use Eclipse to work on a project that has not standardized on Eclipse and does not store the Eclipse project files in the repository.  The user
+could create an Eclipse project locally, and then checkout the source code into that project.
+</p>
+<p>
+<strong>Expected difficulty:</strong> Potentially High.  A lot of code will need to be looked at and modified to not make any assumptions about the
+project structure.  It is possible, perhaps even likely, that most of this code calls the same one or two methods though.  So the core change might
+eventually involve a small amount of code.  New UI would need to be added in places like checkout and share project to support this new scenario.<br />
+<strong>Related Issue#:</strong> <a href="http://subclipse.tigris.org/issues/show_bug.cgi?id=525">525</a>
+</p>
+</div>
+
 <div class="h2" id="synch-view" title="synch-view">
 <h2>Rewrite Synchronize View to use new Logical Model API</h2>
 <p>
