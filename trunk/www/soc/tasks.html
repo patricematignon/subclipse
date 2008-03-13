@@ -61,8 +61,12 @@ very fun project though and would be well-received by our community.<br />
 Subversion 1.5 added support for a local changelist feature that is functionally very similar to the existing Subclipse change set support
 in the Synchronize view.  This task involves tying the two features together so that a user can switch between Subclipse and the
 command-line or other tools and still see the changelist membership for a given set of files.  The Subclipse change set support includes
-the ability to add folders to a change set, as well as associate a commit message.  Those features cannot be lost.<br />
-See Issue#: <a href="http://subclipse.tigris.org/issues/show_bug.cgi?id=635">635</a> for more details.
+the ability to add folders to a change set, as well as associate a commit message.  Those features cannot be lost.
+</p>
+<p>
+<strong>Expected difficulty:</strong> Moderate.  This is generally a straight-forward task but there will be a few areas where the two changeset
+implementations have differences that have to be worked out.<br />
+<strong>Related Issue#:</strong> <a href="http://subclipse.tigris.org/issues/show_bug.cgi?id=635">635</a>
 </p>
 </div>
 
@@ -72,8 +76,12 @@ See Issue#: <a href="http://subclipse.tigris.org/issues/show_bug.cgi?id=635">635
 Eclipse 3.2 introduced some new API and abstractions that are available for team and filesystem providers to implement.  There are probably
 some internal simplifications we could make within Subclipse if we implemented these API, but the main benefit would be for third parties
 that want to build applications on top of these API's and have their application work properly for CVS, Subversion or any other tool that
-properly implements the API.<br />
-See Issue#: <a href="http://subclipse.tigris.org/issues/show_bug.cgi?id=513">513</a> for more details.
+properly implements the API.
+</p>
+<p>
+<strong>Expected difficulty:</strong> Easy/Moderate.  Should be straight-forward, but will need to familiarize with the Eclipse API and might need to
+write a test app to really know the API's work.<br />
+<strong>Related Issue#:</strong> <a href="http://subclipse.tigris.org/issues/show_bug.cgi?id=513">513</a>
 </p>
 </div>
 
@@ -86,6 +94,10 @@ allows alternate presentations of information in the view, such as Java-specific
 be supporting the new API.  To the user, the presentation of their changes in the view closely matches the presentation from the model-specific
 views they are used to seeing.<br />
 </p>
+<p>
+<strong>Expected difficulty:</strong> Very Difficult.  There is a lot of API involved, and in some cases it has not yet become full-fledged API which
+means code needs to be copied into Subclipse.<br />
+</p>
 </div>
 
 <div class="h2" id="nested-projects" title="nested-projects">
@@ -93,8 +105,12 @@ views they are used to seeing.<br />
 <p>
 Eclipse 3.2 introduced the ability to have nested projects.  A master project that contains child projects that can also exist in your
 workspace.  Subclipse has problems with that feature and this task is about fixing those problems.  This problem is gaining more and more
-prominence as Maven users tend to use this feature and the popularity of Maven among Eclipse users seems to be on the rise.<br />
-See Issue#: <a href="http://subclipse.tigris.org/issues/show_bug.cgi?id=656">656</a> for more details.
+prominence as Maven users tend to use this feature and the popularity of Maven among Eclipse users seems to be on the rise.
+</p>
+<p>
+<strong>Expected difficulty:</strong> Very Difficult.  Will need to really learn the internals of Subclipse to solve this problem.  Despite the
+difficulty, this might not be very time consuming.  It likely could be done in a few weeks of work<br />
+<strong>Related Issue#:</strong> <a href="http://subclipse.tigris.org/issues/show_bug.cgi?id=656">656</a>
 </p>
 </div>
 
