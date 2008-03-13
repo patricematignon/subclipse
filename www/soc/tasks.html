@@ -31,9 +31,23 @@ in evaluating your application!
 <div class="h2" id="revision-graph" title="revision-graph">
 <h2>Revision Graph</h2>
 <p>
-Create a feature that lets a user visualize the history of a file as a revision graph, or some other, perhaps new way of visualizing the history.
-Consider using technologies such as the Eclipse Graphical Editor Framework (GEF) to draw the revision graph.<br />
-See Issue#: <a href="http://subclipse.tigris.org/issues/show_bug.cgi?id=721">721</a> for more details.
+It would be useful if the history of a file or folder could be viewed as a
+revision graph.  Eclipse, via the Graphical Editor Framework (GEF), gives us the
+tools we need to present a rich presentation of a revision graph.  The challenge is
+really in Subversion, and what it would take to get the information we need to present
+a proper graph.
+</p>
+<p>
+TortoiseSVN probably has the closest proximation of the feature we want to add
+and the challenges that will involve.  Because of the amount of information they
+have to pull from the repository to create the graph, they created a local
+cache.  We may need to do the same.  Alternatively, we could work with the
+Subversion community to define the API's we need to get the information on demand.
+</p>
+<p>
+<i>Expected difficulty:</i> Potentially High due to the Subversion limitations.  This would be a
+very fun project though and would be well-received by our community.<br />
+<i>Related Issue#:</i> <a href="http://subclipse.tigris.org/issues/show_bug.cgi?id=721">721</a>
 </p>
 </div>
 
@@ -45,6 +59,28 @@ in the Synchronize view.  This task involves tying the two features together so 
 command-line or other tools and still see the changelist membership for a given set of files.  The Subclipse change set support includes
 the ability to add folders to a change set, as well as associate a commit message.  Those features cannot be lost.<br />
 See Issue#: <a href="http://subclipse.tigris.org/issues/show_bug.cgi?id=635">635</a> for more details.
+</p>
+</div>
+
+<div class="h2" id="eclipse-api" title="eclipse-api">
+<h2>Implement Eclipse File System and History Provider API</h2>
+<p>
+Eclipse 3.2 introduced some new API and abstractions that are available for team and filesystem providers to implement.  There are probably
+some internal simplifications we could make within Subclipse if we implemented these API, but the main benefit would be for third parties
+that want to build applications on top of these API's and have their application work properly for CVS, Subversion or any other tool that
+properly implements the API.<br />
+See Issue#: <a href="http://subclipse.tigris.org/issues/show_bug.cgi?id=513">513</a> for more details.
+</p>
+</div>
+
+<div class="h2" id="synch-view" title="synch-view">
+<h2>Rewrite Synchronize View to use new Logical Model API</h2>
+<p>
+In Eclipse 3.2 the CVS plug-in re-wrote their Synchronize view implementation to use a new API, called the Logical Model API.  This
+allows alternate presentations of information in the view, such as Java-specific, generic resource, changesets etc.  Presumably other
+"models" can be added easily or would automatically appear if present (such as a Ruby model).  The main benefit for Subclipse, is to
+be supporting the new API.  To the user, the presentation of their changes in the view closely matches the presentation from the model-specific
+views they are used to seeing.<br />
 </p>
 </div>
 
