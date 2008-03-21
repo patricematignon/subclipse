@@ -79,6 +79,23 @@ We maintain a change log for each release.  This is currently maintained manuall
 a developer add information about their changes.
 </p>
 </div>
+
+<div class="h2" id="checkout" title="checkout">
+<h2>Coding Policies</h2>
+<p>
+The easiest way to checkout the code is to download this <a href="subclipse.psf">Team Project Set File.</a>  This file
+contains references to all of the major Subclipse projects you will typically want to checkout.  You might want to edit
+the file in a text editor before you proceed to the next step.  If you are not on Windows, then you will want to remove
+the line that references the JavaHL Win32 project.  This project just contains Windows binaries and is of no value on other
+platforms.  There is also reference to a Mylyn integration project and you can remove that if you do not have Mylyn installed.</p>
+<p>
+After you download and optionally edit the file, you need to run an Eclipse wizard to checkout the projects.  Go to the File menu
+and choose the Import option.  This launches the Eclipse import wizard.  Expand the Team grouping and choose Team Project Set and
+then click Next.  Then point the wizard at the file you downloaded and let the wizard do its thing.  The wizard will checkout
+all of the projects in the file.</p>
+
+</div>
+
 </div>
 
 </body>
