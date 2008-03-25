@@ -6,7 +6,7 @@ Bundle-ClassPath: .,
  lib/svnClientAdapter.jar,
  lib/svnjavahl.jar,
  lib/svnkit.jar,
- lib/ganymed.jar
+ lib/trilead.jar
 Bundle-Activator: org.tigris.subversion.subclipse.core.SVNProviderPlugin
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
