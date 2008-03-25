@@ -13,6 +13,7 @@ package org.tigris.subversion.subclipse.core;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -35,7 +36,9 @@ import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
 import org.tigris.subversion.subclipse.core.commands.CheckoutCommand;
 import org.tigris.subversion.subclipse.core.repo.SVNRepositoryLocation;
+import org.tigris.subversion.subclipse.core.resources.RemoteFolder;
 import org.tigris.subversion.subclipse.core.resources.SVNWorkspaceRoot;
+import org.tigris.subversion.svnclientadapter.SVNUrl;
 
 /**
  * An object for serializing and deserializing of references to SVN based
@@ -105,7 +108,11 @@ public class SVNProjectSetCapability extends ProjectSetCapability {
             return new IProject[0];
         }
         // Load the projects
-        return checkout(projects, infoMap, monitor);
+        try {
+			return checkout(projects, infoMap, monitor);
+		} catch (MalformedURLException e) {
+			throw SVNException.wrapException(e);
+		}
     }
 
     /**
@@ -150,7 +157,7 @@ public class SVNProjectSetCapability extends ProjectSetCapability {
      *            the progress monitor (not <code>null</code>)
      */
     private IProject[] checkout(IProject[] projects, Map infoMap,
-            IProgressMonitor monitor) throws TeamException {
+            IProgressMonitor monitor) throws TeamException, MalformedURLException {
         if(projects==null || projects.length==0) {
           return new IProject[0];
         }
@@ -182,6 +189,7 @@ public class SVNProjectSetCapability extends ProjectSetCapability {
      */
     protected static class LoadInfo {
         private final ISVNRepositoryLocation repositoryLocation;
+        private final String repo;
         private final IProject project;
         private final boolean fromFileSystem;
         private final String directory; // Only used when fromFileSystem is true
@@ -196,14 +204,14 @@ public class SVNProjectSetCapability extends ProjectSetCapability {
          */
         LoadInfo(ProjectSetSerializationContext context,
                 StringTokenizer tokenizer) throws SVNException {
-            String repo = tokenizer.nextToken();
+            repo = tokenizer.nextToken();
             String projectName = tokenizer.nextToken();
 
             project = ResourcesPlugin.getWorkspace().getRoot().getProject(
                     projectName);
             if (repo.indexOf("://") != -1) { //$NON-NLS-1$
-                //A normal URL
-                repositoryLocation = SVNRepositoryLocation.fromString(repo);
+                // Create connection to repository root.
+            	repositoryLocation = SVNRepositoryLocation.fromString(repo, false, true);
                 fromFileSystem = false;
                 directory = null;
             } else {
@@ -258,15 +266,18 @@ public class SVNProjectSetCapability extends ProjectSetCapability {
          * @return true if loaded, else false
          * @throws TeamException
          */
-        boolean checkout(IProgressMonitor monitor) throws TeamException {
+        boolean checkout(IProgressMonitor monitor) throws TeamException, MalformedURLException {
             if (fromFileSystem) {
                 return importExistingProject(monitor);
             } else {
                 if (repositoryLocation == null) {
                     return false;
                 }
+                RemoteFolder remoteFolder = new RemoteFolder(repositoryLocation, new SVNUrl(repo), repositoryLocation.getRootFolder().getRevision());
                 CheckoutCommand command = new CheckoutCommand(
-                        new ISVNRemoteFolder[] { repositoryLocation.getRootFolder() }, new IProject[] { project });
+                        new ISVNRemoteFolder[] { remoteFolder }, new IProject[] { project });                
+//              CheckoutCommand command = new CheckoutCommand(
+//                      new ISVNRemoteFolder[] { repositoryLocation.getRootFolder() }, new IProject[] { project });                
                 command.run(monitor);
                 return true;
             }
