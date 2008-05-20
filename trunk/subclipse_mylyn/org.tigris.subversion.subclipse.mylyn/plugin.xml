@@ -26,5 +26,18 @@
         order="100">
     </linkProvider>
   </extension>
+  
+  <extension
+        point="org.eclipse.ui.perspectiveExtensions">
+    <perspectiveExtension targetID="org.tigris.subversion.subclipse.ui.svnPerspective">
+       <view
+              id="org.eclipse.mylyn.tasks.ui.views.repositories"
+              ratio="0.7"
+              relationship="bottom"
+              relative="org.tigris.subversion.subclipse.ui.repository.RepositoriesView"
+              visible="true"/>
+       <viewShortcut id="org.eclipse.mylyn.tasks.ui.views.repositories"/>
+    </perspectiveExtension>
+  </extension>
 
 </plugin>
