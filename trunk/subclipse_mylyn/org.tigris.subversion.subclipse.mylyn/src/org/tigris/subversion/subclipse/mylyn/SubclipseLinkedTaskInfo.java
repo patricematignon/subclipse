@@ -111,7 +111,7 @@ class SubclipseLinkedTaskInfo implements ILinkedTaskInfo {
             props = ProjectProperties.getProjectProperties(svnres.getResource());
           } else {
             ISVNClientAdapter client = SVNProviderPlugin.getPlugin()
-                .getSVNClientManager().createSVNClient();
+                .getSVNClientManager().getSVNClient();
             SVNProviderPlugin.disableConsoleLogging(); 
             ISVNProperty[] properties = client.getProperties(svnres.getUrl());
             SVNProviderPlugin.enableConsoleLogging(); 
