@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+
+   <extension
+         point="org.eclipse.ui.popupMenus">
+      <objectContribution
+            objectClass="org.eclipse.core.resources.IFile"
+            id="org.tigris.subversion.subclipse.graph.contribution1">
+         <menu
+               label="Revision graph"
+               path="additions"
+               id="org.tigris.subversion.subclipse.graph.menu1">
+            <separator
+                  name="group1">
+            </separator>
+         </menu>
+         <action
+               label="View file history as graph"
+               class="org.tigris.subversion.subclipse.graph.popup.actions.ViewGraphAction"
+               menubarPath="org.tigris.subversion.subclipse.graph.menu1/group1"
+               enablesFor="1"
+               id="org.tigris.subversion.subclipse.graph.newAction">
+         </action>
+      </objectContribution>
+   </extension>
+
+</plugin>
