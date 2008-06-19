@@ -8,6 +8,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,23 +21,32 @@ public class Cache {
 	private static final String DRIVER_CLASS_NAME = "org.apache.derby.jdbc.EmbeddedDriver";
 	
 	private Connection connection;
+
+	private PreparedStatement insertRevision;
+	private PreparedStatement insertFile;
+	private PreparedStatement insertCopyFile;
+	private PreparedStatement insertChangePath;
+	private PreparedStatement deleteFile;
+	private PreparedStatement selectFiles;
 	
-	public Cache(File f) throws Exception {
-		String databaseName = f.toURL().toString().substring("file:/".length());
-		
-		Class.forName(DRIVER_CLASS_NAME);
+	public Cache(File f) {
 		try {
-			
-			connection = 
-				DriverManager.getConnection("jdbc:derby:"+databaseName);
-			
-		} catch(SQLException e) {
-			// The database may not exist.
-			connection = 
-				DriverManager.getConnection("jdbc:derby:"+databaseName+";create=true");
-			// Create tables
-			createTablesAndIndexes();
-		}	
+			String databaseName = f.toURL().toString().substring("file:/".length());
+
+			Class.forName(DRIVER_CLASS_NAME);
+			try {
+				connection = 
+					DriverManager.getConnection("jdbc:derby:"+databaseName);
+			} catch(SQLException e) {
+				// The database may not exist.
+				connection = 
+					DriverManager.getConnection("jdbc:derby:"+databaseName+";create=true");
+				// Create tables
+				createTablesAndIndexes();
+			}
+		} catch(Exception e) {
+			throw new CacheException("Error creating cache", e);
+		}
 	}
 	
 	private void createTablesAndIndexes() throws Exception {
@@ -81,9 +91,9 @@ public class Cache {
 		
 		executeUpdate(connection, s);
 
-//		s = "CREATE INDEX files_path ON files (path)";
-//		
-//		executeUpdate(connection, s);
+		s = "CREATE INDEX files_path ON files (path)";
+		
+		executeUpdate(connection, s);
 
 		s = "CREATE INDEX files_file_id ON files (file_id)";
 		
@@ -92,63 +102,212 @@ public class Cache {
 	}
 	
 	public void close() {
+		closeStatement(insertRevision);
+		closeStatement(insertFile);
+		closeStatement(insertCopyFile);
+		closeStatement(insertChangePath);
+		closeStatement(deleteFile);
+		closeStatement(selectFiles);
+		
 		try {
 			connection.close();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new CacheException("Error closing database connection", e);
+		}
+	}
+	
+	private void closeStatement(PreparedStatement statement) {
+		if(statement != null) {
+			try {
+				statement.close();
+			} catch (SQLException e) {
+				throw new CacheException("Error closing statement", e);
+			}
+		}
+	}
+
+	private void insertRevision(long revision, Date revisionDate, String author, String message) {
+		if(insertRevision == null) {
+			try {
+			insertRevision = connection.prepareStatement("INSERT INTO revisions (" +
+						"revision_id, " +
+						"revision_date, " +
+						"author, " +
+						"message" +
+						") VALUES (?, ?, ?, ?)");
+			} catch(SQLException e) {
+				throw new CacheException("Cannot create insertRevision statement", e);
+			}
+		}
+		
+		try {
+			insertRevision.setLong(1, revision);
+			insertRevision.setTimestamp(2, new java.sql.Timestamp(revisionDate.getTime()));
+			insertRevision.setString(3, author);
+			insertRevision.setString(4, message);
+			insertRevision.executeUpdate();
+		} catch(SQLException e) {
+			throw new CacheException("Error inserting revision", e);
+		}
+	}
+	
+	private long insertFile(long revFrom, String path) {
+		if(insertFile == null) {
+			try {
+				insertFile = connection.prepareStatement("INSERT INTO files (" +
+					"revision_from, " +
+					"path" +
+					") VALUES (?, ?)", PreparedStatement.RETURN_GENERATED_KEYS);
+			} catch(SQLException e) {
+				throw new CacheException("Cannot create insertFile statement", e);
+			}
+		}
+		
+		ResultSet result = null;
+		try {
+			insertFile.setLong(1, revFrom);
+			insertFile.setString(2, path);
+			insertFile.executeUpdate();
+			
+			result = insertFile.getGeneratedKeys();
+			if(result != null && result.next()) {
+				return result.getLong(1);
+			} else {
+				throw new CacheException("Not generated key for inserted file");
+			}
+		} catch(SQLException e) {
+			throw new CacheException("Error inserting revision", e);
+		} finally {
+			if(result != null) {
+				try {
+					result.close();
+				} catch (SQLException e) {
+					throw new CacheException("Error closing ResultSet", e);
+				}
+			}
+		}
+	}
+	
+	private void insertCopyFile(long fileId, long revision, String path) {
+		if(insertCopyFile == null) {
+			try {
+				insertCopyFile = connection.prepareStatement("INSERT INTO files (" +
+					"file_id, "+
+					"revision_from, " +
+					"path" +
+					") VALUES (?, ?, ?)");
+			} catch(SQLException e) {
+				throw new CacheException("Cannot create insertCopyFile statement", e);
+			}
+		}
+		
+		try {
+			insertCopyFile.setLong(1, fileId);
+			insertCopyFile.setLong(2, revision);
+			insertCopyFile.setString(3, path);
+			insertCopyFile.executeUpdate();
+		} catch(SQLException e) {
+			throw new CacheException("Error inserting file branched", e);
+		}
+	}
+	
+	private void insertChangePath(long revision, Long copySrcRevision, String copySrcPath, char action, long fileId, String path) {
+		if(insertChangePath == null) {
+			try {
+				insertChangePath = connection.prepareStatement("INSERT INTO change_paths (" +
+						"revision_id, " +
+						"copy_src_revision, " +
+						"copy_src_path, " +
+						"action, " +
+						"file_id, " +
+						"path" +
+						") VALUES (?, ?, ?, ?, ?, ?)");
+			} catch(SQLException e) {
+				throw new CacheException("Cannot create insertChangePath statement", e);
+			}
+		}
+		
+		try {
+			insertChangePath.setLong(1, revision);
+			if(copySrcRevision == null) {
+				insertChangePath.setNull(2, Types.BIGINT);
+			} else {
+				insertChangePath.setLong(2, copySrcRevision.longValue());
+			}
+			insertChangePath.setString(3, copySrcPath);
+			insertChangePath.setString(4, Character.toString(action));
+			insertChangePath.setLong(5, fileId);
+			insertChangePath.setString(6, path);
+			insertChangePath.executeUpdate();
+		} catch(SQLException e) {
+			throw new CacheException("Error inserting change path", e);
+		}
+	}
+	
+	private void deleteFile(long revision, long fileId) {
+		if(deleteFile == null) {
+			try {
+				deleteFile = connection.prepareStatement("UPDATE files SET revision_to=? WHERE file_id=?");
+			} catch(SQLException e) {
+				throw new CacheException("Cannot create deleteFile statement", e);
+			}
+		}
+		
+		try {
+			deleteFile.setLong(1, revision);
+			deleteFile.setLong(2, fileId);
+			deleteFile.executeUpdate();
+		} catch(SQLException e) {
+			throw new CacheException("Error deleting file", e);
+		}
+	}
+	
+	private void calculateBranches(Map fileIds, String copySrcPath, String path, char action, long copySrcRevision, long revision) {
+		// anything with copy_src_path/something has a branch in path/something
+		if(selectFiles == null) {
+			try {
+				selectFiles = connection.prepareStatement("SELECT path, file_id FROM files WHERE revision_to IS NULL AND path LIKE ?");
+			} catch(SQLException e) {
+				throw new CacheException("Cannot create selectFiles statement", e);
+			}
+		}
+		
+		try {
+			selectFiles.setString(1, copySrcPath+"/%");
+
+			int length = copySrcPath.length();
+			ResultSet r = selectFiles.executeQuery();
+			while(r.next()) {
+				String fromPath = r.getString(1);
+				long fileId = r.getLong(2);
+				String finalPath = path + fromPath.substring(length);
+				insertCopyFile(fileId, revision, finalPath);
+				fileIds.put(finalPath, new Long(fileId));
+
+				insertChangePath(revision, 
+						new Long(copySrcRevision), 
+						fromPath, 
+						action, 
+						fileId, 
+						finalPath);
+			}
+		} catch(SQLException e) {
+			throw new CacheException("Error calculating branches", e);
 		}
 	}
 	
 	public void update(ISVNLogMessage[] messages) throws Exception {
 		Map fileIds = new HashMap();
-
-		PreparedStatement insertRevision =
-			connection.prepareStatement("INSERT INTO revisions (" +
-					"revision_id, " +
-					"revision_date, " +
-					"author, " +
-					"message" +
-					") VALUES (?, ?, ?, ?)");
-
-		PreparedStatement insertChangePath =
-			connection.prepareStatement("INSERT INTO change_paths (" +
-					"revision_id, " +
-					"copy_src_revision, " +
-					"copy_src_path, " +
-					"action, " +
-					"file_id, " +
-					"path" +
-					") VALUES (?, ?, ?, ?, ?, ?)");
-
-		PreparedStatement insertFile =
-			connection.prepareStatement("INSERT INTO files (" +
-					"revision_from, " +
-					"revision_to, " +
-					"path" +
-					") VALUES (?, ?, ?)", PreparedStatement.RETURN_GENERATED_KEYS);
-
-		PreparedStatement insertCopyFile =
-			connection.prepareStatement("INSERT INTO files (" +
-					"file_id, "+
-					"revision_from, " +
-					"revision_to, " +
-					"path" +
-					") VALUES (?, ?, ?, ?)");
-
-		PreparedStatement deleteFile =
-			connection.prepareStatement("UPDATE files SET revision_to=? WHERE file_id=?");
 		
 		for (int i = 0; i < messages.length; i++) {
 			ISVNLogMessage logMessage = messages[i];
 
 			long revision = logMessage.getRevision().getNumber();
 			
-			insertRevision.setLong(1, revision);
-			insertRevision.setTimestamp(2, new java.sql.Timestamp(logMessage.getDate().getTime()));
-			insertRevision.setString(3, logMessage.getAuthor());
-			insertRevision.setString(4, logMessage.getMessage());
-			insertRevision.executeUpdate();
+			insertRevision(revision,
+					logMessage.getDate(),
+					logMessage.getAuthor(),
+					logMessage.getMessage());
 			
 			ISVNLogMessageChangePath[] changedPaths = logMessage.getChangedPaths();
 			
@@ -161,29 +320,19 @@ public class Cache {
 				switch(action) {
 				case 'A':
 					if(changePath.getCopySrcRevision() == null) {
-						insertFile.setLong(1, revision);
-						insertFile.setNull(2, Types.BIGINT);
-						insertFile.setString(3, changePath.getPath());
-						insertFile.executeUpdate();
-
-						ResultSet result = insertFile.getGeneratedKeys();
-						if(result != null && result.next()) {
-							fileId = result.getLong(1);
-							fileIds.put(changePath.getPath(), new Long(fileId));
-						} else {
-							// TODO: throw exception
-							System.err.println("FATAL! not generated key!");
-							fileId = 0;
-						}
-					} else {
-						// TODO: check if the result != null, though it must not be
-						fileId = getFileId(changePath.getCopySrcPath(), changePath.getCopySrcRevision().getNumber()).longValue();
-						insertCopyFile.setLong(1, fileId);
-						insertCopyFile.setLong(2, revision);
-						insertCopyFile.setNull(3, Types.BIGINT);
-						insertCopyFile.setString(4, changePath.getPath());
-						insertCopyFile.executeUpdate();
+						fileId = insertFile(revision, changePath.getPath());
 						fileIds.put(changePath.getPath(), new Long(fileId));
+					} else {
+						fileId = getFileId(changePath.getCopySrcPath(), changePath.getCopySrcRevision().getNumber()).longValue();
+						insertCopyFile(fileId, revision, changePath.getPath());
+						fileIds.put(changePath.getPath(), new Long(fileId));
+						
+						calculateBranches(fileIds, 
+								changePath.getCopySrcPath(), 
+								changePath.getPath(), 
+								action, 
+								changePath.getCopySrcRevision().getNumber(), 
+								revision);
 					}
 					break;
 				case 'M':
@@ -191,9 +340,7 @@ public class Cache {
 					break;
 				case 'D':
 					fileId = getFileId(fileIds, changePath.getPath(), revision);
-					deleteFile.setLong(1, revision);
-					deleteFile.setLong(2, fileId);
-					deleteFile.executeUpdate();
+					deleteFile(revision, fileId);
 					break;
 				default:
 					// TODO: assert or throw exception
@@ -201,23 +348,16 @@ public class Cache {
 					fileId = 0;
 				}
 				
-				insertChangePath.setLong(1, revision);
-				if(changePath.getCopySrcRevision() == null) {
-					insertChangePath.setNull(2, Types.BIGINT);
-				} else {
-					insertChangePath.setLong(2, changePath.getCopySrcRevision().getNumber());
+				Long copySrcRevision = null;
+				if(changePath.getCopySrcRevision() != null) {
+					copySrcRevision = new Long(changePath.getCopySrcRevision().getNumber());
 				}
-				insertChangePath.setString(3, changePath.getCopySrcPath());
-				insertChangePath.setString(4, Character.toString(action));
-				insertChangePath.setLong(5, fileId);
-				insertChangePath.setString(6, changePath.getPath());
-				insertChangePath.executeUpdate();
-
-				if(changePath.getCopySrcRevision() == null) {
-					System.out.println(action+" "+fileId+" "+changePath.getPath());
-				} else {
-					System.out.println(action+" "+fileId+" "+changePath.getPath()+" from "+changePath.getCopySrcPath());
-				}
+				
+				insertChangePath(revision, 
+						copySrcRevision, 
+						changePath.getCopySrcPath(), 
+						action, fileId, 
+						changePath.getPath());
 			}
 		}
 	}
@@ -228,7 +368,6 @@ public class Cache {
 			l = getFileId(path, revision);
 			fileIds.put(path, l);
 		}
-		// TODO: 
 		return l.longValue();
 	}
 	
@@ -347,9 +486,12 @@ public class Cache {
 		}
 	}
 	
-	private void executeUpdate(Connection connection, String sql) throws SQLException {
-		System.out.println(sql);
-		connection.createStatement().executeUpdate(sql);
+	private void executeUpdate(Connection connection, String sql) {
+		try {
+			connection.createStatement().executeUpdate(sql);
+		} catch (SQLException e) {
+			throw new CacheException("Error creating database structure", e);
+		}
 	}
 	
 	public Object mapRow(ResultSet resultSet, int i) throws SQLException {

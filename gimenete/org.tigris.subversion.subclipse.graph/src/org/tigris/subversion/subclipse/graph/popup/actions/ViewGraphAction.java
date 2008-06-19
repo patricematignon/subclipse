@@ -19,6 +19,7 @@ import org.eclipse.draw2d.Figure;
 import org.eclipse.draw2d.Label;
 import org.eclipse.draw2d.LightweightSystem;
 import org.eclipse.draw2d.LineBorder;
+import org.eclipse.draw2d.ManhattanConnectionRouter;
 import org.eclipse.draw2d.PolylineConnection;
 import org.eclipse.draw2d.ToolbarLayout;
 import org.eclipse.draw2d.XYLayout;
@@ -31,12 +32,7 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.team.core.RepositoryProvider;
-import org.tigris.subversion.subclipse.core.ISVNLocalResource;
-import org.tigris.subversion.subclipse.core.SVNException;
 import org.tigris.subversion.subclipse.core.SVNProviderPlugin;
-import org.tigris.subversion.subclipse.core.SVNTeamProvider;
-import org.tigris.subversion.subclipse.core.resources.SVNWorkspaceRoot;
 import org.tigris.subversion.subclipse.ui.ISVNUIConstants;
 import org.tigris.subversion.subclipse.ui.Policy;
 import org.tigris.subversion.subclipse.ui.actions.SVNAction;
@@ -45,6 +41,8 @@ import org.tigris.subversion.sublicpse.graph.cache.Node;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 import org.tigris.subversion.svnclientadapter.ISVNInfo;
 import org.tigris.subversion.svnclientadapter.ISVNLogMessage;
+import org.tigris.subversion.svnclientadapter.ISVNLogMessageChangePath;
+import org.tigris.subversion.svnclientadapter.SVNClientException;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
 
 public class ViewGraphAction extends SVNAction {
@@ -56,46 +54,18 @@ public class ViewGraphAction extends SVNAction {
 		run(new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) {
 				IResource resource = getSelectedResources()[0];
-				
 				IFile file = (IFile) resource;
-
-//		        SVNTeamProvider svnProvider = (SVNTeamProvider)RepositoryProvider.getProvider(resource.getProject(), SVNProviderPlugin.getTypeId());
-//				if (svnProvider == null)
-//					return;
-
-				ISVNLocalResource svnResource = SVNWorkspaceRoot.getSVNResourceFor(resource);
-				
-				SVNTeamProvider teamProvider = (SVNTeamProvider)RepositoryProvider.getProvider(resource.getProject(), SVNProviderPlugin.getTypeId());
-				SVNWorkspaceRoot svnProject = teamProvider.getSVNWorkspaceRoot();
-				
-				// resource.getProject().getRawLocation().toFile();
-				SVNRevision revision = null;
-				try {
-					revision = svnResource.getRevision();
-				} catch (SVNException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-					return;
-				}
-				
-				if(revision == null) {
-					System.out.println("file not under version control");
-					return;
-				}
-				
 				
 				Cache cache = null;
 				try {
 					ISVNClientAdapter client = SVNProviderPlugin.getPlugin().createSVNClient();
-					File localRoot = svnProject.getLocalRoot().getFile(); // file.getRawLocation().toFile();
-					ISVNInfo info = client.getInfoFromWorkingCopy(localRoot);
-					File database = file.getWorkspace().getRoot().getRawLocation().toFile();
-					database = new File(database, ".metadata");
-					database = new File(database, ".plugins");
-					database = new File(database, "org.tigris.subversion.subclipse.graph");
-					database = new File(database, info.getUuid());
-					cache = new Cache(database);
+					ISVNInfo info = client.getInfoFromWorkingCopy(file.getRawLocation().toFile());
+					long revision = info.getRevision().getNumber();
+					String path = info.getUrl().toString().substring(info.getRepository().toString().length());
 					
+					cache = getCache(file, info.getUuid());
+					
+					// update the cache
 					long latestRevisionStored = cache.getLatestRevision();
 					SVNRevision latest = null;
 					if(latestRevisionStored == 0)
@@ -103,106 +73,22 @@ public class ViewGraphAction extends SVNAction {
 					else
 						latest = new SVNRevision.Number(latestRevisionStored+1);
 					
-					System.out.println("latest revision: "+latest);
-					
 					try {
-					ISVNLogMessage[] messages = client.getLogMessages(localRoot, latest, SVNRevision.HEAD); // revision);
-//					for (int i = 0; i < messages.length; i++) {
-//						ISVNLogMessage message = messages[i];
-//						System.out.println(MessageFormat.format("{0} rev {1} on {3} message: {2}",
-//								new Object[]{ message.getAuthor(),
-//								message.getRevision(),
-//								message.getMessage(),
-//								new SimpleDateFormat("dd/MM/yyyy mm:ss").format(message.getDate())}));
-//						ISVNLogMessageChangePath[] changedPaths = message.getChangedPaths();
-//						for (int j = 0; j < changedPaths.length; j++) {
-//							ISVNLogMessageChangePath cp = changedPaths[j];
-//							System.out.println(MessageFormat.format("{0} {1}",
-//									new Object[]{ Character.toString(cp.getAction()), cp.getPath()}));
-//						}
-//					}
-					cache.update(messages);
+						ISVNLogMessage[] messages = client.getLogMessages(info.getRepository(),
+								latest, SVNRevision.HEAD);
+						// printLogMessages(messages);
+						cache.update(messages);
+					} catch(SVNClientException e) {
+						System.err.println("cache may be up to date "+e.getMessage()+" "+e.getClass());
 					} catch(Exception e) {
-						System.err.println("cache may be up to date");
+						e.printStackTrace();
 					}
 					
-					info = client.getInfoFromWorkingCopy(file.getRawLocation().toFile());
-					
-					long currentResourceRevision = info.getRevision().getNumber();
-					
-					String path = info.getUrl().toString().substring(info.getRepository().toString().length());
-					
-					Long fileId = cache.getFileId(path, currentResourceRevision);
-					
+					// query information
+					Long fileId = cache.getFileId(path, revision);
 					List nodes = cache.getNodes(fileId.longValue());
-					
-					for (Iterator iterator = nodes.iterator(); iterator
-							.hasNext();) {
-						Node node = (Node) iterator.next();
-						System.out.println(MessageFormat.format("{0} rev {1} on {3} {2}",
-								new Object[]{ node.getAuthor(),
-								new Long(node.getRevision()),
-								node.getPath(),
-								new SimpleDateFormat("dd/MM/yyyy mm:ss").format(node.getRevisionDate())}));
-					}
-					
-					final Shell shell = new Shell();
-					shell.setSize(400, 400);
-					shell.setText("Revision graph. "+path);
-					LightweightSystem lws = new LightweightSystem(shell);
-					Figure contents = new Figure();
-					XYLayout contentsLayout = new XYLayout();
-					contents.setLayoutManager(contentsLayout);
-					
-					Map branches = new HashMap();
-					Map figures = new HashMap();
-					Map previousFigure = new HashMap();
-
-					int i=0;
-					for (Iterator iterator = nodes.iterator(); iterator
-							.hasNext();) {
-						Node node = (Node) iterator.next();
-						NodeFigure figure = new NodeFigure(node.getRevision(), node.getAuthor(), node.getRevisionDate());
-						figures.put(node.getRevision()+"@"+node.getPath(), figure);
-						
-						BranchFigure branch = (BranchFigure) branches.get(node.getPath());
-						if(branch == null) {
-							branch = new BranchFigure(node.getPath());
-							contentsLayout.setConstraint(branch, new Rectangle(10+branches.keySet().size()*170, 10, 150, 30));
-							branches.put(node.getPath(), branch);
-							contents.add(branch);
-							previousFigure.put(node.getPath(), branch);
-						}
-						Rectangle r = (Rectangle) contentsLayout.getConstraint(branch);
-						contentsLayout.setConstraint(figure, new Rectangle(r.x, 70+75*i, 150, 50));
-						contents.add(figure);
-
-						ChopboxAnchor sourceAnchor = null;
-						if(node.getCopySrcPath() == null) {
-							sourceAnchor = new ChopboxAnchor((Figure) previousFigure.get(node.getPath()));
-						} else {
-							Figure source = (Figure) figures.get(node.getCopySrcRevision()+"@"+node.getCopySrcPath());
-							sourceAnchor = new ChopboxAnchor(source);
-						}
-						PolylineConnection c = new PolylineConnection();
-//						c.setConnectionRouter(new ManhattanConnectionRouter());
-						ChopboxAnchor targetAnchor = new ChopboxAnchor(figure);
-						c.setSourceAnchor(sourceAnchor);
-						c.setTargetAnchor(targetAnchor);
-						contents.add(c);
-						
-						previousFigure.put(node.getPath(), figure);
-						
-						i++;
-					}
-					lws.setContents(contents);
-					Label label = new Label("Foo bar");
-					label.setLocation(new Point(200, 200));
-					shell.open();
-					Display d = shell.getDisplay();
-					while (!shell.isDisposed())
-						while (!d.readAndDispatch())
-							d.sleep();
+					// printNodes(nodes);
+					showGraph(nodes, path);
 
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -215,6 +101,122 @@ public class ViewGraphAction extends SVNAction {
 			}
 		}, false /* cancelable */, PROGRESS_BUSYCURSOR);
 	}
+	
+	private Cache getCache(IFile file, String uuid) {
+		File database = file.getWorkspace().getRoot().getRawLocation().toFile();
+		database = new File(database, ".metadata");
+		database = new File(database, ".plugins");
+		database = new File(database, "org.tigris.subversion.subclipse.graph");
+		database = new File(database, uuid);
+		return new Cache(database);
+	}
+	
+	private void showGraph(List nodes, String path) {
+		final Shell shell = new Shell();
+		shell.setSize(400, 400);
+		shell.setText("Revision graph. "+path);
+		LightweightSystem lws = new LightweightSystem(shell);
+		Figure contents = new Figure();
+		XYLayout contentsLayout = new XYLayout();
+		contents.setLayoutManager(contentsLayout);
+		
+		Map branches = new HashMap();
+		Map figures = new HashMap();
+		Map previousFigure = new HashMap();
+
+		int i=0;
+		for (Iterator iterator = nodes.iterator(); iterator
+				.hasNext();) {
+			Node node = (Node) iterator.next();
+			NodeFigure figure = new NodeFigure(node.getRevision(), node.getAuthor(), node.getRevisionDate());
+			figures.put(node.getRevision()+"@"+node.getPath(), figure);
+			
+			BranchFigure branch = (BranchFigure) branches.get(node.getPath());
+			if(branch == null) {
+				branch = new BranchFigure(node.getPath());
+				contentsLayout.setConstraint(branch, new Rectangle(10+branches.keySet().size()*170, 10, 150, 30));
+				branches.put(node.getPath(), branch);
+				contents.add(branch);
+				previousFigure.put(node.getPath(), branch);
+			}
+			Rectangle r = (Rectangle) contentsLayout.getConstraint(branch);
+			contentsLayout.setConstraint(figure, new Rectangle(r.x, 50+60*i, 150, 50));
+			contents.add(figure);
+
+			ChopboxAnchor sourceAnchor = null;
+			if(node.getCopySrcPath() == null) {
+				sourceAnchor = new ChopboxAnchor((Figure) previousFigure.get(node.getPath()));
+			} else {
+				Figure source = (Figure) figures.get(node.getCopySrcRevision()+"@"+node.getCopySrcPath());
+				if(source != null) {
+					sourceAnchor = new ChopboxAnchor(source);
+				} else {
+					long rev = node.getCopySrcRevision();
+					do { // FIXME: this is very ugly
+						source = (Figure) figures.get(rev+"@"+node.getCopySrcPath());
+						rev--;
+					} while(source == null && rev >= 0);
+					if(source != null) {
+						sourceAnchor = new ChopboxAnchor(source);
+					} else {
+						sourceAnchor = new ChopboxAnchor((Figure) previousFigure.get(node.getCopySrcPath()));
+					}
+				}
+			}
+			if(sourceAnchor != null) {
+				PolylineConnection c = new PolylineConnection();
+				 c.setConnectionRouter(new ManhattanConnectionRouter());
+				ChopboxAnchor targetAnchor = new ChopboxAnchor(figure);
+				c.setSourceAnchor(sourceAnchor);
+				c.setTargetAnchor(targetAnchor);
+				contents.add(c);
+			}
+			
+			previousFigure.put(node.getPath(), figure);
+			
+			i++;
+		}
+		
+		lws.setContents(contents);
+		Label label = new Label("Foo bar");
+		label.setLocation(new Point(200, 200));
+		shell.open();
+		Display d = shell.getDisplay();
+		while (!shell.isDisposed())
+			while (!d.readAndDispatch())
+				d.sleep();
+	}
+	
+	private void printLogMessages(ISVNLogMessage[] messages) {
+		for (int i = 0; i < messages.length; i++) {
+			ISVNLogMessage message = messages[i];
+			System.out.println(MessageFormat.format("{0} rev {1} on {3} message: {2}",
+					new Object[]{ message.getAuthor(),
+					message.getRevision(),
+					message.getMessage(),
+					new SimpleDateFormat("dd/MM/yyyy mm:ss").format(message.getDate())}));
+			ISVNLogMessageChangePath[] changedPaths = message.getChangedPaths();
+			for (int j = 0; j < changedPaths.length; j++) {
+				ISVNLogMessageChangePath cp = changedPaths[j];
+				System.out.println(MessageFormat.format("{0} {1}",
+						new Object[]{ Character.toString(cp.getAction()), cp.getPath()}));
+			}
+		}
+	}
+	
+	private void printNodes(List nodes) {
+		SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy mm:ss");
+		for (Iterator iterator = nodes.iterator(); 
+				iterator.hasNext();) {
+			Node node = (Node) iterator.next();
+			System.out.println(MessageFormat.format("{0} rev {1} on {3} {2}",
+					new Object[]{ node.getAuthor(),
+					new Long(node.getRevision()),
+					node.getPath(),
+					dateFormat.format(node.getRevisionDate())}));
+		}
+	}
+	
 	/*
 	 * @see TeamAction#isEnabled()
 	 */
