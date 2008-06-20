@@ -3,7 +3,7 @@
    <description url="http://subclipse.tigris.org/update_1.4.x">
       Eclipse Install/Update site for Subclipse
    </description>
-   <feature url="features/org.tmatesoft.svnkit_1.2.0.4350.jar" version="1.2.0.4350" id="org.tmatesoft.svnkit">
+   <feature url="features/org.tmatesoft.svnkit_1.2.0.4389.jar" version="1.2.0.4389" id="org.tmatesoft.svnkit">
       <category name="SVNKit Adapter BETA (optional)"/>
    </feature>
    <feature url="features/org.tigris.subversion.clientadapter.feature_1.5.0.jar" id="org.tigris.subversion.clientadapter.feature" version="1.5.0">
