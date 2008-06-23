@@ -14,8 +14,8 @@ package org.tigris.subversion.subclipse.mylyn;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.mylyn.tasks.core.IRepositoryManager;
 import org.eclipse.mylyn.tasks.core.TaskRepository;
-import org.eclipse.mylyn.tasks.core.TaskRepositoryManager;
 import org.eclipse.ui.IStartup;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
@@ -56,7 +56,7 @@ public class SubclipseTeamPlugin extends AbstractUIPlugin implements IStartup {
     super.stop(context);
 	}
 
-	public static TaskRepository getRepository(String url, TaskRepositoryManager repositoryManager) {
+	public static TaskRepository getRepository(String url, IRepositoryManager repositoryManager) {
 	  if(url!=null) {
       List repositories = repositoryManager.getAllRepositories();
       for (Iterator it = repositories.iterator(); it.hasNext();) {
