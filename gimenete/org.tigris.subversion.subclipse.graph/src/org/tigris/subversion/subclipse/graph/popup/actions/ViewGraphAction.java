@@ -1,6 +1,8 @@
 package org.tigris.subversion.subclipse.graph.popup.actions;
 
 import java.io.File;
+import java.io.FileWriter;
+import java.io.PrintWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
@@ -63,7 +65,10 @@ public class ViewGraphAction extends SVNAction {
 					long revision = info.getRevision().getNumber();
 					String path = info.getUrl().toString().substring(info.getRepository().toString().length());
 					
+					long now = System.currentTimeMillis();
 					cache = getCache(file, info.getUuid());
+					long diff = System.currentTimeMillis() - now;
+					System.out.println("getCache(): "+diff);
 					
 					// update the cache
 					long latestRevisionStored = cache.getLatestRevision();
@@ -74,10 +79,17 @@ public class ViewGraphAction extends SVNAction {
 						latest = new SVNRevision.Number(latestRevisionStored+1);
 					
 					try {
+						now = System.currentTimeMillis();
 						ISVNLogMessage[] messages = client.getLogMessages(info.getRepository(),
 								latest, SVNRevision.HEAD);
-						// printLogMessages(messages);
+						diff = System.currentTimeMillis() - now;
+						System.out.println("getLogMessages(): "+diff+" "+messages.length+" messages");
+						
+//						printLogMessages(messages);
+						now = System.currentTimeMillis();
 						cache.update(messages);
+						diff = System.currentTimeMillis() - now;
+						System.out.println("cache.update(): "+diff+" "+messages.length+" messages");
 					} catch(SVNClientException e) {
 						System.err.println("cache may be up to date "+e.getMessage()+" "+e.getClass());
 					} catch(Exception e) {
@@ -86,7 +98,11 @@ public class ViewGraphAction extends SVNAction {
 					
 					// query information
 					Long fileId = cache.getFileId(path, revision);
+					now = System.currentTimeMillis();
 					List nodes = cache.getNodes(fileId.longValue());
+					diff = System.currentTimeMillis() - now;
+					System.out.println("cache.getNodes(): "+diff+" "+nodes.size()+" nodes");
+					System.out.println();
 					// printNodes(nodes);
 					showGraph(nodes, path);
 
@@ -188,19 +204,38 @@ public class ViewGraphAction extends SVNAction {
 	}
 	
 	private void printLogMessages(ISVNLogMessage[] messages) {
-		for (int i = 0; i < messages.length; i++) {
-			ISVNLogMessage message = messages[i];
-			System.out.println(MessageFormat.format("{0} rev {1} on {3} message: {2}",
-					new Object[]{ message.getAuthor(),
-					message.getRevision(),
-					message.getMessage(),
-					new SimpleDateFormat("dd/MM/yyyy mm:ss").format(message.getDate())}));
-			ISVNLogMessageChangePath[] changedPaths = message.getChangedPaths();
-			for (int j = 0; j < changedPaths.length; j++) {
-				ISVNLogMessageChangePath cp = changedPaths[j];
-				System.out.println(MessageFormat.format("{0} {1}",
-						new Object[]{ Character.toString(cp.getAction()), cp.getPath()}));
+		try {
+			FileWriter writer = new FileWriter("c:/out.txt");
+			PrintWriter out = new PrintWriter(writer);
+			for (int i = 0; i < messages.length; i++) {
+				ISVNLogMessage message = messages[i];
+				out.println(message.getRevision());
+//				System.out.println(MessageFormat.format("{0}",
+//						new Object[]{ message.getRevision(),
+//						message.getRevision(),
+//						message.getMessage(),
+//						new SimpleDateFormat("dd/MM/yyyy mm:ss").format(message.getDate())}));
+				ISVNLogMessageChangePath[] changedPaths = message.getChangedPaths();
+				for (int j = 0; j < changedPaths.length; j++) {
+					ISVNLogMessageChangePath cp = changedPaths[j];
+					if(cp.getCopySrcRevision() == null) {
+						out.println(MessageFormat.format("{0} {1}",
+								new Object[]{
+								Character.toString(cp.getAction()),
+								cp.getPath()}));
+					} else {
+						out.println(MessageFormat.format("{0} {1} from {2} at {3}",
+								new Object[]{
+								Character.toString(cp.getAction()),
+								cp.getPath(),
+								cp.getCopySrcPath(),
+								new Long(cp.getCopySrcRevision().getNumber()) }));
+					}
+				}
 			}
+			out.close();
+		} catch(Exception e) {
+			e.printStackTrace();
 		}
 	}
 	
