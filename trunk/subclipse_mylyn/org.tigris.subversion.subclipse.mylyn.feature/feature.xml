@@ -34,7 +34,7 @@
       <import plugin="org.eclipse.mylyn.compatibility"/>
       <import plugin="org.eclipse.mylyn.tasks.core"/>
       <import plugin="org.eclipse.mylyn.tasks.ui"/>
-      <import plugin="org.eclipse.mylyn.team.ui"/>
+      <import plugin="org.eclipse.mylyn.team.ui" version="2.0.0" match="compatible"/>
    </requires>
 
    <plugin
