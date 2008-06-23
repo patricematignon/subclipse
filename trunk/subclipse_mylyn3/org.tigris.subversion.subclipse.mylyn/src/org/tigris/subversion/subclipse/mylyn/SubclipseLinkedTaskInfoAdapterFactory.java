@@ -13,20 +13,20 @@ package org.tigris.subversion.subclipse.mylyn;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdapterFactory;
-import org.eclipse.mylyn.tasks.core.ILinkedTaskInfo;
+import org.eclipse.mylyn.team.ui.AbstractTaskReference;
 import org.eclipse.team.internal.core.subscribers.CheckedInChangeSet;
 import org.tigris.subversion.subclipse.core.history.LogEntry;
 import org.tigris.subversion.subclipse.ui.subscriber.SVNChangeSetCollector;
 
 
 /**
- * <code>AdapterFactory</code> for adapting to <code>ILinkedTaskInfo</code>. 
+ * <code>AdapterFactory</code> for adapting to <code>AbstractTaskReference</code>. 
  * 
  * @author Eugene Kuleshov
  */
 public class SubclipseLinkedTaskInfoAdapterFactory implements IAdapterFactory {
 
-  private static final Class[] ADAPTER_TYPES = new Class[] { ILinkedTaskInfo.class };
+  private static final Class[] ADAPTER_TYPES = new Class[] { AbstractTaskReference.class };
 
 
   public Class[] getAdapterList() {
@@ -34,7 +34,7 @@ public class SubclipseLinkedTaskInfoAdapterFactory implements IAdapterFactory {
   }
   
   public Object getAdapter(Object object, Class adapterType) {
-    if(adapterType != ILinkedTaskInfo.class) {
+    if(adapterType != AbstractTaskReference.class) {
       return null;
     }
     
@@ -49,11 +49,11 @@ public class SubclipseLinkedTaskInfoAdapterFactory implements IAdapterFactory {
     return null;
   }
 
-  private static ILinkedTaskInfo adaptSubclipseLogEntry(LogEntry logEntry) {
+  private static AbstractTaskReference adaptSubclipseLogEntry(LogEntry logEntry) {
     return new SubclipseLinkedTaskInfo(logEntry);
   }
 
-  private static ILinkedTaskInfo adaptSubclipseChangeset(final CheckedInChangeSet set) {
+  private static AbstractTaskReference adaptSubclipseChangeset(final CheckedInChangeSet set) {
     IResource[] resources = set.getResources();
     IResource res = resources[0];
     return new SubclipseLinkedTaskInfo(res, set);

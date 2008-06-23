@@ -13,10 +13,10 @@ package org.tigris.subversion.subclipse.mylyn;
 
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.mylyn.tasks.core.AbstractTask;
-import org.eclipse.mylyn.tasks.core.ILinkedTaskInfo;
-import org.eclipse.mylyn.tasks.core.TaskRepositoryManager;
-import org.eclipse.mylyn.tasks.ui.TasksUiPlugin;
+import org.eclipse.mylyn.internal.tasks.core.AbstractTask;
+import org.eclipse.mylyn.internal.tasks.core.TaskRepositoryManager;
+import org.eclipse.mylyn.internal.tasks.ui.TasksUiPlugin;
+import org.eclipse.mylyn.team.ui.AbstractTaskReference;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.synchronize.SyncInfoTree;
 import org.eclipse.team.internal.core.subscribers.CheckedInChangeSet;
@@ -37,7 +37,7 @@ import org.tigris.subversion.svnclientadapter.SVNRevision;
  *
  * @author Eugene Kuleshov
  */
-class SubclipseLinkedTaskInfo implements ILinkedTaskInfo {
+class SubclipseLinkedTaskInfo extends AbstractTaskReference {
   private IResource resource;
   private CheckedInChangeSet changeSet;
   private LogEntry logEntry;
@@ -78,7 +78,7 @@ class SubclipseLinkedTaskInfo implements ILinkedTaskInfo {
     return null;
   }
 
-  public String getComment() {
+  public String getText() {
     if(comment==null && changeSet!=null) {
       try {
         SyncInfoTree syncInfoSet = changeSet.getSyncInfoSet();
@@ -119,7 +119,7 @@ class SubclipseLinkedTaskInfo implements ILinkedTaskInfo {
               ISVNProperty property = properties[i];
               if ("bugtraq:url".equals(property.getName())) {
                 repositoryUrl = SubclipseTeamPlugin.getRepository(
-                    property.getValue(), repositoryManager).getUrl();
+                    property.getValue(), repositoryManager).getRepositoryUrl();
                 // comments?
               }
             }
@@ -133,13 +133,13 @@ class SubclipseLinkedTaskInfo implements ILinkedTaskInfo {
     if (props != null) {
       if (repositoryUrl == null) {
         repositoryUrl = SubclipseTeamPlugin.getRepository(props.getUrl(),
-            repositoryManager).getUrl();
+            repositoryManager).getRepositoryUrl();
       }
-      urls = props.getLinkList(getComment()).getUrls();
+      urls = props.getLinkList(getText()).getUrls();
     }
     
     if (urls == null || urls.length == 0) {
-      urls = ProjectProperties.getUrls(getComment()).getUrls();
+      urls = ProjectProperties.getUrls(getText()).getUrls();
     }
     if (urls != null && urls.length > 0) {
       taskFullUrl = urls[0];

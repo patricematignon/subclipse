@@ -12,8 +12,8 @@
 package org.tigris.subversion.subclipse.mylyn;
 
 import org.eclipse.core.resources.IResource;
+import org.eclipse.mylyn.tasks.core.IRepositoryManager;
 import org.eclipse.mylyn.tasks.core.TaskRepository;
-import org.eclipse.mylyn.tasks.core.TaskRepositoryManager;
 import org.eclipse.mylyn.tasks.ui.AbstractTaskRepositoryLinkProvider;
 import org.tigris.subversion.subclipse.core.SVNException;
 import org.tigris.subversion.subclipse.ui.settings.ProjectProperties;
@@ -29,7 +29,7 @@ public class SubclipseTaskRepositoryLinkProvider extends
     AbstractTaskRepositoryLinkProvider {
 
   public TaskRepository getTaskRepository(IResource resource,
-      TaskRepositoryManager repositoryManager) {
+      IRepositoryManager repositoryManager) {
     try {
       ProjectProperties props = ProjectProperties.getProjectProperties(resource);
       if(props!=null) {
