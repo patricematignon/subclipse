@@ -247,6 +247,7 @@ public class Cache {
 			insertChangePath.setLong(5, fileId);
 			insertChangePath.setString(6, path);
 			insertChangePath.executeUpdate();
+//			System.out.println(action+" "+revision+" "+path);
 		} catch(SQLException e) {
 			System.err.println(revision+" at "+path+" "+action);
 			throw new CacheException("Error inserting change path", e);
@@ -278,13 +279,25 @@ public class Cache {
 		PreparedStatement delete = null;
 		ResultSet resultSet = null;
 		try {
-			selectFiles = connection.prepareStatement("SELECT path FROM files WHERE revision_to IS NULL AND path LIKE ?",
+			selectFiles = connection.prepareStatement("SELECT path, file_id FROM files WHERE revision_to IS NULL AND path LIKE ?",
 					ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 			selectFiles.setString(1, path+"/%");
 			resultSet = selectFiles.executeQuery();
 			while(resultSet.next()) {
 				String p = resultSet.getString(1);
+				long id = resultSet.getLong(2);
 				fileIds.remove(p);
+				
+				try {
+					deleteFile.setLong(1, revision);
+					deleteFile.setLong(2, id);
+					deleteFile.setString(3, p);
+					deleteFile.executeUpdate();
+				} catch(SQLException e) {
+					throw new CacheException("Error deleting file", e);
+				}
+				
+				insertChangePath(revision, null, null, 'D', id, p);
 			}
 
 			delete = connection.prepareStatement("UPDATE files SET revision_to=? WHERE revision_to IS NULL AND path LIKE ?");
@@ -372,7 +385,7 @@ public class Cache {
 		}
 	}
 	
-	public void update(ISVNLogMessage[] messages) throws Exception {
+	public void update(ISVNLogMessage[] messages) {
 		Map fileIds = new HashMap();
 		
 		for (int i = 0; i < messages.length; i++) {
@@ -413,7 +426,7 @@ public class Cache {
 		}
 	}
 	
-	private void addedAction(ISVNLogMessageChangePath changePath, Map fileIds, long revision, Long copySrcRevision) throws Exception {
+	private void addedAction(ISVNLogMessageChangePath changePath, Map fileIds, long revision, Long copySrcRevision) {
 		long fileId = 0;
 		char action = 'A';
 		if(changePath.getCopySrcRevision() == null) {
@@ -425,6 +438,7 @@ public class Cache {
 				System.err.println(changePath.getCopySrcPath()+" not found at revision "+changePath.getCopySrcRevision().getNumber());
 				System.err.println(changePath.getPath());
 				
+				/*
 				PreparedStatement st = connection.prepareStatement("SELECT file_id, revision_from, revision_to, path FROM files WHERE path LIKE ?");
 				st.setString(1, changePath.getCopySrcPath());
 				ResultSet result = st.executeQuery();
@@ -436,6 +450,7 @@ public class Cache {
 							result.getString(4)
 					}));
 				}
+				*/
 			}
 			fileId = l.longValue();
 			insertCopyFile(fileId, revision, changePath.getPath());
