@@ -1,4 +1,4 @@
-package org.tigris.subversion.subclipse.graph.view;
+package org.tigris.subversion.subclipse.graph.editors;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
