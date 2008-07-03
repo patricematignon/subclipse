@@ -1,4 +1,4 @@
-package org.tigris.subversion.subclipse.graph.view;
+package org.tigris.subversion.subclipse.graph.editors;
 
 import org.eclipse.draw2d.ColorConstants;
 import org.eclipse.draw2d.Figure;

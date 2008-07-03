@@ -1,4 +1,4 @@
-package org.tigris.subversion.subclipse.graph.view;
+package org.tigris.subversion.subclipse.graph.editors;
 
 import java.io.File;
 import java.util.HashMap;
@@ -23,15 +23,14 @@ import org.eclipse.gef.RootEditPart;
 import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
 import org.eclipse.gef.editparts.ScalableRootEditPart;
 import org.eclipse.gef.ui.parts.ScrollingGraphicalViewer;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.ISelectionListener;
-import org.eclipse.ui.IViewSite;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.part.ViewPart;
+import org.eclipse.ui.part.EditorPart;
+import org.eclipse.ui.part.FileEditorInput;
 import org.tigris.subversion.subclipse.core.SVNException;
 import org.tigris.subversion.subclipse.core.SVNProviderPlugin;
 import org.tigris.subversion.subclipse.ui.operations.SVNOperation;
@@ -43,38 +42,26 @@ import org.tigris.subversion.svnclientadapter.ISVNLogMessage;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
 
-public class RevisionGraphView extends ViewPart implements ISelectionListener {
+public class RevisionGraphEditor extends EditorPart {
 
 	private GraphicalViewer viewer;
 
 	public void setFocus() {
 	}
 	
-	public void init(final IViewSite site) throws PartInitException {
-		super.init(site);
-		site.getPage().addSelectionListener(this);
-		System.out.println("init!");
-	}
-	
-	public void selectionChanged(IWorkbenchPart part,
-			ISelection selection) {
-		if(selection instanceof IStructuredSelection) {
-			Object first = ((IStructuredSelection) selection).getFirstElement();
-			if(first instanceof IResource) {
-				IResource resource = (IResource) first;
-				showGraphFor(resource);
-			}
-		} else if(selection instanceof IResource) {
-			IResource resource = (IResource) selection; // TODO: not tested. This is ok?
-			showGraphFor(resource);
-		}
-	}
-	
-	public void dispose() {
-		super.dispose();
-		getSite().getPage().removeSelectionListener(this);
-		System.out.println("dispose!");
-	}
+//	public void selectionChanged(IWorkbenchPart part,
+//			ISelection selection) {
+//		if(selection instanceof IStructuredSelection) {
+//			Object first = ((IStructuredSelection) selection).getFirstElement();
+//			if(first instanceof IResource) {
+//				IResource resource = (IResource) first;
+//				showGraphFor(resource);
+//			}
+//		} else if(selection instanceof IResource) {
+//			IResource resource = (IResource) selection; // TODO: not tested. This is ok?
+//			showGraphFor(resource);
+//		}
+//	}
 	
 	public void showGraphFor(IResource resource) {
 		ShowGraphBackgroundTask task =
@@ -94,6 +81,31 @@ public class RevisionGraphView extends ViewPart implements ISelectionListener {
 		viewer.setRootEditPart(root);
 		viewer.setEditPartFactory(new GraphEditPartFactory());
 		viewer.setContents("Nothing to show");
+		IEditorInput input = getEditorInput();
+		if(input instanceof FileEditorInput) {
+			FileEditorInput fileEditorInput = (FileEditorInput) input;
+			showGraphFor(fileEditorInput.getFile());
+		}
+	}
+
+	public void doSave(IProgressMonitor monitor) {
+	}
+
+	public void doSaveAs() {
+	}
+
+	public void init(IEditorSite site, IEditorInput input)
+			throws PartInitException {
+		setSite(site);
+		setInput(input);
+	}
+
+	public boolean isDirty() {
+		return false;
+	}
+
+	public boolean isSaveAsAllowed() {
+		return false;
 	}
 
 } class ShowGraphBackgroundTask extends SVNOperation {

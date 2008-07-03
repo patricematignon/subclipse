@@ -2,11 +2,14 @@ package org.tigris.subversion.subclipse.graph.popup.actions;
 
 import java.lang.reflect.InvocationTargetException;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.tigris.subversion.subclipse.core.ISVNRemoteResource;
-import org.tigris.subversion.subclipse.graph.view.RevisionGraphView;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.part.FileEditorInput;
+import org.tigris.subversion.subclipse.graph.editors.RevisionGraphEditor;
 import org.tigris.subversion.subclipse.ui.ISVNUIConstants;
 import org.tigris.subversion.subclipse.ui.Policy;
 import org.tigris.subversion.subclipse.ui.actions.SVNAction;
@@ -19,12 +22,24 @@ public class ViewGraphAction extends SVNAction {
 	public void execute(IAction action) throws InterruptedException, InvocationTargetException {
 		run(new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) {
-				ISVNRemoteResource[] resources = getSelectedRemoteResources();
-				if (resources.length == 0)
-					resources = getSelectedRemoteFolders();
-				RevisionGraphView view = (RevisionGraphView)showView("org.tigris.subversion.subclipse.graph.view.revisionGraphView");
-				if (view != null) {
-					view.showGraphFor(resources[0].getResource());
+				IResource[] resources = getSelectedResources();
+				RevisionGraphEditor editor;
+				try {
+					if (resources.length > 0 && resources[0] instanceof IFile) {
+						System.out.println(resources[0].getClass());
+						IEditorPart part = getTargetPage().openEditor(
+								new FileEditorInput((IFile) resources[0]),
+								"org.tigris.subversion.subclipse.graph.editors.revisionGraphEditor");
+
+						System.out.println(part.getClass());
+//						editor = (RevisionGraphEditor) part;
+//						if(editor != null) {
+//							editor.showGraphFor(resources[0]);
+//						}
+					}
+				} catch (Throwable e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
 			}
 		}, false /* cancelable */, PROGRESS_BUSYCURSOR);
