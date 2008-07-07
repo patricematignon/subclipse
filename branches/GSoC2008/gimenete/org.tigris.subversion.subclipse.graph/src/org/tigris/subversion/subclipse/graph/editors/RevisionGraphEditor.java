@@ -19,7 +19,6 @@ import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gef.EditPartFactory;
 import org.eclipse.gef.GraphicalViewer;
-import org.eclipse.gef.RootEditPart;
 import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
 import org.eclipse.gef.editparts.ScalableRootEditPart;
 import org.eclipse.gef.ui.parts.ScrollingGraphicalViewer;
@@ -39,7 +38,6 @@ import org.tigris.subversion.sublicpse.graph.cache.Node;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 import org.tigris.subversion.svnclientadapter.ISVNInfo;
 import org.tigris.subversion.svnclientadapter.ISVNLogMessage;
-import org.tigris.subversion.svnclientadapter.SVNClientException;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
 
 public class RevisionGraphEditor extends EditorPart {
@@ -77,7 +75,9 @@ public class RevisionGraphEditor extends EditorPart {
 	public void createPartControl(Composite parent) {
 		viewer = new ScrollingGraphicalViewer();
 		viewer.createControl(parent);
-		RootEditPart root = new ScalableRootEditPart();
+		ScalableRootEditPart root = new ScalableRootEditPart();
+//		root.getZoomManager().zoomOut();
+//		root.getZoomManager().zoomOut();
 		viewer.setRootEditPart(root);
 		viewer.setEditPartFactory(new GraphEditPartFactory());
 		viewer.setContents("Nothing to show");
@@ -113,6 +113,8 @@ public class RevisionGraphEditor extends EditorPart {
 	private IResource resource;
 	private GraphicalViewer viewer;
 	
+	private final static int MAGIC_NUMBER = 100;
+	
 	protected ShowGraphBackgroundTask(IWorkbenchPart part, GraphicalViewer viewer, IResource resource) {
 		super(part);
 		this.viewer = viewer;
@@ -128,39 +130,44 @@ public class RevisionGraphEditor extends EditorPart {
 			long revision = info.getRevision().getNumber();
 			String path = info.getUrl().toString().substring(info.getRepository().toString().length());
 			
-			long now = System.currentTimeMillis();
 			monitor.setTaskName("Initializating cache");
 			cache = getCache(resource, info.getUuid());
-			long diff = System.currentTimeMillis() - now;
-			System.out.println("getCache(): "+diff);
 			
 			// update the cache
 			long latestRevisionStored = cache.getLatestRevision();
 			SVNRevision latest = null;
 			if(latestRevisionStored < revision) { // FIXME: this is not always right
-				if(latestRevisionStored == 0)
-					latest = SVNRevision.START;
-				else
-					latest = new SVNRevision.Number(latestRevisionStored+1);
-
-				try {
-					now = System.currentTimeMillis();
-					monitor.setTaskName("Asking the repository for updates");
-					ISVNLogMessage[] messages = client.getLogMessages(info.getRepository(),
-							latest, SVNRevision.HEAD);
-					diff = System.currentTimeMillis() - now;
-					System.out.println("getLogMessages(): "+diff+" "+messages.length+" messages");
-
-//					printLogMessages(messages);
-					now = System.currentTimeMillis();
-					monitor.setTaskName("Updating the cache");
-					cache.update(messages);
-					diff = System.currentTimeMillis() - now;
-					System.out.println("cache.update(): "+diff+" "+messages.length+" messages");
-				} catch(SVNClientException e) {
-					System.err.println("cache may be up to date "+e.getMessage()+" "+e.getClass());
-				} catch(Exception e) {
-					e.printStackTrace();
+				long latestRevisionInRepository = client.getInfo(info.getRepository()).getRevision().getNumber();
+				
+				if(latestRevisionInRepository > latestRevisionStored) {
+					if(latestRevisionStored == 0)
+						latest = SVNRevision.START;
+					else
+						latest = new SVNRevision.Number(latestRevisionStored);
+					
+					try {
+						monitor.setTaskName("Retrieving revision history");
+						monitor.beginTask("Asking the repository for updates", 100);
+						int workedUnit = (int) (100 / ((latestRevisionInRepository - latestRevisionStored) / (float) MAGIC_NUMBER));
+						while(latestRevisionInRepository > latestRevisionStored) {
+							latestRevisionStored += MAGIC_NUMBER;
+							if(latestRevisionStored > latestRevisionInRepository) {
+								latestRevisionStored = latestRevisionInRepository;
+							}
+							
+							ISVNLogMessage[] messages = client.getLogMessages(info.getRepository(),
+									latest, new SVNRevision.Number(latestRevisionStored));
+							monitor.worked(workedUnit);
+//							printLogMessages(messages);
+							cache.update(messages);
+							latest = new SVNRevision.Number(latestRevisionStored+1);
+						}
+						monitor.done();
+					} catch(Exception e) {
+						e.printStackTrace();
+					}
+				} else {
+					System.out.println("No updates");
 				}
 			}
 			updateView(cache, path, revision);
@@ -196,7 +203,7 @@ public class RevisionGraphEditor extends EditorPart {
 	}
 
 	protected String getTaskName() {
-		return "Retrieving revision history";
+		return "Calculating graph information";
 	}
 
 } class Graph {
