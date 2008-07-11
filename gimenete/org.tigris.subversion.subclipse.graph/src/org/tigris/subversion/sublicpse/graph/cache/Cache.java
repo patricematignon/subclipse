@@ -388,6 +388,13 @@ public class Cache {
 	public void update(ISVNLogMessage[] messages) {
 		Map fileIds = new HashMap();
 		
+		try {
+			connection.setAutoCommit(false);
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
 		for (int i = 0; i < messages.length; i++) {
 			ISVNLogMessage logMessage = messages[i];
 			long revision = logMessage.getRevision().getNumber();
@@ -424,6 +431,14 @@ public class Cache {
 				}
 			}
 		}
+		
+		try {
+			connection.commit();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 	
 	private void addedAction(ISVNLogMessageChangePath changePath, Map fileIds, long revision, Long copySrcRevision) {

@@ -12,16 +12,22 @@ import org.eclipse.draw2d.ChopboxAnchor;
 import org.eclipse.draw2d.Figure;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.Label;
-import org.eclipse.draw2d.ManhattanConnectionRouter;
+import org.eclipse.draw2d.PolygonDecoration;
 import org.eclipse.draw2d.PolylineConnection;
 import org.eclipse.draw2d.XYLayout;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gef.EditPartFactory;
+import org.eclipse.gef.EditPartViewer;
 import org.eclipse.gef.GraphicalViewer;
 import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
 import org.eclipse.gef.editparts.ScalableRootEditPart;
+import org.eclipse.gef.editparts.ZoomManager;
+import org.eclipse.gef.ui.actions.ZoomComboContributionItem;
 import org.eclipse.gef.ui.parts.ScrollingGraphicalViewer;
+import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorInput;
@@ -47,20 +53,6 @@ public class RevisionGraphEditor extends EditorPart {
 	public void setFocus() {
 	}
 	
-//	public void selectionChanged(IWorkbenchPart part,
-//			ISelection selection) {
-//		if(selection instanceof IStructuredSelection) {
-//			Object first = ((IStructuredSelection) selection).getFirstElement();
-//			if(first instanceof IResource) {
-//				IResource resource = (IResource) first;
-//				showGraphFor(resource);
-//			}
-//		} else if(selection instanceof IResource) {
-//			IResource resource = (IResource) selection; // TODO: not tested. This is ok?
-//			showGraphFor(resource);
-//		}
-//	}
-	
 	public void showGraphFor(IResource resource) {
 		ShowGraphBackgroundTask task =
 			new ShowGraphBackgroundTask(getSite().getPart(), viewer, resource);
@@ -72,12 +64,24 @@ public class RevisionGraphEditor extends EditorPart {
 		}
 	}
 	
+	public Object getAdapter(Class adapter) {
+		if(adapter == GraphicalViewer.class || adapter == EditPartViewer.class) {
+			return viewer;
+		} else if(adapter == ZoomManager.class) {
+			return ((ScalableRootEditPart) viewer.getRootEditPart()).getZoomManager();
+		}
+		return super.getAdapter(adapter);
+	}
+	
 	public void createPartControl(Composite parent) {
+		IToolBarManager mgr = getEditorSite().getActionBars().getToolBarManager();
+		mgr.add(new ZoomComboContributionItem(getSite().getPage()));
+		
 		viewer = new ScrollingGraphicalViewer();
+		GC gc = new GC(parent);
+		gc.setAntialias(SWT.ON);
 		viewer.createControl(parent);
 		ScalableRootEditPart root = new ScalableRootEditPart();
-//		root.getZoomManager().zoomOut();
-//		root.getZoomManager().zoomOut();
 		viewer.setRootEditPart(root);
 		viewer.setEditPartFactory(new GraphEditPartFactory());
 		viewer.setContents("Nothing to show");
@@ -147,20 +151,28 @@ public class RevisionGraphEditor extends EditorPart {
 					
 					try {
 						monitor.setTaskName("Retrieving revision history");
-						monitor.beginTask("Asking the repository for updates", 100);
-						int workedUnit = (int) (100 / ((latestRevisionInRepository - latestRevisionStored) / (float) MAGIC_NUMBER));
+						monitor.beginTask("Asking the repository for updates", 50*2);
+						int workedUnit = (int) (50 / ((latestRevisionInRepository - latestRevisionStored) / (float) MAGIC_NUMBER));
+						CacheUpdaterThread cacheUpdater = null;
 						while(latestRevisionInRepository > latestRevisionStored) {
 							latestRevisionStored += MAGIC_NUMBER;
 							if(latestRevisionStored > latestRevisionInRepository) {
 								latestRevisionStored = latestRevisionInRepository;
 							}
-							
 							ISVNLogMessage[] messages = client.getLogMessages(info.getRepository(),
 									latest, new SVNRevision.Number(latestRevisionStored));
 							monitor.worked(workedUnit);
 //							printLogMessages(messages);
-							cache.update(messages);
+							if(cacheUpdater != null) {
+								cacheUpdater.join();
+								monitor.worked(workedUnit);
+							}
+							cacheUpdater = new CacheUpdaterThread(cache, messages);
+							cacheUpdater.start();
 							latest = new SVNRevision.Number(latestRevisionStored+1);
+						}
+						if(cacheUpdater != null) {
+							cacheUpdater.join();
 						}
 						monitor.done();
 					} catch(Exception e) {
@@ -176,8 +188,8 @@ public class RevisionGraphEditor extends EditorPart {
 			e.printStackTrace();
 			return;
 		} finally {
-			if(cache != null)
-				cache.close();
+//			if(cache != null)
+//				cache.close();
 			// TODO: clean up ISVNClientAdapter ?
 		}
 	}
@@ -205,6 +217,22 @@ public class RevisionGraphEditor extends EditorPart {
 	protected String getTaskName() {
 		return "Calculating graph information";
 	}
+
+} class CacheUpdaterThread extends Thread {
+	
+	private Cache cache;
+	private ISVNLogMessage[] messages;
+	
+	public CacheUpdaterThread(Cache cache,
+			ISVNLogMessage[] messages) {
+		this.cache = cache;
+		this.messages = messages;
+	}
+	
+	public void run() {
+		cache.update(messages); // TODO: handle exceptions
+	}
+	
 
 } class Graph {
 	
@@ -240,6 +268,14 @@ public class RevisionGraphEditor extends EditorPart {
 } class GraphEditPart extends AbstractGraphicalEditPart {
 	
 	private Graph graph;
+
+	private final static int NODE_WIDTH = 70;
+	private final static int NODE_HEIGHT = 30;
+	private final static int BRANCH_WIDTH = 150;
+	private final static int BRANCH_HEIGHT = 30;
+	private final static int BRANCH_OFFSET = 170;
+	private final static int NODE_OFFSET_Y = 40;
+	private final static int NODE_OFFSET_X = (BRANCH_WIDTH - NODE_WIDTH) / 2;
 	
 	public GraphEditPart(Graph graph) {
 		this.graph = graph;
@@ -254,24 +290,33 @@ public class RevisionGraphEditor extends EditorPart {
 		Map branches = new HashMap();
 		Map figures = new HashMap();
 		Map previousFigure = new HashMap();
+		Map nodesCount = new HashMap();
 
 		int i=0;
 		for (Iterator iterator = nodes.iterator(); iterator
 				.hasNext();) {
 			Node node = (Node) iterator.next();
-			NodeFigure figure = new NodeFigure(node.getRevision(), node.getAuthor(), node.getRevisionDate());
+			NodeFigure figure = new NodeFigure(node);
 			figures.put(node.getRevision()+"@"+node.getPath(), figure);
+			
+			int branchNodesCount = 0;
 			
 			BranchFigure branch = (BranchFigure) branches.get(node.getPath());
 			if(branch == null) {
 				branch = new BranchFigure(node.getPath());
-				contentsLayout.setConstraint(branch, new Rectangle(10+branches.keySet().size()*170, 10, 150, 30));
+				contentsLayout.setConstraint(branch,
+						new Rectangle(10+branches.keySet().size()*BRANCH_OFFSET, 10, BRANCH_WIDTH, BRANCH_HEIGHT));
 				branches.put(node.getPath(), branch);
 				contents.add(branch);
 				previousFigure.put(node.getPath(), branch);
+				nodesCount.put(node.getPath(), new Integer(0));
+			} else {
+				branchNodesCount = ((Integer) nodesCount.get(node.getPath())).intValue() + 1;
+				nodesCount.put(node.getPath(), new Integer(branchNodesCount));
 			}
 			Rectangle r = (Rectangle) contentsLayout.getConstraint(branch);
-			contentsLayout.setConstraint(figure, new Rectangle(r.x, 50+60*i, 150, 50));
+			contentsLayout.setConstraint(figure,
+					new Rectangle(NODE_OFFSET_X+r.x, 50+NODE_OFFSET_Y*branchNodesCount, NODE_WIDTH, NODE_HEIGHT));
 			contents.add(figure);
 
 			ChopboxAnchor sourceAnchor = null;
@@ -296,10 +341,14 @@ public class RevisionGraphEditor extends EditorPart {
 			}
 			if(sourceAnchor != null) {
 				PolylineConnection c = new PolylineConnection();
-				c.setConnectionRouter(new ManhattanConnectionRouter());
+//				c.setLineWidth(2);
+//				c.setConnectionRouter(new ManhattanConnectionRouter());
 				ChopboxAnchor targetAnchor = new ChopboxAnchor(figure);
 				c.setSourceAnchor(sourceAnchor);
 				c.setTargetAnchor(targetAnchor);
+				PolygonDecoration decoration = new PolygonDecoration();
+				decoration.setTemplate(PolygonDecoration.TRIANGLE_TIP);
+				c.setSourceDecoration(decoration);
 				contents.add(c);
 			}
 			
