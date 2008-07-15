@@ -101,11 +101,14 @@ public class RevisionGraphEditor extends EditorPart {
 		ScalableRootEditPart root = new ScalableRootEditPart();
 		viewer.setRootEditPart(root);
 		viewer.setEditPartFactory(new GraphEditPartFactory());
-		viewer.setContents("Nothing to show");
+		viewer.setContents("Loading graph... This can take several minutes");
 		IEditorInput input = getEditorInput();
 		if(input instanceof FileEditorInput) {
 			FileEditorInput fileEditorInput = (FileEditorInput) input;
 			showGraphFor(fileEditorInput.getFile());
+		} else if(input instanceof RevisionGraphEditorInput) {
+			RevisionGraphEditorInput editorInput = (RevisionGraphEditorInput) input;
+			showGraphFor(editorInput.getResource());
 		}
 		
 		// zoom stuff
