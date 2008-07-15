@@ -1,6 +1,10 @@
 package org.tigris.subversion.subclipse.graph.editors;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -9,22 +13,31 @@ import java.util.Map;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.draw2d.ChopboxAnchor;
+import org.eclipse.draw2d.ConnectionAnchor;
 import org.eclipse.draw2d.Figure;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.Label;
 import org.eclipse.draw2d.PolygonDecoration;
 import org.eclipse.draw2d.PolylineConnection;
+import org.eclipse.draw2d.XYAnchor;
 import org.eclipse.draw2d.XYLayout;
+import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gef.EditPartFactory;
 import org.eclipse.gef.EditPartViewer;
 import org.eclipse.gef.GraphicalViewer;
+import org.eclipse.gef.MouseWheelHandler;
+import org.eclipse.gef.MouseWheelZoomHandler;
 import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
 import org.eclipse.gef.editparts.ScalableRootEditPart;
 import org.eclipse.gef.editparts.ZoomManager;
+import org.eclipse.gef.ui.actions.ActionRegistry;
 import org.eclipse.gef.ui.actions.ZoomComboContributionItem;
+import org.eclipse.gef.ui.actions.ZoomInAction;
+import org.eclipse.gef.ui.actions.ZoomOutAction;
 import org.eclipse.gef.ui.parts.ScrollingGraphicalViewer;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.GC;
@@ -49,6 +62,13 @@ import org.tigris.subversion.svnclientadapter.SVNRevision;
 public class RevisionGraphEditor extends EditorPart {
 
 	private GraphicalViewer viewer;
+	private ActionRegistry actionRegistry;
+
+	public ActionRegistry getActionRegistry() {
+		if (actionRegistry == null)
+			actionRegistry = new ActionRegistry();
+		return actionRegistry;
+	}
 
 	public void setFocus() {
 	}
@@ -74,12 +94,9 @@ public class RevisionGraphEditor extends EditorPart {
 	}
 	
 	public void createPartControl(Composite parent) {
-		IToolBarManager mgr = getEditorSite().getActionBars().getToolBarManager();
-		mgr.add(new ZoomComboContributionItem(getSite().getPage()));
-		
-		viewer = new ScrollingGraphicalViewer();
 		GC gc = new GC(parent);
 		gc.setAntialias(SWT.ON);
+		viewer = new ScrollingGraphicalViewer();
 		viewer.createControl(parent);
 		ScalableRootEditPart root = new ScalableRootEditPart();
 		viewer.setRootEditPart(root);
@@ -90,6 +107,28 @@ public class RevisionGraphEditor extends EditorPart {
 			FileEditorInput fileEditorInput = (FileEditorInput) input;
 			showGraphFor(fileEditorInput.getFile());
 		}
+		
+		// zoom stuff
+		ZoomManager zoomManager = ((ScalableRootEditPart) viewer.getRootEditPart()).getZoomManager();
+		IAction zoomIn = new ZoomInAction(zoomManager);
+		IAction zoomOut = new ZoomOutAction(zoomManager);
+		getActionRegistry().registerAction(zoomIn);
+		getActionRegistry().registerAction(zoomOut);
+		// keyboard
+		getSite().getKeyBindingService().registerAction(zoomIn); // FIXME, deprecated
+		getSite().getKeyBindingService().registerAction(zoomOut); // FIXME, deprecated
+		List zoomContributions = Arrays.asList(new String[] { 
+			     ZoomManager.FIT_ALL, 
+			     ZoomManager.FIT_HEIGHT, 
+			     ZoomManager.FIT_WIDTH });
+		zoomManager.setZoomLevelContributions(zoomContributions);
+		// toolbar
+		IToolBarManager mgr = getEditorSite().getActionBars().getToolBarManager();
+		mgr.add(new ZoomComboContributionItem(getSite().getPage()));
+		// menu
+		// mouse wheel
+		viewer.setProperty(MouseWheelHandler.KeyGenerator.getKey(SWT.MOD1),
+				MouseWheelZoomHandler.SINGLETON);
 	}
 
 	public void doSave(IProgressMonitor monitor) {
@@ -269,13 +308,18 @@ public class RevisionGraphEditor extends EditorPart {
 	
 	private Graph graph;
 
-	private final static int NODE_WIDTH = 70;
-	private final static int NODE_HEIGHT = 30;
-	private final static int BRANCH_WIDTH = 150;
+	private final static int NODE_WIDTH = 50;
+	private final static int NODE_HEIGHT = 20;
+	private final static int NODE_HEIGHT2 = NODE_HEIGHT / 2;
+	private final static int BRANCH_WIDTH = 200;
 	private final static int BRANCH_HEIGHT = 30;
-	private final static int BRANCH_OFFSET = 170;
-	private final static int NODE_OFFSET_Y = 40;
+	private final static int BRANCH_OFFSET = BRANCH_WIDTH+20;
+	private final static int NODE_OFFSET_Y = 10;
 	private final static int NODE_OFFSET_X = (BRANCH_WIDTH - NODE_WIDTH) / 2;
+	private final static int ARROW_PADDING = 10;
+	
+	private static final String TAG_PREFIX = "/tags/";
+	private boolean hideTags = true;
 	
 	public GraphEditPart(Graph graph) {
 		this.graph = graph;
@@ -288,79 +332,221 @@ public class RevisionGraphEditor extends EditorPart {
 		contents.setLayoutManager(contentsLayout);
 		
 		Map branches = new HashMap();
-		Map figures = new HashMap();
-		Map previousFigure = new HashMap();
-		Map nodesCount = new HashMap();
+		List branchesList = new ArrayList();
+		List branchesPathList = new ArrayList();
 
-		int i=0;
 		for (Iterator iterator = nodes.iterator(); iterator
 				.hasNext();) {
 			Node node = (Node) iterator.next();
+			
 			NodeFigure figure = new NodeFigure(node);
-			figures.put(node.getRevision()+"@"+node.getPath(), figure);
-			
-			int branchNodesCount = 0;
-			
-			BranchFigure branch = (BranchFigure) branches.get(node.getPath());
+			Branch branch = (Branch) branches.get(node.getPath());
 			if(branch == null) {
-				branch = new BranchFigure(node.getPath());
-				contentsLayout.setConstraint(branch,
-						new Rectangle(10+branches.keySet().size()*BRANCH_OFFSET, 10, BRANCH_WIDTH, BRANCH_HEIGHT));
+				branch = new Branch(new BranchFigure(node.getPath()));
 				branches.put(node.getPath(), branch);
-				contents.add(branch);
-				previousFigure.put(node.getPath(), branch);
-				nodesCount.put(node.getPath(), new Integer(0));
-			} else {
-				branchNodesCount = ((Integer) nodesCount.get(node.getPath())).intValue() + 1;
-				nodesCount.put(node.getPath(), new Integer(branchNodesCount));
+				branchesList.add(branch);
+				branchesPathList.add(node.getPath());
+				contents.add(branch.getBranchFigure());
 			}
-			Rectangle r = (Rectangle) contentsLayout.getConstraint(branch);
-			contentsLayout.setConstraint(figure,
-					new Rectangle(NODE_OFFSET_X+r.x, 50+NODE_OFFSET_Y*branchNodesCount, NODE_WIDTH, NODE_HEIGHT));
-			contents.add(figure);
-
+			
+			NodeFigure source = null;
+			
 			ChopboxAnchor sourceAnchor = null;
 			if(node.getCopySrcPath() == null) {
-				sourceAnchor = new ChopboxAnchor((Figure) previousFigure.get(node.getPath()));
+				sourceAnchor = new ChopboxAnchor(branch.getLast());
 			} else {
-				Figure source = (Figure) figures.get(node.getCopySrcRevision()+"@"+node.getCopySrcPath());
-				if(source != null) {
+				Node n = node;
+				do {
+					source = ((Branch) branches.get(n.getCopySrcPath())).get(n.getCopySrcRevision());
+					n = source.getNode();
+				} while(isTag(n.getPath()));
+
+				if(!isTag(node.getPath()))
 					sourceAnchor = new ChopboxAnchor(source);
-				} else {
-					long rev = node.getCopySrcRevision();
-					do { // FIXME: this is very ugly
-						source = (Figure) figures.get(rev+"@"+node.getCopySrcPath());
-						rev--;
-					} while(source == null && rev >= 0);
-					if(source != null) {
-						sourceAnchor = new ChopboxAnchor(source);
-					} else {
-						sourceAnchor = new ChopboxAnchor((Figure) previousFigure.get(node.getCopySrcPath()));
-					}
-				}
 			}
-			if(sourceAnchor != null) {
+			
+			/*
+			if(branch.getNodes().isEmpty()) {
 				PolylineConnection c = new PolylineConnection();
-//				c.setLineWidth(2);
-//				c.setConnectionRouter(new ManhattanConnectionRouter());
-				ChopboxAnchor targetAnchor = new ChopboxAnchor(figure);
+				c.setSourceAnchor(new ChopboxAnchor(figure));
+				c.setTargetAnchor(new ChopboxAnchor(branch.getBranchFigure()));
+				c.setLineStyle(Graphics.LINE_DASHDOT);
+				contents.add(c);
+			}
+			*/
+			
+			branch.addNode(figure);
+			
+			if(!isTag(node.getPath())) {
+				contents.add(figure);
+				
+				PolylineConnection c = new PolylineConnection();
+				ConnectionAnchor targetAnchor = new ChopboxAnchor(figure);
 				c.setSourceAnchor(sourceAnchor);
 				c.setTargetAnchor(targetAnchor);
 				PolygonDecoration decoration = new PolygonDecoration();
 				decoration.setTemplate(PolygonDecoration.TRIANGLE_TIP);
 				c.setSourceDecoration(decoration);
 				contents.add(c);
+
+				if(source != null) {
+					int i = source.addConnection(c, node);
+					figure.setSource(c, i);
+				}
+			} else if(source != null) {
+				source.addTag(node);
+			} else {
+				System.out.println("meeeec");
+				System.out.println(node.getRevision()+", "+node.getPath()+", "+node.getCopySrcPath()+", "+node.getCopySrcRevision());
+			}
+		}
+		
+		int branchIndex = 0;
+		for (Iterator it = branchesList.iterator(); it.hasNext(); branchIndex++) {
+			Branch branch = (Branch) it.next();
+			
+			if(isTag(branch.getBranchFigure().getPath())) {
+				branchIndex--;
+				continue;
 			}
 			
-			previousFigure.put(node.getPath(), figure);
+			Rectangle rect = new Rectangle(10+branchIndex*BRANCH_OFFSET, 10, BRANCH_WIDTH, BRANCH_HEIGHT);
+			contentsLayout.setConstraint(branch.getBranchFigure(), rect);
 			
-			i++;
+			int x = rect.x + NODE_OFFSET_X;
+			int figureIndex = 0;
+			for (Iterator iter = branch.getNodes().iterator(); iter.hasNext(); figureIndex++) {
+				NodeFigure figure = (NodeFigure) iter.next();
+
+				int y = NODE_OFFSET_Y + rect.y + rect.height;
+				int height = NODE_HEIGHT + ARROW_PADDING * figure.getConnections().size();
+				
+				/*
+				if(figure.getSource() != null && figureIndex == 0) {
+					NodeFigure source = (NodeFigure) figure.getSource().getSourceAnchor().getOwner();
+					Rectangle r = (Rectangle) contentsLayout.getConstraint(source);
+					y = r.y + NODE_HEIGHT * figure.getSourceIndex();
+					
+					Point point = new Point(x, y + height/2);
+					XYAnchor anchor = new MyXYAnchor(point, source);
+					figure.getSource().setTargetAnchor(anchor);
+				}
+				*/
+				rect = new Rectangle(x, y, NODE_WIDTH, height);
+				contentsLayout.setConstraint(figure, rect);
+				
+				int k = 0;
+				for (Iterator i = figure.getConnections().iterator(); i
+						.hasNext(); k++) {
+					PolylineConnection c = (PolylineConnection) i.next();
+					NodeFigure source = (NodeFigure) c.getTargetAnchor().getOwner();
+					int index = branchesPathList.indexOf(source.getNode().getPath());
+					int px = x;
+					if(index > branchIndex) {
+						px += rect.width;
+					}
+					Point point = new Point(px, y+NODE_HEIGHT2+k*ARROW_PADDING);
+					XYAnchor anchor = new MyXYAnchor(point, figure);
+					c.setSourceAnchor(anchor);
+				}
+				figure.endLayout();
+			}
 		}
 		
 		return contents;
 	}
+	
+	private boolean isTag(String path) {
+		if(path == null) return false;
+		return hideTags && path.startsWith(TAG_PREFIX);
+	}
 
 	protected void createEditPolicies() {
+	}
+
+} class MyXYAnchor extends XYAnchor {
+	
+	private IFigure f;
+
+	public MyXYAnchor(Point point, IFigure f) {
+		super(point);
+		this.f = f;
+	}
+	
+	public Point getLocation(Point reference) {
+		Point p = super.getLocation(reference).getCopy();
+		f.translateToAbsolute(p);
+		return p;
+	}
+	
+	public IFigure getOwner() {
+		return f;
+	}
+	
+} class Branch {
+	
+	private static final Comparator c = new Comparator() {
+		public int compare(Object a, Object b) {
+			long ra;
+			long rb;
+			if(a instanceof Long) {
+				ra = ((Long) a).longValue();
+			} else if(a instanceof NodeFigure) {
+				ra = ((NodeFigure) a).getNode().getRevision();
+			} else {
+				throw new RuntimeException();
+			}
+			if(b instanceof Long) {
+				rb = ((Long) b).longValue();
+			} else if(b instanceof NodeFigure) {
+				rb = ((NodeFigure) b).getNode().getRevision();
+			} else {
+				throw new RuntimeException();
+			}
+			if(ra < rb) {
+				return -1;
+			} else if(ra > rb) {
+				return 1;
+			}
+			return 0;
+		}
+	};
+	
+	private BranchFigure branch;
+	private List nodes = new ArrayList();
+	private Figure last = null;
+	
+	public Branch(BranchFigure branch) {
+		this.branch = branch;
+		this.last = branch;
+	}
+	
+	public void addNode(NodeFigure f) {
+		nodes.add(f);
+		last = f;
+	}
+	
+	public Figure getLast() {
+		return last;
+	}
+	
+	public NodeFigure get(long revision) {
+		int index = Collections.binarySearch(nodes, new Long(revision), c);
+		if(index < 0) {
+			index = -index-2;
+			if(index < 0) {
+				return null;
+			}
+		}
+		return (NodeFigure) nodes.get(index);
+	}
+	
+	public BranchFigure getBranchFigure() {
+		return branch;
+	}
+	
+	public List getNodes() {
+		return nodes;
 	}
 	
 }
