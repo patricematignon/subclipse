@@ -142,6 +142,8 @@ public class NodeFigure extends Figure {
 		Figure tooltip = new Figure();
 		setToolTip(tooltip);
 
+		add(createLabel("Action and path", info, NodeFigure.BLUE));
+		add(createLabel(node.getAction()+" "+node.getPath(), plain));
 		add(createLabel("Author", info, NodeFigure.BLUE));
 		add(createLabel(node.getAuthor(), authorFont));
 		add(createLabel("Date", info, NodeFigure.BLUE));

@@ -1,28 +1,15 @@
 package org.tigris.subversion.subclipse.graph.editors;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.draw2d.ChopboxAnchor;
-import org.eclipse.draw2d.ConnectionAnchor;
-import org.eclipse.draw2d.Figure;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.Label;
-import org.eclipse.draw2d.PolygonDecoration;
-import org.eclipse.draw2d.PolylineConnection;
 import org.eclipse.draw2d.XYAnchor;
-import org.eclipse.draw2d.XYLayout;
 import org.eclipse.draw2d.geometry.Point;
-import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gef.EditPartFactory;
 import org.eclipse.gef.EditPartViewer;
@@ -53,10 +40,14 @@ import org.tigris.subversion.subclipse.core.SVNException;
 import org.tigris.subversion.subclipse.core.SVNProviderPlugin;
 import org.tigris.subversion.subclipse.ui.operations.SVNOperation;
 import org.tigris.subversion.sublicpse.graph.cache.Cache;
+import org.tigris.subversion.sublicpse.graph.cache.CacheException;
+import org.tigris.subversion.sublicpse.graph.cache.Graph;
+import org.tigris.subversion.sublicpse.graph.cache.WorkListener;
 import org.tigris.subversion.sublicpse.graph.cache.Node;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 import org.tigris.subversion.svnclientadapter.ISVNInfo;
 import org.tigris.subversion.svnclientadapter.ISVNLogMessage;
+import org.tigris.subversion.svnclientadapter.ISVNLogMessageCallback;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
 
 public class RevisionGraphEditor extends EditorPart {
@@ -74,6 +65,8 @@ public class RevisionGraphEditor extends EditorPart {
 	}
 	
 	public void showGraphFor(IResource resource) {
+		setPartName(resource.getName()+" revision graph");
+//		setContentDescription("Revision graph for "+resource.getName());
 		ShowGraphBackgroundTask task =
 			new ShowGraphBackgroundTask(getSite().getPart(), viewer, resource);
 		try {
@@ -158,8 +151,11 @@ public class RevisionGraphEditor extends EditorPart {
 	
 	private IResource resource;
 	private GraphicalViewer viewer;
-	
-	private final static int MAGIC_NUMBER = 100;
+
+	private static final int TOTAL_STEPS = Integer.MAX_VALUE;
+	private static final int SHORT_TASK_STEPS = TOTAL_STEPS / 50; // 2%
+	private static final int VERY_LONG_TASK = TOTAL_STEPS / 2; // 50%
+	private static final int TASK_STEPS = TOTAL_STEPS / 10; // 10%
 	
 	protected ShowGraphBackgroundTask(IWorkbenchPart part, GraphicalViewer viewer, IResource resource) {
 		super(part);
@@ -170,62 +166,50 @@ public class RevisionGraphEditor extends EditorPart {
 	protected void execute(IProgressMonitor monitor) throws SVNException,
 			InterruptedException {
 		Cache cache = null;
+		monitor.beginTask("Calculating graph information", TOTAL_STEPS);
+		monitor.worked(SHORT_TASK_STEPS);
 		try {
 			ISVNClientAdapter client = SVNProviderPlugin.getPlugin().getSVNClient();
 			ISVNInfo info = client.getInfoFromWorkingCopy(resource.getRawLocation().toFile());
+			
 			long revision = info.getRevision().getNumber();
 			String path = info.getUrl().toString().substring(info.getRepository().toString().length());
 			
 			monitor.setTaskName("Initializating cache");
 			cache = getCache(resource, info.getUuid());
+			monitor.worked(SHORT_TASK_STEPS);
 			
 			// update the cache
 			long latestRevisionStored = cache.getLatestRevision();
 			SVNRevision latest = null;
-			if(latestRevisionStored < revision) { // FIXME: this is not always right
-				long latestRevisionInRepository = client.getInfo(info.getRepository()).getRevision().getNumber();
-				
-				if(latestRevisionInRepository > latestRevisionStored) {
-					if(latestRevisionStored == 0)
-						latest = SVNRevision.START;
-					else
-						latest = new SVNRevision.Number(latestRevisionStored);
+			monitor.setTaskName("Connecting to the repository");
+			long latestRevisionInRepository = client.getInfo(info.getRepository()).getRevision().getNumber();
+			monitor.worked(SHORT_TASK_STEPS);
+
+			if(latestRevisionInRepository > latestRevisionStored) {
+				if(latestRevisionStored == 0)
+					latest = SVNRevision.START;
+				else
+					latest = new SVNRevision.Number(latestRevisionStored);
+
+				try {
+					monitor.setTaskName("Retrieving revision history");
+					int unitWork = VERY_LONG_TASK / (int) (latestRevisionInRepository - latestRevisionStored);
 					
-					try {
-						monitor.setTaskName("Retrieving revision history");
-						monitor.beginTask("Asking the repository for updates", 50*2);
-						int workedUnit = (int) (50 / ((latestRevisionInRepository - latestRevisionStored) / (float) MAGIC_NUMBER));
-						CacheUpdaterThread cacheUpdater = null;
-						while(latestRevisionInRepository > latestRevisionStored) {
-							latestRevisionStored += MAGIC_NUMBER;
-							if(latestRevisionStored > latestRevisionInRepository) {
-								latestRevisionStored = latestRevisionInRepository;
-							}
-							ISVNLogMessage[] messages = client.getLogMessages(info.getRepository(),
-									latest, new SVNRevision.Number(latestRevisionStored));
-							monitor.worked(workedUnit);
-//							printLogMessages(messages);
-							if(cacheUpdater != null) {
-								cacheUpdater.join();
-								monitor.worked(workedUnit);
-							}
-							cacheUpdater = new CacheUpdaterThread(cache, messages);
-							cacheUpdater.start();
-							latest = new SVNRevision.Number(latestRevisionStored+1);
-						}
-						if(cacheUpdater != null) {
-							cacheUpdater.join();
-						}
-						monitor.done();
-					} catch(Exception e) {
-						e.printStackTrace();
-					}
-				} else {
-					System.out.println("No updates");
+					cache.startUpdate();
+					client.getLogMessages(info.getRepository(),
+							latest,
+							latest,
+							SVNRevision.HEAD,
+							false, true, 0, false, null,
+							new CallbackUpdater(cache, monitor, unitWork));
+					cache.executeUpdate();
+				} catch(Exception e) {
+					e.printStackTrace();
 				}
 			}
-			updateView(cache, path, revision);
-
+			updateView(monitor, cache, path, revision);
+			monitor.done();
 		} catch (Exception e) {
 			e.printStackTrace();
 			return;
@@ -236,13 +220,26 @@ public class RevisionGraphEditor extends EditorPart {
 		}
 	}
 	
-	private void updateView(Cache cache, String path, long revision) {
-		Long fileId = cache.getFileId(path, revision);
-		final List nodes = cache.getNodes(fileId.longValue());
-		// printNodes(nodes);
+	private void updateView(IProgressMonitor monitor, Cache cache, String path, long revision) {
+		monitor.setTaskName("Finding root node");
+		
+		int unitWork = TASK_STEPS / (int)(revision);
+		if(unitWork < 1) unitWork = 1;
+		Node root = cache.findRootNode(path, revision,
+				new WorkMonitorListener(monitor, unitWork));
+		
+		monitor.setTaskName("Calculating graph");
+		unitWork = TASK_STEPS / (int)(revision - root.getRevision());
+		if(unitWork < 1) unitWork = 1;
+		final Graph graph = cache.createGraph(
+				root.getPath(),
+				root.getRevision(),
+				new WorkMonitorListener(monitor, unitWork));
+		monitor.setTaskName("Drawing graph");
+		
 		Display.getDefault().syncExec(new Runnable() {
 			public void run() {
-				viewer.setContents(new Graph(nodes));
+				viewer.setContents(graph);
 			}
 		});
 	}
@@ -260,32 +257,67 @@ public class RevisionGraphEditor extends EditorPart {
 		return "Calculating graph information";
 	}
 
+} class WorkMonitorListener implements WorkListener {
+	
+	private IProgressMonitor monitor;
+	private int unitWork;
+	
+	public WorkMonitorListener(IProgressMonitor monitor, int unitWork) {
+		this.monitor = monitor;
+		this.unitWork = unitWork;
+	}
+
+	public void worked() {
+		monitor.worked(unitWork);
+	}
+
+} class CallbackUpdater implements ISVNLogMessageCallback {
+	
+	private Cache cache;
+	private IProgressMonitor monitor;
+	private int count;
+	private CacheUpdaterThread thread;
+	private int unitWork;
+
+	private static final int MAX_BATCH_SIZE = 200;
+	
+	public CallbackUpdater(Cache cache, IProgressMonitor monitor, int unitWork) {
+		this.cache = cache;
+		this.monitor = monitor;
+		this.unitWork = unitWork;
+	}
+
+	public void singleMessage(ISVNLogMessage message) {
+		cache.update(message);
+		monitor.worked(unitWork);
+		count++;
+		if(count > MAX_BATCH_SIZE) {
+			if(thread != null) {
+				try {
+					thread.join();
+				} catch (InterruptedException e) {
+					throw new CacheException("Error while updating cache");
+				}
+			}
+			thread = new CacheUpdaterThread(cache);
+			thread.run();
+//			cache.executeUpdate();
+//			cache.startUpdate();
+			count = 0;
+		}
+	}
+
 } class CacheUpdaterThread extends Thread {
 	
 	private Cache cache;
-	private ISVNLogMessage[] messages;
 	
-	public CacheUpdaterThread(Cache cache,
-			ISVNLogMessage[] messages) {
+	public CacheUpdaterThread(Cache cache) {
 		this.cache = cache;
-		this.messages = messages;
 	}
-	
-	public void run() {
-		cache.update(messages); // TODO: handle exceptions
-	}
-	
 
-} class Graph {
-	
-	private List nodes;
-	
-	public Graph(List nodes) {
-		this.nodes = nodes;
-	}
-	
-	public List getNodes() {
-		return nodes;
+	public void run() {
+		cache.executeUpdate();
+		cache.startUpdate();
 	}
 
 } class GraphEditPartFactory implements EditPartFactory {
@@ -307,166 +339,6 @@ public class RevisionGraphEditor extends EditorPart {
 		throw new RuntimeException("cannot create EditPart for "+node.getClass().getName()+" class");
 	}
 
-} class GraphEditPart extends AbstractGraphicalEditPart {
-	
-	private Graph graph;
-
-	private final static int NODE_WIDTH = 50;
-	private final static int NODE_HEIGHT = 20;
-	private final static int NODE_HEIGHT2 = NODE_HEIGHT / 2;
-	private final static int BRANCH_WIDTH = 200;
-	private final static int BRANCH_HEIGHT = 30;
-	private final static int BRANCH_OFFSET = BRANCH_WIDTH+20;
-	private final static int NODE_OFFSET_Y = 10;
-	private final static int NODE_OFFSET_X = (BRANCH_WIDTH - NODE_WIDTH) / 2;
-	private final static int ARROW_PADDING = 10;
-	
-	private static final String TAG_PREFIX = "/tags/";
-	private boolean hideTags = true;
-	
-	public GraphEditPart(Graph graph) {
-		this.graph = graph;
-	}
-
-	protected IFigure createFigure() {
-		List nodes = graph.getNodes();
-		Figure contents = new Figure();
-		XYLayout contentsLayout = new XYLayout();
-		contents.setLayoutManager(contentsLayout);
-		
-		Map branches = new HashMap();
-		List branchesList = new ArrayList();
-		List branchesPathList = new ArrayList();
-
-		for (Iterator iterator = nodes.iterator(); iterator
-				.hasNext();) {
-			Node node = (Node) iterator.next();
-			
-			NodeFigure figure = new NodeFigure(node);
-			Branch branch = (Branch) branches.get(node.getPath());
-			if(branch == null) {
-				branch = new Branch(new BranchFigure(node.getPath()));
-				branches.put(node.getPath(), branch);
-				branchesList.add(branch);
-				branchesPathList.add(node.getPath());
-				contents.add(branch.getBranchFigure());
-			}
-			
-			NodeFigure source = null;
-			
-			ChopboxAnchor sourceAnchor = null;
-			if(node.getCopySrcPath() == null) {
-				sourceAnchor = new ChopboxAnchor(branch.getLast());
-			} else {
-				Node n = node;
-				do {
-					source = ((Branch) branches.get(n.getCopySrcPath())).get(n.getCopySrcRevision());
-					n = source.getNode();
-				} while(isTag(n.getPath()));
-
-				if(!isTag(node.getPath()))
-					sourceAnchor = new ChopboxAnchor(source);
-			}
-			
-			/*
-			if(branch.getNodes().isEmpty()) {
-				PolylineConnection c = new PolylineConnection();
-				c.setSourceAnchor(new ChopboxAnchor(figure));
-				c.setTargetAnchor(new ChopboxAnchor(branch.getBranchFigure()));
-				c.setLineStyle(Graphics.LINE_DASHDOT);
-				contents.add(c);
-			}
-			*/
-			
-			branch.addNode(figure);
-			
-			if(!isTag(node.getPath())) {
-				contents.add(figure);
-				
-				PolylineConnection c = new PolylineConnection();
-				ConnectionAnchor targetAnchor = new ChopboxAnchor(figure);
-				c.setSourceAnchor(sourceAnchor);
-				c.setTargetAnchor(targetAnchor);
-				PolygonDecoration decoration = new PolygonDecoration();
-				decoration.setTemplate(PolygonDecoration.TRIANGLE_TIP);
-				c.setSourceDecoration(decoration);
-				contents.add(c);
-
-				if(source != null) {
-					int i = source.addConnection(c, node);
-					figure.setSource(c, i);
-				}
-			} else if(source != null) {
-				source.addTag(node);
-			} else {
-				System.out.println("meeeec");
-				System.out.println(node.getRevision()+", "+node.getPath()+", "+node.getCopySrcPath()+", "+node.getCopySrcRevision());
-			}
-		}
-		
-		int branchIndex = 0;
-		for (Iterator it = branchesList.iterator(); it.hasNext(); branchIndex++) {
-			Branch branch = (Branch) it.next();
-			
-			if(isTag(branch.getBranchFigure().getPath())) {
-				branchIndex--;
-				continue;
-			}
-			
-			Rectangle rect = new Rectangle(10+branchIndex*BRANCH_OFFSET, 10, BRANCH_WIDTH, BRANCH_HEIGHT);
-			contentsLayout.setConstraint(branch.getBranchFigure(), rect);
-			
-			int x = rect.x + NODE_OFFSET_X;
-			int figureIndex = 0;
-			for (Iterator iter = branch.getNodes().iterator(); iter.hasNext(); figureIndex++) {
-				NodeFigure figure = (NodeFigure) iter.next();
-
-				int y = NODE_OFFSET_Y + rect.y + rect.height;
-				int height = NODE_HEIGHT + ARROW_PADDING * figure.getConnections().size();
-				
-				/*
-				if(figure.getSource() != null && figureIndex == 0) {
-					NodeFigure source = (NodeFigure) figure.getSource().getSourceAnchor().getOwner();
-					Rectangle r = (Rectangle) contentsLayout.getConstraint(source);
-					y = r.y + NODE_HEIGHT * figure.getSourceIndex();
-					
-					Point point = new Point(x, y + height/2);
-					XYAnchor anchor = new MyXYAnchor(point, source);
-					figure.getSource().setTargetAnchor(anchor);
-				}
-				*/
-				rect = new Rectangle(x, y, NODE_WIDTH, height);
-				contentsLayout.setConstraint(figure, rect);
-				
-				int k = 0;
-				for (Iterator i = figure.getConnections().iterator(); i
-						.hasNext(); k++) {
-					PolylineConnection c = (PolylineConnection) i.next();
-					NodeFigure source = (NodeFigure) c.getTargetAnchor().getOwner();
-					int index = branchesPathList.indexOf(source.getNode().getPath());
-					int px = x;
-					if(index > branchIndex) {
-						px += rect.width;
-					}
-					Point point = new Point(px, y+NODE_HEIGHT2+k*ARROW_PADDING);
-					XYAnchor anchor = new MyXYAnchor(point, figure);
-					c.setSourceAnchor(anchor);
-				}
-				figure.endLayout();
-			}
-		}
-		
-		return contents;
-	}
-	
-	private boolean isTag(String path) {
-		if(path == null) return false;
-		return hideTags && path.startsWith(TAG_PREFIX);
-	}
-
-	protected void createEditPolicies() {
-	}
-
 } class MyXYAnchor extends XYAnchor {
 	
 	private IFigure f;
@@ -486,7 +358,9 @@ public class RevisionGraphEditor extends EditorPart {
 		return f;
 	}
 	
-} class Branch {
+}
+/*
+class Branch {
 	
 	private static final Comparator c = new Comparator() {
 		public int compare(Object a, Object b) {
@@ -553,3 +427,4 @@ public class RevisionGraphEditor extends EditorPart {
 	}
 	
 }
+*/

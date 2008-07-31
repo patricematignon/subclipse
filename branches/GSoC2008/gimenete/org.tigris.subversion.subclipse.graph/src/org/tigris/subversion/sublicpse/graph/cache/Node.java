@@ -1,10 +1,14 @@
 package org.tigris.subversion.sublicpse.graph.cache;
 
+import java.io.Serializable;
 import java.sql.Timestamp;
 import java.text.MessageFormat;
 
-public class Node {
+public class Node implements Serializable {
 	
+	private static final long serialVersionUID = -8085020964170648863L;
+	
+	// fields read from log messages
 	private long revision;
 	private String author;
 	private Timestamp revisionDate;
@@ -13,6 +17,11 @@ public class Node {
 	private char action;
 	private long copySrcRevision;
 	private String copySrcPath;
+	
+	// other fields
+	private Node parent;
+	private int childCount;
+	private transient Object view;
 
 //	public Node(long revision, String author, Timestamp revisionDate,
 //			String message, String path, char action, long copySrcRevision,
@@ -30,6 +39,16 @@ public class Node {
 	public Node() {
 	}
 	
+	public Node getParent() {
+		return parent;
+	}
+
+	public void setParent(Node parent) {
+		this.parent = parent;
+		if(parent != null)
+			parent.childCount++;
+	}
+
 	public long getRevision() {
 		return revision;
 	}
@@ -99,6 +118,18 @@ public class Node {
 		return MessageFormat.format(pattern, 
 				new Object[]{ new Long(revision), 
 				author, path, action+"", message});
+	}
+
+	public Object getView() {
+		return view;
+	}
+
+	public void setView(Object view) {
+		this.view = view;
+	}
+	
+	public int getChildCount() {
+		return childCount;
 	}
 	
 }
