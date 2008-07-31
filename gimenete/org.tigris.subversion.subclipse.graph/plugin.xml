@@ -24,5 +24,5 @@
                id="org.tigris.subversion.subclipse.graph.newAction">
          </action>
       </objectContribution>
-   </extension>>
+   </extension>
 </plugin>
