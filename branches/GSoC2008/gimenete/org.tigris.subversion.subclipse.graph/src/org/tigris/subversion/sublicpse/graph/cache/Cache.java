@@ -267,7 +267,7 @@ public class Cache {
 		long revision = logMessage.getRevision().getNumber();
 		insertRevision(logMessage);
 		
-		ISVNLogMessageChangePath[] changedPaths = logMessage.getChangePaths();
+		ISVNLogMessageChangePath[] changedPaths = logMessage.getChangedPaths();
 		for (int j = 0; j < changedPaths.length; j++) {
 			insertChangePath(revision, changedPaths[j]);
 		}
