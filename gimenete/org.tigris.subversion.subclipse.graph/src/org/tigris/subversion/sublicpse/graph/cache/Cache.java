@@ -33,7 +33,9 @@ public class Cache {
 	
 	public Cache(File f) {
 		try {
-			String databaseName = f.toURL().toString().substring("file:/".length());
+			String databaseName = f.getAbsolutePath();
+			if(File.pathSeparator.equals("\\"))
+				databaseName = databaseName.replace('\\', '/');
 
 			Class.forName(DRIVER_CLASS_NAME);
 			try {
@@ -143,7 +145,12 @@ public class Cache {
 	private String escape(String s) {
 		if(s == null)
 			return "NULL";
-		return "'"+s.replace("\'", "\\'")+"'";
+		s = s.replace("\'", "''");
+		s = s.replace("\t", "\\t");
+		s = s.replace("\r", "\\r");
+		s = s.replace("\n", "\\n");
+//		s = s.replace("\"", "\\\"");
+		return "'"+s+"'";
 	}
 	
 	public void startUpdate() {
@@ -171,7 +178,6 @@ public class Cache {
 						"author, " +
 						"message" +
 						") VALUES ("+logMessage.getRevision()+", '"+dateFormat.format(logMessage.getDate())+"', "+author+", "+message+")";
-//		System.out.println(s);
 		try {
 			batch.addBatch(s);
 		} catch (SQLException e) {
@@ -332,11 +338,16 @@ public class Cache {
 			statement = connection.createStatement();
 			resultSet = statement.executeQuery(sql);
 			
+			long pr = revision; // previous revision
+			
 			while(resultSet.next()) {
-				if(listener != null)
-					listener.worked();
-				
 				Node node = mapRow(resultSet);
+
+				if(listener != null && pr != node.getRevision()) {
+					listener.worked();
+					pr = node.getRevision();
+				}
+				
 				if(node.getRevision() <= revision && node.getAction() == 'A') {
 					if(node.getCopySrcPath() != null) {
 						if(isEqualsOrParent(node.getPath(), path)) {
@@ -389,11 +400,16 @@ public class Cache {
 			Branch rootBranch = new Branch(rootPath);
 			graph.addBranch(rootBranch);
 			
+			long pr = revision; // previous revision
+			
 			while(resultSet.next()) {
-				if(listener != null)
-					listener.worked();
-				
 				Node node = mapRow(resultSet);
+
+				if(listener != null && pr != node.getRevision()) {
+					listener.worked();
+					pr = node.getRevision();
+				}
+				
 				String nodePath = node.getPath();
 				String copySrcPath = node.getCopySrcPath();
 				
