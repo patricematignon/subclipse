@@ -155,7 +155,7 @@ public class RevisionGraphEditor extends EditorPart {
 	private static final int TOTAL_STEPS = Integer.MAX_VALUE;
 	private static final int SHORT_TASK_STEPS = TOTAL_STEPS / 50; // 2%
 	private static final int VERY_LONG_TASK = TOTAL_STEPS / 2; // 50%
-	private static final int TASK_STEPS = TOTAL_STEPS / 10; // 10%
+	private static final int TASK_STEPS = (TOTAL_STEPS - SHORT_TASK_STEPS*3 - VERY_LONG_TASK) / 2;
 	
 	protected ShowGraphBackgroundTask(IWorkbenchPart part, GraphicalViewer viewer, IResource resource) {
 		super(part);
@@ -190,7 +190,7 @@ public class RevisionGraphEditor extends EditorPart {
 				if(latestRevisionStored == 0)
 					latest = SVNRevision.START;
 				else
-					latest = new SVNRevision.Number(latestRevisionStored);
+					latest = new SVNRevision.Number(latestRevisionStored+1);
 
 				try {
 					monitor.setTaskName("Retrieving revision history");
@@ -201,12 +201,15 @@ public class RevisionGraphEditor extends EditorPart {
 							latest,
 							latest,
 							SVNRevision.HEAD,
-							false, true, 0, false, null,
+							false, true, 0, false,
+							ISVNClientAdapter.DEFAULT_LOG_PROPERTIES,
 							new CallbackUpdater(cache, monitor, unitWork));
 					cache.executeUpdate();
 				} catch(Exception e) {
 					e.printStackTrace();
 				}
+			} else {
+				monitor.worked(VERY_LONG_TASK);
 			}
 			updateView(monitor, cache, path, revision);
 			monitor.done();
