@@ -1,8 +1,8 @@
 package org.tigris.subversion.sublicpse.graph.cache;
 
 import java.io.Serializable;
-import java.sql.Timestamp;
 import java.text.MessageFormat;
+import java.util.Date;
 
 public class Node implements Serializable {
 	
@@ -11,7 +11,7 @@ public class Node implements Serializable {
 	// fields read from log messages
 	private long revision;
 	private String author;
-	private Timestamp revisionDate;
+	private Date revisionDate;
 	private String message;
 	private String path;
 	private char action;
@@ -22,19 +22,6 @@ public class Node implements Serializable {
 	private Node parent;
 	private int childCount;
 	private transient Object view;
-
-//	public Node(long revision, String author, Timestamp revisionDate,
-//			String message, String path, char action, long copySrcRevision,
-//			String copySrcPath) {
-//		this.revision = revision;
-//		this.author = author;
-//		this.revisionDate = revisionDate;
-//		this.message = message;
-//		this.path = path;
-//		this.action = action;
-//		this.copySrcRevision = copySrcRevision;
-//		this.copySrcPath = copySrcPath;
-//	}
 	
 	public Node() {
 	}
@@ -65,11 +52,11 @@ public class Node implements Serializable {
 		this.author = author;
 	}
 
-	public Timestamp getRevisionDate() {
+	public Date getRevisionDate() {
 		return revisionDate;
 	}
 
-	public void setRevisionDate(Timestamp revisionDate) {
+	public void setRevisionDate(Date revisionDate) {
 		this.revisionDate = revisionDate;
 	}
 

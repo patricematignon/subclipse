@@ -40,10 +40,9 @@ import org.tigris.subversion.subclipse.core.SVNException;
 import org.tigris.subversion.subclipse.core.SVNProviderPlugin;
 import org.tigris.subversion.subclipse.ui.operations.SVNOperation;
 import org.tigris.subversion.sublicpse.graph.cache.Cache;
-import org.tigris.subversion.sublicpse.graph.cache.CacheException;
 import org.tigris.subversion.sublicpse.graph.cache.Graph;
-import org.tigris.subversion.sublicpse.graph.cache.WorkListener;
 import org.tigris.subversion.sublicpse.graph.cache.Node;
+import org.tigris.subversion.sublicpse.graph.cache.WorkListener;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 import org.tigris.subversion.svnclientadapter.ISVNInfo;
 import org.tigris.subversion.svnclientadapter.ISVNLogMessage;
@@ -204,7 +203,7 @@ public class RevisionGraphEditor extends EditorPart {
 							false, true, 0, false,
 							ISVNClientAdapter.DEFAULT_LOG_PROPERTIES,
 							new CallbackUpdater(cache, monitor, unitWork));
-					cache.executeUpdate();
+					cache.finishUpdate();
 				} catch(Exception e) {
 					e.printStackTrace();
 				}
@@ -281,11 +280,7 @@ public class RevisionGraphEditor extends EditorPart {
 	
 	private Cache cache;
 	private IProgressMonitor monitor;
-	private int count;
-	private CacheUpdaterThread thread;
 	private int unitWork;
-
-	private static final int MAX_BATCH_SIZE = 200;
 	
 	public CallbackUpdater(Cache cache, IProgressMonitor monitor, int unitWork) {
 		this.cache = cache;
@@ -296,34 +291,6 @@ public class RevisionGraphEditor extends EditorPart {
 	public void singleMessage(ISVNLogMessage message) {
 		cache.update(message);
 		monitor.worked(unitWork);
-		count++;
-		if(count > MAX_BATCH_SIZE) {
-			if(thread != null) {
-				try {
-					thread.join();
-				} catch (InterruptedException e) {
-					throw new CacheException("Error while updating cache");
-				}
-			}
-			thread = new CacheUpdaterThread(cache);
-			thread.run();
-//			cache.executeUpdate();
-//			cache.startUpdate();
-			count = 0;
-		}
-	}
-
-} class CacheUpdaterThread extends Thread {
-	
-	private Cache cache;
-	
-	public CacheUpdaterThread(Cache cache) {
-		this.cache = cache;
-	}
-
-	public void run() {
-		cache.executeUpdate();
-		cache.startUpdate();
 	}
 
 } class GraphEditPartFactory implements EditPartFactory {
