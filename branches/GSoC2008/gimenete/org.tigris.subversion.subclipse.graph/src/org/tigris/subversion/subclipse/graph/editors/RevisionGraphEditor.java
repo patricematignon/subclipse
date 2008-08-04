@@ -232,7 +232,10 @@ public class RevisionGraphEditor extends EditorPart {
 				new WorkMonitorListener(monitor, unitWork));
 		
 		monitor.setTaskName("Calculating graph");
-		unitWork = TASK_STEPS / (int)(revision - root.getRevision());
+		if(revision == root.getRevision())
+			unitWork = TASK_STEPS;
+		else
+			unitWork = TASK_STEPS / (int)(revision - root.getRevision());
 		if(unitWork < 1) unitWork = 1;
 		final Graph graph = cache.createGraph(
 				root.getPath(),
