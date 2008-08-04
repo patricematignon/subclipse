@@ -8,14 +8,15 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
-import java.util.Set;
 
 import org.tigris.subversion.svnclientadapter.ISVNLogMessage;
 import org.tigris.subversion.svnclientadapter.ISVNLogMessageChangePath;
 
 public class Cache {
-	
+
 	private static final String[] EMPTY_STRING = {};
+	// TODO: MAX_RESULTSET_SIZE also limits the size of change_paths of a revision
+	private static final int MAX_RESULTSET_REVISIONS = 1000;
 
 	private static final String DRIVER_CLASS_NAME = "org.apache.derby.jdbc.EmbeddedDriver";
 	
@@ -170,14 +171,21 @@ public class Cache {
 	}
 
 	private void insertRevision(ISVNLogMessage logMessage) {
-		String author = escape(logMessage.getAuthor());
-		String message = escape(logMessage.getMessage());
+		String author = logMessage.getAuthor();
+		if(author == null) author = "";
+		author = escape(author);
+		
+		String message = logMessage.getMessage();
+		if(message == null) message = "";
+		message = escape(message);
+		
 		String s = "INSERT INTO revisions (" +
 						"revision_id, " +
 						"revision_date, " +
 						"author, " +
 						"message" +
 						") VALUES ("+logMessage.getRevision()+", '"+dateFormat.format(logMessage.getDate())+"', "+author+", "+message+")";
+//		System.out.println(s);
 		try {
 			batch.addBatch(s);
 		} catch (SQLException e) {
@@ -320,144 +328,171 @@ public class Cache {
 	}
 	
 	public Node findRootNode(String path, long revision, WorkListener listener) {
-		String sql = "SELECT " +
-			"revisions.revision_id, " +
-			"revisions.author, " +
-			"revisions.revision_date, " +
-			"revisions.message," +
-			"change_paths.path, " +
-			"change_paths.action, " +
-			"change_paths.copy_src_revision, " +
-			"change_paths.copy_src_path " +
-			"FROM change_paths, revisions " +
-			"WHERE change_paths.revision_id=revisions.revision_id AND revisions.revision_id<="+ revision +
-			" ORDER BY change_paths.id DESC";
-		ResultSet resultSet = null;
-		Statement statement = null;
-		try {
-			statement = connection.createStatement();
-			resultSet = statement.executeQuery(sql);
-			
-			long pr = revision; // previous revision
-			
-			while(resultSet.next()) {
-				Node node = mapRow(resultSet);
+		long pr = revision; // previous revision
+		long nr = revision; // next revision
+		Node node = null;
+		PreparedStatement statement = null;
 
-				if(listener != null && pr != node.getRevision()) {
-					listener.worked();
-					pr = node.getRevision();
-				}
-				
-				if(node.getRevision() <= revision && node.getAction() == 'A') {
-					if(node.getCopySrcPath() != null) {
-						if(isEqualsOrParent(node.getPath(), path)) {
-							revision = node.getRevision();
-							path = node.getCopySrcPath() + path.substring(node.getPath().length());
-						}
-					} else {
-						if(node.getPath().equals(path)) {
-							revision = node.getRevision();
-							break;
+		try {
+			statement = connection.prepareStatement("SELECT" +
+					" revisions.revision_id," +
+					" revisions.author," +
+					" revisions.revision_date," +
+					" revisions.message," +
+					" change_paths.path," +
+					" change_paths.action," +
+					" change_paths.copy_src_revision," +
+					" change_paths.copy_src_path" +
+					" FROM change_paths" +
+					" JOIN revisions ON change_paths.revision_id=revisions.revision_id" +
+					" WHERE revisions.revision_id<=? AND revisions.revision_id>?"+
+			" ORDER BY change_paths.id DESC", ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+
+			do {
+				long lr = nr - MAX_RESULTSET_REVISIONS;
+				if(lr < 0) lr = 0;
+				statement.setLong(1, nr);
+				statement.setLong(2, lr);
+				ResultSet resultSet = statement.executeQuery();
+
+				node = null;
+
+				while(resultSet.next()) {
+					node = mapRow(resultSet);
+
+					if(listener != null && pr != node.getRevision()) {
+						listener.worked();
+						pr = node.getRevision();
+					}
+
+					if(node.getRevision() <= revision && node.getAction() == 'A') {
+						if(node.getCopySrcPath() != null) {
+							if(isEqualsOrParent(node.getPath(), path)) {
+								revision = node.getRevision();
+								path = node.getCopySrcPath() + path.substring(node.getPath().length());
+							}
+						} else {
+							if(node.getPath().equals(path)) {
+								revision = node.getRevision();
+
+								Node n = new Node();
+								n.setPath(path);
+								n.setRevision(revision);
+								return n;
+							}
 						}
 					}
 				}
-			}
-			
-			Node node = new Node();
-			node.setPath(path);
-			node.setRevision(revision);
-			return node;
+				closeResultSet(resultSet);
+				if(node == null) {
+					break;
+				}
+				nr = lr;
+			} while(true);
 		} catch(SQLException e) {
 			throw new CacheException("Error finding root node", e);
 		} finally {
-			closeResultSet(resultSet);
 			closeStatement(statement);
 		}
+		
+		Node n = new Node();
+		n.setPath(path);
+		n.setRevision(revision);
+		return n;
 	}
 	
 	public Graph createGraph(String rootPath, long revision, WorkListener listener) {
 		Graph graph = new Graph(rootPath);
-		String sql = "SELECT " +
-			"revisions.revision_id, " +
-			"revisions.author, " +
-			"revisions.revision_date, " +
-			"revisions.message," +
-			"change_paths.path, " +
-			"change_paths.action, " +
-			"change_paths.copy_src_revision, " +
-			"change_paths.copy_src_path " +
-			"FROM change_paths, revisions " +
-			"WHERE change_paths.revision_id=revisions.revision_id AND revisions.revision_id>="+ revision +
-			" ORDER BY change_paths.id ASC";
-		ResultSet resultSet = null;
-		Statement statement = null;
+		// root path is the first opened branch
+		graph.getPaths().add(rootPath);
+		Branch rootBranch = new Branch(rootPath);
+		graph.addBranch(rootBranch);
+		
+		long pr = revision; // previous revision
+		long nr = revision; // next revision
+		Node node = null;
+		
+		PreparedStatement statement = null;
 		try {
-			statement = connection.createStatement();
-			resultSet = statement.executeQuery(sql);
-			Set paths = graph.getPaths();
-			// root path is the first opened branch
-			paths.add(rootPath);
-			Branch rootBranch = new Branch(rootPath);
-			graph.addBranch(rootBranch);
-			
-			long pr = revision; // previous revision
-			
-			while(resultSet.next()) {
-				Node node = mapRow(resultSet);
+			statement = connection.prepareStatement("SELECT" +
+					" revisions.revision_id," +
+					" revisions.author," +
+					" revisions.revision_date," +
+					" revisions.message," +
+					" change_paths.path," +
+					" change_paths.action," +
+					" change_paths.copy_src_revision," +
+					" change_paths.copy_src_path" +
+					" FROM change_paths" +
+					" JOIN revisions ON change_paths.revision_id=revisions.revision_id" +
+					" WHERE revisions.revision_id>=? AND revisions.revision_id<?" +
+					" ORDER BY change_paths.id ASC", ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+			do {
+				long lr = nr + MAX_RESULTSET_REVISIONS;
+				statement.setLong(1, nr);
+				statement.setLong(2, lr);
+				ResultSet resultSet = statement.executeQuery();
+				node = null;
+				while(resultSet.next()) {
+					node = mapRow(resultSet);
 
-				if(listener != null && pr != node.getRevision()) {
-					listener.worked();
-					pr = node.getRevision();
-				}
-				
-				String nodePath = node.getPath();
-				String copySrcPath = node.getCopySrcPath();
-				
-				String[] pa = (String[]) paths.toArray(EMPTY_STRING);
-				for (int i = 0; i < pa.length; i++) {
-					String branchPath = pa[i];
-					
-//					System.out.println();
-//					System.out.println(node.getRevision());
-//					System.out.println("cpsrc: "+copySrcPath);
-//					System.out.println("nodep: "+nodePath);
-//					System.out.println("brnch: "+branchPath);
-					
-					if(copySrcPath == null && isEqualsOrParent(nodePath, branchPath)) {
-						Branch branch = graph.getBranch(branchPath);
-						if(branch.isEnded()) {
-							// the branch has ended with a D action
-							continue;
+					if(listener != null && pr != node.getRevision()) {
+						listener.worked();
+						pr = node.getRevision();
+					}
+
+					String nodePath = node.getPath();
+					String copySrcPath = node.getCopySrcPath();
+
+					String[] pa = (String[]) graph.getPaths().toArray(EMPTY_STRING);
+					for (int i = 0; i < pa.length; i++) {
+						String branchPath = pa[i];
+
+						//					System.out.println();
+						//					System.out.println(node.getRevision());
+						//					System.out.println("cpsrc: "+copySrcPath);
+						//					System.out.println("nodep: "+nodePath);
+						//					System.out.println("brnch: "+branchPath);
+
+						if(copySrcPath == null && isEqualsOrParent(nodePath, branchPath)) {
+							Branch branch = graph.getBranch(branchPath);
+							if(branch.isEnded()) {
+								// the branch has ended with a D action
+								continue;
+							}
+							node.setParent(branch.getLastNode());
+							branch.addNode(node);
+							if(node.getAction() == 'D') {
+								branch.end();
+							}
+						} else if(copySrcPath != null && isEqualsOrParent(copySrcPath, branchPath)) {
+							Branch branch = graph.getBranch(branchPath);
+							Node source = branch.getSource(node.getCopySrcRevision());
+							if(source == null)
+								continue;
+							node.setParent(source); // should it use a different method such as setSource ?
+							String path = nodePath + branchPath.substring(copySrcPath.length());
+							Branch newBranch = graph.getBranch(path);
+							if(newBranch == null) {
+								newBranch = new Branch(path);
+								graph.addBranch(newBranch);
+								graph.getPaths().add(path);
+							}
+							newBranch.addNode(node);
 						}
-						node.setParent(branch.getLastNode());
-						branch.addNode(node);
-						if(node.getAction() == 'D') {
-							branch.end();
-						}
-					} else if(copySrcPath != null && isEqualsOrParent(copySrcPath, branchPath)) {
-						Branch branch = graph.getBranch(branchPath);
-						Node source = branch.getSource(node.getCopySrcRevision());
-						if(source == null)
-							continue;
-						node.setParent(source); // should it use a different method such as setSource ?
-						String path = nodePath + branchPath.substring(copySrcPath.length());
-						Branch newBranch = graph.getBranch(path);
-						if(newBranch == null) {
-							newBranch = new Branch(path);
-							graph.addBranch(newBranch);
-							paths.add(path);
-						}
-						newBranch.addNode(node);
 					}
 				}
-			}
+				closeResultSet(resultSet);
+				if(node == null) {
+					break;
+				}
+				nr = lr;
+			} while(true);
 		} catch (SQLException e) {
 			throw new CacheException("Error while calculating graph", e);
 		} finally {
 			closeStatement(statement);
-			closeResultSet(resultSet);
 		}
-		
 		return graph;
 	}
 	
