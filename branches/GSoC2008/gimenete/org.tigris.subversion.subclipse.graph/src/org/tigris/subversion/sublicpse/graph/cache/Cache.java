@@ -3,8 +3,6 @@ package org.tigris.subversion.sublicpse.graph.cache;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.Date;
 
 import org.tigris.subversion.svnclientadapter.ISVNLogMessage;
@@ -24,19 +22,24 @@ public class Cache {
 	private RandomAccessFile revisionsRaf = null;
 	private RandomAccessFile logMessagesRaf = null;
 	
-	public Cache(File f) {
+	public Cache(File f, String uuid) {
+		createDirectory(f);
+		f = new File(f, uuid);
+		createDirectory(f);
 		this.root = f;
-		String databaseName = f.getAbsolutePath();
-		if(File.pathSeparator.equals("\\"))
-			databaseName = databaseName.replace('\\', '/');
-		
+
+		revisionsFile = new File(root, "revisions");
+		logMessagesFile = new File(root, "logMessages");
+	}
+	
+	private void createDirectory(File f) {
 		if(!f.exists()) {
 			if(!f.mkdir()) {
 				throw new CacheException("Couldn't create directory: "+f.getAbsolutePath());
 			}
+		} else if(!f.isDirectory()) {
+			throw new CacheException("Should be a directory: "+f.getAbsolutePath());
 		}
-		revisionsFile = new File(root, "revisions");
-		logMessagesFile = new File(root, "logMessages");
 	}
 	
 	public void close() {
@@ -101,9 +104,38 @@ public class Cache {
 	public void update(ISVNLogMessage logMessage) {
 		try {
 			writeLogMessage(logMessage);
+//			if(logMessage == null) {
+//				System.out.println("null log message");
+//				System.out.println();
+//			} else {
+//				writeLogMessage(logMessage);
+//			}
 		} catch (IOException e) {
 			throw new CacheException("Error while saving log message", e);
 		}
+//		if(logMessage != null)
+//			dump(logMessage, "\t");
+	}
+	
+	private void dump(ISVNLogMessage logMessage, String p) {
+		System.out.println(p+"rev   : "+logMessage.getRevision().getNumber());
+		System.out.println(p+"author: "+logMessage.getAuthor());
+		ISVNLogMessageChangePath[] cps = logMessage.getChangedPaths();
+		for (int i = 0; i < cps.length; i++) {
+			ISVNLogMessageChangePath cp = cps[i];
+			System.out.println(p+cp.getAction()+" "+cp.getPath());
+			if(cp.getCopySrcPath() != null)
+				System.out.println(p+"copy: "+cp.getCopySrcPath());
+		}
+		ISVNLogMessage[] childMessages = logMessage.getChildMessages();
+		System.out.println(p+"has children: "+logMessage.hasChildren());
+		if(childMessages != null) {
+			System.out.println(p+"child messages...");
+			for (int i = 0; i < childMessages.length; i++) {
+				dump(childMessages[i], p+"\t");
+			}
+		}
+		System.out.println();
 	}
 	
 	public long getLatestRevision() {
@@ -321,21 +353,10 @@ public class Cache {
 //		System.out.println(isEqualsOrParent("/f", "/foo/bar/hello.java")); // false
 //	}
 	
-	public static boolean isEqualsOrParent(String parent, String path) {
-		return path.equals(parent) || path.startsWith(parent+"/"); // TODO: optimize
-	}
-	
-	public Node mapRow(ResultSet resultSet) throws SQLException {
-		Node node = new Node();
-		node.setRevision(resultSet.getLong(1));
-		node.setAuthor(resultSet.getString(2));
-		node.setRevisionDate(resultSet.getTimestamp(3));
-		node.setMessage(resultSet.getString(4));
-		node.setPath(resultSet.getString(5));
-		node.setAction(resultSet.getString(6).charAt(0));
-		node.setCopySrcRevision(resultSet.getLong(7));
-		node.setCopySrcPath(resultSet.getString(8));
-		return node;
+	private static boolean isEqualsOrParent(String parent, String path) {
+		if(parent.length() == path.length())
+			return parent.equals(path);
+		return path.startsWith(parent+"/");
 	}
 	
 	public void clearCache() {
