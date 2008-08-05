@@ -182,6 +182,7 @@ public class RevisionGraphEditor extends EditorPart {
 			long latestRevisionStored = cache.getLatestRevision();
 			SVNRevision latest = null;
 			monitor.setTaskName("Connecting to the repository");
+			// TODO: try-catch this line and make it work off-line
 			long latestRevisionInRepository = client.getInfo(info.getRepository()).getRevision().getNumber();
 			monitor.worked(SHORT_TASK_STEPS);
 
@@ -250,12 +251,11 @@ public class RevisionGraphEditor extends EditorPart {
 	}
 	
 	private Cache getCache(IResource file, String uuid) {
-		File database = file.getWorkspace().getRoot().getRawLocation().toFile();
-		database = new File(database, ".metadata");
-		database = new File(database, ".plugins");
-		database = new File(database, "org.tigris.subversion.subclipse.graph");
-		database = new File(database, uuid);
-		return new Cache(database);
+		File f = file.getWorkspace().getRoot().getRawLocation().toFile();
+		f = new File(f, ".metadata");
+		f = new File(f, ".plugins");
+		f = new File(f, "org.tigris.subversion.subclipse.graph");
+		return new Cache(f, uuid);
 	}
 
 	protected String getTaskName() {
