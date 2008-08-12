@@ -49,7 +49,33 @@
 	<p>There is a development release <a href="http://subclipse.tigris.org/files/documents/906/35081/svnant-1.1.0-RC2.zip"><b>1.1.0-RC2</b></a>.</p>
 	<h2>SvnAnt 1.2.x (bound against subversion 1.5.0) Release</h2>
 	<p>There is a development release <a href="http://subclipse.tigris.org/files/documents/906/43359/svnant-1.2.0-RC1.zip"><b>1.2.0-RC1</b></a>.
-	</p>
+	<h3>Known Issues</h3><p>There are a few known issues with this release, but all of them have been 
+traced to outside this project. Command line has no known issues. Here 
+are the issues by client type.</p>
+
+<h4>JavaHL</h4>
+Propset doesn't work on file properties. It will munge them.
+<br>e.g.
+&lt;propset file=&quot;&quot;/&gt;
+
+<br><br>The info task on a url doesn't work.
+<br>e.g.  
+&lt;info target=&quot;http://url&quot; /&gt; 
+
+<h4>SvnKit</h4>The svnExists task does not work.
+<br>e.g.
+<br>&lt;condition property=&quot;svnExists.local.checkedin&quot; value=&quot;true&quot;&gt;
+	<br> &lt;svnExists target=&quot;checkedin.txt&quot;/&gt;
+<br>&lt;/condition&gt;
+
+<br><br>The svnConflicted selector selects all files, and so doesn't work.
+<br>e.g. 
+<br>&lt;fileset dir=&quot;workingcopy&quot;&gt;
+	<br>&lt;svnConflicted /&gt; <br>
+&lt;/fileset&gt;
+
+<br><br>The info task on a url doesn't work.<br>e.g. 
+&lt;info target=&quot;http://url&quot;/&gt;</p>
 </div>
 <div class="h2" id="latestDevelopment" title="latestDevelopment">
 	<h2>Latest development</h2>
