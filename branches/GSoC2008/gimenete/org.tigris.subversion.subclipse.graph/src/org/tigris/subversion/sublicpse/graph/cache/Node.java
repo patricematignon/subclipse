@@ -6,7 +6,7 @@ import java.util.Date;
 
 public class Node implements Serializable {
 	
-	private static final long serialVersionUID = -8085020964170648863L;
+	private static final long serialVersionUID = 7429624234964583545L;
 	
 	// fields read from log messages
 	private long revision;
@@ -20,6 +20,7 @@ public class Node implements Serializable {
 	
 	// other fields
 	private Node parent;
+	private Node source;
 	private int childCount;
 	private transient Object view;
 	
@@ -117,6 +118,16 @@ public class Node implements Serializable {
 	
 	public int getChildCount() {
 		return childCount;
+	}
+
+	public Node getSource() {
+		return source;
+	}
+
+	public void setSource(Node source) {
+		this.source = source;
+		if(source != null)
+			source.childCount++;
 	}
 	
 }

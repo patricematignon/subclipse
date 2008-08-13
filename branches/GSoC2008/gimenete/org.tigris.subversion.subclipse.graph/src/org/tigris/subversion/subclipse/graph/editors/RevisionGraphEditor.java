@@ -8,8 +8,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.Label;
-import org.eclipse.draw2d.XYAnchor;
-import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gef.EditPartFactory;
 import org.eclipse.gef.EditPartViewer;
@@ -51,7 +49,7 @@ import org.tigris.subversion.svnclientadapter.SVNRevision;
 
 public class RevisionGraphEditor extends EditorPart {
 
-	private GraphicalViewer viewer;
+	private ScrollingGraphicalViewer viewer;
 	private ActionRegistry actionRegistry;
 
 	public ActionRegistry getActionRegistry() {
@@ -217,11 +215,23 @@ public class RevisionGraphEditor extends EditorPart {
 			e.printStackTrace();
 			return;
 		} finally {
-//			if(cache != null)
-//				cache.close();
+			if(cache != null)
+				cache.close();
 			// TODO: clean up ISVNClientAdapter ?
 		}
 	}
+	
+//	private void serialize(Graph graph) {
+//		try {
+//			FileOutputStream fos = new FileOutputStream("c:/sample-graph");
+//			ObjectOutputStream oos = new ObjectOutputStream(fos);
+//			oos.writeObject(graph);
+//			fos.close();
+//		} catch (Exception e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//	}
 	
 	private void updateView(IProgressMonitor monitor, Cache cache, String path, long revision) {
 		monitor.setTaskName("Finding root node");
@@ -312,92 +322,4 @@ public class RevisionGraphEditor extends EditorPart {
 		throw new RuntimeException("cannot create EditPart for "+node.getClass().getName()+" class");
 	}
 
-} class MyXYAnchor extends XYAnchor {
-	
-	private IFigure f;
-
-	public MyXYAnchor(Point point, IFigure f) {
-		super(point);
-		this.f = f;
-	}
-	
-	public Point getLocation(Point reference) {
-		Point p = super.getLocation(reference).getCopy();
-		f.translateToAbsolute(p);
-		return p;
-	}
-	
-	public IFigure getOwner() {
-		return f;
-	}
-	
 }
-/*
-class Branch {
-	
-	private static final Comparator c = new Comparator() {
-		public int compare(Object a, Object b) {
-			long ra;
-			long rb;
-			if(a instanceof Long) {
-				ra = ((Long) a).longValue();
-			} else if(a instanceof NodeFigure) {
-				ra = ((NodeFigure) a).getNode().getRevision();
-			} else {
-				throw new RuntimeException();
-			}
-			if(b instanceof Long) {
-				rb = ((Long) b).longValue();
-			} else if(b instanceof NodeFigure) {
-				rb = ((NodeFigure) b).getNode().getRevision();
-			} else {
-				throw new RuntimeException();
-			}
-			if(ra < rb) {
-				return -1;
-			} else if(ra > rb) {
-				return 1;
-			}
-			return 0;
-		}
-	};
-	
-	private BranchFigure branch;
-	private List nodes = new ArrayList();
-	private Figure last = null;
-	
-	public Branch(BranchFigure branch) {
-		this.branch = branch;
-		this.last = branch;
-	}
-	
-	public void addNode(NodeFigure f) {
-		nodes.add(f);
-		last = f;
-	}
-	
-	public Figure getLast() {
-		return last;
-	}
-	
-	public NodeFigure get(long revision) {
-		int index = Collections.binarySearch(nodes, new Long(revision), c);
-		if(index < 0) {
-			index = -index-2;
-			if(index < 0) {
-				return null;
-			}
-		}
-		return (NodeFigure) nodes.get(index);
-	}
-	
-	public BranchFigure getBranchFigure() {
-		return branch;
-	}
-	
-	public List getNodes() {
-		return nodes;
-	}
-	
-}
-*/
