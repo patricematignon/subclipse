@@ -9,8 +9,7 @@ import org.tigris.subversion.svnclientadapter.ISVNLogMessage;
 import org.tigris.subversion.svnclientadapter.ISVNLogMessageChangePath;
 
 public class Cache {
-
-	private static final String[] EMPTY_STRING = {};
+	
 	private static final int MAX_LOG_MESSAGES = 1024;
 	
 	private File revisionsFile;
@@ -78,11 +77,26 @@ public class Cache {
 		
 		ISVNLogMessageChangePath[] changePaths = logMessage.getChangedPaths();
 		logMessagesRaf.writeInt(changePaths.length);
+		
+		// common starting path in all changed paths
+		int cc = 0;
+		if(changePaths.length > 1) {
+			String a = changePaths[0].getPath();
+			String b = null;
+			for (int i = 1; i < changePaths.length; i++) {
+				b = changePaths[i].getPath();
+				cc = commonChars(a, b, cc);
+				a = b;
+			}
+			logMessagesRaf.writeUTF(a.substring(0, cc));
+		}
+		
+		
 		for (int i = 0; i < changePaths.length; i++) {
 			ISVNLogMessageChangePath changePath = changePaths[i];
 
 			logMessagesRaf.writeChar(changePath.getAction());
-			logMessagesRaf.writeUTF(changePath.getPath());
+			logMessagesRaf.writeUTF(changePath.getPath().substring(cc));
 			long copySrcRevision = 0;
 			if(changePath.getCopySrcRevision() != null) {
 				copySrcRevision = changePath.getCopySrcRevision().getNumber();
@@ -117,6 +131,7 @@ public class Cache {
 //			dump(logMessage, "\t");
 	}
 	
+	/*
 	private void dump(ISVNLogMessage logMessage, String p) {
 		System.out.println(p+"rev   : "+logMessage.getRevision().getNumber());
 		System.out.println(p+"author: "+logMessage.getAuthor());
@@ -137,6 +152,7 @@ public class Cache {
 		}
 		System.out.println();
 	}
+	*/
 	
 	public long getLatestRevision() {
 		return revisionsFile.length() / 8;
@@ -222,11 +238,15 @@ public class Cache {
 			LogMessage logMessage = new LogMessage(revision, author, new Date(date), message);
 			
 			int length = file.readInt();
+			String cp = "";
+			if(length > 1) {
+				cp = file.readUTF();
+			}
 			LogMessageChangePath[] changedPaths = new LogMessageChangePath[length];
 			logMessage.setChangedPaths(changedPaths);
 			for(int i=0; i<length; i++) {
 				char action = file.readChar();
-				String path = file.readUTF();
+				String path = cp+file.readUTF();
 				long copySrcRevision = file.readLong();
 				String copySrcPath = null;
 				if(copySrcRevision > 0) {
@@ -259,9 +279,7 @@ public class Cache {
 //		System.out.println("create graph");
 		Graph graph = new Graph(rootPath);
 		// root path is the first opened branch
-		graph.getPaths().add(rootPath);
-		Branch rootBranch = new Branch(rootPath);
-		graph.addBranch(rootBranch);
+		graph.addBranch(rootPath);
 		
 		long seek = getSeek(revision);
 		
@@ -280,7 +298,7 @@ public class Cache {
 					String nodePath = cp.getPath();
 					String copySrcPath = cp.getCopySrcPath();
 
-					String[] pa = (String[]) graph.getPaths().toArray(EMPTY_STRING);
+					String[] pa = graph.getPathsAsArray();
 					for (int i = 0; i < pa.length; i++) {
 						String branchPath = pa[i];
 
@@ -290,17 +308,22 @@ public class Cache {
 						//					System.out.println("nodep: "+nodePath);
 						//					System.out.println("brnch: "+branchPath);
 
-						if(copySrcPath == null && isEqualsOrParent(nodePath, branchPath)) {
-							Branch branch = graph.getBranch(branchPath);
-							if(branch.isEnded()) {
-								// the branch was ended with a D action
-								continue;
-							}
-							Node node = toNode(lm, cp);
-							node.setParent(branch.getLastNode());
-							branch.addNode(node);
-							if(node.getAction() == 'D') {
-								branch.end();
+						if(copySrcPath == null) {
+							if((cp.getAction() == 'A' && nodePath.equals(branchPath))
+									|| (cp.getAction() == 'D' && isEqualsOrParent(nodePath, branchPath))
+									|| (cp.getAction() == 'M' && nodePath.equals(branchPath))) {
+								
+								Branch branch = graph.getBranch(branchPath);
+								if(branch.isEnded()) {
+									// the branch was ended with a D action
+									continue;
+								}
+								Node node = toNode(lm, cp);
+								node.setParent(branch.getLastNode());
+								branch.addNode(node);
+								if(node.getAction() == 'D') {
+									branch.end();
+								}
 							}
 						} else if(copySrcPath != null && isEqualsOrParent(copySrcPath, branchPath)) {
 							Branch branch = graph.getBranch(branchPath);
@@ -308,13 +331,11 @@ public class Cache {
 							if(source == null)
 								continue;
 							Node node = toNode(lm, cp);
-							node.setParent(source); // should it use a different method such as setSource ?
+							node.setSource(source);
 							String path = nodePath + branchPath.substring(copySrcPath.length());
 							Branch newBranch = graph.getBranch(path);
 							if(newBranch == null) {
-								newBranch = new Branch(path);
-								graph.addBranch(newBranch);
-								graph.getPaths().add(path);
+								newBranch = graph.addBranch(path);
 							}
 							newBranch.addNode(node);
 						}
@@ -344,14 +365,46 @@ public class Cache {
 		return node;
 	}
 	
-//	public static void main(String[] args) {
+	private static int commonChars(String a, String b, int max) {
+		int i=0;
+		int ml;
+		if(max > 0)
+			ml = max;
+		else
+			ml = a.length();
+		
+		if(b.length() < ml) {
+			ml = b.length();
+		}
+		while(i<ml) {
+			if(a.charAt(i) != b.charAt(i))
+				break;
+			i++;
+		}
+		return i;
+	}
+	
+	public static void main(String[] args) {
+//		System.out.println(commonStart("", ""));
+//		System.out.println();
+//		System.out.println(commonStart("foo", "bar"));
+//		System.out.println();
+//		System.out.println(commonStart("foo", "foo bar"));
+//		System.out.println();
+//		System.out.println(commonStart("/src/org/apache", "/src/org/apache"));
+//		System.out.println();
+//		System.out.println(commonStart("/src/org/apache", "/src/org"));
+//		System.out.println();
+//		System.out.println(commonStart("/src/org/apache", "/src"));
+//		System.out.println();
+//		System.out.println(commonStart("/src/org/apache", "/srcc"));
 //		System.out.println(isEqualsOrParent("/foo/bar/hello.java", "/foo/bar/hello.java")); // true
 //		System.out.println(isEqualsOrParent("/foo/bar", "/foo/bar/hello.java")); // true
 //		System.out.println(isEqualsOrParent("/foo/b", "/foo/bar/hello.java")); // false
 //		System.out.println(isEqualsOrParent("/foo", "/foo/bar/hello.java")); // true
 //		System.out.println(isEqualsOrParent("/fo", "/foo/bar/hello.java")); // false
 //		System.out.println(isEqualsOrParent("/f", "/foo/bar/hello.java")); // false
-//	}
+	}
 	
 	private static boolean isEqualsOrParent(String parent, String path) {
 		if(parent.length() == path.length())

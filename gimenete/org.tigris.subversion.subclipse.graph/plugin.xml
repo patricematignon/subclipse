@@ -4,7 +4,7 @@
    <extension point="org.eclipse.ui.editors">
       <editor
             class="org.tigris.subversion.subclipse.graph.editors.RevisionGraphEditor"
-            icon="f"
+            icon="icons/chart_organisation.png"
             id="org.tigris.subversion.subclipse.graph.editors.revisionGraphEditor"
             name="Revision Graph Editor">
       </editor>
@@ -17,11 +17,12 @@
             id="org.tigris.subversion.subclipse.graph.contribution1"
             objectClass="org.eclipse.core.resources.IResource">
          <action
-               label="View file history as graph"
                class="org.tigris.subversion.subclipse.graph.popup.actions.ViewGraphAction"
-               menubarPath="team.main/group2"
                enablesFor="1"
-               id="org.tigris.subversion.subclipse.graph.newAction">
+               icon="icons/chart_organisation.png"
+               id="org.tigris.subversion.subclipse.graph.newAction"
+               label="View file history as graph"
+               menubarPath="team.main/group2">
          </action>
       </objectContribution>
    </extension>

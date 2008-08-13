@@ -1,27 +1,29 @@
 package org.tigris.subversion.subclipse.graph.editors;
 
 import org.eclipse.draw2d.BorderLayout;
-import org.eclipse.draw2d.ColorConstants;
-import org.eclipse.draw2d.Figure;
 import org.eclipse.draw2d.Label;
-import org.eclipse.draw2d.LineBorder;
+import org.eclipse.draw2d.RoundedRectangle;
 import org.eclipse.swt.graphics.Color;
 
-public class BranchFigure extends Figure {
-	
-	public static final Color BGCOLOR = new Color(null,255,255,206);
+public class BranchFigure extends RoundedRectangle {
+
+//	public static final Color BGCOLOR = new Color(null, 255, 255, 206);
+	private static final Color BGCOLOR = new Color(null, 216, 228, 248);
+	private static final Color FGCOLOR = new Color(null, 172, 182, 198);
+	private static final Color FONT_COLOR = new Color(null, 1, 70, 122);
 	
 	private String path;
 	
 	public BranchFigure(String path) {
 		this.path = path;
 		
-		setLayoutManager(new BorderLayout());	
-		setBorder(new LineBorder(ColorConstants.black,1));
+		setLayoutManager(new BorderLayout());
 		setBackgroundColor(BGCOLOR);
+		setForegroundColor(FGCOLOR);
 		setOpaque(true);
 
 		Label label = new Label(path);
+		label.setForegroundColor(FONT_COLOR);
 		add(label, BorderLayout.CENTER);
 		
 		Label tooltip = new Label(path);
