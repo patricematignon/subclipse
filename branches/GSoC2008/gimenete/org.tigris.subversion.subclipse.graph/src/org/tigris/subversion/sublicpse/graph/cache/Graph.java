@@ -14,12 +14,31 @@ public class Graph implements Serializable {
 	private String rootPath;
 	private Map branches = new HashMap();
 	private List paths = new ArrayList();
+	
 	private transient String[] pathsArray = null;
+	private transient String selectedPath;
+	private transient long selectedRevision;
 	
 	public Graph(String rootPath) {
 		this.rootPath = rootPath;
 	}
 	
+	public String getSelectedPath() {
+		return selectedPath;
+	}
+
+	public void setSelectedPath(String selectedPath) {
+		this.selectedPath = selectedPath;
+	}
+
+	public long getSelectedRevision() {
+		return selectedRevision;
+	}
+
+	public void setSelectedRevision(long selectedRevision) {
+		this.selectedRevision = selectedRevision;
+	}
+
 	public Branch addBranch(String path) {
 		Branch b = new Branch(path);
 		branches.put(path, b);

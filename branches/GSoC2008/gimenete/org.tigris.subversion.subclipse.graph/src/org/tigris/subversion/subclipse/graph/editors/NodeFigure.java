@@ -2,6 +2,7 @@ package org.tigris.subversion.subclipse.graph.editors;
 
 import org.eclipse.draw2d.BorderLayout;
 import org.eclipse.draw2d.ColorConstants;
+import org.eclipse.draw2d.Cursors;
 import org.eclipse.draw2d.Label;
 import org.eclipse.draw2d.PolylineConnection;
 import org.eclipse.draw2d.RoundedRectangle;
@@ -12,8 +13,6 @@ import org.tigris.subversion.sublicpse.graph.cache.Node;
 
 public class NodeFigure extends RoundedRectangle {
 
-	private static final Color BGCOLOR = new Color(null, 216, 228, 248);
-	private static final Color FGCOLOR = new Color(null, 172, 182, 198);
 	private static final Color FONT_COLOR = new Color(null, 1, 70, 122);
 
 	private static Font revisionFont;
@@ -23,14 +22,16 @@ public class NodeFigure extends RoundedRectangle {
 	private PolylineConnection source;
 	private int sourceIndex;
 	private boolean hasTags;
+	private Color bgcolor;
 	
 //	private List connections = null;
 	
-	public NodeFigure(Node node) {
+	public NodeFigure(Node node, Color bgcolor, Color fgcolor) {
 		this.node = node;
+		this.bgcolor = bgcolor;
 		setLayoutManager(new BorderLayout());
-		setBackgroundColor(BGCOLOR);
-		setForegroundColor(FGCOLOR);
+		setBackgroundColor(bgcolor);
+		setForegroundColor(fgcolor);
 		setOpaque(true);
 
 		if(revisionFont == null) {
@@ -39,6 +40,7 @@ public class NodeFigure extends RoundedRectangle {
 		}
 
 		setToolTip(new NodeTooltipFigure(node));
+		setCursor(Cursors.HAND);
 	}
 	
 	public PolylineConnection getSource() {
@@ -92,6 +94,13 @@ public class NodeFigure extends RoundedRectangle {
 		label.setFont(font);
 		label.setForegroundColor(FONT_COLOR);
 		return label;
+	}
+	
+	public void setSelected(boolean selected) {
+		if(selected)
+			setBackgroundColor(ColorConstants.white);
+		else
+			setBackgroundColor(bgcolor);
 	}
 	
 }

@@ -4,6 +4,7 @@
    <extension point="org.eclipse.ui.editors">
       <editor
             class="org.tigris.subversion.subclipse.graph.editors.RevisionGraphEditor"
+            contributorClass="org.tigris.subversion.subclipse.graph.editors.GraphActionBarContributor"
             icon="icons/chart_organisation.png"
             id="org.tigris.subversion.subclipse.graph.editors.revisionGraphEditor"
             name="Revision Graph Editor">
