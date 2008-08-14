@@ -6,20 +6,17 @@ import org.eclipse.draw2d.RoundedRectangle;
 import org.eclipse.swt.graphics.Color;
 
 public class BranchFigure extends RoundedRectangle {
-
-//	public static final Color BGCOLOR = new Color(null, 255, 255, 206);
-	private static final Color BGCOLOR = new Color(null, 216, 228, 248);
-	private static final Color FGCOLOR = new Color(null, 172, 182, 198);
+	
 	private static final Color FONT_COLOR = new Color(null, 1, 70, 122);
 	
 	private String path;
 	
-	public BranchFigure(String path) {
+	public BranchFigure(String path, Color bgcolor, Color fgcolor) {
 		this.path = path;
 		
 		setLayoutManager(new BorderLayout());
-		setBackgroundColor(BGCOLOR);
-		setForegroundColor(FGCOLOR);
+		setBackgroundColor(bgcolor);
+		setForegroundColor(fgcolor);
 		setOpaque(true);
 
 		Label label = new Label(path);
@@ -28,9 +25,6 @@ public class BranchFigure extends RoundedRectangle {
 		
 		Label tooltip = new Label(path);
 		setToolTip(tooltip);
-//		tooltip.setBorder(new LineBorder(BGCOLOR, 10));
-//		Dimension d = tooltip.getPreferredSize();
-//		tooltip.setPreferredSize(d.width+5, d.height+5);
 	}
 	
 	public String getPath() {
