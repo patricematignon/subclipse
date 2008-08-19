@@ -31,8 +31,10 @@ public class CacheTest extends TestCase {
 		File[] files = dir.listFiles();
 		for (int i = 0; i < files.length; i++) {
 			File f = files[i];
-			System.out.println("Testing file: "+f);
-			testFile(f);
+			if(f.isFile()) {
+				System.out.println("Testing file: "+f);
+				testFile(f);
+			}
 		}
 	}
 	
