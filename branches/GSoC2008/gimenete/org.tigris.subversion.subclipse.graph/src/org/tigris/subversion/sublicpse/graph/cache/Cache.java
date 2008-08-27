@@ -3,7 +3,10 @@ package org.tigris.subversion.sublicpse.graph.cache;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
 
 import org.tigris.subversion.svnclientadapter.ISVNLogMessage;
 import org.tigris.subversion.svnclientadapter.ISVNLogMessageChangePath;
@@ -16,6 +19,9 @@ public class Cache {
 	private File logMessagesFile;
 
 	private File root;
+	
+	private List children = new ArrayList();
+	private int level;
 
 	// used in updates
 	private RandomAccessFile revisionsRaf = null;
@@ -47,6 +53,7 @@ public class Cache {
 	}
 	
 	public void startUpdate() {
+		level = 0;
 		try {
 			revisionsRaf = new RandomAccessFile(revisionsFile, "rw");
 			logMessagesRaf = new RandomAccessFile(logMessagesFile, "rw");
@@ -64,7 +71,7 @@ public class Cache {
 		return s;
 	}
 	
-	private void writeLogMessage(ISVNLogMessage logMessage) throws IOException {
+	private void writeLogMessage(ISVNLogMessage logMessage, int level) throws IOException {
 		long revision = logMessage.getRevision().getNumber();
 		long fp = logMessagesRaf.getFilePointer();
 //		System.out.println("writing rev "+revision+" at "+fp+" "+revisions.getFilePointer());
@@ -106,6 +113,10 @@ public class Cache {
 				logMessagesRaf.writeLong(copySrcRevision);
 			}
 		}
+		
+		if(level == 0 && !logMessage.hasChildren()) {
+			logMessagesRaf.writeInt(0);
+		}
 	}
 	
 	public void finishUpdate() {
@@ -117,18 +128,36 @@ public class Cache {
 	
 	public void update(ISVNLogMessage logMessage) {
 		try {
-			writeLogMessage(logMessage);
-//			if(logMessage == null) {
-//				System.out.println("null log message");
-//				System.out.println();
-//			} else {
-//				writeLogMessage(logMessage);
-//			}
+			if(logMessage == null) {
+				if(level == 1) {
+					writeChildren(level);
+					children.clear();
+				}
+				level--;
+			} else {
+				if(level == 1) {
+					children.add(logMessage);
+				} else if(level == 0) {
+					writeLogMessage(logMessage, level);
+				}
+				
+				if(logMessage.hasChildren()) {
+					level++;
+				}
+			}
 		} catch (IOException e) {
 			throw new CacheException("Error while saving log message", e);
 		}
 //		if(logMessage != null)
 //			dump(logMessage, "\t");
+	}
+	
+	private void writeChildren(int level) throws IOException {
+		logMessagesRaf.writeInt(children.size());
+		for (Iterator it = children.iterator(); it.hasNext();) {
+			ISVNLogMessage logMessage = (ISVNLogMessage) it.next();
+			writeLogMessage(logMessage, level);
+		}
 	}
 	
 	/*
@@ -161,7 +190,7 @@ public class Cache {
 	public void readNext(RandomAccessFile file, ISVNLogMessage[] buffer, int number) {
 		do {
 			number--;
-			buffer[number] = readNext(file);
+			buffer[number] = readNext(file, true);
 		} while(number > 0);
 	}
 	
@@ -228,7 +257,7 @@ public class Cache {
 		return n;
 	}
 	
-	private ISVNLogMessage readNext(RandomAccessFile file) {
+	private LogMessage readNext(RandomAccessFile file, boolean nested) {
 		try {
 			long revision = file.readLong();
 //			System.out.println("reading revision: "+revision+" "+(file.getFilePointer()-8));
@@ -254,6 +283,16 @@ public class Cache {
 				}
 				
 				changedPaths[i] = new LogMessageChangePath(action, path, copySrcPath, copySrcRevision);
+			}
+			
+			if(nested) {
+				int children = file.readInt();
+				if(children > 0) {
+					LogMessage[] childMessages = new LogMessage[children];
+					for (int i = 0; i < children; i++) {
+						childMessages[i] = readNext(file, false);
+					}
+				}
 			}
 			
 			return logMessage;
@@ -289,7 +328,7 @@ public class Cache {
 			file.seek(seek);
 
 			while(file.getFilePointer() < file.length()) {
-				ISVNLogMessage lm = readNext(file);
+				ISVNLogMessage lm = readNext(file, true);
 
 				ISVNLogMessageChangePath[] changedPaths = lm.getChangedPaths();
 				for(int n=0; n<changedPaths.length; n++) {

@@ -72,7 +72,7 @@ public class GraphBackgroundTask extends SVNOperation {
 							latest,
 							latest,
 							SVNRevision.HEAD,
-							false, true, 0, false,
+							false, true, 0, true,
 							ISVNClientAdapter.DEFAULT_LOG_PROPERTIES,
 							new CallbackUpdater(cache, monitor, unitWork));
 					cache.finishUpdate();

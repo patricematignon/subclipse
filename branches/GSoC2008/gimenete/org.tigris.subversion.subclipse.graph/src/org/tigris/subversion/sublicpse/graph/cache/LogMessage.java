@@ -13,6 +13,7 @@ public class LogMessage implements ISVNLogMessage {
 	private String message;
 	private Number revision;
 	private LogMessageChangePath[] changedPaths;
+	private LogMessage[] childMessages;
 
 	public LogMessage(long revision, String author, Date date, String message) {
 		this.author = author;
@@ -70,8 +71,11 @@ public class LogMessage implements ISVNLogMessage {
 	}
 
 	public ISVNLogMessage[] getChildMessages() {
-		// TODO Auto-generated method stub
-		return null;
+		return childMessages;
+	}
+
+	public void setChildMessages(LogMessage[] childMessages) {
+		this.childMessages = childMessages;
 	}
 
 	public long getNumberOfChildren() {
