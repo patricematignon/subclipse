@@ -7,7 +7,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.tigris.subversion.subclipse.graph.editors.RevisionGraphEditorInput;
-import org.tigris.subversion.subclipse.ui.ISVNUIConstants;
 import org.tigris.subversion.subclipse.ui.Policy;
 import org.tigris.subversion.subclipse.ui.actions.SVNAction;
 
@@ -40,7 +39,4 @@ public class ViewGraphAction extends SVNAction {
 		return Policy.bind("ShowHistoryAction.showHistory"); //$NON-NLS-1$
 	}
 
-	protected String getImageId() {
-		return ISVNUIConstants.IMG_MENU_SHOWHISTORY;
-	}
 }
