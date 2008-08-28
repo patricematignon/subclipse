@@ -2,11 +2,13 @@ package org.tigris.subversion.sublicpse.graph.cache;
 
 import java.io.Serializable;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class Node implements Serializable {
 	
-	private static final long serialVersionUID = 7429624234964583545L;
+	private static final long serialVersionUID = 2835522933811459843L;
 	
 	// fields read from log messages
 	private long revision;
@@ -24,6 +26,8 @@ public class Node implements Serializable {
 	private int childCount;
 	private transient Object view;
 	
+	private List mergedRevisions;
+
 	public Node() {
 	}
 	
@@ -128,6 +132,17 @@ public class Node implements Serializable {
 		this.source = source;
 		if(source != null)
 			source.childCount++;
+	}
+	
+	public List getMergedRevisions() {
+		return mergedRevisions;
+	}
+	
+	public void addMergedRevision(Node node) {
+		if(mergedRevisions == null) {
+			mergedRevisions = new ArrayList();
+		}
+		mergedRevisions.add(node);
 	}
 	
 }
