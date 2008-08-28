@@ -137,8 +137,10 @@ public class Cache {
 			} else {
 				if(level == 1) {
 					children.add(logMessage);
+//					dump(logMessage, level);
 				} else if(level == 0) {
 					writeLogMessage(logMessage, level);
+//					dump(logMessage, level);
 				}
 				
 				if(logMessage.hasChildren()) {
@@ -161,7 +163,10 @@ public class Cache {
 	}
 	
 	/*
-	private void dump(ISVNLogMessage logMessage, String p) {
+	private void dump(ISVNLogMessage logMessage, int level) {
+		char[] c = new char[level];
+		Arrays.fill(c, '\t');
+		String p = new String(c);
 		System.out.println(p+"rev   : "+logMessage.getRevision().getNumber());
 		System.out.println(p+"author: "+logMessage.getAuthor());
 		ISVNLogMessageChangePath[] cps = logMessage.getChangedPaths();
@@ -171,14 +176,7 @@ public class Cache {
 			if(cp.getCopySrcPath() != null)
 				System.out.println(p+"copy: "+cp.getCopySrcPath());
 		}
-		ISVNLogMessage[] childMessages = logMessage.getChildMessages();
 		System.out.println(p+"has children: "+logMessage.hasChildren());
-		if(childMessages != null) {
-			System.out.println(p+"child messages...");
-			for (int i = 0; i < childMessages.length; i++) {
-				dump(childMessages[i], p+"\t");
-			}
-		}
 		System.out.println();
 	}
 	*/
@@ -292,6 +290,7 @@ public class Cache {
 					for (int i = 0; i < children; i++) {
 						childMessages[i] = readNext(file, false);
 					}
+					logMessage.setChildMessages(childMessages);
 				}
 			}
 			
@@ -331,13 +330,14 @@ public class Cache {
 				ISVNLogMessage lm = readNext(file, true);
 
 				ISVNLogMessageChangePath[] changedPaths = lm.getChangedPaths();
+				String[] pa = graph.getPathsAsArray();
+				Node node = null;
 				for(int n=0; n<changedPaths.length; n++) {
 					ISVNLogMessageChangePath cp = changedPaths[n];
 
 					String nodePath = cp.getPath();
 					String copySrcPath = cp.getCopySrcPath();
 
-					String[] pa = graph.getPathsAsArray();
 					for (int i = 0; i < pa.length; i++) {
 						String branchPath = pa[i];
 
@@ -357,7 +357,7 @@ public class Cache {
 									// the branch was ended with a D action
 									continue;
 								}
-								Node node = toNode(lm, cp);
+								node = toNode(lm, cp);
 								node.setParent(branch.getLastNode());
 								branch.addNode(node);
 								if(node.getAction() == 'D') {
@@ -369,7 +369,7 @@ public class Cache {
 							Node source = branch.getSource(cp.getCopySrcRevision().getNumber());
 							if(source == null)
 								continue;
-							Node node = toNode(lm, cp);
+							node = toNode(lm, cp);
 							node.setSource(source);
 							String path = nodePath + branchPath.substring(copySrcPath.length());
 							Branch newBranch = graph.getBranch(path);
@@ -380,6 +380,32 @@ public class Cache {
 						}
 					}
 				}
+				
+				if(node != null && lm.hasChildren()) {
+					ISVNLogMessage[] cm = lm.getChildMessages();
+					for (int i = 0; i < cm.length; i++) {
+						ISVNLogMessage child = cm[i];
+						ISVNLogMessageChangePath[] cp = child.getChangedPaths();
+						
+						for (int j = 0; j < cp.length; j++) {
+							ISVNLogMessageChangePath changePath = cp[j];
+							
+							for(int k=0; k<pa.length; k++) {
+								String path = pa[k];
+								if(path.equals(changePath.getPath())) {
+									Branch branch = graph.getBranch(path);
+									Node source = branch.getSource(child.getRevision().getNumber());
+									if(source == null)
+										continue;
+									// add connection between "node" and "source"
+									node.addMergedRevision(source);
+								}
+							}
+						}
+					}
+				}
+				
+				
 				if(listener != null)
 					listener.worked();
 			}

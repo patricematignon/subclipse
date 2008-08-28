@@ -59,7 +59,7 @@ public class LogMessage implements ISVNLogMessage {
 	}
 	
 	public boolean hasChildren() {
-		throw new RuntimeException("Method not implemented");
+		return childMessages != null;
 	}
 
 	public void setChangedPaths(LogMessageChangePath[] changedPaths) {

@@ -149,6 +149,29 @@ public class GraphEditPart extends AbstractGraphicalEditPart implements MouseLis
 				}
 			}
 		}
+		
+		// merged connections
+		for (Iterator iter = paths.iterator(); iter.hasNext(); i++) {
+			String path = (String) iter.next();
+			Branch branch = graph.getBranch(path);
+			if(branch.getView() != null) {
+				for (Iterator it = branch.getNodes().iterator(); it.hasNext();) {
+					Node node = (Node) it.next();
+					List mergedRevisions = node.getMergedRevisions();
+					if(mergedRevisions == null)
+						continue;
+					
+					NodeFigure nodeFigure = (NodeFigure) node.getView();
+					for (Iterator iterator = node.getMergedRevisions().iterator(); iterator
+							.hasNext();) {
+						Node merged = (Node) iterator.next();
+						NodeFigure mergedView = (NodeFigure) merged.getView();
+						if(mergedView != null)
+							makeConnection(contents, mergedView, nodeFigure, ColorConstants.red);
+					}
+				}
+			}
+		}
 
 		// end layouts
 		for (Iterator iter = paths.iterator(); iter.hasNext(); i++) {
@@ -176,8 +199,12 @@ public class GraphEditPart extends AbstractGraphicalEditPart implements MouseLis
 
 		return contents;
 	}
-
+	
 	private PolylineConnection makeConnection(IFigure contents, IFigure source, NodeFigure target) {
+		return makeConnection(contents, source, target, CONNECTION_COLOR);
+	}
+
+	private PolylineConnection makeConnection(IFigure contents, IFigure source, NodeFigure target, Color color) {
 		PolylineConnection c = new PolylineConnection();
 		ConnectionAnchor targetAnchor = new ChopboxAnchor(target);
 		c.setTargetAnchor(targetAnchor);
@@ -185,7 +212,7 @@ public class GraphEditPart extends AbstractGraphicalEditPart implements MouseLis
 		PolygonDecoration decoration = new PolygonDecoration();
 		decoration.setTemplate(PolygonDecoration.TRIANGLE_TIP);
 		c.setTargetDecoration(decoration);
-		c.setForegroundColor(CONNECTION_COLOR);
+		c.setForegroundColor(color);
 		ConnectionMouseListener listener = new ConnectionMouseListener(c);
 		c.addMouseMotionListener(listener);
 		c.addMouseListener(listener);
