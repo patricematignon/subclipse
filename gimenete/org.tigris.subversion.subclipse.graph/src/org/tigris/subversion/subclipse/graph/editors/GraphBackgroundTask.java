@@ -54,7 +54,7 @@ public class GraphBackgroundTask extends SVNOperation {
 			SVNRevision latest = null;
 			monitor.setTaskName("Connecting to the repository");
 			// TODO: try-catch this line and make it work off-line
-			long latestRevisionInRepository = client.getInfo(info.getRepository()).getRevision().getNumber();
+			long latestRevisionInRepository = client.getInfo(info.getRepository()).getLastChangedRevision().getNumber();
 			monitor.worked(SHORT_TASK_STEPS);
 
 			if(latestRevisionInRepository > latestRevisionStored) {
