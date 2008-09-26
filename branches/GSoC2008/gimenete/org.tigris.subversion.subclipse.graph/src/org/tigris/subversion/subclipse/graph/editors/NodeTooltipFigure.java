@@ -89,7 +89,7 @@ public class NodeTooltipFigure extends Figure {
 	}
 	
 	public String format(long revision, String path) {
-		return "rev"+Long.toString(revision)+" "+path;
+		return "r"+Long.toString(revision)+" "+path;
 	}
 	
 	public static Label createLabel(String text, Font font) {
