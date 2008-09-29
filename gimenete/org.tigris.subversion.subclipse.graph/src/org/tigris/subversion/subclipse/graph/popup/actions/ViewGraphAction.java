@@ -8,35 +8,57 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.tigris.subversion.subclipse.graph.editors.RevisionGraphEditorInput;
 import org.tigris.subversion.subclipse.ui.Policy;
-import org.tigris.subversion.subclipse.ui.actions.SVNAction;
+import org.tigris.subversion.subclipse.ui.actions.WorkbenchWindowAction;
 
-public class ViewGraphAction extends SVNAction {
+public class ViewGraphAction extends WorkbenchWindowAction {
 
 	public void execute(IAction action) throws InterruptedException, InvocationTargetException {
-		run(new IRunnableWithProgress() {
-			public void run(IProgressMonitor monitor) {
-				IResource[] resources = getSelectedResources();
-				try {
-					if (resources.length > 0) {
-//						IEditorPart part =
-						getTargetPage().openEditor(
-								new RevisionGraphEditorInput(resources[0]),
-								"org.tigris.subversion.subclipse.graph.editors.revisionGraphEditor");
+        if (action != null && !action.isEnabled()) { 
+        	action.setEnabled(true);
+        } 
+        else {		
+			run(new IRunnableWithProgress() {
+				public void run(IProgressMonitor monitor) {
+					IResource[] resources = getSelectedResources();
+					try {
+						if (resources.length > 0) {
+	//						IEditorPart part =
+							getTargetPage().openEditor(
+									new RevisionGraphEditorInput(resources[0]),
+									"org.tigris.subversion.subclipse.graph.editors.revisionGraphEditor");
+						}
+					} catch (Throwable e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
 					}
-				} catch (Throwable e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
 				}
-			}
-		}, false /* cancelable */, PROGRESS_BUSYCURSOR);
-	}
-
-	protected boolean isEnabled() {
-		return true;
+			}, false /* cancelable */, PROGRESS_BUSYCURSOR);
+        }
 	}
 
 	protected String getErrorTitle() {
 		return Policy.bind("ShowHistoryAction.showHistory"); //$NON-NLS-1$
+	}
+	
+	/**
+	 * @see org.tigris.subversion.subclipse.ui.actions.WorkspaceAction#isEnabledForMultipleResources()
+	 */
+	protected boolean isEnabledForMultipleResources() {
+		return false;
+	}
+
+	/**
+	 * @see org.tigris.subversion.subclipse.ui.actions.WorkspaceAction#isEnabledForAddedResources()
+	 */
+	protected boolean isEnabledForAddedResources() {
+		return false;
+	}
+
+	/**
+	 * @see org.tigris.subversion.subclipse.ui.actions.WorkspaceAction#isEnabledForCopiedResources()
+	 */
+	protected boolean isEnabledForCopiedResources() {
+		return true;
 	}
 
 }
