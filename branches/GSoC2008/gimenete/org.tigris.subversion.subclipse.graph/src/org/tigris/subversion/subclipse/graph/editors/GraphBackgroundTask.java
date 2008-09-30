@@ -57,6 +57,9 @@ public class GraphBackgroundTask extends SVNOperation {
 			else {
 				if (resource.getRawLocation() == null) info = client.getInfoFromWorkingCopy(resource.getLocation().toFile());
 				else info = client.getInfoFromWorkingCopy(resource.getRawLocation().toFile());
+				if (info.getUuid() == null) {
+					info = client.getInfo(info.getUrl());
+				}
 			}
 			
 			long revision = info.getRevision().getNumber();
