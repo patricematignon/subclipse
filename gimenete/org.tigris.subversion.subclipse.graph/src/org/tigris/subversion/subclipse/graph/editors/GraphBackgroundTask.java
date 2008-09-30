@@ -54,7 +54,10 @@ public class GraphBackgroundTask extends SVNOperation {
 			ISVNClientAdapter client = SVNProviderPlugin.getPlugin().getSVNClient();
 			ISVNInfo info;
 			if (resource == null) info = client.getInfo(remoteResource.getUrl());
-			else info = client.getInfoFromWorkingCopy(resource.getRawLocation().toFile());
+			else {
+				if (resource.getRawLocation() == null) info = client.getInfoFromWorkingCopy(resource.getLocation().toFile());
+				else info = client.getInfoFromWorkingCopy(resource.getRawLocation().toFile());
+			}
 			
 			long revision = info.getRevision().getNumber();
 			String path = info.getUrl().toString().substring(info.getRepository().toString().length());
