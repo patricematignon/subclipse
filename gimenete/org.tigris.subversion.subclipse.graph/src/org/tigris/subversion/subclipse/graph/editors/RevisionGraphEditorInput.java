@@ -5,17 +5,27 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IPersistableElement;
 import org.eclipse.ui.PlatformUI;
+import org.tigris.subversion.subclipse.core.ISVNRemoteResource;
 
 public class RevisionGraphEditorInput implements IEditorInput {
 	
 	private IResource resource;
+	private ISVNRemoteResource remoteResource;
 
 	public RevisionGraphEditorInput(IResource resource) {
 		this.resource = resource;
 	}
 	
+	public RevisionGraphEditorInput(ISVNRemoteResource remoteResource) {
+		this.remoteResource = remoteResource;
+	}
+	
 	public IResource getResource() {
 		return resource;
+	}
+	
+	public ISVNRemoteResource getRemoteResource() {
+		return remoteResource;
 	}
 
 	public boolean exists() {
@@ -24,11 +34,12 @@ public class RevisionGraphEditorInput implements IEditorInput {
 
 	public ImageDescriptor getImageDescriptor() {
 		return PlatformUI.getWorkbench().getEditorRegistry()
-			.getImageDescriptor(resource.getName());
+			.getImageDescriptor(getName());
 	}
 
 	public String getName() {
-		return resource.getName();
+		if (resource == null) return remoteResource.getName();
+		else return resource.getName();
 	}
 
 	public IPersistableElement getPersistable() {
@@ -40,10 +51,17 @@ public class RevisionGraphEditorInput implements IEditorInput {
 	}
 
 	public Object getAdapter(Class adapter) {
-		if(adapter == IResource.class) {
-			return resource;
+		if (resource == null) {
+			if (adapter == ISVNRemoteResource.class) {
+				return remoteResource;
+			}
+			return remoteResource.getAdapter(adapter);
+		} else {
+			if(adapter == IResource.class) {
+				return resource;
+			}
+			return resource.getAdapter(adapter);
 		}
-		return resource.getAdapter(adapter);
 	}
 
 }

@@ -3,10 +3,12 @@ package org.tigris.subversion.subclipse.graph.editors;
 import java.io.File;
 
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.gef.GraphicalViewer;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbenchPart;
+import org.tigris.subversion.subclipse.core.ISVNRemoteResource;
 import org.tigris.subversion.subclipse.core.SVNException;
 import org.tigris.subversion.subclipse.core.SVNProviderPlugin;
 import org.tigris.subversion.subclipse.ui.operations.SVNOperation;
@@ -20,17 +22,27 @@ import org.tigris.subversion.svnclientadapter.SVNRevision;
 public class GraphBackgroundTask extends SVNOperation {
 	
 	private IResource resource;
+	private ISVNRemoteResource remoteResource;
 	private GraphicalViewer viewer;
 
 	private static final int TOTAL_STEPS = Integer.MAX_VALUE;
 	private static final int SHORT_TASK_STEPS = TOTAL_STEPS / 50; // 2%
 	private static final int VERY_LONG_TASK = TOTAL_STEPS / 2; // 50%
 	private static final int TASK_STEPS = (TOTAL_STEPS - SHORT_TASK_STEPS*3 - VERY_LONG_TASK) / 2;
-	
-	protected GraphBackgroundTask(IWorkbenchPart part, GraphicalViewer viewer, IResource resource) {
+
+	protected GraphBackgroundTask(IWorkbenchPart part, GraphicalViewer viewer) {
 		super(part);
 		this.viewer = viewer;
+	}	
+	
+	protected GraphBackgroundTask(IWorkbenchPart part, GraphicalViewer viewer, IResource resource) {
+		this(part, viewer);
 		this.resource = resource;
+	}
+	
+	protected GraphBackgroundTask(IWorkbenchPart part, GraphicalViewer viewer, ISVNRemoteResource remoteResource) {
+		this(part, viewer);
+		this.remoteResource = remoteResource;
 	}
 
 	protected void execute(IProgressMonitor monitor) throws SVNException,
@@ -40,13 +52,15 @@ public class GraphBackgroundTask extends SVNOperation {
 		monitor.worked(SHORT_TASK_STEPS);
 		try {
 			ISVNClientAdapter client = SVNProviderPlugin.getPlugin().getSVNClient();
-			ISVNInfo info = client.getInfoFromWorkingCopy(resource.getRawLocation().toFile());
+			ISVNInfo info;
+			if (resource == null) info = client.getInfo(remoteResource.getUrl());
+			else info = client.getInfoFromWorkingCopy(resource.getRawLocation().toFile());
 			
 			long revision = info.getRevision().getNumber();
 			String path = info.getUrl().toString().substring(info.getRepository().toString().length());
 			
 			monitor.setTaskName("Initializating cache");
-			cache = getCache(resource, info.getUuid());
+			cache = getCache(info.getUuid());
 			monitor.worked(SHORT_TASK_STEPS);
 			
 			// update the cache
@@ -135,8 +149,10 @@ public class GraphBackgroundTask extends SVNOperation {
 		});
 	}
 	
-	private Cache getCache(IResource file, String uuid) {
-		File f = file.getWorkspace().getRoot().getRawLocation().toFile();
+	private Cache getCache(String uuid) {
+		File f;
+		if (resource == null) f = ResourcesPlugin.getWorkspace().getRoot().getRawLocation().toFile();
+		else f = resource.getWorkspace().getRoot().getRawLocation().toFile();
 		f = new File(f, ".metadata");
 		f = new File(f, ".plugins");
 		f = new File(f, "org.tigris.subversion.subclipse.graph");

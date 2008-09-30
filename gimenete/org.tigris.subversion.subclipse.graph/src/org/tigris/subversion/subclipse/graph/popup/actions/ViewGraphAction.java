@@ -37,7 +37,7 @@ public class ViewGraphAction extends WorkbenchWindowAction {
 	}
 
 	protected String getErrorTitle() {
-		return Policy.bind("ShowHistoryAction.showHistory"); //$NON-NLS-1$
+		return Policy.bind("ViewGraphAction.viewGraph"); //$NON-NLS-1$
 	}
 	
 	/**
