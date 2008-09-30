@@ -31,5 +31,17 @@
                menubarPath="team.main/group2">
          </action>
       </objectContribution>
+      <objectContribution
+            objectClass="org.tigris.subversion.subclipse.core.ISVNRemoteResource"
+            adaptable = "true"
+            id="org.tigris.subversion.subclipse.ui.RemoteResourceContributions">
+         <action
+               label="View file history as graph"
+               class="org.tigris.subversion.subclipse.graph.popup.actions.RemoteResourceViewGraphAction"
+               icon="icons/chart_organisation.png"
+               menubarPath="historyGroup"
+               id="org.tigris.subversion.subclipse.graph.popup.actions.RemoteResourceViewGraphAction">
+         </action>                   
+      </objectContribution>      
    </extension>
 </plugin>

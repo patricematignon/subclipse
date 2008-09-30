@@ -60,6 +60,19 @@ public class RevisionGraphEditor extends EditorPart {
 		}
 	}
 	
+	public void showGraphFor(RevisionGraphEditorInput editorInput) {
+		setPartName(editorInput.getName() + " revision graph");
+		GraphBackgroundTask task;
+		if (editorInput.getResource() == null) task = new GraphBackgroundTask(getSite().getPart(), viewer, editorInput.getRemoteResource());
+		else task = new GraphBackgroundTask(getSite().getPart(), viewer, editorInput.getResource());
+		try {
+			task.run();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
 	public Object getAdapter(Class adapter) {
 		if(adapter == GraphicalViewer.class ||
 				adapter == EditPartViewer.class) {
@@ -87,7 +100,7 @@ public class RevisionGraphEditor extends EditorPart {
 			showGraphFor(fileEditorInput.getFile());
 		} else if(input instanceof RevisionGraphEditorInput) {
 			RevisionGraphEditorInput editorInput = (RevisionGraphEditorInput) input;
-			showGraphFor(editorInput.getResource());
+			showGraphFor(editorInput);
 		}
 		
 		// zoom stuff
