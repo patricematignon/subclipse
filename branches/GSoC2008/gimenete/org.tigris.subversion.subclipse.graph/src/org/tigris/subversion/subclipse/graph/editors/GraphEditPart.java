@@ -228,6 +228,10 @@ public class GraphEditPart extends AbstractGraphicalEditPart implements MouseLis
 		selected = figure;
 	}
 	
+	public NodeFigure getSelectedNode() {
+		return selected;
+	}
+	
 	private void scrollTo(Rectangle fbounds) {
 		scrollTo(fbounds.x+fbounds.width/2, fbounds.y+fbounds.height/2);
 	}
