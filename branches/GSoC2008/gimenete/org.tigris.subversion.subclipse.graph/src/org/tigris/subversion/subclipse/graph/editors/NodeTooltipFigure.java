@@ -42,10 +42,10 @@ public class NodeTooltipFigure extends Figure {
 		// lazy loading and reuse
 		if(dateFormat == null) {
 			dateFormat = SimpleDateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM);
-			info = new Font(null, "Arial", 10, SWT.BOLD);
-			authorFont = new Font(null, "Arial", 8, SWT.BOLD);
-			dateFont = new Font(null, "Arial", 8, SWT.ITALIC);
-			plain = new Font(null, "Arial", 8, SWT.NONE);
+			info = new Font(null, "Arial", 12, SWT.BOLD);
+			authorFont = new Font(null, "Arial", 10, SWT.BOLD);
+			dateFont = new Font(null, "Arial", 10, SWT.ITALIC);
+			plain = new Font(null, "Arial", 10, SWT.NONE);
 		}
 
 		Figure tooltip = new Figure();
