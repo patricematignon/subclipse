@@ -5,12 +5,12 @@ import java.util.List;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.gef.ContextMenuProvider;
 import org.eclipse.gef.EditPartViewer;
 import org.eclipse.gef.GraphicalViewer;
 import org.eclipse.gef.MouseWheelHandler;
 import org.eclipse.gef.MouseWheelZoomHandler;
 import org.eclipse.gef.RootEditPart;
-import org.eclipse.gef.editparts.ScalableFreeformRootEditPart;
 import org.eclipse.gef.editparts.ScalableRootEditPart;
 import org.eclipse.gef.editparts.ZoomManager;
 import org.eclipse.gef.ui.actions.ActionRegistry;
@@ -94,6 +94,9 @@ public class RevisionGraphEditor extends EditorPart {
 		viewer.setRootEditPart(root);
 		viewer.setEditPartFactory(new GraphEditPartFactory(viewer));
 		viewer.setContents("Loading graph... This can take several minutes");
+		ContextMenuProvider cmProvider = new RevisionGraphMenuProvider(viewer);
+		viewer.setContextMenu(cmProvider);
+//		getSite().registerContextMenu(cmProvider, viewer);
 		IEditorInput input = getEditorInput();
 		if(input instanceof FileEditorInput) {
 			FileEditorInput fileEditorInput = (FileEditorInput) input;
@@ -145,10 +148,10 @@ public class RevisionGraphEditor extends EditorPart {
 	protected OverviewOutlinePage getOverviewOutlinePage() {
 		if(null == overviewOutlinePage && null != viewer) {
 			RootEditPart rootEditPart = viewer.getRootEditPart();
-			if(rootEditPart instanceof ScalableFreeformRootEditPart) {
+			if(rootEditPart instanceof ScalableRootEditPart) {
 				overviewOutlinePage =
 					new OverviewOutlinePage(
-							(ScalableFreeformRootEditPart) rootEditPart);
+							(ScalableRootEditPart) rootEditPart);
 			}
 		}
 		return overviewOutlinePage;
