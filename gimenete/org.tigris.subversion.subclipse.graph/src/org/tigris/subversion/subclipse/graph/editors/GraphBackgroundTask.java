@@ -88,11 +88,12 @@ public class GraphBackgroundTask extends SVNOperation {
 					int unitWork = VERY_LONG_TASK / (int) (latestRevisionInRepository - latestRevisionStored);
 					
 					cache.startUpdate();
+					boolean includeMergedRevisions = false;
 					client.getLogMessages(info.getRepository(),
 							latest,
 							latest,
 							SVNRevision.HEAD,
-							false, true, 0, true,
+							false, true, 0, includeMergedRevisions,
 							ISVNClientAdapter.DEFAULT_LOG_PROPERTIES,
 							new CallbackUpdater(cache, monitor, unitWork));
 					cache.finishUpdate();
