@@ -6,7 +6,7 @@ import org.eclipse.draw2d.Cursors;
 import org.eclipse.draw2d.Label;
 import org.eclipse.draw2d.PolylineConnection;
 import org.eclipse.draw2d.RoundedRectangle;
-import org.eclipse.swt.SWT;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.tigris.subversion.sublicpse.graph.cache.Node;
@@ -14,9 +14,6 @@ import org.tigris.subversion.sublicpse.graph.cache.Node;
 public class NodeFigure extends RoundedRectangle {
 
 	private static final Color FONT_COLOR = new Color(null, 1, 70, 122);
-
-	private static Font revisionFont;
-	private static Font revisionFontBold;
 	
 	private Node node;
 	private PolylineConnection source;
@@ -33,11 +30,6 @@ public class NodeFigure extends RoundedRectangle {
 		setBackgroundColor(bgcolor);
 		setForegroundColor(fgcolor);
 		setOpaque(true);
-
-		if(revisionFont == null) {
-			revisionFont = new Font(null, "Arial", 10, SWT.NONE);
-			revisionFontBold = new Font(null, "Arial", 10, SWT.BOLD);
-		}
 
 		setToolTip(new NodeTooltipFigure(node));
 		setCursor(Cursors.HAND);
@@ -82,9 +74,9 @@ public class NodeFigure extends RoundedRectangle {
 	
 	public void endLayout() {
 		if(hasTags)
-			add(createLabel(Long.toString(node.getRevision()), revisionFontBold), BorderLayout.CENTER);
+			add(createLabel(Long.toString(node.getRevision()), JFaceResources.getHeaderFont()), BorderLayout.CENTER);
 		else
-			add(createLabel(Long.toString(node.getRevision()), revisionFont), BorderLayout.CENTER);
+			add(createLabel(Long.toString(node.getRevision()), JFaceResources.getTextFont()), BorderLayout.CENTER);
 		NodeTooltipFigure tt = (NodeTooltipFigure) getToolTip();
 		tt.endLayout();
 	}
