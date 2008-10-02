@@ -212,7 +212,7 @@ public class Cache {
 				
 				for (int k = 0; k < size; k++) {
 					ISVNLogMessage lm = buffer[k];
-					System.out.println("revision: "+lm.getRevision().getNumber());
+//					System.out.println("revision: "+lm.getRevision().getNumber());
 					
 					ISVNLogMessageChangePath[] changedPaths = lm.getChangedPaths();
 					for(int n=0; n<changedPaths.length; n++) {
