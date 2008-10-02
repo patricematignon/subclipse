@@ -74,9 +74,9 @@ public class NodeFigure extends RoundedRectangle {
 	
 	public void endLayout() {
 		if(hasTags)
-			add(createLabel(Long.toString(node.getRevision()), JFaceResources.getHeaderFont()), BorderLayout.CENTER);
+			add(createLabel(Long.toString(node.getRevision()) + "*", JFaceResources.getDefaultFont()), BorderLayout.CENTER);
 		else
-			add(createLabel(Long.toString(node.getRevision()), JFaceResources.getTextFont()), BorderLayout.CENTER);
+			add(createLabel(Long.toString(node.getRevision()), JFaceResources.getDefaultFont()), BorderLayout.CENTER);
 		NodeTooltipFigure tt = (NodeTooltipFigure) getToolTip();
 		tt.endLayout();
 	}
