@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
+import org.tigris.subversion.subclipse.core.util.Util;
 import org.tigris.subversion.svnclientadapter.ISVNLogMessage;
 import org.tigris.subversion.svnclientadapter.ISVNLogMessageChangePath;
 
@@ -211,7 +212,7 @@ public class Cache {
 				
 				for (int k = 0; k < size; k++) {
 					ISVNLogMessage lm = buffer[k];
-//					System.out.println("revision: "+lm.getRevision().getNumber());
+					System.out.println("revision: "+lm.getRevision().getNumber());
 					
 					ISVNLogMessageChangePath[] changedPaths = lm.getChangedPaths();
 					for(int n=0; n<changedPaths.length; n++) {
@@ -219,18 +220,18 @@ public class Cache {
 
 						if(lm.getRevision().getNumber() <= revision && cp.getAction() == 'A') {
 							if(cp.getCopySrcPath() != null) {
-								if(isEqualsOrParent(cp.getPath(), path)) {
+								if(isEqualsOrParent(cp.getPath(), Util.unescape(path))) {
 									revision = lm.getRevision().getNumber();
-									path = cp.getCopySrcPath() + path.substring(cp.getPath().length());
+									path = cp.getCopySrcPath() + Util.unescape(path).substring(cp.getPath().length());
 									// TODO: here I could seek to 'revision'
 									// because all other revisions in between will be ignored
 								}
 							} else {
-								if(cp.getPath().equals(path)) {
+								if(cp.getPath().equals(Util.unescape(path))) {
 									revision = lm.getRevision().getNumber();
 
 									Node node = new Node();
-									node.setPath(path);
+									node.setPath(Util.unescape(path));
 									node.setRevision(revision);
 									return node;
 								}
@@ -250,7 +251,7 @@ public class Cache {
 		}
 		
 		Node n = new Node();
-		n.setPath(path);
+		n.setPath(Util.unescape(path));
 		n.setRevision(revision);
 		return n;
 	}
