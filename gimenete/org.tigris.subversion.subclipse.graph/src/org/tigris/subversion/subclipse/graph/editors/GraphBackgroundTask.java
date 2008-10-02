@@ -24,24 +24,26 @@ public class GraphBackgroundTask extends SVNOperation {
 	private IResource resource;
 	private ISVNRemoteResource remoteResource;
 	private GraphicalViewer viewer;
+	private RevisionGraphEditor editor;
 
 	private static final int TOTAL_STEPS = Integer.MAX_VALUE;
 	private static final int SHORT_TASK_STEPS = TOTAL_STEPS / 50; // 2%
 	private static final int VERY_LONG_TASK = TOTAL_STEPS / 2; // 50%
 	private static final int TASK_STEPS = (TOTAL_STEPS - SHORT_TASK_STEPS*3 - VERY_LONG_TASK) / 2;
 
-	protected GraphBackgroundTask(IWorkbenchPart part, GraphicalViewer viewer) {
+	protected GraphBackgroundTask(IWorkbenchPart part, GraphicalViewer viewer, RevisionGraphEditor editor) {
 		super(part);
 		this.viewer = viewer;
+		this.editor = editor;
 	}	
 	
-	protected GraphBackgroundTask(IWorkbenchPart part, GraphicalViewer viewer, IResource resource) {
-		this(part, viewer);
+	protected GraphBackgroundTask(IWorkbenchPart part, GraphicalViewer viewer, RevisionGraphEditor editor, IResource resource) {
+		this(part, viewer, editor);
 		this.resource = resource;
 	}
 	
-	protected GraphBackgroundTask(IWorkbenchPart part, GraphicalViewer viewer, ISVNRemoteResource remoteResource) {
-		this(part, viewer);
+	protected GraphBackgroundTask(IWorkbenchPart part, GraphicalViewer viewer, RevisionGraphEditor editor, ISVNRemoteResource remoteResource) {
+		this(part, viewer, editor);
 		this.remoteResource = remoteResource;
 	}
 
@@ -61,6 +63,8 @@ public class GraphBackgroundTask extends SVNOperation {
 					info = client.getInfo(info.getUrl());
 				}
 			}
+			
+			((RevisionGraphEditorInput)editor.getEditorInput()).setInfo(info);
 			
 			long revision = info.getRevision().getNumber();
 			String path = info.getUrl().toString().substring(info.getRepository().toString().length());
