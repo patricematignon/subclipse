@@ -23,6 +23,7 @@ import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
 import org.eclipse.gef.ui.parts.ScrollingGraphicalViewer;
 import org.eclipse.swt.graphics.Color;
+import org.tigris.subversion.subclipse.graph.Activator;
 import org.tigris.subversion.sublicpse.graph.cache.Branch;
 import org.tigris.subversion.sublicpse.graph.cache.Graph;
 import org.tigris.subversion.sublicpse.graph.cache.Node;
@@ -31,18 +32,6 @@ public class GraphEditPart extends AbstractGraphicalEditPart implements MouseLis
 
 	private Graph graph;
 	private NodeFigure selected;
-
-	public static final Color CONNECTION_COLOR = new Color(null, 172, 182, 198);
-
-	private static final Color[] FG_COLORS = { new Color(null, 1, 70, 122),
-		new Color(null, 76, 160, 104),
-		new Color(null, 194, 128, 84),
-		new Color(null, 76, 160, 20) };
-
-	private static final Color[] BG_COLORS = { new Color(null, 216, 228, 248),
-		new Color(null, 198, 240, 212),
-		new Color(null, 240, 198, 170),
-		new Color(null, 198, 240, 170) };
 
 	private final static int NODE_WIDTH = 50;
 	private final static int NODE_HEIGHT = 30;
@@ -85,9 +74,9 @@ public class GraphEditPart extends AbstractGraphicalEditPart implements MouseLis
 			}
 
 			// both are supposed to have the same length
-			int mod = i % BG_COLORS.length;
-			Color bgcolor = BG_COLORS[mod];
-			Color fgcolor = FG_COLORS[mod];
+			int mod = i % Activator.BG_COLORS.length;
+			Color bgcolor = Activator.BG_COLORS[mod];
+			Color fgcolor = Activator.FG_COLORS[mod];
 
 			BranchFigure branchFigure = new BranchFigure(path, bgcolor, fgcolor);
 			branch.setView(branchFigure);
@@ -201,7 +190,7 @@ public class GraphEditPart extends AbstractGraphicalEditPart implements MouseLis
 	}
 	
 	private PolylineConnection makeConnection(IFigure contents, IFigure source, NodeFigure target) {
-		return makeConnection(contents, source, target, CONNECTION_COLOR);
+		return makeConnection(contents, source, target, Activator.CONNECTION_COLOR);
 	}
 
 	private PolylineConnection makeConnection(IFigure contents, IFigure source, NodeFigure target, Color color) {
