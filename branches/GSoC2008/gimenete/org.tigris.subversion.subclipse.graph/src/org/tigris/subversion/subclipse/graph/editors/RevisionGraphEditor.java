@@ -6,6 +6,7 @@ import java.util.List;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.gef.ContextMenuProvider;
+import org.eclipse.gef.EditPart;
 import org.eclipse.gef.EditPartViewer;
 import org.eclipse.gef.GraphicalViewer;
 import org.eclipse.gef.MouseWheelHandler;
@@ -123,6 +124,10 @@ public class RevisionGraphEditor extends EditorPart {
 		// mouse wheel
 		viewer.setProperty(MouseWheelHandler.KeyGenerator.getKey(SWT.MOD1),
 				MouseWheelZoomHandler.SINGLETON);
+	}
+	
+	public void refresh() {
+		showGraphFor((RevisionGraphEditorInput)getEditorInput());
 	}
 
 	public void doSave(IProgressMonitor monitor) {
