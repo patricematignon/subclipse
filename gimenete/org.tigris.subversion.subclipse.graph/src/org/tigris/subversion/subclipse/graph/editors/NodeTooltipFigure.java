@@ -12,12 +12,10 @@ import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
+import org.tigris.subversion.subclipse.graph.Activator;
 import org.tigris.subversion.sublicpse.graph.cache.Node;
 
 public class NodeTooltipFigure extends Figure {
-	
-	private static final Color BGCOLOR = new Color(null, 250, 250, 250);
-	private static final Color FONT_COLOR = new Color(null, 1, 70, 122);
 
 	private static final int BORDER_WIDTH = 5;
 	private static final int BORDER_WIDTH2 = BORDER_WIDTH*2;
@@ -31,7 +29,7 @@ public class NodeTooltipFigure extends Figure {
 		ToolbarLayout layout = new ToolbarLayout();
 		layout.setStretchMinorAxis(false);
 		setLayoutManager(layout);	
-		setBackgroundColor(BGCOLOR);
+		setBackgroundColor(Activator.BGCOLOR);
 		setOpaque(true);
 		layout.setSpacing(5);
 		
@@ -43,16 +41,16 @@ public class NodeTooltipFigure extends Figure {
 		Figure tooltip = new Figure();
 		setToolTip(tooltip);
 
-		add(createLabel("Action and path", JFaceResources.getHeaderFont(), FONT_COLOR));
+		add(createLabel("Action and path", JFaceResources.getHeaderFont(), Activator.FONT_COLOR));
 		add(createLabel(node.getAction()+" "+node.getPath(), JFaceResources.getTextFont()));
-		add(createLabel("Author", JFaceResources.getHeaderFont(), FONT_COLOR));
+		add(createLabel("Author", JFaceResources.getHeaderFont(), Activator.FONT_COLOR));
 		add(createLabel(node.getAuthor(), JFaceResources.getTextFont()));
-		add(createLabel("Date", JFaceResources.getHeaderFont(), FONT_COLOR));
+		add(createLabel("Date", JFaceResources.getHeaderFont(), Activator.FONT_COLOR));
 		add(createLabel(dateFormat.format(node.getRevisionDate()), JFaceResources.getTextFont()));
-		add(createLabel("Message", JFaceResources.getHeaderFont(), FONT_COLOR));
+		add(createLabel("Message", JFaceResources.getHeaderFont(), Activator.FONT_COLOR));
 		add(createLabel(node.getMessage(), JFaceResources.getTextFont()));
 		if(node.getCopySrcPath() != null) {
-			add(createLabel("From", JFaceResources.getHeaderFont(), FONT_COLOR));
+			add(createLabel("From", JFaceResources.getHeaderFont(), Activator.FONT_COLOR));
 			add(createLabel(format(node.getCopySrcRevision(), node.getCopySrcPath()), JFaceResources.getTextFont()));
 		}
 	}
@@ -61,12 +59,12 @@ public class NodeTooltipFigure extends Figure {
 		Dimension d = getPreferredSize();
 		
 		setPreferredSize(d.width+BORDER_WIDTH2, d.height+BORDER_WIDTH2);
-		setBorder(new LineBorder(BGCOLOR, BORDER_WIDTH));
+		setBorder(new LineBorder(Activator.BGCOLOR, BORDER_WIDTH));
 	}
 	
 	public void addSource(Node node) {
 		if(!hasSources) {
-			add(createLabel("Source of", JFaceResources.getHeaderFont(), FONT_COLOR));
+			add(createLabel("Source of", JFaceResources.getHeaderFont(), Activator.FONT_COLOR));
 			hasSources = true;
 		}
 		add(createLabel(format(node.getRevision(), node.getPath()), JFaceResources.getTextFont()));
@@ -74,7 +72,7 @@ public class NodeTooltipFigure extends Figure {
 	
 	public void addTag(Node node) {
 		if(!hasTags) {
-			add(createLabel("Tagged as", JFaceResources.getHeaderFont(), FONT_COLOR));
+			add(createLabel("Tagged as", JFaceResources.getHeaderFont(), Activator.FONT_COLOR));
 			hasTags = true;
 		}
 		add(createLabel(format(node.getRevision(), node.getPath()), JFaceResources.getTextFont()));

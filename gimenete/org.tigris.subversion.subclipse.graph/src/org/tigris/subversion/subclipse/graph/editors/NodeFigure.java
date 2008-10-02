@@ -9,12 +9,11 @@ import org.eclipse.draw2d.RoundedRectangle;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
+import org.tigris.subversion.subclipse.graph.Activator;
 import org.tigris.subversion.sublicpse.graph.cache.Node;
 
 public class NodeFigure extends RoundedRectangle {
 
-	private static final Color FONT_COLOR = new Color(null, 1, 70, 122);
-	
 	private Node node;
 	private PolylineConnection source;
 	private int sourceIndex;
@@ -84,7 +83,7 @@ public class NodeFigure extends RoundedRectangle {
 	public static Label createLabel(String text, Font font) {
 		Label label = new Label(text);
 		label.setFont(font);
-		label.setForegroundColor(FONT_COLOR);
+		label.setForegroundColor(Activator.FONT_COLOR);
 		return label;
 	}
 	

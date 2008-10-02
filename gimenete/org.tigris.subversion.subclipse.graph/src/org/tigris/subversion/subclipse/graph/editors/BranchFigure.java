@@ -4,11 +4,10 @@ import org.eclipse.draw2d.BorderLayout;
 import org.eclipse.draw2d.Label;
 import org.eclipse.draw2d.RoundedRectangle;
 import org.eclipse.swt.graphics.Color;
+import org.tigris.subversion.subclipse.graph.Activator;
 
 public class BranchFigure extends RoundedRectangle {
-	
-	private static final Color FONT_COLOR = new Color(null, 1, 70, 122);
-	
+
 	private String path;
 	
 	public BranchFigure(String path, Color bgcolor, Color fgcolor) {
@@ -20,7 +19,7 @@ public class BranchFigure extends RoundedRectangle {
 		setOpaque(true);
 
 		Label label = new Label(path);
-		label.setForegroundColor(FONT_COLOR);
+		label.setForegroundColor(Activator.FONT_COLOR);
 		add(label, BorderLayout.CENTER);
 		
 		Label tooltip = new Label(path);
