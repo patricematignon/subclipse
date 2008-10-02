@@ -64,4 +64,13 @@ public class RevisionGraphEditorInput implements IEditorInput {
 		}
 	}
 
+	public boolean equals(Object obj) {
+		if (obj instanceof RevisionGraphEditorInput) {
+			RevisionGraphEditorInput compareTo = (RevisionGraphEditorInput)obj;
+			if (resource != null && compareTo.getResource() != null) return resource.equals(compareTo.getResource());
+			if (remoteResource != null && compareTo.getRemoteResource() != null) return remoteResource.equals(compareTo.getRemoteResource());
+		}
+		return super.equals(obj);
+	}
+
 }
