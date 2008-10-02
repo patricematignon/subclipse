@@ -6,11 +6,13 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IPersistableElement;
 import org.eclipse.ui.PlatformUI;
 import org.tigris.subversion.subclipse.core.ISVNRemoteResource;
+import org.tigris.subversion.svnclientadapter.ISVNInfo;
 
 public class RevisionGraphEditorInput implements IEditorInput {
 	
 	private IResource resource;
 	private ISVNRemoteResource remoteResource;
+	private ISVNInfo info;
 
 	public RevisionGraphEditorInput(IResource resource) {
 		this.resource = resource;
@@ -62,6 +64,14 @@ public class RevisionGraphEditorInput implements IEditorInput {
 			}
 			return resource.getAdapter(adapter);
 		}
+	}
+	
+	public ISVNInfo getInfo() {
+		return info;
+	}
+
+	public void setInfo(ISVNInfo info) {
+		this.info = info;
 	}
 
 	public boolean equals(Object obj) {

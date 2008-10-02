@@ -6,7 +6,6 @@ import java.util.List;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.gef.ContextMenuProvider;
-import org.eclipse.gef.EditPart;
 import org.eclipse.gef.EditPartViewer;
 import org.eclipse.gef.GraphicalViewer;
 import org.eclipse.gef.MouseWheelHandler;
@@ -37,6 +36,7 @@ public class RevisionGraphEditor extends EditorPart {
 
 	private OverviewOutlinePage overviewOutlinePage;
 	private ScrollingGraphicalViewer viewer;
+
 	private ActionRegistry actionRegistry;
 
 	public ActionRegistry getActionRegistry() {
@@ -52,7 +52,7 @@ public class RevisionGraphEditor extends EditorPart {
 		setPartName(resource.getName()+" revision graph");
 //		setContentDescription("Revision graph for "+resource.getName());
 		GraphBackgroundTask task =
-			new GraphBackgroundTask(getSite().getPart(), viewer, resource);
+			new GraphBackgroundTask(getSite().getPart(), viewer, this, resource);
 		try {
 			task.run();
 		} catch (Exception e) {
@@ -64,8 +64,8 @@ public class RevisionGraphEditor extends EditorPart {
 	public void showGraphFor(RevisionGraphEditorInput editorInput) {
 		setPartName(editorInput.getName() + " revision graph");
 		GraphBackgroundTask task;
-		if (editorInput.getResource() == null) task = new GraphBackgroundTask(getSite().getPart(), viewer, editorInput.getRemoteResource());
-		else task = new GraphBackgroundTask(getSite().getPart(), viewer, editorInput.getResource());
+		if (editorInput.getResource() == null) task = new GraphBackgroundTask(getSite().getPart(), viewer, this, editorInput.getRemoteResource());
+		else task = new GraphBackgroundTask(getSite().getPart(), viewer, this, editorInput.getResource());
 		try {
 			task.run();
 		} catch (Exception e) {
@@ -95,7 +95,7 @@ public class RevisionGraphEditor extends EditorPart {
 		viewer.setRootEditPart(root);
 		viewer.setEditPartFactory(new GraphEditPartFactory(viewer));
 		viewer.setContents("Loading graph... This can take several minutes");
-		ContextMenuProvider cmProvider = new RevisionGraphMenuProvider(viewer);
+		ContextMenuProvider cmProvider = new RevisionGraphMenuProvider(viewer, this);
 		viewer.setContextMenu(cmProvider);
 //		getSite().registerContextMenu(cmProvider, viewer);
 		IEditorInput input = getEditorInput();
@@ -149,6 +149,10 @@ public class RevisionGraphEditor extends EditorPart {
 
 	public boolean isSaveAsAllowed() {
 		return false;
+	}
+	
+	public ScrollingGraphicalViewer getViewer() {
+		return viewer;
 	}
 	
 	protected OverviewOutlinePage getOverviewOutlinePage() {
