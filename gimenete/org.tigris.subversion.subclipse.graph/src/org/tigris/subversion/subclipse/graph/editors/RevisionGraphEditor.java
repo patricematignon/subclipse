@@ -127,6 +127,7 @@ public class RevisionGraphEditor extends EditorPart {
 	}
 	
 	public void refresh() {
+		viewer.setContents("Loading graph... This can take several minutes");
 		showGraphFor((RevisionGraphEditorInput)getEditorInput());
 	}
 
