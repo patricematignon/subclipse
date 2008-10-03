@@ -17,7 +17,6 @@ import org.tigris.subversion.subclipse.graph.editors.NodeFigure;
 import org.tigris.subversion.subclipse.graph.editors.NodeTooltipFigure;
 import org.tigris.subversion.subclipse.graph.editors.RevisionGraphEditor;
 import org.tigris.subversion.subclipse.graph.editors.RevisionGraphEditorInput;
-import org.tigris.subversion.subclipse.ui.Policy;
 import org.tigris.subversion.subclipse.ui.SVNUIPlugin;
 import org.tigris.subversion.subclipse.ui.dialogs.SetCommitPropertiesDialog;
 import org.tigris.subversion.subclipse.ui.settings.ProjectProperties;
@@ -35,7 +34,7 @@ public class SetCommitPropertiesAction extends Action {
 		this.nodeFigure = nodeFigure;
 		this.editor = editor;
 		node = nodeFigure.getNode();
-		setText(Policy.bind("HistoryView.setCommitProperties"));
+		setText("Set commit properties...");
 	}
 
 	public void run() {
