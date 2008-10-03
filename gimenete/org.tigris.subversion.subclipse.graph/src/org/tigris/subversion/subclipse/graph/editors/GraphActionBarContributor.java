@@ -6,6 +6,7 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.ui.IEditorPart;
+import org.tigris.subversion.subclipse.graph.popup.actions.ImageAction;
 import org.tigris.subversion.subclipse.ui.ISVNUIConstants;
 import org.tigris.subversion.subclipse.ui.SVNUIPlugin;
 
@@ -35,6 +36,14 @@ public class GraphActionBarContributor extends ActionBarContributor {
         };
         refreshAction.setImageDescriptor(SVNUIPlugin.getPlugin().getImageDescriptor(ISVNUIConstants.IMG_REFRESH));
         toolBarManager.add(refreshAction);
+        Action imageAction = new Action() {
+			public void run() {
+				Action action = new ImageAction(editor);
+				action.run();
+			}            	
+        };
+        imageAction.setImageDescriptor(SVNUIPlugin.getPlugin().getImageDescriptor(ISVNUIConstants.IMG_EXPORT_IMAGE));
+        toolBarManager.add(imageAction);
 	}
 	
 	/*
