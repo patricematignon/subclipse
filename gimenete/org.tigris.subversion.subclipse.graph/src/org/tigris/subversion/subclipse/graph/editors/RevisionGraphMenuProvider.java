@@ -3,6 +3,8 @@ package org.tigris.subversion.subclipse.graph.editors;
 import org.eclipse.gef.ContextMenuProvider;
 import org.eclipse.gef.EditPartViewer;
 import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.Separator;
+import org.tigris.subversion.subclipse.graph.popup.actions.ImageAction;
 import org.tigris.subversion.subclipse.graph.popup.actions.SetCommitPropertiesAction;
 
 public class RevisionGraphMenuProvider extends ContextMenuProvider {
@@ -19,6 +21,8 @@ public class RevisionGraphMenuProvider extends ContextMenuProvider {
 		if (nodeFigure != null) {
 			menu.add(new SetCommitPropertiesAction(nodeFigure, editor));
 		}
+		menu.add(new Separator());
+		menu.add(new ImageAction(editor));
 //		Iterator iter = getViewer().getSelectedEditParts().iterator();
 //		while (iter.hasNext()) {
 //			EditPart editPart = (EditPart)iter.next();
