@@ -1,14 +1,19 @@
 package org.tigris.subversion.subclipse.graph.dialogs;
 
 import java.io.File;
-import java.io.FileOutputStream;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.draw2d.Figure;
+import org.eclipse.draw2d.Graphics;
+import org.eclipse.draw2d.IFigure;
+import org.eclipse.draw2d.SWTGraphics;
+import org.eclipse.draw2d.geometry.Rectangle;
+import org.eclipse.gef.GraphicalViewer;
+import org.eclipse.gef.LayerConstants;
+import org.eclipse.gef.editparts.LayerManager;
+import org.eclipse.gef.editparts.ScalableRootEditPart;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.TrayDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
@@ -19,6 +24,10 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.swt.graphics.ImageLoader;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -31,8 +40,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.tigris.subversion.subclipse.graph.Activator;
-import org.tigris.subversion.subclipse.graph.ImageFactory;
-import org.tigris.subversion.subclipse.graph.editors.GraphEditPart;
 import org.tigris.subversion.subclipse.graph.editors.RevisionGraphEditor;
 
 public class SaveImageDialog extends TrayDialog {
@@ -48,9 +55,7 @@ public class SaveImageDialog extends TrayDialog {
 	
 	private static final int BMP = 0;
 	private static final int JPEG = 1;
-//	private static final int GIF = 2;
-//	private static final int ICO = 3;
-//	private static final int PNG = 4;
+	private static final int PNG = 2;
 	private final static String LAST_OUTPUT = "SaveImageDialog.lastOutput";
 
 	public SaveImageDialog(Shell parentShell, RevisionGraphEditor editor) {
@@ -80,9 +85,7 @@ public class SaveImageDialog extends TrayDialog {
 		fileTypeCombo.setLayoutData(gd);
 		fileTypeCombo.add("BMP");
 		fileTypeCombo.add("JPEG");
-//		fileTypeCombo.add("GIF");
-//		fileTypeCombo.add("ICO");
-//		fileTypeCombo.add("PNG");
+		fileTypeCombo.add("PNG");
 
 		Label fileLabel = new Label(composite, SWT.NONE);
 		fileLabel.setText("Save to file:");
@@ -105,15 +108,9 @@ public class SaveImageDialog extends TrayDialog {
 		case JPEG:
 			fileTypeCombo.setText("JPEG");
 			break;
-//		case GIF:
-//			fileTypeCombo.setText("GIF");
-//			break;
-//		case ICO:
-//			fileTypeCombo.setText("ICO");
-//			break;
-//		case PNG:
-//			fileTypeCombo.setText("PNG");
-//			break;				
+		case PNG:
+			fileTypeCombo.setText("PNG");
+			break;				
 		default:
 			fileTypeCombo.setText("BMP");
 			break;
@@ -150,52 +147,62 @@ public class SaveImageDialog extends TrayDialog {
 	
 	protected void okPressed() {
 		settings.put(LAST_OUTPUT, fileTypeCombo.getSelectionIndex());
+		
 		BusyIndicator.showWhile(Display.getDefault(), new Runnable() {
 			public void run() {
-				GraphEditPart editPart = (GraphEditPart)editor.getViewer().getContents();
-				Figure figure = (Figure)editPart.getFigure();
-				int imageType = ImageFactory.BMP;
+				GraphicalViewer viewer = editor.getViewer();
+				ScalableRootEditPart rootEditPart = (ScalableRootEditPart)viewer.getEditPartRegistry().get(LayerManager.ID);
+				IFigure rootFigure = ((LayerManager)rootEditPart).getLayer(LayerConstants.PRINTABLE_LAYERS);
+				Rectangle rootFigureBounds = rootFigure.getBounds();	
+				Control figureCanvas = viewer.getControl();
+				GC figureCanvasGC = new GC(figureCanvas);
+				Image img = new Image(null, rootFigureBounds.width, rootFigureBounds.height);
+				GC imageGC = new GC(img);
+				imageGC.setBackground(figureCanvasGC.getBackground());
+				imageGC.setForeground(figureCanvasGC.getForeground());
+				imageGC.setFont(figureCanvasGC.getFont());
+				imageGC.setLineStyle(figureCanvasGC.getLineStyle());
+				imageGC.setLineWidth(figureCanvasGC.getLineWidth());
+//				imageGC.setXORMode(figureCanvasGC.getXORMode());
+				Graphics imgGraphics = new SWTGraphics(imageGC);
+
+				rootFigure.paint(imgGraphics);
+
+				ImageData[] imgData = new ImageData[1];
+				imgData[0] = img.getImageData();
+
+				ImageLoader imgLoader = new ImageLoader();
+				imgLoader.data = imgData;
+				String extension;
+				if (fileTypeCombo.getText().equals("JPEG")) extension = "jpg";
+				else extension = fileTypeCombo.getText().toLowerCase();
+				String fileName = null;
+				if (!fileText.getText().trim().endsWith("." + extension))
+					fileName = fileText.getText().trim() + "." + extension;
+				else
+					fileName = fileText.getText().trim();
+				int imageType = SWT.IMAGE_BMP;
 				switch (fileTypeCombo.getSelectionIndex()) {
 				case BMP:
-					imageType = ImageFactory.BMP;
+					imageType = SWT.IMAGE_BMP;
 					break;
 				case JPEG:
-					imageType = ImageFactory.JPEG;
+					imageType = SWT.IMAGE_JPEG;
 					break;	
-//				case PNG:
-//					imageType = ImageFactory.PNG;
-//					break;					
-//				case ICO:
-//					imageType = ImageFactory.ICO;
-//					break;					
-//				case GIF:
-//					imageType = ImageFactory.GIF;
-//					break;
+				case PNG:
+					imageType = SWT.IMAGE_PNG;
+					break;					
 				default:
 					break;
-				}
-				byte[] image = ImageFactory.createImage(editor.getViewer(), figure, imageType);
-				try {
-					String extension;
-					if (fileTypeCombo.getText().equals("JPEG")) extension = "jpg";
-					else extension = fileTypeCombo.getText().toLowerCase();
-					String fileName = null;
-					if (!fileText.getText().trim().endsWith("." + extension))
-						fileName = fileText.getText().trim() + "." + extension;
-					else
-						fileName = fileText.getText().trim();
-					File file = new File(fileName);
-					FileOutputStream out = new FileOutputStream(file);
-					out.write(image);
-					try {
-						out.close();
-					} catch (Exception e1) {}
-				} catch (Exception e) {
-					MessageDialog.openError(getShell(), "Save Image to File", e.getMessage());
-					return;
-				}
+				}				
+				imgLoader.save(fileName, imageType);
+
+				figureCanvasGC.dispose();
+				imageGC.dispose();
+				img.dispose();
 			}		
-		});
+		});		
+		
 		super.okPressed();
 	}
 
