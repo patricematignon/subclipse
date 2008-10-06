@@ -178,12 +178,14 @@ public class GraphEditPart extends AbstractGraphicalEditPart implements MouseLis
 		}
 		
 		Branch selected = graph.getBranch(graph.getSelectedPath());
-		Node n = selected.getSource(graph.getSelectedRevision());
-		if(n.getView() != null) {
-			NodeFigure nodeFigure = (NodeFigure) n.getView();
-			selectNode(nodeFigure);
-			// FIXME: it doesn't work
-			scrollTo((Rectangle) contentsLayout.getConstraint(nodeFigure)); 
+		if (selected != null) {
+			Node n = selected.getSource(graph.getSelectedRevision());
+			if(n.getView() != null) {
+				NodeFigure nodeFigure = (NodeFigure) n.getView();
+				selectNode(nodeFigure);
+				// FIXME: it doesn't work
+				scrollTo((Rectangle) contentsLayout.getConstraint(nodeFigure)); 
+			}
 		}
 
 		return contents;
