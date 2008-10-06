@@ -193,31 +193,64 @@ public class Cache {
 		} while(number > 0);
 	}
 	
+	/**
+	 * This method finds the revision number and path where the file was first created.
+	 * 
+	 * @param path The path of the selected file
+	 * @param revision The revision number of the selected file
+	 * @param listener A listener to implement a progress bar for example
+	 * @return a Node object just containing the path and revision properties setted
+	 */
 	public Node findRootNode(String path, long revision, WorkListener listener) {
-		long r = revision;
-		long pr = r;
+		long r = revision; // r means "current revision"
+		long pr = r; // pr means "previous revision"
 		RandomAccessFile logMessages = null;
 		try {
+			/*
+			 * We need to read the logMessagesFiles backwards, from the selected revision
+			 * to the root revision.
+			 * It is done by jumping backwards and reading a
+			 * maximmun of MAX_LOG_MESSAGES number of messages inside an array
+			 * that acts as a buffer.
+			 */
 			logMessages = new RandomAccessFile(logMessagesFile, "r");
 			ISVNLogMessage[] buffer = new ISVNLogMessage[MAX_LOG_MESSAGES];
 			do {
+				// We are going to jump to a previous revision.
+				// Exactly MAX_LOG_MESSAGES revisions before
 				r -= (MAX_LOG_MESSAGES)-1;
 				if(r < 1) {
-					r = 1;
+					r = 1; // Well, we cannot jump to a revision lower than 1
 				}
+				// It moves the file pointer to the revision. Here is where it jumps backwards
 				logMessages.seek(getSeek(r));
+				// It calculates how many log messages should be read
 				int size = (int) (pr - r + 1); // this won't be higher than MAX_LOG_MESSAGES
 				if(size == 0) break;
+				// It reads the log messages to the buffer
 				readNext(logMessages, buffer, size);
 				
+				// It iterates over all log messages
 				for (int k = 0; k < size; k++) {
 					ISVNLogMessage lm = buffer[k];
 //					System.out.println("revision: "+lm.getRevision().getNumber());
 					
+					// It iterates over all changed paths
 					ISVNLogMessageChangePath[] changedPaths = lm.getChangedPaths();
 					for(int n=0; n<changedPaths.length; n++) {
 						ISVNLogMessageChangePath cp = changedPaths[n];
 
+						/*
+						 * It is only interested on 'A' actions.
+						 * If copySrcPath is not null it compares the paths to know
+						 * if the changedPath is equals or parent to the current path.
+						 * For example if it is finding the root node for /branches/a/foo.txt
+						 * "A /branches/a from /trunk" 
+						 * In this case /branches/a is parent of /branches/a/foo.txt
+						 * so now we know that /branches/a/foo.txt was copied from /trunk/foo.txt
+						 * If copySrcPath is null and the changed path is equal to the path
+						 * we are looking for then we have found the root node.
+						 */ 
 						if(lm.getRevision().getNumber() <= revision && cp.getAction() == 'A') {
 							if(cp.getCopySrcPath() != null) {
 								if(isEqualsOrParent(cp.getPath(), Util.unescape(path))) {
@@ -242,7 +275,7 @@ public class Cache {
 					if(listener != null)
 						listener.worked();
 				}
-				pr = r;
+				pr = r; // previous revision is the current revision
 			} while(true);
 		} catch(IOException e) {
 			throw new CacheException("Error while finding root node", e);
