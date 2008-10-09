@@ -4,6 +4,7 @@ import org.eclipse.gef.ContextMenuProvider;
 import org.eclipse.gef.EditPartViewer;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
+import org.tigris.subversion.subclipse.graph.popup.actions.BranchTagAction;
 import org.tigris.subversion.subclipse.graph.popup.actions.ImageAction;
 import org.tigris.subversion.subclipse.graph.popup.actions.SetCommitPropertiesAction;
 
@@ -20,6 +21,7 @@ public class RevisionGraphMenuProvider extends ContextMenuProvider {
 		NodeFigure nodeFigure = graphEditPart.getSelectedNode();
 		if (nodeFigure != null) {
 			menu.add(new SetCommitPropertiesAction(nodeFigure, editor));
+			menu.add(new BranchTagAction("Create Branch/Tag from Revision " + nodeFigure.getNode().getRevision() + "...", editor, nodeFigure));
 		}
 		menu.add(new Separator());
 		menu.add(new ImageAction(editor));
