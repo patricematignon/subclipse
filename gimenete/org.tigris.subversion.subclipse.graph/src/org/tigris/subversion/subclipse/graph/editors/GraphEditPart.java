@@ -133,8 +133,11 @@ public class GraphEditPart extends AbstractGraphicalEditPart implements MouseLis
 				for (Iterator it = branch.getNodes().iterator(); it.hasNext();) {
 					Node node = (Node) it.next();
 					if(node.getSource() != null && node.getSource().getView() != null) {
-						NodeFigure nodeFigure = (NodeFigure) node.getSource().getView();
-						nodeFigure.addTag(node);
+						Node lastNode = (Node)branch.getNodes().get(branch.getNodes().size() - 1);
+						if (lastNode.getAction() != 'D' || !Cache.isEqualsOrParent(lastNode.getPath(), branch.getPath())) {
+							NodeFigure nodeFigure = (NodeFigure) node.getSource().getView();
+							nodeFigure.addTag(node);
+						}
 					}
 				}
 			} else {
