@@ -48,6 +48,16 @@ public class GraphEditPart extends AbstractGraphicalEditPart implements MouseLis
 		this.graph = graph;
 		this.viewer = viewer;
 	}
+	
+	private boolean isModified(Branch branch) {
+		List nodes = branch.getNodes();
+		Iterator iter = nodes.iterator();
+		while (iter.hasNext()) {
+			Node node = (Node)iter.next();
+			if (node.getPath().equals(branch.getPath()) && node.getAction() == 'M') return true;
+		}
+		return false;
+	}
 
 	protected IFigure createFigure() {
 		Figure contents = new Figure();
@@ -77,9 +87,11 @@ public class GraphEditPart extends AbstractGraphicalEditPart implements MouseLis
 			if (branch.getNodes().size() > 0) {
 				Node lastNode = (Node)branch.getNodes().get(branch.getNodes().size() - 1);
 				if (lastNode.getAction() == 'D' && Cache.isEqualsOrParent(lastNode.getPath(), branch.getPath())) {
-					// branch has been deleted
-					i--;
-					continue;
+					if (!isModified(branch)) {
+						// branch has been deleted and item was not modified in that location
+						i--;
+						continue;
+					}
 				}
 			}
 
