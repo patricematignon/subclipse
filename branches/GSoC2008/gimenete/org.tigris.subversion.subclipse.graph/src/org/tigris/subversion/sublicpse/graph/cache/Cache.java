@@ -505,7 +505,7 @@ public class Cache {
 //		System.out.println(isEqualsOrParent("/f", "/foo/bar/hello.java")); // false
 	}
 	
-	private static boolean isEqualsOrParent(String parent, String path) {
+	public static boolean isEqualsOrParent(String parent, String path) {
 		if(parent.length() == path.length())
 			return parent.equals(path);
 		return path.startsWith(parent+"/");

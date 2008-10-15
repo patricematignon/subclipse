@@ -25,6 +25,7 @@ import org.eclipse.gef.ui.parts.ScrollingGraphicalViewer;
 import org.eclipse.swt.graphics.Color;
 import org.tigris.subversion.subclipse.graph.Activator;
 import org.tigris.subversion.sublicpse.graph.cache.Branch;
+import org.tigris.subversion.sublicpse.graph.cache.Cache;
 import org.tigris.subversion.sublicpse.graph.cache.Graph;
 import org.tigris.subversion.sublicpse.graph.cache.Node;
 
@@ -68,6 +69,15 @@ public class GraphEditPart extends AbstractGraphicalEditPart implements MouseLis
 				if(firstNode.getSource() != null && firstNode.getChildCount() == 0) {
 					// is not the root node and is not the target of any arrow
 					// therefore is a tag
+					i--;
+					continue;
+				}
+			}
+			
+			if (branch.getNodes().size() > 0) {
+				Node lastNode = (Node)branch.getNodes().get(branch.getNodes().size() - 1);
+				if (lastNode.getAction() == 'D' && Cache.isEqualsOrParent(lastNode.getPath(), branch.getPath())) {
+					// branch has been deleted
 					i--;
 					continue;
 				}
