@@ -22,6 +22,7 @@ import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
 import org.eclipse.gef.ui.parts.ScrollingGraphicalViewer;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.graphics.Color;
 import org.tigris.subversion.subclipse.graph.Activator;
 import org.tigris.subversion.sublicpse.graph.cache.Branch;
@@ -60,6 +61,8 @@ public class GraphEditPart extends AbstractGraphicalEditPart implements MouseLis
 	}
 
 	protected IFigure createFigure() {
+		IPreferenceStore store = Activator.getDefault().getPreferenceStore();
+		int showDeleted = store.getInt(RevisionGraphEditor.SHOW_DELETED_PREFERENCE);
 		Figure contents = new Figure();
 		contents.setBackgroundColor(ColorConstants.white);
 		contents.setOpaque(true);
@@ -87,7 +90,7 @@ public class GraphEditPart extends AbstractGraphicalEditPart implements MouseLis
 			if (branch.getNodes().size() > 0) {
 				Node lastNode = (Node)branch.getNodes().get(branch.getNodes().size() - 1);
 				if (lastNode.getAction() == 'D' && Cache.isEqualsOrParent(lastNode.getPath(), branch.getPath())) {
-					if (!isModified(branch)) {
+					if (showDeleted == RevisionGraphEditor.SHOW_DELETED_NO || (showDeleted == RevisionGraphEditor.SHOW_DELETED_MODIFIED && !isModified(branch))) {
 						// branch has been deleted and item was not modified in that location
 						i--;
 						continue;
