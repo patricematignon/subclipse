@@ -102,6 +102,7 @@ public class RevisionGraphEditor extends EditorPart {
 		viewer.setContents("Loading graph... This can take several minutes");
 		ContextMenuProvider cmProvider = new RevisionGraphMenuProvider(viewer, this);
 		viewer.setContextMenu(cmProvider);
+		getSite().setSelectionProvider(viewer);
 //		getSite().registerContextMenu(cmProvider, viewer);
 		IEditorInput input = getEditorInput();
 		if(input instanceof FileEditorInput) {

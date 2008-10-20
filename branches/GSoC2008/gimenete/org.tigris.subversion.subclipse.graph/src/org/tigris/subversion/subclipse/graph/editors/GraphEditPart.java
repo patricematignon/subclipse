@@ -1,5 +1,6 @@
 package org.tigris.subversion.subclipse.graph.editors;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -23,6 +24,7 @@ import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
 import org.eclipse.gef.ui.parts.ScrollingGraphicalViewer;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.graphics.Color;
 import org.tigris.subversion.subclipse.graph.Activator;
 import org.tigris.subversion.sublicpse.graph.cache.Branch;
@@ -127,7 +129,7 @@ public class GraphEditPart extends AbstractGraphicalEditPart implements MouseLis
 				contentsLayout.setConstraint(nodeFigure, rect);
 			}
 		}
-
+		
 		// create connections
 		for (Iterator iter = paths.iterator(); iter.hasNext(); i++) {
 			String path = (String) iter.next();
@@ -245,12 +247,48 @@ public class GraphEditPart extends AbstractGraphicalEditPart implements MouseLis
 			selected.setSelected(false);
 		figure.setSelected(true);
 		selected = figure;
+		if (figure == null) graph.setSelectedNode(null);
+		else graph.setSelectedNode(figure.getNode());
+		getViewer().setSelection(new IStructuredSelection() {
+
+			public Object getFirstElement() {
+				return GraphEditPart.this;
+			}
+
+			public Iterator iterator() {
+				return toList().iterator();
+			}
+
+			public int size() {
+				return toArray().length;
+			}
+
+			public Object[] toArray() {
+				Object[] selectedObjects = { GraphEditPart.this };
+				return selectedObjects;
+			}
+
+			public List toList() {
+				List list = new ArrayList();
+				list.add(GraphEditPart.this);
+				return list;
+			}
+
+			public boolean isEmpty() {
+				return false;
+			}
+			
+		});
 	}
 	
 	public NodeFigure getSelectedNode() {
 		return selected;
 	}
 	
+	public Object getModel() {
+		return graph;
+	}
+
 	private void scrollTo(Rectangle fbounds) {
 		scrollTo(fbounds.x+fbounds.width/2, fbounds.y+fbounds.height/2);
 	}
