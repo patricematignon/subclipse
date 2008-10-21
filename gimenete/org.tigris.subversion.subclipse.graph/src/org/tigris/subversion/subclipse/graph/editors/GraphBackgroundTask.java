@@ -161,12 +161,7 @@ public class GraphBackgroundTask extends SVNOperation {
 	}
 	
 	private Cache getCache(String uuid) {
-		File f;
-		if (resource == null) f = ResourcesPlugin.getWorkspace().getRoot().getRawLocation().toFile();
-		else f = resource.getWorkspace().getRoot().getRawLocation().toFile();
-		f = new File(f, ".metadata");
-		f = new File(f, ".plugins");
-		f = new File(f, "org.tigris.subversion.subclipse.graph");
+		File f = Cache.getCacheDirectory(resource);
 		return new Cache(f, uuid);
 	}
 
