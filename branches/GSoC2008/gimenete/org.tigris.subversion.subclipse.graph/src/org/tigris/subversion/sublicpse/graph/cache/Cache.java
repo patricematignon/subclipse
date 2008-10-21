@@ -8,6 +8,8 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.tigris.subversion.subclipse.core.util.Util;
 import org.tigris.subversion.svnclientadapter.ISVNLogMessage;
 import org.tigris.subversion.svnclientadapter.ISVNLogMessageChangePath;
@@ -514,6 +516,16 @@ public class Cache {
 	public void clearCache() {
 		deleteFile(revisionsFile);
 		deleteFile(logMessagesFile);
+	}
+	
+	public static File getCacheDirectory(IResource resource) {
+		File f;
+		if (resource == null) f = ResourcesPlugin.getWorkspace().getRoot().getRawLocation().toFile();
+		else f = resource.getWorkspace().getRoot().getRawLocation().toFile();
+		f = new File(f, ".metadata");
+		f = new File(f, ".plugins");
+		f = new File(f, "org.tigris.subversion.subclipse.graph");
+		return f;
 	}
 	
 	private void deleteFile(File f) {

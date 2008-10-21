@@ -42,6 +42,18 @@
                menubarPath="historyGroup"
                id="org.tigris.subversion.subclipse.graph.popup.actions.RemoteResourceViewGraphAction">
          </action>                   
-      </objectContribution>      
+      </objectContribution>  
+      <objectContribution
+            objectClass="org.tigris.subversion.subclipse.core.ISVNRepositoryLocation"
+            adaptable="true"
+            id="org.tigris.subversion.subclipse.ui.RepositoryLocationContributions">
+         <action
+               label="Clear revision graph cache"
+               class="org.tigris.subversion.subclipse.graph.popup.actions.DeleteCacheAction"
+               menubarPath="historyGroup"
+               enablesFor="1"
+               id="org.tigris.subversion.subclipse.graph.popup.actions.DeleteCacheAction">
+         </action>            
+      </objectContribution>     
    </extension>
 </plugin>
