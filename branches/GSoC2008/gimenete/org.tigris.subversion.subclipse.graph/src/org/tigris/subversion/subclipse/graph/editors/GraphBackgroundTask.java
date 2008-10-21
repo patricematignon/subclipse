@@ -24,6 +24,7 @@ public class GraphBackgroundTask extends SVNOperation {
 	private ISVNRemoteResource remoteResource;
 	private GraphicalViewer viewer;
 	private RevisionGraphEditor editor;
+	private SVNRevision refreshRevision;
 
 	private static final int TOTAL_STEPS = Integer.MAX_VALUE;
 	private static final int SHORT_TASK_STEPS = TOTAL_STEPS / 50; // 2%
@@ -36,7 +37,7 @@ public class GraphBackgroundTask extends SVNOperation {
 		this.editor = editor;
 	}	
 	
-	protected GraphBackgroundTask(IWorkbenchPart part, GraphicalViewer viewer, RevisionGraphEditor editor, IResource resource) {
+	public GraphBackgroundTask(IWorkbenchPart part, GraphicalViewer viewer, RevisionGraphEditor editor, IResource resource) {
 		this(part, viewer, editor);
 		this.resource = resource;
 	}
@@ -75,27 +76,36 @@ public class GraphBackgroundTask extends SVNOperation {
 			// update the cache
 			long latestRevisionStored = cache.getLatestRevision();
 			SVNRevision latest = null;
+			SVNRevision endRevision = null;
 			monitor.setTaskName("Connecting to the repository");
 			// TODO: try-catch this line and make it work off-line
 			long latestRevisionInRepository = client.getInfo(info.getRepository()).getLastChangedRevision().getNumber();
 			monitor.worked(SHORT_TASK_STEPS);
 
-			if(latestRevisionInRepository > latestRevisionStored) {
-				if(latestRevisionStored == 0)
-					latest = SVNRevision.START;
-				else
-					latest = new SVNRevision.Number(latestRevisionStored+1);
+			if(refreshRevision != null || latestRevisionInRepository > latestRevisionStored) {
+				if (refreshRevision == null) {
+					if(latestRevisionStored == 0)
+						latest = SVNRevision.START;
+					else
+						latest = new SVNRevision.Number(latestRevisionStored+1);
+				} else {
+					latest = refreshRevision;
+				}
+				
+				if (refreshRevision == null) endRevision = SVNRevision.HEAD;
+				else endRevision = refreshRevision;
 
 				try {
 					monitor.setTaskName("Retrieving revision history");
-					int unitWork = VERY_LONG_TASK / (int) (latestRevisionInRepository - latestRevisionStored);
-					
+					int unitWork;
+					if (refreshRevision == null) unitWork = VERY_LONG_TASK / (int) (latestRevisionInRepository - latestRevisionStored);
+					else unitWork = VERY_LONG_TASK;
 					cache.startUpdate();
 					boolean includeMergedRevisions = false;
 					client.getLogMessages(info.getRepository(),
 							latest,
 							latest,
-							SVNRevision.HEAD,
+							endRevision,
 							false, true, 0, includeMergedRevisions,
 							ISVNClientAdapter.DEFAULT_LOG_PROPERTIES,
 							new CallbackUpdater(cache, monitor, unitWork));
@@ -161,11 +171,16 @@ public class GraphBackgroundTask extends SVNOperation {
 	
 	private Cache getCache(String uuid) {
 		File f = Cache.getCacheDirectory(resource);
-		return new Cache(f, uuid);
+		if (refreshRevision == null) return new Cache(f, uuid);
+		else return new Cache(f, uuid, Long.parseLong(refreshRevision.toString())); 
 	}
 
 	protected String getTaskName() {
 		return "Calculating graph information";
+	}
+	
+	public void setRefreshRevision(SVNRevision refreshRevision) {
+		this.refreshRevision = refreshRevision;
 	}
 
 }

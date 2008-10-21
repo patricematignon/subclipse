@@ -25,6 +25,7 @@ public class Cache {
 	
 	private List children = new ArrayList();
 	private int level;
+	private long refreshRevision;
 
 	// used in updates
 	private RandomAccessFile revisionsRaf = null;
@@ -38,6 +39,11 @@ public class Cache {
 
 		revisionsFile = new File(root, "revisions");
 		logMessagesFile = new File(root, "logMessages");
+	}
+	
+	public Cache(File f, String uuid, long refreshRevision) {
+		this(f, uuid);
+		this.refreshRevision = refreshRevision;
 	}
 	
 	private void createDirectory(File f) {
@@ -61,8 +67,13 @@ public class Cache {
 			revisionsRaf = new RandomAccessFile(revisionsFile, "rw");
 			logMessagesRaf = new RandomAccessFile(logMessagesFile, "rw");
 
-			revisionsRaf.seek(revisionsRaf.length());
-			logMessagesRaf.seek(logMessagesRaf.length());
+			if (refreshRevision == 0) {
+				revisionsRaf.seek(revisionsRaf.length());
+				logMessagesRaf.seek(logMessagesRaf.length());
+			} else {
+				revisionsRaf.seek(getSeek(refreshRevision));
+				logMessagesRaf.seek(getSeek(refreshRevision));
+			}
 		} catch(IOException e) {
 			throw new CacheException("Error while opening file", e);
 		}
@@ -79,7 +90,6 @@ public class Cache {
 		long fp = logMessagesRaf.getFilePointer();
 //		System.out.println("writing rev "+revision+" at "+fp+" "+revisions.getFilePointer());
 		revisionsRaf.writeLong(fp);
-
 		logMessagesRaf.writeLong(revision);
 		logMessagesRaf.writeLong(logMessage.getDate().getTime());
 		logMessagesRaf.writeUTF(notNull(logMessage.getAuthor()));
