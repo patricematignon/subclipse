@@ -50,10 +50,17 @@
          <action
                label="Clear revision graph cache"
                class="org.tigris.subversion.subclipse.graph.popup.actions.DeleteCacheAction"
-               menubarPath="historyGroup"
+               menubarPath="revisionHistoryGroup"
                enablesFor="1"
                id="org.tigris.subversion.subclipse.graph.popup.actions.DeleteCacheAction">
-         </action>            
+         </action> 
+         <action
+               label="Build/update revision graph cache"
+               class="org.tigris.subversion.subclipse.graph.popup.actions.UpdateCacheAction"
+               menubarPath="revisionHistoryGroup"
+               enablesFor="1"
+               id="org.tigris.subversion.subclipse.graph.popup.actions.UpdateCacheAction">
+         </action>                            
       </objectContribution>     
    </extension>
 </plugin>

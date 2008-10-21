@@ -3,7 +3,6 @@ package org.tigris.subversion.subclipse.graph.editors;
 import java.io.File;
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.gef.GraphicalViewer;
 import org.eclipse.swt.widgets.Display;
@@ -42,7 +41,7 @@ public class GraphBackgroundTask extends SVNOperation {
 		this.resource = resource;
 	}
 	
-	protected GraphBackgroundTask(IWorkbenchPart part, GraphicalViewer viewer, RevisionGraphEditor editor, ISVNRemoteResource remoteResource) {
+	public GraphBackgroundTask(IWorkbenchPart part, GraphicalViewer viewer, RevisionGraphEditor editor, ISVNRemoteResource remoteResource) {
 		this(part, viewer, editor);
 		this.remoteResource = remoteResource;
 	}
@@ -64,7 +63,7 @@ public class GraphBackgroundTask extends SVNOperation {
 				}
 			}
 			
-			((RevisionGraphEditorInput)editor.getEditorInput()).setInfo(info);
+			if (editor != null) ((RevisionGraphEditorInput)editor.getEditorInput()).setInfo(info);
 			
 			long revision = info.getRevision().getNumber();
 			String path = info.getUrl().toString().substring(info.getRepository().toString().length());
@@ -107,7 +106,7 @@ public class GraphBackgroundTask extends SVNOperation {
 			} else {
 				monitor.worked(VERY_LONG_TASK);
 			}
-			updateView(monitor, cache, path, revision);
+			if (editor != null) updateView(monitor, cache, path, revision);
 			monitor.done();
 		} catch (Exception e) {
 			e.printStackTrace();
