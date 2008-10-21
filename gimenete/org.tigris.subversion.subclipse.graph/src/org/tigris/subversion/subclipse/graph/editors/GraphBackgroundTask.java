@@ -25,6 +25,7 @@ public class GraphBackgroundTask extends SVNOperation {
 	private GraphicalViewer viewer;
 	private RevisionGraphEditor editor;
 	private SVNRevision refreshRevision;
+	private boolean includeMergedRevisions = false;
 
 	private static final int TOTAL_STEPS = Integer.MAX_VALUE;
 	private static final int SHORT_TASK_STEPS = TOTAL_STEPS / 50; // 2%
@@ -101,7 +102,6 @@ public class GraphBackgroundTask extends SVNOperation {
 					if (refreshRevision == null) unitWork = VERY_LONG_TASK / (int) (latestRevisionInRepository - latestRevisionStored);
 					else unitWork = VERY_LONG_TASK;
 					cache.startUpdate();
-					boolean includeMergedRevisions = false;
 					client.getLogMessages(info.getRepository(),
 							latest,
 							latest,
@@ -181,6 +181,11 @@ public class GraphBackgroundTask extends SVNOperation {
 	
 	public void setRefreshRevision(SVNRevision refreshRevision) {
 		this.refreshRevision = refreshRevision;
+		includeMergedRevisions = refreshRevision != null;
+	}
+	
+	public void setIncludeMergedRevisions(boolean includeMergedRevisions) {
+		this.includeMergedRevisions = includeMergedRevisions;
 	}
 
 }
