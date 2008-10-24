@@ -1,6 +1,8 @@
 package org.tigris.subversion.subclipse.graph.editors;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -16,6 +18,8 @@ import org.tigris.subversion.sublicpse.graph.cache.Graph;
 import org.tigris.subversion.sublicpse.graph.cache.Node;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 import org.tigris.subversion.svnclientadapter.ISVNInfo;
+import org.tigris.subversion.svnclientadapter.ISVNLogMessage;
+import org.tigris.subversion.svnclientadapter.ISVNLogMessageCallback;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
 
 public class GraphBackgroundTask extends SVNOperation {
@@ -26,6 +30,8 @@ public class GraphBackgroundTask extends SVNOperation {
 	private RevisionGraphEditor editor;
 	private SVNRevision refreshRevision;
 	private boolean includeMergedRevisions = false;
+	private List refreshedMessages;
+//	private ISVNLogMessage[] refreshedMessageArray;
 
 	private static final int TOTAL_STEPS = Integer.MAX_VALUE;
 	private static final int SHORT_TASK_STEPS = TOTAL_STEPS / 50; // 2%
@@ -96,20 +102,40 @@ public class GraphBackgroundTask extends SVNOperation {
 				if (refreshRevision == null) endRevision = SVNRevision.HEAD;
 				else endRevision = refreshRevision;
 
+				// for now
+				includeMergedRevisions = false;
+				
 				try {
 					monitor.setTaskName("Retrieving revision history");
 					int unitWork;
 					if (refreshRevision == null) unitWork = VERY_LONG_TASK / (int) (latestRevisionInRepository - latestRevisionStored);
 					else unitWork = VERY_LONG_TASK;
-					cache.startUpdate();
-					client.getLogMessages(info.getRepository(),
-							latest,
-							latest,
-							endRevision,
-							false, true, 0, includeMergedRevisions,
-							ISVNClientAdapter.DEFAULT_LOG_PROPERTIES,
-							new CallbackUpdater(cache, monitor, unitWork));
-					cache.finishUpdate();
+					if (refreshRevision != null) {
+						refreshedMessages = new ArrayList();
+						client.getLogMessages(info.getRepository(),
+								latest,
+								latest,
+								endRevision,
+								false, true, 0, includeMergedRevisions,
+								ISVNClientAdapter.DEFAULT_LOG_PROPERTIES,
+								new ISVNLogMessageCallback() {
+									public void singleMessage(
+											ISVNLogMessage message) {
+										if (message != null) refreshedMessages.add(message);
+									}							
+								});						
+						cache.refresh(refreshedMessages);
+					} else {
+						cache.startUpdate();
+						client.getLogMessages(info.getRepository(),
+								latest,
+								latest,
+								endRevision,
+								false, true, 0, includeMergedRevisions,
+								ISVNClientAdapter.DEFAULT_LOG_PROPERTIES,
+								new CallbackUpdater(cache, monitor, unitWork));
+						cache.finishUpdate();
+					}
 				} catch(Exception e) {
 					e.printStackTrace();
 				}

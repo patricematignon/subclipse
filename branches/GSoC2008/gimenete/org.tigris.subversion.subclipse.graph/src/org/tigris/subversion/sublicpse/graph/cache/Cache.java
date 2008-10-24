@@ -46,6 +46,43 @@ public class Cache {
 		this.refreshRevision = refreshRevision;
 	}
 	
+	public void refresh(List refreshedMessages) {
+		List revisions = new ArrayList();
+		Iterator iter = refreshedMessages.iterator();
+		while (iter.hasNext()) {
+			ISVNLogMessage message = (ISVNLogMessage)iter.next();
+			revisions.add(message.getRevision().toString());
+		}
+		
+		startUpdate();
+		ISVNLogMessage[] logMessages = getLogMessages();
+		finishUpdate();
+		revisionsFile.delete();
+		logMessagesFile.delete();
+		try {
+			revisionsFile.createNewFile();
+			logMessagesFile.createNewFile();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		startUpdate();
+		for (int i = 0; i < logMessages.length; i++) {
+			int index = revisions.indexOf(logMessages[i].getRevision().toString());
+			if (index == -1) {
+				update(logMessages[i]);
+			} else {
+				update((ISVNLogMessage) refreshedMessages.get(index));
+			}
+//			if (logMessages[i].getRevision().getNumber() == logMessage.getRevision().getNumber()) {
+//				update(logMessage);
+//			} else {
+//				update(logMessages[i]);
+//			}
+		}
+		finishUpdate();
+	}
+	
 	private void createDirectory(File f) {
 		if(!f.exists()) {
 			if(!f.mkdir()) {
@@ -66,13 +103,16 @@ public class Cache {
 		try {
 			revisionsRaf = new RandomAccessFile(revisionsFile, "rw");
 			logMessagesRaf = new RandomAccessFile(logMessagesFile, "rw");
-
+			
 			if (refreshRevision == 0) {
 				revisionsRaf.seek(revisionsRaf.length());
 				logMessagesRaf.seek(logMessagesRaf.length());
 			} else {
-				revisionsRaf.seek(getSeek(refreshRevision));
-				logMessagesRaf.seek(getSeek(refreshRevision));
+				
+//				ISVNLogMessage[] logMessages = getLogMessages();
+//				
+//				revisionsRaf.seek(getSeek(refreshRevision));
+//				logMessagesRaf.seek(getSeek(refreshRevision));
 			}
 		} catch(IOException e) {
 			throw new CacheException("Error while opening file", e);
@@ -118,7 +158,7 @@ public class Cache {
 			logMessagesRaf.writeChar(changePath.getAction());
 			logMessagesRaf.writeUTF(changePath.getPath().substring(cc));
 			long copySrcRevision = 0;
-			if(changePath.getCopySrcRevision() != null) {
+			if(changePath.getCopySrcRevision() != null && changePath.getCopySrcPath() != null) {
 				copySrcRevision = changePath.getCopySrcRevision().getNumber();
 				logMessagesRaf.writeLong(copySrcRevision);
 				logMessagesRaf.writeUTF(changePath.getCopySrcPath());
@@ -357,6 +397,25 @@ public class Cache {
 		} finally {
 			closeFile(file);
 		}
+	}
+	
+	public ISVNLogMessage[] getLogMessages() {
+		List logMessages = new ArrayList();
+		RandomAccessFile file = null;
+		try {
+			file = new RandomAccessFile(logMessagesFile, "r");
+			while(file.getFilePointer() < file.length()) {
+				ISVNLogMessage lm = readNext(file, true);
+				logMessages.add(lm);
+			}
+		} catch (Exception e) {
+			
+		} finally {
+			closeFile(file);
+		}
+		ISVNLogMessage[] logMessageArray = new ISVNLogMessage[logMessages.size()];
+		logMessages.toArray(logMessageArray);
+		return logMessageArray;
 	}
 	
 	public Graph createGraph(String rootPath, long revision, WorkListener listener) {
