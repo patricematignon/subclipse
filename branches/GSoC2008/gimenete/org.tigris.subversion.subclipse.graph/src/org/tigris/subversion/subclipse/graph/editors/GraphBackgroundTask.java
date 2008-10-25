@@ -103,7 +103,7 @@ public class GraphBackgroundTask extends SVNOperation {
 				else endRevision = refreshRevision;
 
 				// for now
-				includeMergedRevisions = false;
+//				includeMergedRevisions = false;
 				
 				try {
 					monitor.setTaskName("Retrieving revision history");
@@ -148,6 +148,11 @@ public class GraphBackgroundTask extends SVNOperation {
 			e.printStackTrace();
 			return;
 		} finally {
+			
+			ISVNLogMessage[] logMessages = cache.getLogMessages();
+			for (int i = 0; i < logMessages.length; i++) 
+//				System.out.println(logMessages[i].getRevision().getNumber());
+			
 			if(cache != null)
 				cache.close();
 			// TODO: clean up ISVNClientAdapter ?

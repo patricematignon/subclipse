@@ -128,7 +128,7 @@ public class Cache {
 	private void writeLogMessage(ISVNLogMessage logMessage, int level) throws IOException {
 		long revision = logMessage.getRevision().getNumber();
 		long fp = logMessagesRaf.getFilePointer();
-//		System.out.println("writing rev "+revision+" at "+fp+" "+revisions.getFilePointer());
+//		System.out.println("writing rev "+revision+" at "+fp+" "+revisionsRaf.getFilePointer());
 		revisionsRaf.writeLong(fp);
 		logMessagesRaf.writeLong(revision);
 		logMessagesRaf.writeLong(logMessage.getDate().getTime());
@@ -196,7 +196,7 @@ public class Cache {
 //					dump(logMessage, level);
 				}
 				
-				if(logMessage.hasChildren()) {
+				if(logMessage.hasChildren() && refreshRevision == 0) {
 					level++;
 				}
 			}
@@ -344,11 +344,13 @@ public class Cache {
 	private LogMessage readNext(RandomAccessFile file, boolean nested) {
 		try {
 			long revision = file.readLong();
-//			System.out.println("reading revision: "+revision+" "+(file.getFilePointer()-8));
+			System.out.println("reading revision: "+revision+" "+(file.getFilePointer()-8));
 			long date = file.readLong();
 			String author = file.readUTF();
 			String message = file.readUTF();
 			LogMessage logMessage = new LogMessage(revision, author, new Date(date), message);
+			
+//			System.out.println("logMessage: " + revision + " " + author + " " + new Date(date).toString() + " " + message);
 			
 			int length = file.readInt();
 			String cp = "";
@@ -368,18 +370,21 @@ public class Cache {
 				
 				changedPaths[i] = new LogMessageChangePath(action, path, copySrcPath, copySrcRevision);
 			}
-			
+//			System.out.println("changedPaths set for " + logMessage.getRevision().getNumber() + " - nested = " + nested);
 			if(nested) {
-				int children = file.readInt();
-				if(children > 0) {
-					LogMessage[] childMessages = new LogMessage[children];
-					for (int i = 0; i < children; i++) {
-						childMessages[i] = readNext(file, false);
+				try {
+					int children = file.readInt();
+//					System.out.println(logMessage.getRevision().getNumber() + " children: " + children);
+					if(children > 0) {
+						LogMessage[] childMessages = new LogMessage[children];
+						for (int i = 0; i < children; i++) {
+							childMessages[i] = readNext(file, false);
+						}
+						logMessage.setChildMessages(childMessages);
 					}
-					logMessage.setChildMessages(childMessages);
-				}
+				} catch (Exception e) {}
 			}
-			
+//			System.out.println("return logMessage: " + logMessage.getRevision().getNumber());
 			return logMessage;
 		} catch (IOException e) {
 			throw new CacheException("Error while reading log messages from file", e);
@@ -391,7 +396,9 @@ public class Cache {
 		try {
 			file = new RandomAccessFile(revisionsFile, "r");
 			file.seek((revision-1)*8);
-			return file.readLong();
+			long seek = file.readLong();
+//			System.out.println("seek: " + seek);
+			return seek;
 		} catch (IOException e) {
 			throw new CacheException("Error while reading revisions file", e);
 		} finally {
