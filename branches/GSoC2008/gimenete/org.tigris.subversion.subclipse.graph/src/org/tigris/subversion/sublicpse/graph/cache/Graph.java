@@ -5,8 +5,10 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertySource;
@@ -94,6 +96,23 @@ public class Graph implements Serializable, IPropertySource {
 	
 	public Branch getBranch(String path) {
 		return (Branch) branches.get(path);
+	}
+	
+	public Node[] getNodes() {
+		List nodes = new ArrayList();
+		Set keySet = branches.keySet();
+		Iterator iter = keySet.iterator();
+		while (iter.hasNext()) {
+			Branch branch = (Branch)branches.get(iter.next());
+			List branchNodes = branch.getNodes();
+			Iterator nodeIter = branchNodes.iterator();
+			while (nodeIter.hasNext()) {
+				nodes.add(nodeIter.next());
+			}
+		}
+		Node[] nodeArray = new Node[nodes.size()];
+		nodes.toArray(nodeArray);
+		return nodeArray;
 	}
 	
 	public String getRootPath() {

@@ -31,6 +31,7 @@ public class RefreshNodeAction extends Action {
 		GraphBackgroundTask task;
 		if (resource == null) task = new GraphBackgroundTask(SVNUIPlugin.getActivePage().getActivePart(), editor.getViewer(), editor, remoteResource);
 		else task = new GraphBackgroundTask(SVNUIPlugin.getActivePage().getActivePart(), editor.getViewer(), editor, resource);	
+		task.setGetNewRevisions(false);
 		SVNRevision.Number revision = new SVNRevision.Number(node.getRevision());
 		task.setRefreshRevision(revision);
 		try {
