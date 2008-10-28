@@ -68,17 +68,19 @@ public class Cache {
 		}
 		startUpdate();
 		for (int i = 0; i < logMessages.length; i++) {
+			ISVNLogMessage updateRevision = null;
 			int index = revisions.indexOf(logMessages[i].getRevision().toString());
 			if (index == -1) {
-				update(logMessages[i]);
+				updateRevision = logMessages[i];
 			} else {
-				update((ISVNLogMessage) refreshedMessages.get(index));
+				updateRevision = (ISVNLogMessage)refreshedMessages.get(index);
 			}
-//			if (logMessages[i].getRevision().getNumber() == logMessage.getRevision().getNumber()) {
-//				update(logMessage);
-//			} else {
-//				update(logMessages[i]);
-//			}
+			update(updateRevision);
+			if (updateRevision.hasChildren()) {
+				ISVNLogMessage[] childMessages = updateRevision.getChildMessages();
+				for (int j = 0; j < childMessages.length; j++) update(childMessages[j]);
+				update(null);
+			}
 		}
 		finishUpdate();
 	}
@@ -107,12 +109,6 @@ public class Cache {
 			if (refreshRevision == 0) {
 				revisionsRaf.seek(revisionsRaf.length());
 				logMessagesRaf.seek(logMessagesRaf.length());
-			} else {
-				
-//				ISVNLogMessage[] logMessages = getLogMessages();
-//				
-//				revisionsRaf.seek(getSeek(refreshRevision));
-//				logMessagesRaf.seek(getSeek(refreshRevision));
 			}
 		} catch(IOException e) {
 			throw new CacheException("Error while opening file", e);
@@ -196,7 +192,7 @@ public class Cache {
 //					dump(logMessage, level);
 				}
 				
-				if(logMessage.hasChildren() && refreshRevision == 0) {
+				if(logMessage.hasChildren()) {
 					level++;
 				}
 			}
@@ -344,7 +340,7 @@ public class Cache {
 	private LogMessage readNext(RandomAccessFile file, boolean nested) {
 		try {
 			long revision = file.readLong();
-			System.out.println("reading revision: "+revision+" "+(file.getFilePointer()-8));
+//			System.out.println("reading revision: "+revision+" "+(file.getFilePointer()-8));
 			long date = file.readLong();
 			String author = file.readUTF();
 			String message = file.readUTF();
@@ -372,17 +368,15 @@ public class Cache {
 			}
 //			System.out.println("changedPaths set for " + logMessage.getRevision().getNumber() + " - nested = " + nested);
 			if(nested) {
-				try {
-					int children = file.readInt();
-//					System.out.println(logMessage.getRevision().getNumber() + " children: " + children);
-					if(children > 0) {
-						LogMessage[] childMessages = new LogMessage[children];
-						for (int i = 0; i < children; i++) {
-							childMessages[i] = readNext(file, false);
-						}
-						logMessage.setChildMessages(childMessages);
+				int children = file.readInt();
+//				System.out.println(logMessage.getRevision().getNumber() + " children: " + children);
+				if(children > 0) {
+					LogMessage[] childMessages = new LogMessage[children];
+					for (int i = 0; i < children; i++) {
+						childMessages[i] = readNext(file, false);
 					}
-				} catch (Exception e) {}
+					logMessage.setChildMessages(childMessages);
+				}
 			}
 //			System.out.println("return logMessage: " + logMessage.getRevision().getNumber());
 			return logMessage;
