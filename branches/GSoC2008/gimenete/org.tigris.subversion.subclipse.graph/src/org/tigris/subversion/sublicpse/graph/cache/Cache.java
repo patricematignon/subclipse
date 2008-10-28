@@ -77,12 +77,19 @@ public class Cache {
 			}
 			update(updateRevision);
 			if (updateRevision.hasChildren()) {
-				ISVNLogMessage[] childMessages = updateRevision.getChildMessages();
-				for (int j = 0; j < childMessages.length; j++) update(childMessages[j]);
-				update(null);
+				updateChildren(updateRevision);
 			}
 		}
 		finishUpdate();
+	}
+	
+	private void updateChildren(ISVNLogMessage logMessage) {
+		ISVNLogMessage[] childMessages = logMessage.getChildMessages();
+		for (int j = 0; j < childMessages.length; j++) {
+			update(childMessages[j]);
+			if (childMessages[j].hasChildren()) updateChildren(childMessages[j]);
+		}
+		update(null);		
 	}
 	
 	private void createDirectory(File f) {
