@@ -28,9 +28,9 @@ public class GraphBackgroundTask extends SVNOperation {
 	private GraphicalViewer viewer;
 	private RevisionGraphEditor editor;
 	private SVNRevision refreshRevision;
+	private SVNRevision[] refreshRevisions;
 	private boolean includeMergedRevisions = false;
-//	private List refreshedMessages;
-//	private ISVNLogMessage[] refreshedMessageArray;
+	private boolean getNewRevisions = true;
 
 	private static final int TOTAL_STEPS = Integer.MAX_VALUE;
 	private static final int SHORT_TASK_STEPS = TOTAL_STEPS / 50; // 2%
@@ -51,6 +51,10 @@ public class GraphBackgroundTask extends SVNOperation {
 	public GraphBackgroundTask(IWorkbenchPart part, GraphicalViewer viewer, RevisionGraphEditor editor, ISVNRemoteResource remoteResource) {
 		this(part, viewer, editor);
 		this.remoteResource = remoteResource;
+	}
+	
+	public void setGetNewRevisions(boolean getNewRevisions) {
+		this.getNewRevisions = getNewRevisions;
 	}
 
 	protected void execute(IProgressMonitor monitor) throws SVNException,
@@ -88,7 +92,7 @@ public class GraphBackgroundTask extends SVNOperation {
 			long latestRevisionInRepository = client.getInfo(info.getRepository()).getLastChangedRevision().getNumber();
 			monitor.worked(SHORT_TASK_STEPS);
 
-			if(refreshRevision != null || latestRevisionInRepository > latestRevisionStored) {
+			if(refreshRevision != null || refreshRevisions != null || latestRevisionInRepository > latestRevisionStored) {
 				if (refreshRevision == null) {
 					if(latestRevisionStored == 0)
 						latest = SVNRevision.START;
@@ -104,10 +108,24 @@ public class GraphBackgroundTask extends SVNOperation {
 				try {
 					monitor.setTaskName("Retrieving revision history");
 					int unitWork;
-					if (refreshRevision == null) unitWork = VERY_LONG_TASK / (int) (latestRevisionInRepository - latestRevisionStored);
+					if (refreshRevision == null && refreshRevisions == null) unitWork = VERY_LONG_TASK / (int) (latestRevisionInRepository - latestRevisionStored);
+					else if (refreshRevisions != null) unitWork = VERY_LONG_TASK/refreshRevisions.length;
 					else unitWork = VERY_LONG_TASK;
-					if (refreshRevision != null) {
-						
+					if (refreshRevisions != null) {
+						List refreshedMessages = new ArrayList();
+						for (int i = 0; i < refreshRevisions.length; i++) {
+							SVNRevision rev = refreshRevisions[i];
+							ISVNLogMessage[] refreshedMessageArray = client.getLogMessages(info.getRepository(),
+									rev,
+									rev,
+									rev,
+									false, true, 0, includeMergedRevisions);
+							for (int j = 0; j < refreshedMessageArray.length; j++)
+								refreshedMessages.add(refreshedMessageArray[j]);							
+						}
+						cache.refresh(refreshedMessages);
+					}
+					else if (refreshRevision != null) {					
 						ISVNLogMessage[] refreshedMessageArray = client.getLogMessages(info.getRepository(),
 								latest,
 								latest,
@@ -117,7 +135,8 @@ public class GraphBackgroundTask extends SVNOperation {
 						for (int i = 0; i < refreshedMessageArray.length; i++)
 							refreshedMessages.add(refreshedMessageArray[i]);
 						cache.refresh(refreshedMessages);
-					} else {
+					} 
+					if (getNewRevisions) {
 						cache.startUpdate();
 						client.getLogMessages(info.getRepository(),
 								latest,
@@ -205,6 +224,11 @@ public class GraphBackgroundTask extends SVNOperation {
 	public void setRefreshRevision(SVNRevision refreshRevision) {
 		this.refreshRevision = refreshRevision;
 		includeMergedRevisions = refreshRevision != null;
+	}
+	
+	public void setRefreshRevisions(SVNRevision[] refreshRevisions) {
+		this.refreshRevisions = refreshRevisions;
+		includeMergedRevisions = refreshRevisions != null;
 	}
 	
 	public void setIncludeMergedRevisions(boolean includeMergedRevisions) {
