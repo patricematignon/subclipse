@@ -31,6 +31,8 @@ public class Cache {
 	private RandomAccessFile revisionsRaf = null;
 	private RandomAccessFile logMessagesRaf = null;
 	
+	private List writtenChildren = new ArrayList();
+	
 	public Cache(File f, String uuid) {
 		createDirectory(f);
 		f = new File(f, uuid);
@@ -211,11 +213,26 @@ public class Cache {
 	}
 	
 	private void writeChildren(int level) throws IOException {
-		logMessagesRaf.writeInt(children.size());
-		for (Iterator it = children.iterator(); it.hasNext();) {
+		List nonWrittenChildren = getNonWrittenChildren();
+//		logMessagesRaf.writeInt(children.size());
+		logMessagesRaf.writeInt(nonWrittenChildren.size());
+//		for (Iterator it = children.iterator(); it.hasNext();) {
+		for (Iterator it = nonWrittenChildren.iterator(); it.hasNext();) {
 			ISVNLogMessage logMessage = (ISVNLogMessage) it.next();
 			writeLogMessage(logMessage, level);
 		}
+	}
+
+	private List getNonWrittenChildren() {
+		List nonWrittenChildren = new ArrayList();
+		for (Iterator it = children.iterator(); it.hasNext();) {
+			ISVNLogMessage logMessage = (ISVNLogMessage) it.next();
+			if (!writtenChildren.contains(logMessage.getRevision().toString())) {
+				nonWrittenChildren.add(logMessage);
+				writtenChildren.add(logMessage.getRevision().toString());
+			}
+		}		
+		return nonWrittenChildren;
 	}
 	
 	/*
