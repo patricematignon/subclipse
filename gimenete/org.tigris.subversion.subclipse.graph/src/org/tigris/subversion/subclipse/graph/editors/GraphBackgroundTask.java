@@ -121,6 +121,7 @@ public class GraphBackgroundTask extends SVNOperation {
 									rev,
 									rev,
 									false, true, 0, includeMergedRevisions);
+							monitor.worked(unitWork);
 							for (int j = 0; j < refreshedMessageArray.length; j++)
 								refreshedMessages.add(refreshedMessageArray[j]);							
 						}
