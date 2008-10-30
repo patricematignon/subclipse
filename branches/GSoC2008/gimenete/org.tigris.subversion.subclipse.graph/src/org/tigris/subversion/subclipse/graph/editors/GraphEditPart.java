@@ -36,6 +36,8 @@ public class GraphEditPart extends AbstractGraphicalEditPart implements MouseLis
 
 	private Graph graph;
 	private NodeFigure selected;
+	private List connections = new ArrayList();
+	private IPreferenceStore store = Activator.getDefault().getPreferenceStore();
 
 	private final static int NODE_WIDTH = 50;
 	private final static int NODE_HEIGHT = 30;
@@ -239,10 +241,23 @@ public class GraphEditPart extends AbstractGraphicalEditPart implements MouseLis
 		c.addMouseListener(listener);
 		c.setCursor(Cursors.HAND);
 		contents.add(c);
+		connections.add(c);
 		return c;
+	}
+	
+	public void setConnectionVisibility(NodeFigure figure) {
+		if (figure == null) return;
+		Iterator iter = connections.iterator();
+		while (iter.hasNext()) {
+			PolylineConnection con = (PolylineConnection)iter.next();
+			boolean show = !store.getBoolean(RevisionGraphEditor.FILTER_CONNECTIONS) || (con.getSourceAnchor().getOwner() == figure || con.getTargetAnchor().getOwner() == figure);
+			con.setVisible(show);
+		}		
 	}
 
 	private void selectNode(NodeFigure figure) {
+		setConnectionVisibility(figure);
+		
 		if(selected != null)
 			selected.setSelected(false);
 		figure.setSelected(true);
