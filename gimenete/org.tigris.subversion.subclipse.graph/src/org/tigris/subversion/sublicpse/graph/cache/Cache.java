@@ -51,9 +51,14 @@ public class Cache {
 	public void refresh(List refreshedMessages) {
 		List revisions = new ArrayList();
 		Iterator iter = refreshedMessages.iterator();
+		
+//		System.out.println("Refresh Revisions: ");
+		
 		while (iter.hasNext()) {
 			ISVNLogMessage message = (ISVNLogMessage)iter.next();
 			revisions.add(message.getRevision().toString());
+			
+//			System.out.println(message.getRevision());
 		}
 		
 		startUpdate();
@@ -70,15 +75,20 @@ public class Cache {
 		}
 		startUpdate();
 		for (int i = 0; i < logMessages.length; i++) {
+			
+			level = 0;
+			
 			ISVNLogMessage updateRevision = null;
 			int index = revisions.indexOf(logMessages[i].getRevision().toString());
 			if (index == -1) {
 				updateRevision = logMessages[i];
 			} else {
 				updateRevision = (ISVNLogMessage)refreshedMessages.get(index);
+				
+//				System.out.println("Update: " + updateRevision.getRevision() + " (level =" + level + ")");
 			}
 			update(updateRevision);
-			if (updateRevision.hasChildren()) {
+			if (updateRevision.hasChildren() && updateRevision.getChildMessages() != null) {
 				updateChildren(updateRevision);
 			}
 		}
@@ -89,7 +99,7 @@ public class Cache {
 		ISVNLogMessage[] childMessages = logMessage.getChildMessages();
 		for (int j = 0; j < childMessages.length; j++) {
 			update(childMessages[j]);
-			if (childMessages[j].hasChildren()) updateChildren(childMessages[j]);
+			if (childMessages[j].hasChildren() && childMessages[j].getChildMessages() != null) updateChildren(childMessages[j]);
 		}
 		update(null);		
 	}
@@ -172,8 +182,9 @@ public class Cache {
 			}
 		}
 		
-		if(level == 0 && !logMessage.hasChildren()) {
+		if(level == 0 && (!logMessage.hasChildren() || logMessage.getChildMessages() == null)) {
 			logMessagesRaf.writeInt(0);
+//			System.out.println("A. Children: 0");
 		}
 	}
 	
@@ -201,7 +212,7 @@ public class Cache {
 //					dump(logMessage, level);
 				}
 				
-				if(logMessage.hasChildren()) {
+				if(logMessage.hasChildren() && logMessage.getChildMessages() != null) {
 					level++;
 				}
 			}
@@ -215,6 +226,9 @@ public class Cache {
 	private void writeChildren(int level) throws IOException {
 		List nonWrittenChildren = getNonWrittenChildren();
 //		logMessagesRaf.writeInt(children.size());
+		
+//		System.out.println("B. Children: " + nonWrittenChildren.size());
+		
 		logMessagesRaf.writeInt(nonWrittenChildren.size());
 //		for (Iterator it = children.iterator(); it.hasNext();) {
 		for (Iterator it = nonWrittenChildren.iterator(); it.hasNext();) {
