@@ -31,6 +31,7 @@ public class GraphBackgroundTask extends SVNOperation {
 	private SVNRevision[] refreshRevisions;
 	private boolean includeMergedRevisions = false;
 	private boolean getNewRevisions = true;
+	private Graph graph;
 
 	private static final int TOTAL_STEPS = Integer.MAX_VALUE;
 	private static final int SHORT_TASK_STEPS = TOTAL_STEPS / 50; // 2%
@@ -153,17 +154,13 @@ public class GraphBackgroundTask extends SVNOperation {
 			} else {
 				monitor.worked(VERY_LONG_TASK);
 			}
-			if (editor != null) updateView(monitor, cache, path, revision);
 			monitor.done();
+			if (editor != null) updateView(monitor, cache, path, revision);
+//			monitor.done();
 		} catch (Exception e) {
 			e.printStackTrace();
 			return;
 		} finally {
-			
-			ISVNLogMessage[] logMessages = cache.getLogMessages();
-			for (int i = 0; i < logMessages.length; i++) 
-//				System.out.println(logMessages[i].getRevision().getNumber());
-			
 			if(cache != null)
 				cache.close();
 			// TODO: clean up ISVNClientAdapter ?
@@ -196,7 +193,7 @@ public class GraphBackgroundTask extends SVNOperation {
 		else
 			unitWork = TASK_STEPS / (int)(revision - root.getRevision());
 		if(unitWork < 1) unitWork = 1;
-		final Graph graph = cache.createGraph(
+		graph = cache.createGraph(
 				root.getPath(),
 				root.getRevision(),
 				new WorkMonitorListener(monitor, unitWork));
