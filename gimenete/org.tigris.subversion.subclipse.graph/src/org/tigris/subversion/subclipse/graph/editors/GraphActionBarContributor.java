@@ -28,6 +28,7 @@ import org.tigris.subversion.svnclientadapter.SVNRevision;
 
 public class GraphActionBarContributor extends ActionBarContributor {
 	private RevisionGraphEditor editor;
+	private IPreferenceStore store = Activator.getDefault().getPreferenceStore();
 	private static ToggleShowDeletedAction[] toggleShowDeletedActions;
 	private static RefreshAction[] refreshActions;
 
@@ -47,8 +48,7 @@ public class GraphActionBarContributor extends ActionBarContributor {
 		toolBarManager.add(new Separator());
         toolBarManager.add(new ZoomComboContributionItem(getPage()));
         toolBarManager.add(new Separator());
-//        toolBarManager.add(new RefreshAction());
-        
+
         refreshActions = new RefreshAction[] {
         	new RefreshAction("All new revisions", RefreshAction.TYPE_NEW), 
         	new RefreshAction("Graph revisions", RefreshAction.TYPE_NODES),
@@ -64,6 +64,18 @@ public class GraphActionBarContributor extends ActionBarContributor {
         };
         ShowDeletedAction showDeletedAction = new ShowDeletedAction();
         toolBarManager.add(showDeletedAction);
+        
+        Action filterConnectionsAction = new Action() {
+        	public void run() {
+        		store.setValue(RevisionGraphEditor.FILTER_CONNECTIONS, isChecked());
+        		GraphEditPart graphEditPart = (GraphEditPart)editor.getViewer().getContents();
+        		graphEditPart.setConnectionVisibility(graphEditPart.getSelectedNode());
+        	}
+        };
+        filterConnectionsAction.setImageDescriptor(SVNUIPlugin.getPlugin().getImageDescriptor(ISVNUIConstants.IMG_FILTER_CONNECTIONS));
+        filterConnectionsAction.setToolTipText("Show connections only for selected revision");
+        filterConnectionsAction.setChecked(store.getBoolean(RevisionGraphEditor.FILTER_CONNECTIONS));
+        toolBarManager.add(filterConnectionsAction);
         
         Action imageAction = new Action() {
 			public void run() {
@@ -162,7 +174,7 @@ public class GraphActionBarContributor extends ActionBarContributor {
 		public ToggleShowDeletedAction(String text, int show) {
 			super(text, AS_RADIO_BUTTON);
 			this.show = show;
-			IPreferenceStore store = Activator.getDefault().getPreferenceStore();
+//			IPreferenceStore store = Activator.getDefault().getPreferenceStore();
 			setChecked(show == store.getInt(RevisionGraphEditor.SHOW_DELETED_PREFERENCE));
 		}
 		

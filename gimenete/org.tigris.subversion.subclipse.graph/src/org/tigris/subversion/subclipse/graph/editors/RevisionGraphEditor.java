@@ -40,6 +40,7 @@ public class RevisionGraphEditor extends EditorPart {
 	private ActionRegistry actionRegistry;
 	
 	public final static String SHOW_DELETED_PREFERENCE = "RevisionGraph_showDeleted";
+	public final static String FILTER_CONNECTIONS = "RevisionGraph_filterConnections";
 	public final static int SHOW_DELETED_MODIFIED = 0;
 	public final static int SHOW_DELETED_YES = 1;
 	public final static int SHOW_DELETED_NO = 2;
