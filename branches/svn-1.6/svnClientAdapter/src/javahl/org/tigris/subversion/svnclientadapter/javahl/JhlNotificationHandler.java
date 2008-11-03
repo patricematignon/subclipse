@@ -181,15 +181,19 @@ public class JhlNotificationHandler extends SVNNotificationHandler implements No
                 logMessage("D         " + info.getPath()); //$NON-NLS-1$
                 receivedSomeChange = true;
                 break;
+            case NotifyAction.tree_conflict :
+                logError("  C " + info.getPath()); //$NON-NLS-1$
+                receivedSomeChange = true;
+                treeConflicts += 1;
+            	break;
             case NotifyAction.update_update :
                 boolean error = false;
                 if (!((info.getKind() == NodeKind.dir)
-                	&& !info.getTreeConflicted()
                     && ((info.getPropState() == NotifyStatus.inapplicable)
                         || (info.getPropState() == NotifyStatus.unknown)
                         || (info.getPropState() == NotifyStatus.unchanged)))) {
                     receivedSomeChange = true;
-                    char[] statecharBuf = new char[] { ' ', ' ', ' ' };
+                    char[] statecharBuf = new char[] { ' ', ' ' };
                     if (info.getKind() == NodeKind.file) {
                         if (info.getContentState() == NotifyStatus.conflicted) {
                             statecharBuf[0] = 'C';
@@ -209,11 +213,6 @@ public class JhlNotificationHandler extends SVNNotificationHandler implements No
                                 && info.getPropState() < NotifyStatus.obstructed)
                             break;
                     }
-                    if (info.getTreeConflicted()) {
-                        statecharBuf[2] = 'C';
-                        treeConflicts += 1;
-                        error = true;
-                    }
                     if (info.getPropState() == NotifyStatus.conflicted) {
                         statecharBuf[1] = 'C';
                         propConflicts += 1;
@@ -232,9 +231,9 @@ public class JhlNotificationHandler extends SVNNotificationHandler implements No
                     		info.getContentState() == NotifyStatus.unknown && info.getPropState() == NotifyStatus.unknown)
                     	break;
                     if (error)
-                        logError("" + statecharBuf[0] + statecharBuf[1] + statecharBuf[2] +" " + info.getPath());                       //$NON-NLS-1$ //$NON-NLS-2$
+                        logError("" + statecharBuf[0] + statecharBuf[1] + "  " + info.getPath());                       //$NON-NLS-1$ //$NON-NLS-2$
                     else
-                        logMessage("" + statecharBuf[0] + statecharBuf[1] + statecharBuf[2] + " " + info.getPath());                       //$NON-NLS-1$ //$NON-NLS-2$
+                        logMessage("" + statecharBuf[0] + statecharBuf[1] + "  " + info.getPath());                       //$NON-NLS-1$ //$NON-NLS-2$
                 }
                 break;
             case NotifyAction.update_external :
