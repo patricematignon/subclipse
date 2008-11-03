@@ -6,11 +6,11 @@ import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
 import org.tigris.subversion.subclipse.core.ISVNRemoteResource;
 import org.tigris.subversion.subclipse.core.ISVNRepositoryLocation;
-import org.tigris.subversion.subclipse.core.SVNException;
 import org.tigris.subversion.subclipse.core.SVNProviderPlugin;
 import org.tigris.subversion.subclipse.core.commands.GetLogsCommand;
 import org.tigris.subversion.subclipse.core.history.AliasManager;
 import org.tigris.subversion.subclipse.core.history.ILogEntry;
+import org.tigris.subversion.subclipse.core.resources.RemoteFile;
 import org.tigris.subversion.subclipse.graph.editors.NodeFigure;
 import org.tigris.subversion.subclipse.graph.editors.RevisionGraphEditor;
 import org.tigris.subversion.subclipse.graph.editors.RevisionGraphEditorInput;
@@ -20,6 +20,7 @@ import org.tigris.subversion.subclipse.ui.dialogs.ShowRevisionsDialog;
 import org.tigris.subversion.sublicpse.graph.cache.Node;
 import org.tigris.subversion.svnclientadapter.ISVNInfo;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
+import org.tigris.subversion.svnclientadapter.SVNUrl;
 
 public class RevisionDetailsAction extends Action {
 	private NodeFigure nodeFigure;
@@ -47,7 +48,10 @@ public class RevisionDetailsAction extends Action {
 					RevisionGraphEditorInput input = (RevisionGraphEditorInput)editor.getEditorInput();
 					ISVNInfo info = input.getInfo();
 					ISVNRepositoryLocation repository = SVNProviderPlugin.getPlugin().getRepository(info.getRepository().toString());
-					remoteResource = repository.getRemoteFile(node.getPath());
+//					remoteResource = repository.getRemoteFile(node.getPath());
+					
+					remoteResource = new RemoteFile(repository, new SVNUrl(repository.getLocation() + node.getPath()), new SVNRevision.Number(node.getRevision()));
+					
 					AliasManager tagManager = null;
 	            	if (includeTags) tagManager = new AliasManager(remoteResource.getUrl());
 	            	SVNRevision pegRevision = new SVNRevision.Number(node.getRevision());
