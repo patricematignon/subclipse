@@ -2,6 +2,7 @@ package org.tigris.subversion.subclipse.graph.editors;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.StringTokenizer;
 
 import org.eclipse.draw2d.Figure;
 import org.eclipse.draw2d.Label;
@@ -24,6 +25,12 @@ public class NodeTooltipFigure extends Figure {
 
 	private boolean hasSources = false;
 	private boolean hasTags = false;
+	private int tagsAdded;
+	private int tagCount;
+	private int messageLines;
+	
+	private final static int NUMBER_OF_LOG_MESSAGE_LINES = 15;
+	private final static int NUMBER_OF_TAG_AND_MESSAGE_LINES = 25;
 	
 	public NodeTooltipFigure(Node node) {
 		ToolbarLayout layout = new ToolbarLayout();
@@ -48,7 +55,7 @@ public class NodeTooltipFigure extends Figure {
 		add(createLabel("Date", JFaceResources.getHeaderFont(), Activator.FONT_COLOR));
 		add(createLabel(dateFormat.format(node.getRevisionDate()), JFaceResources.getTextFont()));
 		add(createLabel("Message", JFaceResources.getHeaderFont(), Activator.FONT_COLOR));
-		add(createLabel(node.getMessage(), JFaceResources.getTextFont()));
+		add(createLabel(getFirstLines(node.getMessage(), NUMBER_OF_LOG_MESSAGE_LINES), JFaceResources.getTextFont()));
 		if(node.getCopySrcPath() != null) {
 			add(createLabel("From", JFaceResources.getHeaderFont(), Activator.FONT_COLOR));
 			add(createLabel(format(node.getCopySrcRevision(), node.getCopySrcPath()), JFaceResources.getTextFont()));
@@ -56,6 +63,8 @@ public class NodeTooltipFigure extends Figure {
 	}
 	
 	public void endLayout() {
+		if (tagCount > tagsAdded) add(createLabel((tagCount - tagsAdded) + " more...", JFaceResources.getTextFont()));
+		
 		Dimension d = getPreferredSize();
 		
 		setPreferredSize(d.width+BORDER_WIDTH2, d.height+BORDER_WIDTH2);
@@ -75,7 +84,11 @@ public class NodeTooltipFigure extends Figure {
 			add(createLabel("Tagged as", JFaceResources.getHeaderFont(), Activator.FONT_COLOR));
 			hasTags = true;
 		}
-		add(createLabel(format(node.getRevision(), node.getPath()), JFaceResources.getTextFont()));
+		if (messageLines + tagCount < NUMBER_OF_TAG_AND_MESSAGE_LINES) {
+			add(createLabel(format(node.getRevision(), node.getPath()), JFaceResources.getTextFont()));
+			tagsAdded++;
+		}
+		tagCount++;
 	}
 	
 	public String format(long revision, String path) {
@@ -96,6 +109,22 @@ public class NodeTooltipFigure extends Figure {
 		label.setForegroundColor(c);
 		return label;
 	}
-	
+
+	public String getFirstLines(String string, int numberLines) {
+		if (string == null) return null;
+		StringTokenizer tokenizer = new StringTokenizer(string, "\r\n");
+		int count = tokenizer.countTokens();
+		if (count <= numberLines) {
+			messageLines = count;
+			return string;
+		}
+		messageLines = numberLines;
+		StringBuffer newString = new StringBuffer();
+		for (int i = 0; i < numberLines; i++) {
+			newString.append(tokenizer.nextToken() + "\n");
+		}
+		newString.append((count - numberLines) + " more message lines . . .");
+		return newString.toString();
+	}
 	
 }
