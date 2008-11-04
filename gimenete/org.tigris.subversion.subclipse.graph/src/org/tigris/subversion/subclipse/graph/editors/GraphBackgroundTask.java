@@ -8,7 +8,9 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.gef.GraphicalViewer;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.tigris.subversion.subclipse.core.ISVNRemoteResource;
 import org.tigris.subversion.subclipse.core.SVNException;
 import org.tigris.subversion.subclipse.core.SVNProviderPlugin;
@@ -115,6 +117,9 @@ public class GraphBackgroundTask extends SVNOperation {
 					if (refreshRevisions != null) {
 						List refreshedMessages = new ArrayList();
 						for (int i = 0; i < refreshRevisions.length; i++) {
+							if (monitor.isCanceled()) {
+								return;
+							}
 							SVNRevision rev = refreshRevisions[i];
 							ISVNLogMessage[] refreshedMessageArray = client.getLogMessages(info.getRepository(),
 									rev,
@@ -125,20 +130,30 @@ public class GraphBackgroundTask extends SVNOperation {
 							for (int j = 0; j < refreshedMessageArray.length; j++)
 								refreshedMessages.add(refreshedMessageArray[j]);							
 						}
+						if (monitor.isCanceled()) {
+							monitor.done();
+						}
+						monitor.setTaskName("Refreshing cache");
 						cache.refresh(refreshedMessages);
 					}
-					else if (refreshRevision != null) {					
+					else if (refreshRevision != null) {			
+						if (monitor.isCanceled()) return;
 						ISVNLogMessage[] refreshedMessageArray = client.getLogMessages(info.getRepository(),
 								latest,
 								latest,
 								endRevision,
 								false, true, 0, includeMergedRevisions);
+						if (monitor.isCanceled()) {
+							return;
+						}
 						List refreshedMessages = new ArrayList();
 						for (int i = 0; i < refreshedMessageArray.length; i++)
 							refreshedMessages.add(refreshedMessageArray[i]);
+						monitor.setTaskName("Refreshing cache");					
 						cache.refresh(refreshedMessages);
 					} 
 					if (getNewRevisions) {
+						CallbackUpdater callbackUpdater = new CallbackUpdater(cache, monitor, unitWork, client);
 						cache.startUpdate();
 						client.getLogMessages(info.getRepository(),
 								latest,
@@ -146,7 +161,11 @@ public class GraphBackgroundTask extends SVNOperation {
 								endRevision,
 								false, true, 0, includeMergedRevisions,
 								ISVNClientAdapter.DEFAULT_LOG_PROPERTIES,
-								new CallbackUpdater(cache, monitor, unitWork));
+								callbackUpdater);
+						if (!monitor.isCanceled()) {
+							monitor.setTaskName("Refreshing cache");
+							callbackUpdater.writeMessages();
+						}
 						cache.finishUpdate();
 					}
 				} catch(Exception e) {
@@ -155,9 +174,23 @@ public class GraphBackgroundTask extends SVNOperation {
 			} else {
 				monitor.worked(VERY_LONG_TASK);
 			}
+			if (editor != null) {
+				if (monitor.isCanceled()) {
+					if (refreshRevision == null && refreshRevisions == null) {
+						Display.getDefault().syncExec(new Runnable() {
+							public void run() {
+								IWorkbenchWindow window = editor.getEditorSite().getWorkbenchWindow();
+								IWorkbenchPage page = window.getActivePage();	
+								page.activate(editor);
+								page.closeEditor(editor, false);
+							}						
+						});
+					}
+				} else {
+					updateView(monitor, cache, path, revision);
+				}
+			}
 			monitor.done();
-			if (editor != null) updateView(monitor, cache, path, revision);
-//			monitor.done();
 		} catch (Exception e) {
 			e.printStackTrace();
 			return;

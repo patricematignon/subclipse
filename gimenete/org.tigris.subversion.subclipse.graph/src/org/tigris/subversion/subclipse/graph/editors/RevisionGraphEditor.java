@@ -1,6 +1,8 @@
 package org.tigris.subversion.subclipse.graph.editors;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.resources.IResource;
@@ -29,8 +31,10 @@ import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 import org.tigris.subversion.sublicpse.graph.cache.Cache;
 import org.tigris.subversion.sublicpse.graph.cache.WorkListener;
+import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 import org.tigris.subversion.svnclientadapter.ISVNLogMessage;
 import org.tigris.subversion.svnclientadapter.ISVNLogMessageCallback;
+import org.tigris.subversion.svnclientadapter.SVNClientException;
 
 public class RevisionGraphEditor extends EditorPart {
 
@@ -190,19 +194,40 @@ public class RevisionGraphEditor extends EditorPart {
 
 } class CallbackUpdater implements ISVNLogMessageCallback {
 	
+	private List messages = new ArrayList();
+	
 	private Cache cache;
 	private IProgressMonitor monitor;
 	private int unitWork;
+	private ISVNClientAdapter client;
+	private boolean canceled;
 	
-	public CallbackUpdater(Cache cache, IProgressMonitor monitor, int unitWork) {
+	public CallbackUpdater(Cache cache, IProgressMonitor monitor, int unitWork, ISVNClientAdapter client) {
 		this.cache = cache;
 		this.monitor = monitor;
 		this.unitWork = unitWork;
+		this.client = client;
 	}
 
 	public void singleMessage(ISVNLogMessage message) {
-		cache.update(message);
+		if (!canceled && monitor.isCanceled()) {
+			try {
+				canceled = true;
+				client.cancelOperation();
+			} catch (SVNClientException e) {}
+			return;
+		}
+		messages.add(message);
 		monitor.worked(unitWork);
+	}
+	
+	public void writeMessages() {
+		Iterator iter = messages.iterator();
+		while (iter.hasNext()) {
+			ISVNLogMessage message = (ISVNLogMessage)iter.next();
+			cache.update(message);
+			monitor.worked(unitWork);
+		}
 	}
 
 }
