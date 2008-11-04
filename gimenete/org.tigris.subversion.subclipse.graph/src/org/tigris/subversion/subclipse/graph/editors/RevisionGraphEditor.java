@@ -1,8 +1,6 @@
 package org.tigris.subversion.subclipse.graph.editors;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.resources.IResource;
@@ -194,7 +192,7 @@ public class RevisionGraphEditor extends EditorPart {
 
 } class CallbackUpdater implements ISVNLogMessageCallback {
 	
-	private List messages = new ArrayList();
+//	private List messages = new ArrayList();
 	
 	private Cache cache;
 	private IProgressMonitor monitor;
@@ -217,17 +215,19 @@ public class RevisionGraphEditor extends EditorPart {
 			} catch (SVNClientException e) {}
 			return;
 		}
-		messages.add(message);
+//		messages.add(message);
+//		monitor.worked(unitWork);
+		cache.update(message);
 		monitor.worked(unitWork);
 	}
 	
-	public void writeMessages() {
-		Iterator iter = messages.iterator();
-		while (iter.hasNext()) {
-			ISVNLogMessage message = (ISVNLogMessage)iter.next();
-			cache.update(message);
-			monitor.worked(unitWork);
-		}
-	}
+//	public void writeMessages() {
+//		Iterator iter = messages.iterator();
+//		while (iter.hasNext()) {
+//			ISVNLogMessage message = (ISVNLogMessage)iter.next();
+//			cache.update(message);
+//			monitor.worked(unitWork);
+//		}
+//	}
 
 }
