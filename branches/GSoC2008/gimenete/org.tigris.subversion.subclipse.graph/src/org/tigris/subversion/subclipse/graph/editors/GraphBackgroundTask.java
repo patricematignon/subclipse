@@ -162,10 +162,6 @@ public class GraphBackgroundTask extends SVNOperation {
 								false, true, 0, includeMergedRevisions,
 								ISVNClientAdapter.DEFAULT_LOG_PROPERTIES,
 								callbackUpdater);
-						if (!monitor.isCanceled()) {
-							monitor.setTaskName("Refreshing cache");
-							callbackUpdater.writeMessages();
-						}
 						cache.finishUpdate();
 					}
 				} catch(Exception e) {
