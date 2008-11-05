@@ -216,7 +216,7 @@ public class GraphEditPart extends AbstractGraphicalEditPart implements MouseLis
 				NodeFigure nodeFigure = (NodeFigure) n.getView();
 				selectNode(nodeFigure);
 				// FIXME: it doesn't work
-				scrollTo((Rectangle) contentsLayout.getConstraint(nodeFigure)); 
+//				scrollTo((Rectangle) contentsLayout.getConstraint(nodeFigure)); 
 			}
 		}
 
