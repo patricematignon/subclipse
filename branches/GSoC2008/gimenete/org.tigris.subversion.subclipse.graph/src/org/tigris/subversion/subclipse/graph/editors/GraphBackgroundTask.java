@@ -142,7 +142,9 @@ public class GraphBackgroundTask extends SVNOperation {
 						monitor.setTaskName("Refreshing cache");
 						cache.refresh(refreshedMessages, monitor, unitWork);
 					}
-					else if (refreshRevision != null) {			
+					else if (refreshRevision != null) {		
+						revision = refreshNode.getRevision();
+						path = refreshNode.getPath();
 						if (monitor.isCanceled()) return;
 						ISVNLogMessage[] refreshedMessageArray = client.getLogMessages(new SVNUrl(info.getRepository() + refreshNode.getPath()),
 								latest,
