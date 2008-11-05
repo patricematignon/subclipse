@@ -22,6 +22,7 @@ import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 import org.tigris.subversion.svnclientadapter.ISVNInfo;
 import org.tigris.subversion.svnclientadapter.ISVNLogMessage;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
+import org.tigris.subversion.svnclientadapter.SVNUrl;
 
 public class GraphBackgroundTask extends SVNOperation {
 	
@@ -30,7 +31,9 @@ public class GraphBackgroundTask extends SVNOperation {
 	private GraphicalViewer viewer;
 	private RevisionGraphEditor editor;
 	private SVNRevision refreshRevision;
+	private Node refreshNode;
 	private SVNRevision[] refreshRevisions;
+	private Node[] refreshNodes;
 	private boolean includeMergedRevisions = false;
 	private boolean getNewRevisions = true;
 	private Graph graph;
@@ -121,24 +124,27 @@ public class GraphBackgroundTask extends SVNOperation {
 								return;
 							}
 							SVNRevision rev = refreshRevisions[i];
-							ISVNLogMessage[] refreshedMessageArray = client.getLogMessages(info.getRepository(),
-									rev,
-									rev,
-									rev,
-									false, true, 0, includeMergedRevisions);
-							monitor.worked(unitWork);
-							for (int j = 0; j < refreshedMessageArray.length; j++)
-								refreshedMessages.add(refreshedMessageArray[j]);							
+							Node node = refreshNodes[i];
+							if (!(node.getAction() == 'D')) {
+								ISVNLogMessage[] refreshedMessageArray = client.getLogMessages(new SVNUrl(info.getRepository() + node.getPath()),
+										rev,
+										rev,
+										rev,
+										false, true, 0, includeMergedRevisions);
+								monitor.worked(unitWork);
+								for (int j = 0; j < refreshedMessageArray.length; j++)
+									refreshedMessages.add(refreshedMessageArray[j]);	
+							}
 						}
 						if (monitor.isCanceled()) {
 							monitor.done();
 						}
 						monitor.setTaskName("Refreshing cache");
-						cache.refresh(refreshedMessages);
+						cache.refresh(refreshedMessages, monitor, unitWork);
 					}
 					else if (refreshRevision != null) {			
 						if (monitor.isCanceled()) return;
-						ISVNLogMessage[] refreshedMessageArray = client.getLogMessages(info.getRepository(),
+						ISVNLogMessage[] refreshedMessageArray = client.getLogMessages(new SVNUrl(info.getRepository() + refreshNode.getPath()),
 								latest,
 								latest,
 								endRevision,
@@ -150,7 +156,7 @@ public class GraphBackgroundTask extends SVNOperation {
 						for (int i = 0; i < refreshedMessageArray.length; i++)
 							refreshedMessages.add(refreshedMessageArray[i]);
 						monitor.setTaskName("Refreshing cache");					
-						cache.refresh(refreshedMessages);
+						cache.refresh(refreshedMessages, monitor, unitWork);
 					} 
 					if (getNewRevisions) {
 						CallbackUpdater callbackUpdater = new CallbackUpdater(cache, monitor, unitWork, client);
@@ -248,13 +254,15 @@ public class GraphBackgroundTask extends SVNOperation {
 		return "Calculating graph information";
 	}
 	
-	public void setRefreshRevision(SVNRevision refreshRevision) {
+	public void setRefreshRevision(SVNRevision refreshRevision, Node refreshNode) {
 		this.refreshRevision = refreshRevision;
+		this.refreshNode = refreshNode;
 		includeMergedRevisions = refreshRevision != null;
 	}
 	
-	public void setRefreshRevisions(SVNRevision[] refreshRevisions) {
+	public void setRefreshRevisions(SVNRevision[] refreshRevisions, Node[] refreshNodes) {
 		this.refreshRevisions = refreshRevisions;
+		this.refreshNodes = refreshNodes;
 		includeMergedRevisions = refreshRevisions != null;
 	}
 	

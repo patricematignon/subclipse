@@ -10,6 +10,7 @@ import java.util.List;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.tigris.subversion.subclipse.core.util.Util;
 import org.tigris.subversion.svnclientadapter.ISVNLogMessage;
 import org.tigris.subversion.svnclientadapter.ISVNLogMessageChangePath;
@@ -48,7 +49,7 @@ public class Cache {
 		this.refreshRevision = refreshRevision;
 	}
 	
-	public void refresh(List refreshedMessages) {
+	public void refresh(List refreshedMessages, IProgressMonitor monitor, int unitWorked) {
 		List revisions = new ArrayList();
 		Iterator iter = refreshedMessages.iterator();
 		
@@ -82,9 +83,10 @@ public class Cache {
 			int index = revisions.indexOf(logMessages[i].getRevision().toString());
 			if (index == -1) {
 				updateRevision = logMessages[i];
+				monitor.worked(unitWorked/logMessages.length);
 			} else {
 				updateRevision = (ISVNLogMessage)refreshedMessages.get(index);
-				
+				monitor.worked(unitWorked);
 //				System.out.println("Update: " + updateRevision.getRevision() + " (level =" + level + ")");
 			}
 			update(updateRevision);
