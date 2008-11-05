@@ -205,11 +205,12 @@ public class GraphActionBarContributor extends ActionBarContributor {
 		
 		public void run() {
 			SVNRevision[] refreshRevisions = null;
+			Node[] nodes = null;
 			if (type == TYPE_NODES || type == TYPE_BOTH) {
 				List refreshList = new ArrayList();
 				GraphEditPart graphEditPart = (GraphEditPart)editor.getViewer().getContents();
 				Graph graph = (Graph)graphEditPart.getModel();
-				Node[] nodes = graph.getNodes();
+				nodes = graph.getNodes();
 				for (int i = 0; i < nodes.length; i++) {
 					SVNRevision.Number revision = new SVNRevision.Number(nodes[i].getRevision());
 					refreshList.add(revision);
@@ -223,7 +224,7 @@ public class GraphActionBarContributor extends ActionBarContributor {
 			if (resource == null) task = new GraphBackgroundTask(SVNUIPlugin.getActivePage().getActivePart(), editor.getViewer(), editor, remoteResource);
 			else task = new GraphBackgroundTask(SVNUIPlugin.getActivePage().getActivePart(), editor.getViewer(), editor, resource);	
 			if (type == TYPE_NODES) task.setGetNewRevisions(false);
-			if (refreshRevisions != null) task.setRefreshRevisions(refreshRevisions);
+			if (refreshRevisions != null) task.setRefreshRevisions(refreshRevisions, nodes);
 			try {
 				task.run();
 			} catch (Exception e) {

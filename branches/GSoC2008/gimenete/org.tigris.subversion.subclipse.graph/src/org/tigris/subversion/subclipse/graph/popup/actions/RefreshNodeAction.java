@@ -33,7 +33,7 @@ public class RefreshNodeAction extends Action {
 		else task = new GraphBackgroundTask(SVNUIPlugin.getActivePage().getActivePart(), editor.getViewer(), editor, resource);	
 		task.setGetNewRevisions(false);
 		SVNRevision.Number revision = new SVNRevision.Number(node.getRevision());
-		task.setRefreshRevision(revision);
+		task.setRefreshRevision(revision, node);
 		try {
 			task.run();
 		} catch (Exception e) {
