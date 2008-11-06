@@ -47,27 +47,29 @@ public class DeleteCacheAction extends SVNAction {
 		String[] url = { selectedFolders[0].getUrl().toString() };
 		if (!MessageDialog.openConfirm(Display.getDefault().getActiveShell(), Policy.bind("DeleteCacheAction.title"), Policy.bind("DeleteCacheAction.confirm", url))) return; //$NON-NLS-1$ //$NON-NLS-2$
 		File revisionsFile = new File(f, "revisions"); //$NON-NLS-1$
-		if (!deleteFile(revisionsFile)) return;
+		if (!deleteFile(revisionsFile, true)) return;
 		File logMessagesFile = new File(f, "logMessages"); //$NON-NLS-1$
-		if (!deleteFile(logMessagesFile)) return;
+		if (!deleteFile(logMessagesFile, true)) return;
 		
 		// Just in case of a failed refresh
 		File revisionsTempFile = new File(f, "revisionsTemp"); //$NON-NLS-1$
-		deleteFile(revisionsTempFile);
+		deleteFile(revisionsTempFile, false);
 		File logMessagesTempFile = new File(f, "logMessagesTemp"); //$NON-NLS-1$
-		deleteFile(logMessagesTempFile);
+		deleteFile(logMessagesTempFile, false);
 		
-		deleteFile(f);
+		deleteFile(f, true);
 	}
 
 	protected boolean isEnabled() throws TeamException {
 		return true;
 	}
 	
-	private boolean deleteFile(File f) {
+	private boolean deleteFile(File f, boolean showErrorMessage) {
 		if (!f.delete()) {
-			String[] file = { f.getPath() };
-			MessageDialog.openError(Display.getDefault().getActiveShell(), Policy.bind("DeleteCacheAction.title"), Policy.bind("DeleteCacheAction.deleteError", file)); //$NON-NLS-1$ //$NON-NLS-2$
+			if (showErrorMessage) {
+				String[] file = { f.getPath() };
+				MessageDialog.openError(Display.getDefault().getActiveShell(), Policy.bind("DeleteCacheAction.title"), Policy.bind("DeleteCacheAction.deleteError", file)); //$NON-NLS-1$ //$NON-NLS-2$
+			}
 			return false;
 		}
 		return true;
