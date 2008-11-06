@@ -32,6 +32,12 @@ public class Cache {
 	private RandomAccessFile revisionsRaf = null;
 	private RandomAccessFile logMessagesRaf = null;
 	
+	// used in refresh
+	private File revisionsTempFile;
+	private File logMessagesTempFile;
+	private RandomAccessFile revisionsTempRaf = null;
+	private RandomAccessFile logMessagesTempRaf = null;	
+	
 	private List writtenChildren = new ArrayList();
 	
 	public Cache(File f, String uuid) {
@@ -50,60 +56,77 @@ public class Cache {
 	}
 	
 	public void refresh(List refreshedMessages, IProgressMonitor monitor, int unitWorked) {
-		List revisions = new ArrayList();
-		Iterator iter = refreshedMessages.iterator();
-		
-//		System.out.println("Refresh Revisions: ");
-		
-		while (iter.hasNext()) {
-			ISVNLogMessage message = (ISVNLogMessage)iter.next();
-			revisions.add(message.getRevision().toString());
-			
-//			System.out.println(message.getRevision());
-		}
-		
-		startUpdate();
-		ISVNLogMessage[] logMessages = getLogMessages();
-		finishUpdate();
-		revisionsFile.delete();
-		logMessagesFile.delete();
+		revisionsTempFile = new File(root, "revisionsTemp");
+		logMessagesTempFile = new File(root, "logMessagesTemp");
+		revisionsTempFile.delete();
+		logMessagesTempFile.delete();
 		try {
-			revisionsFile.createNewFile();
-			logMessagesFile.createNewFile();
+			revisionsTempFile.createNewFile();
+			logMessagesTempFile.createNewFile();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
-		startUpdate();
-		for (int i = 0; i < logMessages.length; i++) {
-			
-			level = 0;
-			
-			ISVNLogMessage updateRevision = null;
-			int index = revisions.indexOf(logMessages[i].getRevision().toString());
-			if (index == -1) {
-				updateRevision = logMessages[i];
-				monitor.worked(unitWorked/logMessages.length);
-			} else {
-				updateRevision = (ISVNLogMessage)refreshedMessages.get(index);
-				monitor.worked(unitWorked);
-//				System.out.println("Update: " + updateRevision.getRevision() + " (level =" + level + ")");
+		}		
+		
+		List revisions = new ArrayList();
+		Iterator iter = refreshedMessages.iterator();
+		while (iter.hasNext()) {
+			ISVNLogMessage message = (ISVNLogMessage)iter.next();
+			revisions.add(message.getRevision().toString());
+		}	
+		
+		startTempUpdate();
+		RandomAccessFile file = null;
+		try {
+			file = new RandomAccessFile(logMessagesFile, "r");
+			int revInt = new Long(getLatestRevision()).intValue();
+			while(file.getFilePointer() < file.length()) {
+				ISVNLogMessage lm = readNext(file, true);
+
+				level = 0;
+				
+				ISVNLogMessage updateRevision = null;
+				int index = revisions.indexOf(lm.getRevision().toString());
+				if (index == -1) {
+					updateRevision = lm;
+					monitor.worked(unitWorked/revInt);
+				} else {
+					updateRevision = (ISVNLogMessage)refreshedMessages.get(index);
+					monitor.worked(unitWorked);
+//					System.out.println("Update: " + updateRevision.getRevision() + " (level =" + level + ")");
+				}
+				update(updateRevision, true);
+				if (updateRevision.hasChildren() && updateRevision.getChildMessages() != null) {
+					updateChildren(updateRevision, true);
+				}	
+				if (monitor.isCanceled()) {
+					break;
+				}
 			}
-			update(updateRevision);
-			if (updateRevision.hasChildren() && updateRevision.getChildMessages() != null) {
-				updateChildren(updateRevision);
-			}
+		} catch (Exception e) {
+			
+		} finally {
+			closeFile(file);
 		}
-		finishUpdate();
+		finishTempUpdate();
+		if (monitor.isCanceled()) {
+			revisionsTempFile.delete();
+			logMessagesTempFile.delete();
+			return;
+		}
+		revisionsFile.delete();
+		logMessagesFile.delete();
+		revisionsTempFile.renameTo(revisionsFile);
+		logMessagesTempFile.renameTo(logMessagesFile);
 	}
-	
-	private void updateChildren(ISVNLogMessage logMessage) {
+
+	private void updateChildren(ISVNLogMessage logMessage, boolean writingTempFile) {
 		ISVNLogMessage[] childMessages = logMessage.getChildMessages();
 		for (int j = 0; j < childMessages.length; j++) {
-			update(childMessages[j]);
-			if (childMessages[j].hasChildren() && childMessages[j].getChildMessages() != null) updateChildren(childMessages[j]);
+			update(childMessages[j], writingTempFile);
+			if (childMessages[j].hasChildren() && childMessages[j].getChildMessages() != null) updateChildren(childMessages[j], writingTempFile);
 		}
-		update(null);		
+		update(null, writingTempFile);		
 	}
 	
 	private void createDirectory(File f) {
@@ -136,24 +159,44 @@ public class Cache {
 		}
 	}
 	
+	public void startTempUpdate() {
+		level = 0;
+		try {
+			revisionsTempRaf = new RandomAccessFile(revisionsTempFile, "rw");
+			logMessagesTempRaf = new RandomAccessFile(logMessagesTempFile, "rw");
+		} catch(IOException e) {
+			throw new CacheException("Error while opening file", e);
+		}
+	}
+	
 	private String notNull(String s) {
 		if(s == null)
 			return "";
 		return s;
 	}
 	
-	private void writeLogMessage(ISVNLogMessage logMessage, int level) throws IOException {
+	private void writeLogMessage(ISVNLogMessage logMessage, int level, boolean writingTempFile) throws IOException {
+		RandomAccessFile revRaf = null;
+		RandomAccessFile logRaf = null;
+		if (writingTempFile) {
+			revRaf = revisionsTempRaf;
+			logRaf = logMessagesTempRaf;
+		} else {
+			revRaf = revisionsRaf;
+			logRaf = logMessagesRaf;			
+		}
+		
 		long revision = logMessage.getRevision().getNumber();
-		long fp = logMessagesRaf.getFilePointer();
+		long fp = logRaf.getFilePointer();
 //		System.out.println("writing rev "+revision+" at "+fp+" "+revisionsRaf.getFilePointer());
-		revisionsRaf.writeLong(fp);
-		logMessagesRaf.writeLong(revision);
-		logMessagesRaf.writeLong(logMessage.getDate().getTime());
-		logMessagesRaf.writeUTF(notNull(logMessage.getAuthor()));
-		logMessagesRaf.writeUTF(notNull(logMessage.getMessage()));
+		revRaf.writeLong(fp);
+		logRaf.writeLong(revision);
+		logRaf.writeLong(logMessage.getDate().getTime());
+		logRaf.writeUTF(notNull(logMessage.getAuthor()));
+		logRaf.writeUTF(notNull(logMessage.getMessage()));
 		
 		ISVNLogMessageChangePath[] changePaths = logMessage.getChangedPaths();
-		logMessagesRaf.writeInt(changePaths.length);
+		logRaf.writeInt(changePaths.length);
 		
 		// common starting path in all changed paths
 		int cc = 0;
@@ -165,27 +208,27 @@ public class Cache {
 				cc = commonChars(a, b, cc);
 				a = b;
 			}
-			logMessagesRaf.writeUTF(a.substring(0, cc));
+			logRaf.writeUTF(a.substring(0, cc));
 		}
 		
 		
 		for (int i = 0; i < changePaths.length; i++) {
 			ISVNLogMessageChangePath changePath = changePaths[i];
 
-			logMessagesRaf.writeChar(changePath.getAction());
-			logMessagesRaf.writeUTF(changePath.getPath().substring(cc));
+			logRaf.writeChar(changePath.getAction());
+			logRaf.writeUTF(changePath.getPath().substring(cc));
 			long copySrcRevision = 0;
 			if(changePath.getCopySrcRevision() != null && changePath.getCopySrcPath() != null) {
 				copySrcRevision = changePath.getCopySrcRevision().getNumber();
-				logMessagesRaf.writeLong(copySrcRevision);
-				logMessagesRaf.writeUTF(changePath.getCopySrcPath());
+				logRaf.writeLong(copySrcRevision);
+				logRaf.writeUTF(changePath.getCopySrcPath());
 			} else {
-				logMessagesRaf.writeLong(copySrcRevision);
+				logRaf.writeLong(copySrcRevision);
 			}
 		}
 		
 		if(level == 0 && (!logMessage.hasChildren() || logMessage.getChildMessages() == null)) {
-			logMessagesRaf.writeInt(0);
+			logRaf.writeInt(0);
 //			System.out.println("A. Children: 0");
 		}
 	}
@@ -197,11 +240,22 @@ public class Cache {
 		logMessagesRaf = null;
 	}
 	
+	public void finishTempUpdate() {
+		closeFile(revisionsTempRaf);
+		closeFile(logMessagesTempRaf);
+		revisionsTempRaf = null;
+		logMessagesTempRaf = null;
+	}
+	
 	public void update(ISVNLogMessage logMessage) {
+		update(logMessage, false);
+	}
+	
+	public void update(ISVNLogMessage logMessage, boolean writingTempFile) {
 		try {
 			if(logMessage == null) {
 				if(level == 1) {
-					writeChildren(level);
+					writeChildren(level, writingTempFile);
 					children.clear();
 				}
 				level--;
@@ -210,7 +264,7 @@ public class Cache {
 					children.add(logMessage);
 //					dump(logMessage, level);
 				} else if(level == 0) {
-					writeLogMessage(logMessage, level);
+					writeLogMessage(logMessage, level, writingTempFile);
 //					dump(logMessage, level);
 				}
 				
@@ -225,17 +279,17 @@ public class Cache {
 //			dump(logMessage, "\t");
 	}
 	
-	private void writeChildren(int level) throws IOException {
+	private void writeChildren(int level, boolean writingTempFile) throws IOException {
 		List nonWrittenChildren = getNonWrittenChildren();
 //		logMessagesRaf.writeInt(children.size());
 		
 //		System.out.println("B. Children: " + nonWrittenChildren.size());
-		
-		logMessagesRaf.writeInt(nonWrittenChildren.size());
+		if (writingTempFile) logMessagesTempRaf.writeInt(nonWrittenChildren.size());
+		else logMessagesRaf.writeInt(nonWrittenChildren.size());
 //		for (Iterator it = children.iterator(); it.hasNext();) {
 		for (Iterator it = nonWrittenChildren.iterator(); it.hasNext();) {
 			ISVNLogMessage logMessage = (ISVNLogMessage) it.next();
-			writeLogMessage(logMessage, level);
+			writeLogMessage(logMessage, level, writingTempFile);
 		}
 	}
 
@@ -438,25 +492,6 @@ public class Cache {
 		} finally {
 			closeFile(file);
 		}
-	}
-	
-	public ISVNLogMessage[] getLogMessages() {
-		List logMessages = new ArrayList();
-		RandomAccessFile file = null;
-		try {
-			file = new RandomAccessFile(logMessagesFile, "r");
-			while(file.getFilePointer() < file.length()) {
-				ISVNLogMessage lm = readNext(file, true);
-				logMessages.add(lm);
-			}
-		} catch (Exception e) {
-			
-		} finally {
-			closeFile(file);
-		}
-		ISVNLogMessage[] logMessageArray = new ISVNLogMessage[logMessages.size()];
-		logMessages.toArray(logMessageArray);
-		return logMessageArray;
 	}
 	
 	public Graph createGraph(String rootPath, long revision, WorkListener listener) {

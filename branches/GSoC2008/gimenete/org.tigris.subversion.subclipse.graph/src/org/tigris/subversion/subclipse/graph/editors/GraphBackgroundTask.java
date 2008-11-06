@@ -137,7 +137,7 @@ public class GraphBackgroundTask extends SVNOperation {
 							}
 						}
 						if (monitor.isCanceled()) {
-							monitor.done();
+							return;
 						}
 						monitor.setTaskName("Refreshing cache");
 						cache.refresh(refreshedMessages, monitor, unitWork);
