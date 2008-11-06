@@ -50,6 +50,13 @@ public class DeleteCacheAction extends SVNAction {
 		if (!deleteFile(revisionsFile)) return;
 		File logMessagesFile = new File(f, "logMessages"); //$NON-NLS-1$
 		if (!deleteFile(logMessagesFile)) return;
+		
+		// Just in case of a failed refresh
+		File revisionsTempFile = new File(f, "revisionsTemp"); //$NON-NLS-1$
+		deleteFile(revisionsTempFile);
+		File logMessagesTempFile = new File(f, "logMessagesTemp"); //$NON-NLS-1$
+		deleteFile(logMessagesTempFile);
+		
 		deleteFile(f);
 	}
 
