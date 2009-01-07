@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <description url="http://subclipse.tigris.org/update_1.4.x">
+      Eclipse Install/Update site for Subclipse
+   </description>
+   <feature url="features/org.tmatesoft.svnkit_1.2.1.5297.jar" id="org.tmatesoft.svnkit" version="1.2.1.5297">
+      <category name="SVNKit Adapter (optional)"/>
+   </feature>
+   <feature url="features/com.sun.jna_3.0.9.jar" id="com.sun.jna" version="3.0.9">
+      <category name="SVNKit Adapter (optional)"/>
+   </feature>
+   <feature url="features/org.tigris.subversion.subclipse.mylyn_2.0.4.jar" id="org.tigris.subversion.subclipse.mylyn" version="2.0.4">
+      <category name="Integrations (optional)"/>
+   </feature>
+   <feature url="features/org.tigris.subversion.subclipse.mylyn_3.0.0.jar" id="org.tigris.subversion.subclipse.mylyn" version="3.0.0">
+      <category name="Integrations (optional)"/>
+   </feature>
+   <feature url="features/org.tigris.subversion.clientadapter.feature_1.5.2.jar" id="org.tigris.subversion.clientadapter.feature" version="1.5.2">
+      <category name="Subclipse (required)"/>
+   </feature>
+   <feature url="features/org.tigris.subversion.subclipse_1.4.7.jar" id="org.tigris.subversion.subclipse" version="1.4.7">
+      <category name="Subclipse (required)"/>
+   </feature>
+   <feature url="features/org.tigris.subversion.clientadapter.svnkit.feature_1.5.4.jar" id="org.tigris.subversion.clientadapter.svnkit.feature" version="1.5.4">
+      <category name="SVNKit Adapter (optional)"/>
+   </feature>
+   <feature url="features/org.tigris.subversion.subclipse.graph.feature_1.0.3.jar" id="org.tigris.subversion.subclipse.graph.feature" version="1.0.3">
+      <category name="Revision Graph (optional)"/>
+   </feature>
+   <feature url="features/org.tigris.subversion.clientadapter.javahl.feature_1.5.5.jar" id="org.tigris.subversion.clientadapter.javahl.feature" version="1.5.5">
+      <category name="JavaHL Adapter (recommended)"/>
+   </feature>
+   <category-def name="Subclipse (required)" label="Subclipse (required)">
+      <description>
+         The subclipse Subversion plugin
+      </description>
+   </category-def>
+   <category-def name="JavaHL Adapter (recommended)" label="JavaHL Adapter (recommended)">
+      <description>
+         The native adapter.  Uses JNI to work directly with native Subversion libraries.
+      </description>
+   </category-def>
+   <category-def name="SVNKit Adapter (optional)" label="SVNKit Adapter (optional)">
+      <description>
+         The pure Java adapter.  Use SVNKit, a pure Java  implementation of Subversion client and protocols.
+      </description>
+   </category-def>
+   <category-def name="Integrations (optional)" label="Integrations (optional)">
+      <description>
+         Integrations between Subclipse and other tools.  Install these ONLY if you already use these tools
+      </description>
+   </category-def>
+   <category-def name="Revision Graph (optional)" label="Revision Graph (optional)">
+      <description>
+         Adds a Subversion revision graph feature to Subclipse.  Requires the Eclipse GEF plugin.
+      </description>
+   </category-def>
+</site>
