@@ -1,3 +1,9 @@
+*
+* This used to be project_tools.html which allowed us to customize the tools
+* links.  I am experiementing with removing the customizations and using the
+* new capabilities of tigris.org.
+*
+
 <!-- Begin Left Navigation Bar Override -->
 
 <!-- This file overrides the left navigation bar on subclipse.tigris.org, 
