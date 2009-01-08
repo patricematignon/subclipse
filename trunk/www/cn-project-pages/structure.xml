@@ -6,5 +6,11 @@
     <directory>Screenshots</directory>
     <ordinal>1</ordinal>
   </page>
+  <page>
+    <id>p4wYuA</id>
+    <name>Download and Install</name>
+    <directory>Download and Install</directory>
+    <ordinal>2</ordinal>
+  </page>
 </structure>
 
