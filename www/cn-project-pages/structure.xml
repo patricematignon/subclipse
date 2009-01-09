@@ -12,5 +12,11 @@
     <directory>Download and Install</directory>
     <ordinal>2</ordinal>
   </page>
+  <page>
+    <id>t65B1R</id>
+    <name>Issues and Help</name>
+    <directory>Issues and Help</directory>
+    <ordinal>3</ordinal>
+  </page>
 </structure>
 
