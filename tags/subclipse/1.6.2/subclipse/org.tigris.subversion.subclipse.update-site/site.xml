@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <description url="http://subclipse.tigris.org/update_1.6.x">
+      Eclipse Install/Update site for Subclipse
+   </description>
+   <feature url="features/org.tigris.subversion.subclipse.mylyn_2.0.4.jar" id="org.tigris.subversion.subclipse.mylyn" version="2.0.4">
+      <category name="Subclipse"/>
+   </feature>
+   <feature url="features/org.tigris.subversion.subclipse.mylyn_3.0.0.jar" id="org.tigris.subversion.subclipse.mylyn" version="3.0.0">
+      <category name="Subclipse"/>
+   </feature>
+   <feature url="features/org.tigris.subversion.clientadapter.feature_1.6.0.1.jar" id="org.tigris.subversion.clientadapter.feature" version="1.6.0.1">
+      <category name="Subclipse"/>
+   </feature>
+   <feature url="features/org.tigris.subversion.clientadapter.javahl.feature_1.6.0.2.jar" id="org.tigris.subversion.clientadapter.javahl.feature" version="1.6.0.2">
+      <category name="Subclipse"/>
+   </feature>
+   <feature url="features/org.tigris.subversion.clientadapter.svnkit.feature_1.6.0.1.jar" id="org.tigris.subversion.clientadapter.svnkit.feature" version="1.6.0.1">
+      <category name="Subclipse"/>
+   </feature>
+   <feature url="features/org.tigris.subversion.subclipse_1.6.2.jar" id="org.tigris.subversion.subclipse" version="1.6.2">
+      <category name="Subclipse"/>
+   </feature>
+   <feature url="features/org.tigris.subversion.subclipse.graph.feature_1.0.6.jar" id="org.tigris.subversion.subclipse.graph.feature" version="1.0.6">
+      <category name="Subclipse"/>
+   </feature>
+   <category-def name="Subclipse" label="Subclipse">
+      <description>
+         Subversion 1.6 plug-in for Eclipse 3.2 and higher.
+      </description>
+   </category-def>
+</site>
