@@ -309,15 +309,15 @@ public class JhlClientAdapterFactory extends SVNClientAdapterFactory {
     			try {
 	                SVNClientInterface svnClient = new SVNClient();
     				Version version = svnClient.getVersion();
-    				if (version.getMajor() == 1 && version.getMinor() >= 5)
+    				if (version.getMajor() == 1 && version.getMinor() == 5)
     					available = true;
     				else {
     					available = false;
-    					javaHLErrors.append("Incompatible JavaHL library loaded.  1.5.x or later required.");
+    					javaHLErrors = new StringBuffer("Incompatible JavaHL library loaded.  1.5.x or later required.");
     				}
     			} catch (UnsatisfiedLinkError e) {
     				available = false;
-    				javaHLErrors.append("Incompatible JavaHL library loaded.  1.5.x or later required.");
+    				javaHLErrors = new StringBuffer("Incompatible JavaHL library loaded.  1.5.x or later required.");
     			}
     		}
     	}
