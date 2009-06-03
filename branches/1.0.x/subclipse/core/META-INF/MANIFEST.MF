@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.tigris.subversion.subclipse.core; singleton=true
-Bundle-Version: 1.0.6
+Bundle-Version: 1.0.7
 Bundle-ClassPath: SVNPluginCore.jar,
  lib/svnClientAdapter.jar,
  lib/svnjavahl.jar,
