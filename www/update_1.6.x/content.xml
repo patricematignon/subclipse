@@ -3,7 +3,7 @@
 <repository name='Subclipse 1.6.x Update Site' type='org.eclipse.equinox.internal.p2.metadata.repository.LocalMetadataRepository' version='1'>
   <properties size='2'>
     <property name='p2.compressed' value='false'/>
-    <property name='p2.timestamp' value='1243614753138'/>
+    <property name='p2.timestamp' value='1245522268520'/>
   </properties>
   <references size='4'>
     <repository url='http://eclipse.svnkit.com/1.3.x/' type='1' options='0'/>
@@ -11,45 +11,7 @@
     <repository url='http://subclipse.tigris.org/update_1.6.x' type='0' options='0'/>
     <repository url='http://subclipse.tigris.org/update_1.6.x' type='1' options='0'/>
   </references>
-  <units size='33'>
-    <unit id='org.tigris.subversion.subclipse.mylyn' version='3.0.0'>
-      <update id='org.tigris.subversion.subclipse.mylyn' range='[0.0.0,3.0.0)' severity='0'/>
-      <properties size='4'>
-        <property name='df_LT.pluginProvider' value='tigris.org'/>
-        <property name='df_LT.pluginName' value='Subclipse Integration for Mylyn 3.x'/>
-        <property name='org.eclipse.equinox.p2.name' value='%pluginName'/>
-        <property name='org.eclipse.equinox.p2.provider' value='%pluginProvider'/>
-      </properties>
-      <provides size='5'>
-        <provided namespace='org.eclipse.equinox.p2.iu' name='org.tigris.subversion.subclipse.mylyn' version='3.0.0'/>
-        <provided namespace='osgi.bundle' name='org.tigris.subversion.subclipse.mylyn' version='3.0.0'/>
-        <provided namespace='java.package' name='org.tigris.subversion.subclipse.mylyn' version='0.0.0'/>
-        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
-        <provided namespace='org.eclipse.equinox.p2.localization' name='df_LT' version='1.0.0'/>
-      </provides>
-      <requires size='9'>
-        <required namespace='osgi.bundle' name='org.eclipse.core.resources' range='0.0.0'/>
-        <required namespace='osgi.bundle' name='org.eclipse.core.runtime' range='0.0.0'/>
-        <required namespace='osgi.bundle' name='org.eclipse.team.core' range='0.0.0'/>
-        <required namespace='osgi.bundle' name='org.tigris.subversion.subclipse.core' range='0.0.0'/>
-        <required namespace='osgi.bundle' name='org.tigris.subversion.subclipse.ui' range='0.0.0'/>
-        <required namespace='osgi.bundle' name='org.eclipse.ui' range='0.0.0'/>
-        <required namespace='osgi.bundle' name='org.eclipse.mylyn.tasks.core' range='[3.0.0,4.0.0)'/>
-        <required namespace='osgi.bundle' name='org.eclipse.mylyn.tasks.ui' range='[3.0.0,4.0.0)'/>
-        <required namespace='osgi.bundle' name='org.eclipse.mylyn.team.ui' range='[3.0.0,4.0.0)'/>
-      </requires>
-      <artifacts size='1'>
-        <artifact classifier='osgi.bundle' id='org.tigris.subversion.subclipse.mylyn' version='3.0.0'/>
-      </artifacts>
-      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
-      <touchpointData size='1'>
-        <instructions size='1'>
-          <instruction key='manifest'>
-            Bundle-RequiredExecutionEnvironment: J2SE-1.5&#xA;Bundle-Name: %pluginName&#xA;Bundle-Activator: org.tigris.subversion.subclipse.mylyn.SubclipseTeamPlugin&#xA;Manifest-Version: 1.0&#xA;Bundle-Vendor: %pluginProvider&#xA;Bundle-ClassPath: .&#xA;Bundle-ActivationPolicy: lazy&#xA;Bundle-SymbolicName: org.tigris.subversion.subclipse.mylyn;singleton:=true&#xA;Bundle-ManifestVersion: 2&#xA;Bundle-Version: 3.0.0&#xA;Bundle-Localization: plugin&#xA;Export-Package: org.tigris.subversion.subclipse.mylyn&#xA;Require-Bundle: org.eclipse.core.resources,org.eclipse.core.runtime,org.eclipse.team.core,org.tigris.subversion.subclipse.core,org.tigris.subversion.subclipse.ui,org.eclipse.ui,org.eclipse.mylyn.tasks.core;bundle-version=&quot;[3.0.0,4.0.0)&quot;,org.eclipse.mylyn.tasks.ui;bundle-version=&quot;[3.0.0,4.0.0)&quot;,org.eclipse.mylyn.team.ui;bundle-version=&quot;[3.0.0,4.0.0)&quot;&#xA;
-          </instruction>
-        </instructions>
-      </touchpointData>
-    </unit>
+  <units size='36'>
     <unit id='org.tigris.subversion.clientadapter.svnkit' version='1.6.2'>
       <update id='org.tigris.subversion.clientadapter.svnkit' range='[0.0.0,1.6.2)' severity='0'/>
       <properties size='2'>
@@ -103,6 +65,44 @@
         <instructions size='1'>
           <instruction key='manifest'>
             Bundle-Vendor: tigris.org&#xA;Bundle-ManifestVersion: 2&#xA;Bundle-Activator: org.tigris.subversion.clientadapter.javahl.Activator&#xA;Bundle-RequiredExecutionEnvironment: J2SE-1.4&#xA;Require-Bundle: org.eclipse.core.runtime,org.tigris.subversion.clientadapter;bundle-version=&quot;[1.6.0,1.7.0)&quot;&#xA;Bundle-Name: Subversion JavaHL&#xA;Manifest-Version: 1.0&#xA;Bundle-SymbolicName: org.tigris.subversion.clientadapter.javahl;singleton:=true&#xA;Bundle-Version: 1.6.2.1&#xA;Eclipse-LazyStart: true&#xA;Export-Package: org.tigris.subversion.javahl,org.tigris.subversion.svnclientadapter.javahl&#xA;
+          </instruction>
+        </instructions>
+      </touchpointData>
+    </unit>
+    <unit id='org.tigris.subversion.subclipse.mylyn' version='3.0.0'>
+      <update id='org.tigris.subversion.subclipse.mylyn' range='[0.0.0,3.0.0)' severity='0'/>
+      <properties size='4'>
+        <property name='df_LT.pluginProvider' value='tigris.org'/>
+        <property name='df_LT.pluginName' value='Subclipse Integration for Mylyn 3.x'/>
+        <property name='org.eclipse.equinox.p2.name' value='%pluginName'/>
+        <property name='org.eclipse.equinox.p2.provider' value='%pluginProvider'/>
+      </properties>
+      <provides size='5'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='org.tigris.subversion.subclipse.mylyn' version='3.0.0'/>
+        <provided namespace='osgi.bundle' name='org.tigris.subversion.subclipse.mylyn' version='3.0.0'/>
+        <provided namespace='java.package' name='org.tigris.subversion.subclipse.mylyn' version='0.0.0'/>
+        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
+        <provided namespace='org.eclipse.equinox.p2.localization' name='df_LT' version='1.0.0'/>
+      </provides>
+      <requires size='9'>
+        <required namespace='osgi.bundle' name='org.eclipse.core.resources' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.core.runtime' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.team.core' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.tigris.subversion.subclipse.core' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.tigris.subversion.subclipse.ui' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.ui' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.mylyn.tasks.core' range='[3.0.0,4.0.0)'/>
+        <required namespace='osgi.bundle' name='org.eclipse.mylyn.tasks.ui' range='[3.0.0,4.0.0)'/>
+        <required namespace='osgi.bundle' name='org.eclipse.mylyn.team.ui' range='[3.0.0,4.0.0)'/>
+      </requires>
+      <artifacts size='1'>
+        <artifact classifier='osgi.bundle' id='org.tigris.subversion.subclipse.mylyn' version='3.0.0'/>
+      </artifacts>
+      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
+      <touchpointData size='1'>
+        <instructions size='1'>
+          <instruction key='manifest'>
+            Bundle-RequiredExecutionEnvironment: J2SE-1.5&#xA;Bundle-Name: %pluginName&#xA;Bundle-Activator: org.tigris.subversion.subclipse.mylyn.SubclipseTeamPlugin&#xA;Manifest-Version: 1.0&#xA;Bundle-Vendor: %pluginProvider&#xA;Bundle-ClassPath: .&#xA;Bundle-ActivationPolicy: lazy&#xA;Bundle-SymbolicName: org.tigris.subversion.subclipse.mylyn;singleton:=true&#xA;Bundle-ManifestVersion: 2&#xA;Bundle-Version: 3.0.0&#xA;Bundle-Localization: plugin&#xA;Export-Package: org.tigris.subversion.subclipse.mylyn&#xA;Require-Bundle: org.eclipse.core.resources,org.eclipse.core.runtime,org.eclipse.team.core,org.tigris.subversion.subclipse.core,org.tigris.subversion.subclipse.ui,org.eclipse.ui,org.eclipse.mylyn.tasks.core;bundle-version=&quot;[3.0.0,4.0.0)&quot;,org.eclipse.mylyn.tasks.ui;bundle-version=&quot;[3.0.0,4.0.0)&quot;,org.eclipse.mylyn.team.ui;bundle-version=&quot;[3.0.0,4.0.0)&quot;&#xA;
           </instruction>
         </instructions>
       </touchpointData>
@@ -595,6 +595,48 @@
         </instructions>
       </touchpointData>
     </unit>
+    <unit id='com.collabnet.subversion.merge' version='1.9.0.4'>
+      <update id='com.collabnet.subversion.merge' range='[0.0.0,1.9.0.4)' severity='0'/>
+      <properties size='2'>
+        <property name='org.eclipse.equinox.p2.name' value='CollabNet Subversion Merge Client'/>
+        <property name='org.eclipse.equinox.p2.provider' value='CollabNet'/>
+      </properties>
+      <provides size='6'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='com.collabnet.subversion.merge' version='1.9.0.4'/>
+        <provided namespace='osgi.bundle' name='com.collabnet.subversion.merge' version='1.9.0.4'/>
+        <provided namespace='java.package' name='com.collabnet.subversion.merge' version='0.0.0'/>
+        <provided namespace='java.package' name='com.collabnet.subversion.merge.dialogs' version='0.0.0'/>
+        <provided namespace='java.package' name='com.collabnet.subversion.merge.wizards' version='0.0.0'/>
+        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
+      </provides>
+      <requires size='14'>
+        <required namespace='osgi.bundle' name='org.eclipse.ui' range='3.3.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.core.runtime' range='3.3.0'/>
+        <required namespace='osgi.bundle' name='org.tigris.subversion.subclipse.ui' range='1.6.2'/>
+        <required namespace='osgi.bundle' name='org.tigris.subversion.subclipse.core' range='1.6.2'/>
+        <required namespace='osgi.bundle' name='org.eclipse.core.resources' range='3.3.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.team.core' range='3.3.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.team.ui' range='3.3.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.ui.ide' range='3.3.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.ui.views' range='3.2.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.compare' range='3.3.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.ui.editors' range='3.3.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.jface.text' range='3.3.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.ui.forms' range='3.3.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.core.filesystem' range='1.1.0'/>
+      </requires>
+      <artifacts size='1'>
+        <artifact classifier='osgi.bundle' id='com.collabnet.subversion.merge' version='1.9.0.4'/>
+      </artifacts>
+      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
+      <touchpointData size='1'>
+        <instructions size='1'>
+          <instruction key='manifest'>
+            Bundle-Name: CollabNet Subversion Merge Client&#xA;Bundle-Version: 1.9.0.4&#xA;Eclipse-LazyStart: true&#xA;Bundle-Activator: com.collabnet.subversion.merge.Activator&#xA;Created-By: 11.3-b02 (Sun Microsystems Inc.)&#xA;Bundle-Vendor: CollabNet&#xA;Require-Bundle: org.eclipse.ui;bundle-version=&quot;3.3.0&quot;,org.eclipse.core.runtime;bundle-version=&quot;3.3.0&quot;,org.tigris.subversion.subclipse.ui;bundle-version=&quot;1.6.2&quot;,org.tigris.subversion.subclipse.core;bundle-version=&quot;1.6.2&quot;,org.eclipse.core.resources;bundle-version=&quot;3.3.0&quot;,org.eclipse.team.core;bundle-version=&quot;3.3.0&quot;,org.eclipse.team.ui;bundle-version=&quot;3.3.0&quot;,org.eclipse.ui.ide;bundle-version=&quot;3.3.0&quot;,org.eclipse.ui.views;bundle-version=&quot;3.2.0&quot;,org.eclipse.compare;bundle-version=&quot;3.3.0&quot;,org.eclipse.ui.editors;bundle-version=&quot;3.3.0&quot;,org.eclipse.jface.text;bundle-version=&quot;3.3.0&quot;,org.eclipse.ui.forms;bundle-version=&quot;3.3.0&quot;,org.eclipse.core.filesystem;bundle-version=&quot;1.1.0&quot;&#xA;Export-Package: com.collabnet.subversion.merge,com.collabnet.subversion.merge.dialogs,com.collabnet.subversion.merge.wizards&#xA;Bundle-SymbolicName: com.collabnet.subversion.merge; singleton:=true&#xA;Ant-Version: Apache Ant 1.7.0&#xA;Manifest-Version: 1.0&#xA;Bundle-ManifestVersion: 2&#xA;Bundle-RequiredExecutionEnvironment: J2SE-1.5&#xA;Bundle-Localization: plugin&#xA;
+          </instruction>
+        </instructions>
+      </touchpointData>
+    </unit>
     <unit id='org.tigris.subversion.subclipse.mylyn.feature.jar' version='3.0.0'>
       <update id='org.tigris.subversion.subclipse.mylyn.feature.jar' range='[0.0.0,3.0.0)' severity='0'/>
       <properties size='6'>
@@ -764,6 +806,50 @@
         </instructions>
       </touchpointData>
     </unit>
+    <unit id='com.collabnet.subversion.merge.feature.feature.group' version='1.9.0.4' singleton='false'>
+      <update id='com.collabnet.subversion.merge.feature.feature.group' range='[0.0.0,1.9.0.4)' severity='0'/>
+      <properties size='5'>
+        <property name='org.eclipse.equinox.p2.name' value='CollabNet Merge Client'/>
+        <property name='org.eclipse.equinox.p2.description' value='The CollabNet Merge client provides powerful Subversion merge capabilities within the Eclipse environment.'/>
+        <property name='org.eclipse.equinox.p2.description.url' value='http://desktop-eclipse.open.collab.net'/>
+        <property name='org.eclipse.equinox.p2.provider' value='CollabNet'/>
+        <property name='org.eclipse.equinox.p2.type.group' value='true'/>
+      </properties>
+      <provides size='1'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='com.collabnet.subversion.merge.feature.feature.group' version='1.9.0.4'/>
+      </provides>
+      <requires size='16'>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.ui' range='3.3.0'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.core.runtime' range='3.3.0'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.tigris.subversion.subclipse.ui' range='1.6.2'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.tigris.subversion.subclipse.core' range='1.6.2'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.core.resources' range='3.3.0'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.team.core' range='3.3.0'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.team.ui' range='3.3.0'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.ui.ide' range='3.3.0'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.ui.views' range='3.2.0'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.compare' range='3.3.0'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.ui.editors' range='3.3.0'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.jface.text' range='3.3.0'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.ui.forms' range='3.3.0'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.core.filesystem' range='1.1.0'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='com.collabnet.subversion.merge' range='[1.9.0.4,1.9.0.4]'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='com.collabnet.subversion.merge.feature.feature.jar' range='[1.9.0.4,1.9.0.4]'>
+          <filter>
+            (org.eclipse.update.install.features=true)
+          </filter>
+        </required>
+      </requires>
+      <touchpoint id='null' version='0.0.0'/>
+      <licenses size='1'>
+        <license url='http://www.eclipse.org/legal/epl-v10.html'>
+          Eclipse Public License - v 1.0&#xA;THE ACCOMPANYING PROGRAM IS PROVIDED UNDER THE TERMS OF THIS&#xA;ECLIPSE PUBLIC LICENSE (&quot;AGREEMENT&quot;). ANY USE, REPRODUCTION OR&#xA;DISTRIBUTION OF THE PROGRAM CONSTITUTES RECIPIENT&apos;S ACCEPTANCE&#xA;OF THIS AGREEMENT.&#xA;1. DEFINITIONS&#xA;&quot;Contribution&quot; means:&#xA;a) in the case of the initial Contributor, the initial code and&#xA;documentation distributed under this Agreement, and&#xA;b) in the case of each subsequent Contributor:&#xA;i) changes to the Program, and&#xA;ii) additions to the Program;&#xA;where such changes and/or additions to the Program originate&#xA;from and are distributed by that particular Contributor. A Contribution&#xA;&apos;originates&apos; from a Contributor if it was added to the Program&#xA;by such Contributor itself or anyone acting on such Contributor&apos;s&#xA;behalf. Contributions do not include additions to the Program&#xA;which: (i) are separate modules of software distributed in conjunction&#xA;with the Program under their own license agreement, and (ii)&#xA;are not derivative works of the Program.&#xA;&quot;Contributor&quot; means any person or entity that distributes the&#xA;Program.&#xA;&quot;Licensed Patents &quot; mean patent claims licensable by a Contributor&#xA;which are necessarily infringed by the use or sale of its Contribution&#xA;alone or when combined with the Program.&#xA;&quot;Program&quot; means the Contributions distributed in accordance with&#xA;this Agreement.&#xA;&quot;Recipient&quot; means anyone who receives the Program under this&#xA;Agreement, including all Contributors.&#xA;2. GRANT OF RIGHTS&#xA;a) Subject to the terms of this Agreement, each Contributor hereby&#xA;grants Recipient a non-exclusive, worldwide, royalty-free copyright&#xA;license to reproduce, prepare derivative works of, publicly display,&#xA;publicly perform, distribute and sublicense the Contribution&#xA;of such Contributor, if any, and such derivative works, in source&#xA;code and object code form.&#xA;b) Subject to the terms of this Agreement, each Contributor hereby&#xA;grants Recipient a non-exclusive, worldwide, royalty-free patent&#xA;license under Licensed Patents to make, use, sell, offer to sell,&#xA;import and otherwise transfer the Contribution of such Contributor,&#xA;if any, in source code and object code form. This patent license&#xA;shall apply to the combination of the Contribution and the Program&#xA;if, at the time the Contribution is added by the Contributor,&#xA;such addition of the Contribution causes such combination to&#xA;be covered by the Licensed Patents. The patent license shall&#xA;not apply to any other combinations which include the Contribution.&#xA;No hardware per se is licensed hereunder.&#xA;c) Recipient understands that although each Contributor grants&#xA;the licenses to its Contributions set forth herein, no assurances&#xA;are provided by any Contributor that the Program does not infringe&#xA;the patent or other intellectual property rights of any other&#xA;entity. Each Contributor disclaims any liability to Recipient&#xA;for claims brought by any other entity based on infringement&#xA;of intellectual property rights or otherwise. As a condition&#xA;to exercising the rights and licenses granted hereunder, each&#xA;Recipient hereby assumes sole responsibility to secure any other&#xA;intellectual property rights needed, if any. For example, if&#xA;a third party patent license is required to allow Recipient to&#xA;distribute the Program, it is Recipient&apos;s responsibility to acquire&#xA;that license before distributing the Program.&#xA;d) Each Contributor represents that to its knowledge it has sufficient&#xA;copyright rights in its Contribution, if any, to grant the copyright&#xA;license set forth in this Agreement.&#xA;3. REQUIREMENTS&#xA;A Contributor may choose to distribute the Program in object&#xA;code form under its own license agreement, provided that:&#xA;a) it complies with the terms and conditions of this Agreement;&#xA;and&#xA;b) its license agreement:&#xA;i) effectively disclaims on behalf of all Contributors all warranties&#xA;and conditions, express and implied, including warranties or&#xA;conditions of title and non-infringement, and implied warranties&#xA;or conditions of merchantability and fitness for a particular&#xA;purpose;&#xA;ii) effectively excludes on behalf of all Contributors all liability&#xA;for damages, including direct, indirect, special, incidental&#xA;and consequential damages, such as lost profits;&#xA;iii) states that any provisions which differ from this Agreement&#xA;are offered by that Contributor alone and not by any other party;&#xA;and&#xA;iv) states that source code for the Program is available from&#xA;such Contributor, and informs licensees how to obtain it in a&#xA;reasonable manner on or through a medium customarily used for&#xA;software exchange.&#xA;When the Program is made available in source code form:&#xA;a) it must be made available under this Agreement; and&#xA;b) a copy of this Agreement must be included with each copy of&#xA;the Program.&#xA;Contributors may not remove or alter any copyright notices contained&#xA;within the Program.&#xA;Each Contributor must identify itself as the originator of its&#xA;Contribution, if any, in a manner that reasonably allows subsequent&#xA;Recipients to identify the originator of the Contribution.&#xA;4. COMMERCIAL DISTRIBUTION&#xA;Commercial distributors of software may accept certain responsibilities&#xA;with respect to end users, business partners and the like. While&#xA;this license is intended to facilitate the commercial use of&#xA;the Program, the Contributor who includes the Program in a commercial&#xA;product offering should do so in a manner which does not create&#xA;potential liability for other Contributors. Therefore, if a Contributor&#xA;includes the Program in a commercial product offering, such Contributor&#xA;(&quot;Commercial Contributor&quot;) hereby agrees to defend and indemnify&#xA;every other Contributor (&quot;Indemnified Contributor&quot;) against any&#xA;losses, damages and costs (collectively &quot;Losses&quot;) arising from&#xA;claims, lawsuits and other legal actions brought by a third party&#xA;against the Indemnified Contributor to the extent caused by the&#xA;acts or omissions of such Commercial Contributor in connection&#xA;with its distribution of the Program in a commercial product&#xA;offering. The obligations in this section do not apply to any&#xA;claims or Losses relating to any actual or alleged intellectual&#xA;property infringement. In order to qualify, an Indemnified Contributor&#xA;must: a) promptly notify the Commercial Contributor in writing&#xA;of such claim, and b) allow the Commercial Contributor to control,&#xA;and cooperate with the Commercial Contributor in, the defense&#xA;and any related settlement negotiations. The Indemnified Contributor&#xA;may participate in any such claim at its own expense.&#xA;For example, a Contributor might include the Program in a commercial&#xA;product offering, Product X. That Contributor is then a Commercial&#xA;Contributor. If that Commercial Contributor then makes performance&#xA;claims, or offers warranties related to Product X, those performance&#xA;claims and warranties are such Commercial Contributor&apos;s responsibility&#xA;alone. Under this section, the Commercial Contributor would have&#xA;to defend claims against the other Contributors related to those&#xA;performance claims and warranties, and if a court requires any&#xA;other Contributor to pay any damages as a result, the Commercial&#xA;Contributor must pay those damages.&#xA;5. NO WARRANTY&#xA;EXCEPT AS EXPRESSLY SET FORTH IN THIS AGREEMENT, THE PROGRAM&#xA;IS PROVIDED ON AN &quot;AS IS&quot; BASIS, WITHOUT WARRANTIES OR CONDITIONS&#xA;OF ANY KIND, EITHER EXPRESS OR IMPLIED INCLUDING, WITHOUT LIMITATION,&#xA;ANY WARRANTIES OR CONDITIONS OF TITLE, NON-INFRINGEMENT, MERCHANTABILITY&#xA;OR FITNESS FOR A PARTICULAR PURPOSE. Each Recipient is solely&#xA;responsible for determining the appropriateness of using and&#xA;distributing the Program and assumes all risks associated with&#xA;its exercise of rights under this Agreement , including but not&#xA;limited to the risks and costs of program errors, compliance&#xA;with applicable laws, damage to or loss of data, programs or&#xA;equipment, and unavailability or interruption of operations.&#xA;6. DISCLAIMER OF LIABILITY&#xA;EXCEPT AS EXPRESSLY SET FORTH IN THIS AGREEMENT, NEITHER RECIPIENT&#xA;NOR ANY CONTRIBUTORS SHALL HAVE ANY LIABILITY FOR ANY DIRECT,&#xA;INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES&#xA;(INCLUDING WITHOUT LIMITATION LOST PROFITS), HOWEVER CAUSED AND&#xA;ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,&#xA;OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&#xA;OUT OF THE USE OR DISTRIBUTION OF THE PROGRAM OR THE EXERCISE&#xA;OF ANY RIGHTS GRANTED HEREUNDER, EVEN IF ADVISED OF THE POSSIBILITY&#xA;OF SUCH DAMAGES.&#xA;7. GENERAL&#xA;If any provision of this Agreement is invalid or unenforceable&#xA;under applicable law, it shall not affect the validity or enforceability&#xA;of the remainder of the terms of this Agreement, and without&#xA;further action by the parties hereto, such provision shall be&#xA;reformed to the minimum extent necessary to make such provision&#xA;valid and enforceable.&#xA;If Recipient institutes patent litigation against any entity&#xA;(including a cross-claim or counterclaim in a lawsuit) alleging&#xA;that the Program itself (excluding combinations of the Program&#xA;with other software or hardware) infringes such Recipient&apos;s patent(s),&#xA;then such Recipient&apos;s rights granted under Section 2(b) shall&#xA;terminate as of the date such litigation is filed.&#xA;All Recipient&apos;s rights under this Agreement shall terminate if&#xA;it fails to comply with any of the material terms or conditions&#xA;of this Agreement and does not cure such failure in a reasonable&#xA;period of time after becoming aware of such noncompliance. If&#xA;all Recipient&apos;s rights under this Agreement terminate, Recipient&#xA;agrees to cease use and distribution of the Program as soon as&#xA;reasonably practicable. However, Recipient&apos;s obligations under&#xA;this Agreement and any licenses granted by Recipient relating&#xA;to the Program shall continue and survive.&#xA;Everyone is permitted to copy and distribute copies of this Agreement,&#xA;but in order to avoid inconsistency the Agreement is copyrighted&#xA;and may only be modified in the following manner. The Agreement&#xA;Steward reserves the right to publish new versions (including&#xA;revisions) of this Agreement from time to time. No one other&#xA;than the Agreement Steward has the right to modify this Agreement.&#xA;The Eclipse Foundation is the initial Agreement Steward. The&#xA;Eclipse Foundation may assign the responsibility to serve as&#xA;the Agreement Steward to a suitable separate entity. Each new&#xA;version of the Agreement will be given a distinguishing version&#xA;number. The Program (including Contributions) may always be distributed&#xA;subject to the version of the Agreement under which it was received.&#xA;In addition, after a new version of the Agreement is published,&#xA;Contributor may elect to distribute the Program (including its&#xA;Contributions) under the new version. Except as expressly stated&#xA;in Sections 2(a) and 2(b) above, Recipient receives no rights&#xA;or licenses to the intellectual property of any Contributor under&#xA;this Agreement, whether expressly, by implication, estoppel or&#xA;otherwise. All rights in the Program not expressly granted under&#xA;this Agreement are reserved.&#xA;This Agreement is governed by the laws of the State of New York&#xA;and the intellectual property laws of the United States of America.&#xA;No party to this Agreement will bring a legal action under this&#xA;Agreement more than one year after the cause of action arose.&#xA;Each party waives its rights to a jury trial in any resulting&#xA;litigation.
+        </license>
+      </licenses>
+      <copyright>
+        (c) 2009 CollabNet, Inc.
+      </copyright>
+    </unit>
     <unit id='org.tigris.subversion.subclipse.graph.feature.feature.jar' version='1.0.7'>
       <update id='org.tigris.subversion.subclipse.graph.feature.feature.jar' range='[0.0.0,1.0.7)' severity='0'/>
       <properties size='6'>
@@ -862,11 +948,12 @@
       <provides size='1'>
         <provided namespace='org.eclipse.equinox.p2.iu' name='Subclipse' version='0.0.0'/>
       </provides>
-      <requires size='6'>
+      <requires size='7'>
         <required namespace='org.eclipse.equinox.p2.iu' name='org.tigris.subversion.subclipse.mylyn.feature.group' range='[3.0.0,3.0.0]'/>
         <required namespace='org.eclipse.equinox.p2.iu' name='org.tigris.subversion.clientadapter.feature.feature.group' range='[1.6.0.2,1.6.0.2]'/>
         <required namespace='org.eclipse.equinox.p2.iu' name='org.tigris.subversion.clientadapter.javahl.feature.feature.group' range='[1.6.2.1,1.6.2.1]'/>
         <required namespace='org.eclipse.equinox.p2.iu' name='org.tigris.subversion.subclipse.graph.feature.feature.group' range='[1.0.7,1.0.7]'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='com.collabnet.subversion.merge.feature.feature.group' range='[1.9.0.4,1.9.0.4]'/>
         <required namespace='org.eclipse.equinox.p2.iu' name='org.tigris.subversion.subclipse.feature.group' range='[1.6.2,1.6.2]'/>
         <required namespace='org.eclipse.equinox.p2.iu' name='org.tigris.subversion.clientadapter.svnkit.feature.feature.group' range='[1.6.2,1.6.2]'/>
       </requires>
@@ -910,6 +997,76 @@
       <copyright url='http://subclipse.tigris.org/'>
         http://subclipse.tigris.org/
       </copyright>
+    </unit>
+    <unit id='org.tmatesoft.svnkit' version='1.3.0.5847' singleton='false'>
+      <update id='org.tmatesoft.svnkit' range='[0.0.0,1.3.0.5847)' severity='0'/>
+      <properties size='2'>
+        <property name='org.eclipse.equinox.p2.name' value='SVNKit Library Plug-in'/>
+        <property name='org.eclipse.equinox.p2.provider' value='TMate Software'/>
+      </properties>
+      <provides size='43'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='org.tmatesoft.svnkit' version='1.3.0.5847'/>
+        <provided namespace='osgi.bundle' name='org.tmatesoft.svnkit' version='1.3.0.5847'/>
+        <provided namespace='java.package' name='com.trilead.ssh2' version='0.0.0'/>
+        <provided namespace='java.package' name='com.trilead.ssh2.auth' version='0.0.0'/>
+        <provided namespace='java.package' name='com.trilead.ssh2.channel' version='0.0.0'/>
+        <provided namespace='java.package' name='com.trilead.ssh2.crypto' version='0.0.0'/>
+        <provided namespace='java.package' name='com.trilead.ssh2.crypto.cipher' version='0.0.0'/>
+        <provided namespace='java.package' name='com.trilead.ssh2.crypto.dh' version='0.0.0'/>
+        <provided namespace='java.package' name='com.trilead.ssh2.crypto.digest' version='0.0.0'/>
+        <provided namespace='java.package' name='com.trilead.ssh2.log' version='0.0.0'/>
+        <provided namespace='java.package' name='com.trilead.ssh2.packets' version='0.0.0'/>
+        <provided namespace='java.package' name='com.trilead.ssh2.sftp' version='0.0.0'/>
+        <provided namespace='java.package' name='com.trilead.ssh2.signature' version='0.0.0'/>
+        <provided namespace='java.package' name='com.trilead.ssh2.transport' version='0.0.0'/>
+        <provided namespace='java.package' name='com.trilead.ssh2.util' version='0.0.0'/>
+        <provided namespace='java.package' name='de.regnis.q.sequence' version='0.0.0'/>
+        <provided namespace='java.package' name='de.regnis.q.sequence.core' version='0.0.0'/>
+        <provided namespace='java.package' name='de.regnis.q.sequence.line' version='0.0.0'/>
+        <provided namespace='java.package' name='de.regnis.q.sequence.line.diff' version='0.0.0'/>
+        <provided namespace='java.package' name='de.regnis.q.sequence.line.simplifier' version='0.0.0'/>
+        <provided namespace='java.package' name='de.regnis.q.sequence.media' version='0.0.0'/>
+        <provided namespace='java.package' name='org.tigris.subversion.javahl' version='0.0.0'/>
+        <provided namespace='java.package' name='org.tmatesoft.svn.core' version='0.0.0'/>
+        <provided namespace='java.package' name='org.tmatesoft.svn.core.auth' version='0.0.0'/>
+        <provided namespace='java.package' name='org.tmatesoft.svn.core.internal.delta' version='0.0.0'/>
+        <provided namespace='java.package' name='org.tmatesoft.svn.core.internal.io.dav' version='0.0.0'/>
+        <provided namespace='java.package' name='org.tmatesoft.svn.core.internal.io.dav.handlers' version='0.0.0'/>
+        <provided namespace='java.package' name='org.tmatesoft.svn.core.internal.io.dav.http' version='0.0.0'/>
+        <provided namespace='java.package' name='org.tmatesoft.svn.core.internal.io.fs' version='0.0.0'/>
+        <provided namespace='java.package' name='org.tmatesoft.svn.core.internal.io.svn' version='0.0.0'/>
+        <provided namespace='java.package' name='org.tmatesoft.svn.core.internal.util' version='0.0.0'/>
+        <provided namespace='java.package' name='org.tmatesoft.svn.core.internal.util.jna' version='0.0.0'/>
+        <provided namespace='java.package' name='org.tmatesoft.svn.core.internal.wc' version='0.0.0'/>
+        <provided namespace='java.package' name='org.tmatesoft.svn.core.internal.wc.admin' version='0.0.0'/>
+        <provided namespace='java.package' name='org.tmatesoft.svn.core.io' version='0.0.0'/>
+        <provided namespace='java.package' name='org.tmatesoft.svn.core.io.diff' version='0.0.0'/>
+        <provided namespace='java.package' name='org.tmatesoft.svn.core.javahl' version='0.0.0'/>
+        <provided namespace='java.package' name='org.tmatesoft.svn.core.replicator' version='0.0.0'/>
+        <provided namespace='java.package' name='org.tmatesoft.svn.core.wc' version='0.0.0'/>
+        <provided namespace='java.package' name='org.tmatesoft.svn.core.wc.admin' version='0.0.0'/>
+        <provided namespace='java.package' name='org.tmatesoft.svn.core.wc.xml' version='0.0.0'/>
+        <provided namespace='java.package' name='org.tmatesoft.svn.util' version='0.0.0'/>
+        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
+      </provides>
+      <requires size='5'>
+        <required namespace='osgi.bundle' name='com.sun.jna' range='[3.0.0,4.0.0)' optional='true'/>
+        <required namespace='osgi.bundle' name='org.eclipse.core.runtime' range='[3.0.0,4.0.0)' optional='true'/>
+        <required namespace='java.package' name='org.osgi.framework' range='1.3.0'/>
+        <required namespace='java.package' name='org.osgi.service.log' range='1.3.0'/>
+        <required namespace='java.package' name='org.osgi.util.tracker' range='1.3.1'/>
+      </requires>
+      <artifacts size='1'>
+        <artifact classifier='osgi.bundle' id='org.tmatesoft.svnkit' version='1.3.0.5847'/>
+      </artifacts>
+      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
+      <touchpointData size='1'>
+        <instructions size='1'>
+          <instruction key='manifest'>
+            Bundle-ManifestVersion: 2&#xA;Bundle-RequiredExecutionEnvironment: J2SE-1.4&#xA;Bundle-ActivationPolicy: lazy&#xA;Bundle-Name: SVNKit Library Plug-in&#xA;Ant-Version: Apache Ant 1.7.0&#xA;Bundle-ClassPath: .,svnkit.jar,svnkit-javahl.jar,trilead.jar&#xA;Require-Bundle: com.sun.jna;bundle-version=&quot;[3.0.0,4.0.0)&quot;;resolution:=optional,org.eclipse.core.runtime;bundle-version=&quot;[3.0.0,4.0.0)&quot;;resolution:=optional&#xA;Bundle-Activator: org.tmatesoft.svn.core.SVNKitActivator&#xA;Bundle-Vendor: TMate Software&#xA;Created-By: 1.4.2_17-b06 (Sun Microsystems Inc.)&#xA;Manifest-Version: 1.0&#xA;Bundle-Version: 1.3.0.5847&#xA;Export-Package: com.trilead.ssh2,com.trilead.ssh2.auth,com.trilead.ssh2.channel,com.trilead.ssh2.crypto,com.trilead.ssh2.crypto.cipher,com.trilead.ssh2.crypto.dh,com.trilead.ssh2.crypto.digest,com.trilead.ssh2.log,com.trilead.ssh2.packets,com.trilead.ssh2.sftp,com.trilead.ssh2.signature,com.trilead.ssh2.transport,com.trilead.ssh2.util,de.regnis.q.sequence,de.regnis.q.sequence.core,de.regnis.q.sequence.line,de.regnis.q.sequence.line.diff,de.regnis.q.sequence.line.simplifier,de.regnis.q.sequence.media,org.tigris.subversion.javahl,org.tmatesoft.svn.core,org.tmatesoft.svn.core.auth,org.tmatesoft.svn.core.internal.delta,org.tmatesoft.svn.core.internal.io.dav,org.tmatesoft.svn.core.internal.io.dav.handlers,org.tmatesoft.svn.core.internal.io.dav.http,org.tmatesoft.svn.core.internal.io.fs,org.tmatesoft.svn.core.internal.io.svn,org.tmatesoft.svn.core.internal.util,org.tmatesoft.svn.core.internal.util.jna,org.tmatesoft.svn.core.internal.wc,org.tmatesoft.svn.core.internal.wc.admin,org.tmatesoft.svn.core.io,org.tmatesoft.svn.core.io.diff,org.tmatesoft.svn.core.javahl,org.tmatesoft.svn.core.replicator,org.tmatesoft.svn.core.wc,org.tmatesoft.svn.core.wc.admin,org.tmatesoft.svn.core.wc.xml,org.tmatesoft.svn.util&#xA;Bundle-SymbolicName: org.tmatesoft.svnkit&#xA;Import-Package: org.osgi.framework;version=&quot;1.3.0&quot;,org.osgi.service.log; version=&quot;1.3&quot;,org.osgi.util.tracker;version=&quot;1.3.1&quot;&#xA;
+          </instruction>
+        </instructions>
+      </touchpointData>
     </unit>
     <unit id='a.jre' version='1.6.0' singleton='false'>
       <provides size='117'>
@@ -1033,75 +1190,44 @@
       </provides>
       <touchpoint id='org.eclipse.equinox.p2.native' version='1.0.0'/>
     </unit>
-    <unit id='org.tmatesoft.svnkit' version='1.3.0.5847' singleton='false'>
-      <update id='org.tmatesoft.svnkit' range='[0.0.0,1.3.0.5847)' severity='0'/>
-      <properties size='2'>
-        <property name='org.eclipse.equinox.p2.name' value='SVNKit Library Plug-in'/>
-        <property name='org.eclipse.equinox.p2.provider' value='TMate Software'/>
+    <unit id='org.tigris.subversion.clientadapter.javahl.feature.feature.group' version='1.6.2.1' singleton='false'>
+      <update id='org.tigris.subversion.clientadapter.javahl.feature.feature.group' range='[0.0.0,1.6.2.1)' severity='0'/>
+      <properties size='6'>
+        <property name='org.eclipse.equinox.p2.name' value='Subversion JavaHL Native Library Adapter (Required)'/>
+        <property name='org.eclipse.equinox.p2.description' value='%description'/>
+        <property name='org.eclipse.equinox.p2.provider' value='tigris.org'/>
+        <property name='org.eclipse.equinox.p2.type.group' value='true'/>
+        <property name='df_LT.description' value='Subversion Client Adapter implementation using the Subversion native JavaHL library.'/>
+        <property name='df_LT.license' value='Subclipse Software User Agreement&#xA;11th April, 2006&#xA;&#xA;Subclipse is licensed under the terms of the Eclipse Public&#xA;License v1.0.  http://www.eclipse.org/legal/epl-v10.html&#xA;&#xA;Applicable Licenses&#xA;&#xA;Subclipse is built upon a number of other open source&#xA;technologies and products.  Here is a list of those products&#xA;with links to their licenses.&#xA;&#xA;svnClientAdapter:  Part of the overall Subclipse project,&#xA;svnClientAdapter presents a pluggable high-level interface&#xA;to the Subversion repository.  svnClientAdapter is licensed&#xA;under the Apache2 License.&#xA;http://www.apache.org/licenses/LICENSE-2.0&#xA;&#xA;Depending on the adapter you choose in your preferences, the&#xA;following products and licenses are involved.&#xA;&#xA;Subversion/JavaHL:  JavaHL is a high-level Java language binding&#xA;to the Subversion &quot;C&quot; libraries and is part of the official&#xA;Subversion source distribution.  Subversion is licensed under&#xA;the CollabNet license.&#xA;http://subversion.tigris.org/project_license.html&#xA;&#xA;SVNKit:  SVNKit is a &quot;pure Java&quot; implementation of the&#xA;Subversion network protocols and working copy formats.&#xA;SVNKit is licensed under the TMate license.&#xA;http://svnkit.com/licensing/index.html&#xA;&#xA;Ganymed SSH-2:  SVNKit uses the Ganymed SSH-2 library to support&#xA;the svn+ssh:// protocol.  Ganymed SSH-2 is licensed under the&#xA;Ganymed license.&#xA;http://www.ganymed.ethz.ch/ssh2/LICENSE.txt&#xA;&#xA;IT IS YOUR OBLIGATION TO READ AND ACCEPT ALL SUCH TERMS&#xA;AND CONDITIONS PRIOR TO USE OF THIS CONTENT.&#xA;'/>
       </properties>
-      <provides size='43'>
-        <provided namespace='org.eclipse.equinox.p2.iu' name='org.tmatesoft.svnkit' version='1.3.0.5847'/>
-        <provided namespace='osgi.bundle' name='org.tmatesoft.svnkit' version='1.3.0.5847'/>
-        <provided namespace='java.package' name='com.trilead.ssh2' version='0.0.0'/>
-        <provided namespace='java.package' name='com.trilead.ssh2.auth' version='0.0.0'/>
-        <provided namespace='java.package' name='com.trilead.ssh2.channel' version='0.0.0'/>
-        <provided namespace='java.package' name='com.trilead.ssh2.crypto' version='0.0.0'/>
-        <provided namespace='java.package' name='com.trilead.ssh2.crypto.cipher' version='0.0.0'/>
-        <provided namespace='java.package' name='com.trilead.ssh2.crypto.dh' version='0.0.0'/>
-        <provided namespace='java.package' name='com.trilead.ssh2.crypto.digest' version='0.0.0'/>
-        <provided namespace='java.package' name='com.trilead.ssh2.log' version='0.0.0'/>
-        <provided namespace='java.package' name='com.trilead.ssh2.packets' version='0.0.0'/>
-        <provided namespace='java.package' name='com.trilead.ssh2.sftp' version='0.0.0'/>
-        <provided namespace='java.package' name='com.trilead.ssh2.signature' version='0.0.0'/>
-        <provided namespace='java.package' name='com.trilead.ssh2.transport' version='0.0.0'/>
-        <provided namespace='java.package' name='com.trilead.ssh2.util' version='0.0.0'/>
-        <provided namespace='java.package' name='de.regnis.q.sequence' version='0.0.0'/>
-        <provided namespace='java.package' name='de.regnis.q.sequence.core' version='0.0.0'/>
-        <provided namespace='java.package' name='de.regnis.q.sequence.line' version='0.0.0'/>
-        <provided namespace='java.package' name='de.regnis.q.sequence.line.diff' version='0.0.0'/>
-        <provided namespace='java.package' name='de.regnis.q.sequence.line.simplifier' version='0.0.0'/>
-        <provided namespace='java.package' name='de.regnis.q.sequence.media' version='0.0.0'/>
-        <provided namespace='java.package' name='org.tigris.subversion.javahl' version='0.0.0'/>
-        <provided namespace='java.package' name='org.tmatesoft.svn.core' version='0.0.0'/>
-        <provided namespace='java.package' name='org.tmatesoft.svn.core.auth' version='0.0.0'/>
-        <provided namespace='java.package' name='org.tmatesoft.svn.core.internal.delta' version='0.0.0'/>
-        <provided namespace='java.package' name='org.tmatesoft.svn.core.internal.io.dav' version='0.0.0'/>
-        <provided namespace='java.package' name='org.tmatesoft.svn.core.internal.io.dav.handlers' version='0.0.0'/>
-        <provided namespace='java.package' name='org.tmatesoft.svn.core.internal.io.dav.http' version='0.0.0'/>
-        <provided namespace='java.package' name='org.tmatesoft.svn.core.internal.io.fs' version='0.0.0'/>
-        <provided namespace='java.package' name='org.tmatesoft.svn.core.internal.io.svn' version='0.0.0'/>
-        <provided namespace='java.package' name='org.tmatesoft.svn.core.internal.util' version='0.0.0'/>
-        <provided namespace='java.package' name='org.tmatesoft.svn.core.internal.util.jna' version='0.0.0'/>
-        <provided namespace='java.package' name='org.tmatesoft.svn.core.internal.wc' version='0.0.0'/>
-        <provided namespace='java.package' name='org.tmatesoft.svn.core.internal.wc.admin' version='0.0.0'/>
-        <provided namespace='java.package' name='org.tmatesoft.svn.core.io' version='0.0.0'/>
-        <provided namespace='java.package' name='org.tmatesoft.svn.core.io.diff' version='0.0.0'/>
-        <provided namespace='java.package' name='org.tmatesoft.svn.core.javahl' version='0.0.0'/>
-        <provided namespace='java.package' name='org.tmatesoft.svn.core.replicator' version='0.0.0'/>
-        <provided namespace='java.package' name='org.tmatesoft.svn.core.wc' version='0.0.0'/>
-        <provided namespace='java.package' name='org.tmatesoft.svn.core.wc.admin' version='0.0.0'/>
-        <provided namespace='java.package' name='org.tmatesoft.svn.core.wc.xml' version='0.0.0'/>
-        <provided namespace='java.package' name='org.tmatesoft.svn.util' version='0.0.0'/>
-        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
+      <provides size='2'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='org.tigris.subversion.clientadapter.javahl.feature.feature.group' version='1.6.2.1'/>
+        <provided namespace='org.eclipse.equinox.p2.localization' name='df_LT' version='1.0.0'/>
       </provides>
       <requires size='5'>
-        <required namespace='osgi.bundle' name='com.sun.jna' range='[3.0.0,4.0.0)' optional='true'/>
-        <required namespace='osgi.bundle' name='org.eclipse.core.runtime' range='[3.0.0,4.0.0)' optional='true'/>
-        <required namespace='java.package' name='org.osgi.framework' range='1.3.0'/>
-        <required namespace='java.package' name='org.osgi.service.log' range='1.3.0'/>
-        <required namespace='java.package' name='org.osgi.util.tracker' range='1.3.1'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.core.runtime' range='0.0.0'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.tigris.subversion.clientadapter' range='[1.6.0,1.7.0)'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.tigris.subversion.clientadapter.javahl' range='[1.6.2.1,1.6.2.1]'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.tigris.subversion.clientadapter.javahl.win32' range='[1.6.2.1,1.6.2.1]'>
+          <filter>
+            (&amp;(osgi.os=win32)(osgi.arch=x86))
+          </filter>
+        </required>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.tigris.subversion.clientadapter.javahl.feature.feature.jar' range='[1.6.2.1,1.6.2.1]'>
+          <filter>
+            (org.eclipse.update.install.features=true)
+          </filter>
+        </required>
       </requires>
-      <artifacts size='1'>
-        <artifact classifier='osgi.bundle' id='org.tmatesoft.svnkit' version='1.3.0.5847'/>
-      </artifacts>
-      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
-      <touchpointData size='1'>
-        <instructions size='1'>
-          <instruction key='manifest'>
-            Bundle-ManifestVersion: 2&#xA;Bundle-RequiredExecutionEnvironment: J2SE-1.4&#xA;Bundle-ActivationPolicy: lazy&#xA;Bundle-Name: SVNKit Library Plug-in&#xA;Ant-Version: Apache Ant 1.7.0&#xA;Bundle-ClassPath: .,svnkit.jar,svnkit-javahl.jar,trilead.jar&#xA;Require-Bundle: com.sun.jna;bundle-version=&quot;[3.0.0,4.0.0)&quot;;resolution:=optional,org.eclipse.core.runtime;bundle-version=&quot;[3.0.0,4.0.0)&quot;;resolution:=optional&#xA;Bundle-Activator: org.tmatesoft.svn.core.SVNKitActivator&#xA;Bundle-Vendor: TMate Software&#xA;Created-By: 1.4.2_17-b06 (Sun Microsystems Inc.)&#xA;Manifest-Version: 1.0&#xA;Bundle-Version: 1.3.0.5847&#xA;Export-Package: com.trilead.ssh2,com.trilead.ssh2.auth,com.trilead.ssh2.channel,com.trilead.ssh2.crypto,com.trilead.ssh2.crypto.cipher,com.trilead.ssh2.crypto.dh,com.trilead.ssh2.crypto.digest,com.trilead.ssh2.log,com.trilead.ssh2.packets,com.trilead.ssh2.sftp,com.trilead.ssh2.signature,com.trilead.ssh2.transport,com.trilead.ssh2.util,de.regnis.q.sequence,de.regnis.q.sequence.core,de.regnis.q.sequence.line,de.regnis.q.sequence.line.diff,de.regnis.q.sequence.line.simplifier,de.regnis.q.sequence.media,org.tigris.subversion.javahl,org.tmatesoft.svn.core,org.tmatesoft.svn.core.auth,org.tmatesoft.svn.core.internal.delta,org.tmatesoft.svn.core.internal.io.dav,org.tmatesoft.svn.core.internal.io.dav.handlers,org.tmatesoft.svn.core.internal.io.dav.http,org.tmatesoft.svn.core.internal.io.fs,org.tmatesoft.svn.core.internal.io.svn,org.tmatesoft.svn.core.internal.util,org.tmatesoft.svn.core.internal.util.jna,org.tmatesoft.svn.core.internal.wc,org.tmatesoft.svn.core.internal.wc.admin,org.tmatesoft.svn.core.io,org.tmatesoft.svn.core.io.diff,org.tmatesoft.svn.core.javahl,org.tmatesoft.svn.core.replicator,org.tmatesoft.svn.core.wc,org.tmatesoft.svn.core.wc.admin,org.tmatesoft.svn.core.wc.xml,org.tmatesoft.svn.util&#xA;Bundle-SymbolicName: org.tmatesoft.svnkit&#xA;Import-Package: org.osgi.framework;version=&quot;1.3.0&quot;,org.osgi.service.log; version=&quot;1.3&quot;,org.osgi.util.tracker;version=&quot;1.3.1&quot;&#xA;
-          </instruction>
-        </instructions>
-      </touchpointData>
+      <touchpoint id='null' version='0.0.0'/>
+      <licenses size='1'>
+        <license>
+          %license
+        </license>
+      </licenses>
+      <copyright url='http://subclipse.tigris.org/'>
+        http://subclipse.tigris.org/
+      </copyright>
     </unit>
     <unit id='org.tigris.subversion.subclipse.graph' version='1.0.7'>
       <update id='org.tigris.subversion.subclipse.graph' range='[0.0.0,1.0.7)' severity='0'/>
@@ -1142,43 +1268,41 @@
         </instructions>
       </touchpointData>
     </unit>
-    <unit id='org.tigris.subversion.clientadapter.javahl.feature.feature.group' version='1.6.2.1' singleton='false'>
-      <update id='org.tigris.subversion.clientadapter.javahl.feature.feature.group' range='[0.0.0,1.6.2.1)' severity='0'/>
-      <properties size='6'>
-        <property name='org.eclipse.equinox.p2.name' value='Subversion JavaHL Native Library Adapter (Required)'/>
-        <property name='org.eclipse.equinox.p2.description' value='%description'/>
-        <property name='org.eclipse.equinox.p2.provider' value='tigris.org'/>
-        <property name='org.eclipse.equinox.p2.type.group' value='true'/>
-        <property name='df_LT.description' value='Subversion Client Adapter implementation using the Subversion native JavaHL library.'/>
-        <property name='df_LT.license' value='Subclipse Software User Agreement&#xA;11th April, 2006&#xA;&#xA;Subclipse is licensed under the terms of the Eclipse Public&#xA;License v1.0.  http://www.eclipse.org/legal/epl-v10.html&#xA;&#xA;Applicable Licenses&#xA;&#xA;Subclipse is built upon a number of other open source&#xA;technologies and products.  Here is a list of those products&#xA;with links to their licenses.&#xA;&#xA;svnClientAdapter:  Part of the overall Subclipse project,&#xA;svnClientAdapter presents a pluggable high-level interface&#xA;to the Subversion repository.  svnClientAdapter is licensed&#xA;under the Apache2 License.&#xA;http://www.apache.org/licenses/LICENSE-2.0&#xA;&#xA;Depending on the adapter you choose in your preferences, the&#xA;following products and licenses are involved.&#xA;&#xA;Subversion/JavaHL:  JavaHL is a high-level Java language binding&#xA;to the Subversion &quot;C&quot; libraries and is part of the official&#xA;Subversion source distribution.  Subversion is licensed under&#xA;the CollabNet license.&#xA;http://subversion.tigris.org/project_license.html&#xA;&#xA;SVNKit:  SVNKit is a &quot;pure Java&quot; implementation of the&#xA;Subversion network protocols and working copy formats.&#xA;SVNKit is licensed under the TMate license.&#xA;http://svnkit.com/licensing/index.html&#xA;&#xA;Ganymed SSH-2:  SVNKit uses the Ganymed SSH-2 library to support&#xA;the svn+ssh:// protocol.  Ganymed SSH-2 is licensed under the&#xA;Ganymed license.&#xA;http://www.ganymed.ethz.ch/ssh2/LICENSE.txt&#xA;&#xA;IT IS YOUR OBLIGATION TO READ AND ACCEPT ALL SUCH TERMS&#xA;AND CONDITIONS PRIOR TO USE OF THIS CONTENT.&#xA;'/>
+    <unit id='com.collabnet.subversion.merge.feature.feature.jar' version='1.9.0.4'>
+      <update id='com.collabnet.subversion.merge.feature.feature.jar' range='[0.0.0,1.9.0.4)' severity='0'/>
+      <properties size='5'>
+        <property name='org.eclipse.equinox.p2.name' value='CollabNet Merge Client'/>
+        <property name='org.eclipse.equinox.p2.description' value='The CollabNet Merge client provides powerful Subversion merge capabilities within the Eclipse environment.'/>
+        <property name='org.eclipse.equinox.p2.description.url' value='http://desktop-eclipse.open.collab.net'/>
+        <property name='org.eclipse.equinox.p2.provider' value='CollabNet'/>
+        <property name='org.eclipse.update.feature.plugin' value='com.collabnet.subversion.merge'/>
       </properties>
-      <provides size='2'>
-        <provided namespace='org.eclipse.equinox.p2.iu' name='org.tigris.subversion.clientadapter.javahl.feature.feature.group' version='1.6.2.1'/>
-        <provided namespace='org.eclipse.equinox.p2.localization' name='df_LT' version='1.0.0'/>
+      <provides size='3'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='com.collabnet.subversion.merge.feature.feature.jar' version='1.9.0.4'/>
+        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='feature' version='1.0.0'/>
+        <provided namespace='org.eclipse.update.feature' name='com.collabnet.subversion.merge.feature' version='1.9.0.4'/>
       </provides>
-      <requires size='5'>
-        <required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.core.runtime' range='0.0.0'/>
-        <required namespace='org.eclipse.equinox.p2.iu' name='org.tigris.subversion.clientadapter' range='[1.6.0,1.7.0)'/>
-        <required namespace='org.eclipse.equinox.p2.iu' name='org.tigris.subversion.clientadapter.javahl' range='[1.6.2.1,1.6.2.1]'/>
-        <required namespace='org.eclipse.equinox.p2.iu' name='org.tigris.subversion.clientadapter.javahl.win32' range='[1.6.2.1,1.6.2.1]'>
-          <filter>
-            (&amp;(osgi.os=win32)(osgi.arch=x86))
-          </filter>
-        </required>
-        <required namespace='org.eclipse.equinox.p2.iu' name='org.tigris.subversion.clientadapter.javahl.feature.feature.jar' range='[1.6.2.1,1.6.2.1]'>
-          <filter>
-            (org.eclipse.update.install.features=true)
-          </filter>
-        </required>
-      </requires>
-      <touchpoint id='null' version='0.0.0'/>
+      <filter>
+        (org.eclipse.update.install.features=true)
+      </filter>
+      <artifacts size='1'>
+        <artifact classifier='org.eclipse.update.feature' id='com.collabnet.subversion.merge.feature' version='1.9.0.4'/>
+      </artifacts>
+      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
+      <touchpointData size='1'>
+        <instructions size='1'>
+          <instruction key='zipped'>
+            true
+          </instruction>
+        </instructions>
+      </touchpointData>
       <licenses size='1'>
-        <license>
-          %license
+        <license url='http://www.eclipse.org/legal/epl-v10.html'>
+          Eclipse Public License - v 1.0&#xA;THE ACCOMPANYING PROGRAM IS PROVIDED UNDER THE TERMS OF THIS&#xA;ECLIPSE PUBLIC LICENSE (&quot;AGREEMENT&quot;). ANY USE, REPRODUCTION OR&#xA;DISTRIBUTION OF THE PROGRAM CONSTITUTES RECIPIENT&apos;S ACCEPTANCE&#xA;OF THIS AGREEMENT.&#xA;1. DEFINITIONS&#xA;&quot;Contribution&quot; means:&#xA;a) in the case of the initial Contributor, the initial code and&#xA;documentation distributed under this Agreement, and&#xA;b) in the case of each subsequent Contributor:&#xA;i) changes to the Program, and&#xA;ii) additions to the Program;&#xA;where such changes and/or additions to the Program originate&#xA;from and are distributed by that particular Contributor. A Contribution&#xA;&apos;originates&apos; from a Contributor if it was added to the Program&#xA;by such Contributor itself or anyone acting on such Contributor&apos;s&#xA;behalf. Contributions do not include additions to the Program&#xA;which: (i) are separate modules of software distributed in conjunction&#xA;with the Program under their own license agreement, and (ii)&#xA;are not derivative works of the Program.&#xA;&quot;Contributor&quot; means any person or entity that distributes the&#xA;Program.&#xA;&quot;Licensed Patents &quot; mean patent claims licensable by a Contributor&#xA;which are necessarily infringed by the use or sale of its Contribution&#xA;alone or when combined with the Program.&#xA;&quot;Program&quot; means the Contributions distributed in accordance with&#xA;this Agreement.&#xA;&quot;Recipient&quot; means anyone who receives the Program under this&#xA;Agreement, including all Contributors.&#xA;2. GRANT OF RIGHTS&#xA;a) Subject to the terms of this Agreement, each Contributor hereby&#xA;grants Recipient a non-exclusive, worldwide, royalty-free copyright&#xA;license to reproduce, prepare derivative works of, publicly display,&#xA;publicly perform, distribute and sublicense the Contribution&#xA;of such Contributor, if any, and such derivative works, in source&#xA;code and object code form.&#xA;b) Subject to the terms of this Agreement, each Contributor hereby&#xA;grants Recipient a non-exclusive, worldwide, royalty-free patent&#xA;license under Licensed Patents to make, use, sell, offer to sell,&#xA;import and otherwise transfer the Contribution of such Contributor,&#xA;if any, in source code and object code form. This patent license&#xA;shall apply to the combination of the Contribution and the Program&#xA;if, at the time the Contribution is added by the Contributor,&#xA;such addition of the Contribution causes such combination to&#xA;be covered by the Licensed Patents. The patent license shall&#xA;not apply to any other combinations which include the Contribution.&#xA;No hardware per se is licensed hereunder.&#xA;c) Recipient understands that although each Contributor grants&#xA;the licenses to its Contributions set forth herein, no assurances&#xA;are provided by any Contributor that the Program does not infringe&#xA;the patent or other intellectual property rights of any other&#xA;entity. Each Contributor disclaims any liability to Recipient&#xA;for claims brought by any other entity based on infringement&#xA;of intellectual property rights or otherwise. As a condition&#xA;to exercising the rights and licenses granted hereunder, each&#xA;Recipient hereby assumes sole responsibility to secure any other&#xA;intellectual property rights needed, if any. For example, if&#xA;a third party patent license is required to allow Recipient to&#xA;distribute the Program, it is Recipient&apos;s responsibility to acquire&#xA;that license before distributing the Program.&#xA;d) Each Contributor represents that to its knowledge it has sufficient&#xA;copyright rights in its Contribution, if any, to grant the copyright&#xA;license set forth in this Agreement.&#xA;3. REQUIREMENTS&#xA;A Contributor may choose to distribute the Program in object&#xA;code form under its own license agreement, provided that:&#xA;a) it complies with the terms and conditions of this Agreement;&#xA;and&#xA;b) its license agreement:&#xA;i) effectively disclaims on behalf of all Contributors all warranties&#xA;and conditions, express and implied, including warranties or&#xA;conditions of title and non-infringement, and implied warranties&#xA;or conditions of merchantability and fitness for a particular&#xA;purpose;&#xA;ii) effectively excludes on behalf of all Contributors all liability&#xA;for damages, including direct, indirect, special, incidental&#xA;and consequential damages, such as lost profits;&#xA;iii) states that any provisions which differ from this Agreement&#xA;are offered by that Contributor alone and not by any other party;&#xA;and&#xA;iv) states that source code for the Program is available from&#xA;such Contributor, and informs licensees how to obtain it in a&#xA;reasonable manner on or through a medium customarily used for&#xA;software exchange.&#xA;When the Program is made available in source code form:&#xA;a) it must be made available under this Agreement; and&#xA;b) a copy of this Agreement must be included with each copy of&#xA;the Program.&#xA;Contributors may not remove or alter any copyright notices contained&#xA;within the Program.&#xA;Each Contributor must identify itself as the originator of its&#xA;Contribution, if any, in a manner that reasonably allows subsequent&#xA;Recipients to identify the originator of the Contribution.&#xA;4. COMMERCIAL DISTRIBUTION&#xA;Commercial distributors of software may accept certain responsibilities&#xA;with respect to end users, business partners and the like. While&#xA;this license is intended to facilitate the commercial use of&#xA;the Program, the Contributor who includes the Program in a commercial&#xA;product offering should do so in a manner which does not create&#xA;potential liability for other Contributors. Therefore, if a Contributor&#xA;includes the Program in a commercial product offering, such Contributor&#xA;(&quot;Commercial Contributor&quot;) hereby agrees to defend and indemnify&#xA;every other Contributor (&quot;Indemnified Contributor&quot;) against any&#xA;losses, damages and costs (collectively &quot;Losses&quot;) arising from&#xA;claims, lawsuits and other legal actions brought by a third party&#xA;against the Indemnified Contributor to the extent caused by the&#xA;acts or omissions of such Commercial Contributor in connection&#xA;with its distribution of the Program in a commercial product&#xA;offering. The obligations in this section do not apply to any&#xA;claims or Losses relating to any actual or alleged intellectual&#xA;property infringement. In order to qualify, an Indemnified Contributor&#xA;must: a) promptly notify the Commercial Contributor in writing&#xA;of such claim, and b) allow the Commercial Contributor to control,&#xA;and cooperate with the Commercial Contributor in, the defense&#xA;and any related settlement negotiations. The Indemnified Contributor&#xA;may participate in any such claim at its own expense.&#xA;For example, a Contributor might include the Program in a commercial&#xA;product offering, Product X. That Contributor is then a Commercial&#xA;Contributor. If that Commercial Contributor then makes performance&#xA;claims, or offers warranties related to Product X, those performance&#xA;claims and warranties are such Commercial Contributor&apos;s responsibility&#xA;alone. Under this section, the Commercial Contributor would have&#xA;to defend claims against the other Contributors related to those&#xA;performance claims and warranties, and if a court requires any&#xA;other Contributor to pay any damages as a result, the Commercial&#xA;Contributor must pay those damages.&#xA;5. NO WARRANTY&#xA;EXCEPT AS EXPRESSLY SET FORTH IN THIS AGREEMENT, THE PROGRAM&#xA;IS PROVIDED ON AN &quot;AS IS&quot; BASIS, WITHOUT WARRANTIES OR CONDITIONS&#xA;OF ANY KIND, EITHER EXPRESS OR IMPLIED INCLUDING, WITHOUT LIMITATION,&#xA;ANY WARRANTIES OR CONDITIONS OF TITLE, NON-INFRINGEMENT, MERCHANTABILITY&#xA;OR FITNESS FOR A PARTICULAR PURPOSE. Each Recipient is solely&#xA;responsible for determining the appropriateness of using and&#xA;distributing the Program and assumes all risks associated with&#xA;its exercise of rights under this Agreement , including but not&#xA;limited to the risks and costs of program errors, compliance&#xA;with applicable laws, damage to or loss of data, programs or&#xA;equipment, and unavailability or interruption of operations.&#xA;6. DISCLAIMER OF LIABILITY&#xA;EXCEPT AS EXPRESSLY SET FORTH IN THIS AGREEMENT, NEITHER RECIPIENT&#xA;NOR ANY CONTRIBUTORS SHALL HAVE ANY LIABILITY FOR ANY DIRECT,&#xA;INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES&#xA;(INCLUDING WITHOUT LIMITATION LOST PROFITS), HOWEVER CAUSED AND&#xA;ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,&#xA;OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&#xA;OUT OF THE USE OR DISTRIBUTION OF THE PROGRAM OR THE EXERCISE&#xA;OF ANY RIGHTS GRANTED HEREUNDER, EVEN IF ADVISED OF THE POSSIBILITY&#xA;OF SUCH DAMAGES.&#xA;7. GENERAL&#xA;If any provision of this Agreement is invalid or unenforceable&#xA;under applicable law, it shall not affect the validity or enforceability&#xA;of the remainder of the terms of this Agreement, and without&#xA;further action by the parties hereto, such provision shall be&#xA;reformed to the minimum extent necessary to make such provision&#xA;valid and enforceable.&#xA;If Recipient institutes patent litigation against any entity&#xA;(including a cross-claim or counterclaim in a lawsuit) alleging&#xA;that the Program itself (excluding combinations of the Program&#xA;with other software or hardware) infringes such Recipient&apos;s patent(s),&#xA;then such Recipient&apos;s rights granted under Section 2(b) shall&#xA;terminate as of the date such litigation is filed.&#xA;All Recipient&apos;s rights under this Agreement shall terminate if&#xA;it fails to comply with any of the material terms or conditions&#xA;of this Agreement and does not cure such failure in a reasonable&#xA;period of time after becoming aware of such noncompliance. If&#xA;all Recipient&apos;s rights under this Agreement terminate, Recipient&#xA;agrees to cease use and distribution of the Program as soon as&#xA;reasonably practicable. However, Recipient&apos;s obligations under&#xA;this Agreement and any licenses granted by Recipient relating&#xA;to the Program shall continue and survive.&#xA;Everyone is permitted to copy and distribute copies of this Agreement,&#xA;but in order to avoid inconsistency the Agreement is copyrighted&#xA;and may only be modified in the following manner. The Agreement&#xA;Steward reserves the right to publish new versions (including&#xA;revisions) of this Agreement from time to time. No one other&#xA;than the Agreement Steward has the right to modify this Agreement.&#xA;The Eclipse Foundation is the initial Agreement Steward. The&#xA;Eclipse Foundation may assign the responsibility to serve as&#xA;the Agreement Steward to a suitable separate entity. Each new&#xA;version of the Agreement will be given a distinguishing version&#xA;number. The Program (including Contributions) may always be distributed&#xA;subject to the version of the Agreement under which it was received.&#xA;In addition, after a new version of the Agreement is published,&#xA;Contributor may elect to distribute the Program (including its&#xA;Contributions) under the new version. Except as expressly stated&#xA;in Sections 2(a) and 2(b) above, Recipient receives no rights&#xA;or licenses to the intellectual property of any Contributor under&#xA;this Agreement, whether expressly, by implication, estoppel or&#xA;otherwise. All rights in the Program not expressly granted under&#xA;this Agreement are reserved.&#xA;This Agreement is governed by the laws of the State of New York&#xA;and the intellectual property laws of the United States of America.&#xA;No party to this Agreement will bring a legal action under this&#xA;Agreement more than one year after the cause of action arose.&#xA;Each party waives its rights to a jury trial in any resulting&#xA;litigation.
         </license>
       </licenses>
-      <copyright url='http://subclipse.tigris.org/'>
-        http://subclipse.tigris.org/
+      <copyright>
+        (c) 2009 CollabNet, Inc.
       </copyright>
     </unit>
     <unit id='com.sun.jna' version='3.0.9' singleton='false'>
