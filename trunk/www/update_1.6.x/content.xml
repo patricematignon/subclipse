@@ -3,7 +3,7 @@
 <repository name='Subclipse 1.6.x Update Site' type='org.eclipse.equinox.internal.p2.metadata.repository.LocalMetadataRepository' version='1'>
   <properties size='2'>
     <property name='p2.compressed' value='false'/>
-    <property name='p2.timestamp' value='1245522268520'/>
+    <property name='p2.timestamp' value='1245675438393'/>
   </properties>
   <references size='4'>
     <repository url='http://eclipse.svnkit.com/1.3.x/' type='1' options='0'/>
@@ -36,35 +36,6 @@
         <instructions size='1'>
           <instruction key='manifest'>
             Bundle-ManifestVersion: 2&#xA;Bundle-Name: SVNKit Client Adapter&#xA;Bundle-Version: 1.6.2&#xA;Require-Bundle: org.eclipse.core.runtime,org.tigris.subversion.clientadapter;bundle-version=&quot;[1.6.0,1.7.0)&quot;,org.tmatesoft.svnkit;bundle-version=&quot;[1.3.0,1.4.0)&quot;&#xA;Eclipse-LazyStart: true&#xA;Bundle-SymbolicName: org.tigris.subversion.clientadapter.svnkit;singleton:=true&#xA;Manifest-Version: 1.0&#xA;Bundle-Vendor: tigris.org&#xA;Bundle-Activator: org.tigris.subversion.clientadapter.svnkit.Activator&#xA;
-          </instruction>
-        </instructions>
-      </touchpointData>
-    </unit>
-    <unit id='org.tigris.subversion.clientadapter.javahl' version='1.6.2.1'>
-      <update id='org.tigris.subversion.clientadapter.javahl' range='[0.0.0,1.6.2.1)' severity='0'/>
-      <properties size='2'>
-        <property name='org.eclipse.equinox.p2.name' value='Subversion JavaHL'/>
-        <property name='org.eclipse.equinox.p2.provider' value='tigris.org'/>
-      </properties>
-      <provides size='5'>
-        <provided namespace='org.eclipse.equinox.p2.iu' name='org.tigris.subversion.clientadapter.javahl' version='1.6.2.1'/>
-        <provided namespace='osgi.bundle' name='org.tigris.subversion.clientadapter.javahl' version='1.6.2.1'/>
-        <provided namespace='java.package' name='org.tigris.subversion.javahl' version='0.0.0'/>
-        <provided namespace='java.package' name='org.tigris.subversion.svnclientadapter.javahl' version='0.0.0'/>
-        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
-      </provides>
-      <requires size='2'>
-        <required namespace='osgi.bundle' name='org.eclipse.core.runtime' range='0.0.0'/>
-        <required namespace='osgi.bundle' name='org.tigris.subversion.clientadapter' range='[1.6.0,1.7.0)'/>
-      </requires>
-      <artifacts size='1'>
-        <artifact classifier='osgi.bundle' id='org.tigris.subversion.clientadapter.javahl' version='1.6.2.1'/>
-      </artifacts>
-      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
-      <touchpointData size='1'>
-        <instructions size='1'>
-          <instruction key='manifest'>
-            Bundle-Vendor: tigris.org&#xA;Bundle-ManifestVersion: 2&#xA;Bundle-Activator: org.tigris.subversion.clientadapter.javahl.Activator&#xA;Bundle-RequiredExecutionEnvironment: J2SE-1.4&#xA;Require-Bundle: org.eclipse.core.runtime,org.tigris.subversion.clientadapter;bundle-version=&quot;[1.6.0,1.7.0)&quot;&#xA;Bundle-Name: Subversion JavaHL&#xA;Manifest-Version: 1.0&#xA;Bundle-SymbolicName: org.tigris.subversion.clientadapter.javahl;singleton:=true&#xA;Bundle-Version: 1.6.2.1&#xA;Eclipse-LazyStart: true&#xA;Export-Package: org.tigris.subversion.javahl,org.tigris.subversion.svnclientadapter.javahl&#xA;
           </instruction>
         </instructions>
       </touchpointData>
@@ -298,45 +269,6 @@
         </instructions>
       </touchpointData>
     </unit>
-    <unit id='org.tigris.subversion.clientadapter.javahl.feature.feature.jar' version='1.6.2.1'>
-      <update id='org.tigris.subversion.clientadapter.javahl.feature.feature.jar' range='[0.0.0,1.6.2.1)' severity='0'/>
-      <properties size='6'>
-        <property name='org.eclipse.equinox.p2.name' value='Subversion JavaHL Native Library Adapter (Required)'/>
-        <property name='org.eclipse.equinox.p2.description' value='%description'/>
-        <property name='org.eclipse.equinox.p2.provider' value='tigris.org'/>
-        <property name='org.eclipse.update.feature.plugin' value='org.tigris.subversion.clientadapter.javahl'/>
-        <property name='df_LT.description' value='Subversion Client Adapter implementation using the Subversion native JavaHL library.'/>
-        <property name='df_LT.license' value='Subclipse Software User Agreement&#xA;11th April, 2006&#xA;&#xA;Subclipse is licensed under the terms of the Eclipse Public&#xA;License v1.0.  http://www.eclipse.org/legal/epl-v10.html&#xA;&#xA;Applicable Licenses&#xA;&#xA;Subclipse is built upon a number of other open source&#xA;technologies and products.  Here is a list of those products&#xA;with links to their licenses.&#xA;&#xA;svnClientAdapter:  Part of the overall Subclipse project,&#xA;svnClientAdapter presents a pluggable high-level interface&#xA;to the Subversion repository.  svnClientAdapter is licensed&#xA;under the Apache2 License.&#xA;http://www.apache.org/licenses/LICENSE-2.0&#xA;&#xA;Depending on the adapter you choose in your preferences, the&#xA;following products and licenses are involved.&#xA;&#xA;Subversion/JavaHL:  JavaHL is a high-level Java language binding&#xA;to the Subversion &quot;C&quot; libraries and is part of the official&#xA;Subversion source distribution.  Subversion is licensed under&#xA;the CollabNet license.&#xA;http://subversion.tigris.org/project_license.html&#xA;&#xA;SVNKit:  SVNKit is a &quot;pure Java&quot; implementation of the&#xA;Subversion network protocols and working copy formats.&#xA;SVNKit is licensed under the TMate license.&#xA;http://svnkit.com/licensing/index.html&#xA;&#xA;Ganymed SSH-2:  SVNKit uses the Ganymed SSH-2 library to support&#xA;the svn+ssh:// protocol.  Ganymed SSH-2 is licensed under the&#xA;Ganymed license.&#xA;http://www.ganymed.ethz.ch/ssh2/LICENSE.txt&#xA;&#xA;IT IS YOUR OBLIGATION TO READ AND ACCEPT ALL SUCH TERMS&#xA;AND CONDITIONS PRIOR TO USE OF THIS CONTENT.&#xA;'/>
-      </properties>
-      <provides size='4'>
-        <provided namespace='org.eclipse.equinox.p2.iu' name='org.tigris.subversion.clientadapter.javahl.feature.feature.jar' version='1.6.2.1'/>
-        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='feature' version='1.0.0'/>
-        <provided namespace='org.eclipse.update.feature' name='org.tigris.subversion.clientadapter.javahl.feature' version='1.6.2.1'/>
-        <provided namespace='org.eclipse.equinox.p2.localization' name='df_LT' version='1.0.0'/>
-      </provides>
-      <filter>
-        (org.eclipse.update.install.features=true)
-      </filter>
-      <artifacts size='1'>
-        <artifact classifier='org.eclipse.update.feature' id='org.tigris.subversion.clientadapter.javahl.feature' version='1.6.2.1'/>
-      </artifacts>
-      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
-      <touchpointData size='1'>
-        <instructions size='1'>
-          <instruction key='zipped'>
-            true
-          </instruction>
-        </instructions>
-      </touchpointData>
-      <licenses size='1'>
-        <license>
-          %license
-        </license>
-      </licenses>
-      <copyright url='http://subclipse.tigris.org/'>
-        http://subclipse.tigris.org/
-      </copyright>
-    </unit>
     <unit id='org.tmatesoft.svnkit.feature.jar' version='1.3.0.5847'>
       <update id='org.tmatesoft.svnkit.feature.jar' range='[0.0.0,1.3.0.5847)' severity='0'/>
       <properties size='6'>
@@ -445,38 +377,6 @@
         (c) 2004-2009, TMate Software Ltd.
       </copyright>
     </unit>
-    <unit id='com.sun.jna.feature.group' version='3.0.9' singleton='false'>
-      <update id='com.sun.jna.feature.group' range='[0.0.0,3.0.9)' severity='0'/>
-      <properties size='6'>
-        <property name='org.eclipse.equinox.p2.name' value='JNA Library'/>
-        <property name='org.eclipse.equinox.p2.description' value='%description'/>
-        <property name='org.eclipse.equinox.p2.description.url' value='http://jna.dev.java.net/'/>
-        <property name='org.eclipse.equinox.p2.type.group' value='true'/>
-        <property name='df_LT.description' value='JNA provides Java programs easy access to native shared libraries (DLLs on Windows) without writing anything but Java code - no JNI or native code is required. This functionality is comparable to Windows&amp;apos; Platform/Invoke and Python&amp;apos;s ctypes. Access is dynamic at runtime without code generation.'/>
-        <property name='df_LT.license' value='Copyright (c) 2008 Timothy Wall, All Rights Reserved&#xA;&#xA;This library is free software; you can redistribute it and/or&#xA;modify it under the terms of the GNU Lesser General Public&#xA;License as published by the Free Software Foundation; either&#xA;version 2.1 of the License, or (at your option) any later version.&#xA;&#xA;This library is distributed in the hope that it will be useful,&#xA;but WITHOUT ANY WARRANTY; without even the implied warranty of&#xA;MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU&#xA;Lesser General Public License for more details.'/>
-      </properties>
-      <provides size='2'>
-        <provided namespace='org.eclipse.equinox.p2.iu' name='com.sun.jna.feature.group' version='3.0.9'/>
-        <provided namespace='org.eclipse.equinox.p2.localization' name='df_LT' version='1.0.0'/>
-      </provides>
-      <requires size='2'>
-        <required namespace='org.eclipse.equinox.p2.iu' name='com.sun.jna' range='[3.0.9,3.0.9]'/>
-        <required namespace='org.eclipse.equinox.p2.iu' name='com.sun.jna.feature.jar' range='[3.0.9,3.0.9]'>
-          <filter>
-            (org.eclipse.update.install.features=true)
-          </filter>
-        </required>
-      </requires>
-      <touchpoint id='null' version='0.0.0'/>
-      <licenses size='1'>
-        <license url='http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html'>
-          %license
-        </license>
-      </licenses>
-      <copyright url='http://jna.dev.java.net/'>
-        Copyright (c) 2008 Timothy Wall, All Rights Reserved
-      </copyright>
-    </unit>
     <unit id='org.tigris.subversion.subclipse.feature.jar' version='1.6.2'>
       <update id='org.tigris.subversion.subclipse.feature.jar' range='[0.0.0,1.6.2)' severity='0'/>
       <properties size='7'>
@@ -515,6 +415,38 @@
       </licenses>
       <copyright url='http://subclipse.tigris.org/'>
         http://subclipse.tigris.org/
+      </copyright>
+    </unit>
+    <unit id='com.sun.jna.feature.group' version='3.0.9' singleton='false'>
+      <update id='com.sun.jna.feature.group' range='[0.0.0,3.0.9)' severity='0'/>
+      <properties size='6'>
+        <property name='org.eclipse.equinox.p2.name' value='JNA Library'/>
+        <property name='org.eclipse.equinox.p2.description' value='%description'/>
+        <property name='org.eclipse.equinox.p2.description.url' value='http://jna.dev.java.net/'/>
+        <property name='org.eclipse.equinox.p2.type.group' value='true'/>
+        <property name='df_LT.description' value='JNA provides Java programs easy access to native shared libraries (DLLs on Windows) without writing anything but Java code - no JNI or native code is required. This functionality is comparable to Windows&amp;apos; Platform/Invoke and Python&amp;apos;s ctypes. Access is dynamic at runtime without code generation.'/>
+        <property name='df_LT.license' value='Copyright (c) 2008 Timothy Wall, All Rights Reserved&#xA;&#xA;This library is free software; you can redistribute it and/or&#xA;modify it under the terms of the GNU Lesser General Public&#xA;License as published by the Free Software Foundation; either&#xA;version 2.1 of the License, or (at your option) any later version.&#xA;&#xA;This library is distributed in the hope that it will be useful,&#xA;but WITHOUT ANY WARRANTY; without even the implied warranty of&#xA;MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU&#xA;Lesser General Public License for more details.'/>
+      </properties>
+      <provides size='2'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='com.sun.jna.feature.group' version='3.0.9'/>
+        <provided namespace='org.eclipse.equinox.p2.localization' name='df_LT' version='1.0.0'/>
+      </provides>
+      <requires size='2'>
+        <required namespace='org.eclipse.equinox.p2.iu' name='com.sun.jna' range='[3.0.9,3.0.9]'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='com.sun.jna.feature.jar' range='[3.0.9,3.0.9]'>
+          <filter>
+            (org.eclipse.update.install.features=true)
+          </filter>
+        </required>
+      </requires>
+      <touchpoint id='null' version='0.0.0'/>
+      <licenses size='1'>
+        <license url='http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html'>
+          %license
+        </license>
+      </licenses>
+      <copyright url='http://jna.dev.java.net/'>
+        Copyright (c) 2008 Timothy Wall, All Rights Reserved
       </copyright>
     </unit>
     <unit id='org.tigris.subversion.subclipse.graph.feature.feature.group' version='1.0.7' singleton='false'>
@@ -561,39 +493,6 @@
       <copyright url='http://subclipse.tigris.org/'>
         http://subclipse.tigris.org/
       </copyright>
-    </unit>
-    <unit id='org.tigris.subversion.clientadapter.javahl.win32' version='1.6.2.1' singleton='false'>
-      <update id='org.tigris.subversion.clientadapter.javahl.win32' range='[0.0.0,1.6.2.1)' severity='0'/>
-      <properties size='2'>
-        <property name='org.eclipse.equinox.p2.name' value='Win32 JavaHL Binaries'/>
-        <property name='org.eclipse.equinox.p2.provider' value='tigris.org'/>
-      </properties>
-      <provides size='4'>
-        <provided namespace='org.eclipse.equinox.p2.iu' name='org.tigris.subversion.clientadapter.javahl.win32' version='1.6.2.1'/>
-        <provided namespace='osgi.bundle' name='org.tigris.subversion.clientadapter.javahl.win32' version='1.6.2.1'/>
-        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
-        <provided namespace='osgi.fragment' name='org.tigris.subversion.clientadapter.javahl' version='1.6.2.1'/>
-      </provides>
-      <requires size='1'>
-        <required namespace='osgi.bundle' name='org.tigris.subversion.clientadapter.javahl' range='[1.6.0,1.7.0)'/>
-      </requires>
-      <filter>
-        (&amp; (osgi.os=win32) (osgi.arch=x86))
-      </filter>
-      <artifacts size='1'>
-        <artifact classifier='osgi.bundle' id='org.tigris.subversion.clientadapter.javahl.win32' version='1.6.2.1'/>
-      </artifacts>
-      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
-      <touchpointData size='1'>
-        <instructions size='2'>
-          <instruction key='manifest'>
-            Bundle-ManifestVersion: 2&#xA;Bundle-Version: 1.6.2.1&#xA;Manifest-Version: 1.0&#xA;Bundle-SymbolicName: org.tigris.subversion.clientadapter.javahl.win32&#xA;Bundle-Name: Win32 JavaHL Binaries&#xA;Fragment-Host: org.tigris.subversion.clientadapter.javahl;bundle-version=&quot;[1.6.0,1.7.0)&quot;&#xA;Bundle-Vendor: tigris.org&#xA;Eclipse-PlatformFilter: (&amp; (osgi.os=win32) (osgi.arch=x86))&#xA;
-          </instruction>
-          <instruction key='zipped'>
-            true
-          </instruction>
-        </instructions>
-      </touchpointData>
     </unit>
     <unit id='com.collabnet.subversion.merge' version='1.9.0.4'>
       <update id='com.collabnet.subversion.merge' range='[0.0.0,1.9.0.4)' severity='0'/>
@@ -689,6 +588,84 @@
         <required namespace='org.eclipse.equinox.p2.iu' name='com.sun.jna.feature.group' range='[3.0.9,3.0.9]'/>
       </requires>
       <touchpoint id='null' version='0.0.0'/>
+    </unit>
+    <unit id='org.tigris.subversion.clientadapter.javahl.feature.feature.group' version='1.6.3' singleton='false'>
+      <update id='org.tigris.subversion.clientadapter.javahl.feature.feature.group' range='[0.0.0,1.6.3)' severity='0'/>
+      <properties size='6'>
+        <property name='org.eclipse.equinox.p2.name' value='Subversion JavaHL Native Library Adapter (Required)'/>
+        <property name='org.eclipse.equinox.p2.description' value='%description'/>
+        <property name='org.eclipse.equinox.p2.provider' value='tigris.org'/>
+        <property name='org.eclipse.equinox.p2.type.group' value='true'/>
+        <property name='df_LT.description' value='Subversion Client Adapter implementation using the Subversion native JavaHL library.'/>
+        <property name='df_LT.license' value='Subclipse Software User Agreement&#xA;11th April, 2006&#xA;&#xA;Subclipse is licensed under the terms of the Eclipse Public&#xA;License v1.0.  http://www.eclipse.org/legal/epl-v10.html&#xA;&#xA;Applicable Licenses&#xA;&#xA;Subclipse is built upon a number of other open source&#xA;technologies and products.  Here is a list of those products&#xA;with links to their licenses.&#xA;&#xA;svnClientAdapter:  Part of the overall Subclipse project,&#xA;svnClientAdapter presents a pluggable high-level interface&#xA;to the Subversion repository.  svnClientAdapter is licensed&#xA;under the Apache2 License.&#xA;http://www.apache.org/licenses/LICENSE-2.0&#xA;&#xA;Depending on the adapter you choose in your preferences, the&#xA;following products and licenses are involved.&#xA;&#xA;Subversion/JavaHL:  JavaHL is a high-level Java language binding&#xA;to the Subversion &quot;C&quot; libraries and is part of the official&#xA;Subversion source distribution.  Subversion is licensed under&#xA;the CollabNet license.&#xA;http://subversion.tigris.org/project_license.html&#xA;&#xA;SVNKit:  SVNKit is a &quot;pure Java&quot; implementation of the&#xA;Subversion network protocols and working copy formats.&#xA;SVNKit is licensed under the TMate license.&#xA;http://svnkit.com/licensing/index.html&#xA;&#xA;Ganymed SSH-2:  SVNKit uses the Ganymed SSH-2 library to support&#xA;the svn+ssh:// protocol.  Ganymed SSH-2 is licensed under the&#xA;Ganymed license.&#xA;http://www.ganymed.ethz.ch/ssh2/LICENSE.txt&#xA;&#xA;IT IS YOUR OBLIGATION TO READ AND ACCEPT ALL SUCH TERMS&#xA;AND CONDITIONS PRIOR TO USE OF THIS CONTENT.&#xA;'/>
+      </properties>
+      <provides size='2'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='org.tigris.subversion.clientadapter.javahl.feature.feature.group' version='1.6.3'/>
+        <provided namespace='org.eclipse.equinox.p2.localization' name='df_LT' version='1.0.0'/>
+      </provides>
+      <requires size='5'>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.core.runtime' range='0.0.0'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.tigris.subversion.clientadapter' range='[1.6.0,1.7.0)'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.tigris.subversion.clientadapter.javahl' range='[1.6.3,1.6.3]'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.tigris.subversion.clientadapter.javahl.win32' range='[1.6.3,1.6.3]'>
+          <filter>
+            (&amp;(osgi.os=win32)(osgi.arch=x86))
+          </filter>
+        </required>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.tigris.subversion.clientadapter.javahl.feature.feature.jar' range='[1.6.3,1.6.3]'>
+          <filter>
+            (org.eclipse.update.install.features=true)
+          </filter>
+        </required>
+      </requires>
+      <touchpoint id='null' version='0.0.0'/>
+      <licenses size='1'>
+        <license>
+          %license
+        </license>
+      </licenses>
+      <copyright url='http://subclipse.tigris.org/'>
+        http://subclipse.tigris.org/
+      </copyright>
+    </unit>
+    <unit id='org.tigris.subversion.clientadapter.javahl.feature.feature.jar' version='1.6.3'>
+      <update id='org.tigris.subversion.clientadapter.javahl.feature.feature.jar' range='[0.0.0,1.6.3)' severity='0'/>
+      <properties size='6'>
+        <property name='org.eclipse.equinox.p2.name' value='Subversion JavaHL Native Library Adapter (Required)'/>
+        <property name='org.eclipse.equinox.p2.description' value='%description'/>
+        <property name='org.eclipse.equinox.p2.provider' value='tigris.org'/>
+        <property name='org.eclipse.update.feature.plugin' value='org.tigris.subversion.clientadapter.javahl'/>
+        <property name='df_LT.description' value='Subversion Client Adapter implementation using the Subversion native JavaHL library.'/>
+        <property name='df_LT.license' value='Subclipse Software User Agreement&#xA;11th April, 2006&#xA;&#xA;Subclipse is licensed under the terms of the Eclipse Public&#xA;License v1.0.  http://www.eclipse.org/legal/epl-v10.html&#xA;&#xA;Applicable Licenses&#xA;&#xA;Subclipse is built upon a number of other open source&#xA;technologies and products.  Here is a list of those products&#xA;with links to their licenses.&#xA;&#xA;svnClientAdapter:  Part of the overall Subclipse project,&#xA;svnClientAdapter presents a pluggable high-level interface&#xA;to the Subversion repository.  svnClientAdapter is licensed&#xA;under the Apache2 License.&#xA;http://www.apache.org/licenses/LICENSE-2.0&#xA;&#xA;Depending on the adapter you choose in your preferences, the&#xA;following products and licenses are involved.&#xA;&#xA;Subversion/JavaHL:  JavaHL is a high-level Java language binding&#xA;to the Subversion &quot;C&quot; libraries and is part of the official&#xA;Subversion source distribution.  Subversion is licensed under&#xA;the CollabNet license.&#xA;http://subversion.tigris.org/project_license.html&#xA;&#xA;SVNKit:  SVNKit is a &quot;pure Java&quot; implementation of the&#xA;Subversion network protocols and working copy formats.&#xA;SVNKit is licensed under the TMate license.&#xA;http://svnkit.com/licensing/index.html&#xA;&#xA;Ganymed SSH-2:  SVNKit uses the Ganymed SSH-2 library to support&#xA;the svn+ssh:// protocol.  Ganymed SSH-2 is licensed under the&#xA;Ganymed license.&#xA;http://www.ganymed.ethz.ch/ssh2/LICENSE.txt&#xA;&#xA;IT IS YOUR OBLIGATION TO READ AND ACCEPT ALL SUCH TERMS&#xA;AND CONDITIONS PRIOR TO USE OF THIS CONTENT.&#xA;'/>
+      </properties>
+      <provides size='4'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='org.tigris.subversion.clientadapter.javahl.feature.feature.jar' version='1.6.3'/>
+        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='feature' version='1.0.0'/>
+        <provided namespace='org.eclipse.update.feature' name='org.tigris.subversion.clientadapter.javahl.feature' version='1.6.3'/>
+        <provided namespace='org.eclipse.equinox.p2.localization' name='df_LT' version='1.0.0'/>
+      </provides>
+      <filter>
+        (org.eclipse.update.install.features=true)
+      </filter>
+      <artifacts size='1'>
+        <artifact classifier='org.eclipse.update.feature' id='org.tigris.subversion.clientadapter.javahl.feature' version='1.6.3'/>
+      </artifacts>
+      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
+      <touchpointData size='1'>
+        <instructions size='1'>
+          <instruction key='zipped'>
+            true
+          </instruction>
+        </instructions>
+      </touchpointData>
+      <licenses size='1'>
+        <license>
+          %license
+        </license>
+      </licenses>
+      <copyright url='http://subclipse.tigris.org/'>
+        http://subclipse.tigris.org/
+      </copyright>
     </unit>
     <unit id='org.tigris.subversion.clientadapter.feature.feature.group' version='1.6.0.2' singleton='false'>
       <update id='org.tigris.subversion.clientadapter.feature.feature.group' range='[0.0.0,1.6.0.2)' severity='0'/>
@@ -949,9 +926,9 @@
         <provided namespace='org.eclipse.equinox.p2.iu' name='Subclipse' version='0.0.0'/>
       </provides>
       <requires size='7'>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.tigris.subversion.clientadapter.javahl.feature.feature.group' range='[1.6.3,1.6.3]'/>
         <required namespace='org.eclipse.equinox.p2.iu' name='org.tigris.subversion.subclipse.mylyn.feature.group' range='[3.0.0,3.0.0]'/>
         <required namespace='org.eclipse.equinox.p2.iu' name='org.tigris.subversion.clientadapter.feature.feature.group' range='[1.6.0.2,1.6.0.2]'/>
-        <required namespace='org.eclipse.equinox.p2.iu' name='org.tigris.subversion.clientadapter.javahl.feature.feature.group' range='[1.6.2.1,1.6.2.1]'/>
         <required namespace='org.eclipse.equinox.p2.iu' name='org.tigris.subversion.subclipse.graph.feature.feature.group' range='[1.0.7,1.0.7]'/>
         <required namespace='org.eclipse.equinox.p2.iu' name='com.collabnet.subversion.merge.feature.feature.group' range='[1.9.0.4,1.9.0.4]'/>
         <required namespace='org.eclipse.equinox.p2.iu' name='org.tigris.subversion.subclipse.feature.group' range='[1.6.2,1.6.2]'/>
@@ -997,76 +974,6 @@
       <copyright url='http://subclipse.tigris.org/'>
         http://subclipse.tigris.org/
       </copyright>
-    </unit>
-    <unit id='org.tmatesoft.svnkit' version='1.3.0.5847' singleton='false'>
-      <update id='org.tmatesoft.svnkit' range='[0.0.0,1.3.0.5847)' severity='0'/>
-      <properties size='2'>
-        <property name='org.eclipse.equinox.p2.name' value='SVNKit Library Plug-in'/>
-        <property name='org.eclipse.equinox.p2.provider' value='TMate Software'/>
-      </properties>
-      <provides size='43'>
-        <provided namespace='org.eclipse.equinox.p2.iu' name='org.tmatesoft.svnkit' version='1.3.0.5847'/>
-        <provided namespace='osgi.bundle' name='org.tmatesoft.svnkit' version='1.3.0.5847'/>
-        <provided namespace='java.package' name='com.trilead.ssh2' version='0.0.0'/>
-        <provided namespace='java.package' name='com.trilead.ssh2.auth' version='0.0.0'/>
-        <provided namespace='java.package' name='com.trilead.ssh2.channel' version='0.0.0'/>
-        <provided namespace='java.package' name='com.trilead.ssh2.crypto' version='0.0.0'/>
-        <provided namespace='java.package' name='com.trilead.ssh2.crypto.cipher' version='0.0.0'/>
-        <provided namespace='java.package' name='com.trilead.ssh2.crypto.dh' version='0.0.0'/>
-        <provided namespace='java.package' name='com.trilead.ssh2.crypto.digest' version='0.0.0'/>
-        <provided namespace='java.package' name='com.trilead.ssh2.log' version='0.0.0'/>
-        <provided namespace='java.package' name='com.trilead.ssh2.packets' version='0.0.0'/>
-        <provided namespace='java.package' name='com.trilead.ssh2.sftp' version='0.0.0'/>
-        <provided namespace='java.package' name='com.trilead.ssh2.signature' version='0.0.0'/>
-        <provided namespace='java.package' name='com.trilead.ssh2.transport' version='0.0.0'/>
-        <provided namespace='java.package' name='com.trilead.ssh2.util' version='0.0.0'/>
-        <provided namespace='java.package' name='de.regnis.q.sequence' version='0.0.0'/>
-        <provided namespace='java.package' name='de.regnis.q.sequence.core' version='0.0.0'/>
-        <provided namespace='java.package' name='de.regnis.q.sequence.line' version='0.0.0'/>
-        <provided namespace='java.package' name='de.regnis.q.sequence.line.diff' version='0.0.0'/>
-        <provided namespace='java.package' name='de.regnis.q.sequence.line.simplifier' version='0.0.0'/>
-        <provided namespace='java.package' name='de.regnis.q.sequence.media' version='0.0.0'/>
-        <provided namespace='java.package' name='org.tigris.subversion.javahl' version='0.0.0'/>
-        <provided namespace='java.package' name='org.tmatesoft.svn.core' version='0.0.0'/>
-        <provided namespace='java.package' name='org.tmatesoft.svn.core.auth' version='0.0.0'/>
-        <provided namespace='java.package' name='org.tmatesoft.svn.core.internal.delta' version='0.0.0'/>
-        <provided namespace='java.package' name='org.tmatesoft.svn.core.internal.io.dav' version='0.0.0'/>
-        <provided namespace='java.package' name='org.tmatesoft.svn.core.internal.io.dav.handlers' version='0.0.0'/>
-        <provided namespace='java.package' name='org.tmatesoft.svn.core.internal.io.dav.http' version='0.0.0'/>
-        <provided namespace='java.package' name='org.tmatesoft.svn.core.internal.io.fs' version='0.0.0'/>
-        <provided namespace='java.package' name='org.tmatesoft.svn.core.internal.io.svn' version='0.0.0'/>
-        <provided namespace='java.package' name='org.tmatesoft.svn.core.internal.util' version='0.0.0'/>
-        <provided namespace='java.package' name='org.tmatesoft.svn.core.internal.util.jna' version='0.0.0'/>
-        <provided namespace='java.package' name='org.tmatesoft.svn.core.internal.wc' version='0.0.0'/>
-        <provided namespace='java.package' name='org.tmatesoft.svn.core.internal.wc.admin' version='0.0.0'/>
-        <provided namespace='java.package' name='org.tmatesoft.svn.core.io' version='0.0.0'/>
-        <provided namespace='java.package' name='org.tmatesoft.svn.core.io.diff' version='0.0.0'/>
-        <provided namespace='java.package' name='org.tmatesoft.svn.core.javahl' version='0.0.0'/>
-        <provided namespace='java.package' name='org.tmatesoft.svn.core.replicator' version='0.0.0'/>
-        <provided namespace='java.package' name='org.tmatesoft.svn.core.wc' version='0.0.0'/>
-        <provided namespace='java.package' name='org.tmatesoft.svn.core.wc.admin' version='0.0.0'/>
-        <provided namespace='java.package' name='org.tmatesoft.svn.core.wc.xml' version='0.0.0'/>
-        <provided namespace='java.package' name='org.tmatesoft.svn.util' version='0.0.0'/>
-        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
-      </provides>
-      <requires size='5'>
-        <required namespace='osgi.bundle' name='com.sun.jna' range='[3.0.0,4.0.0)' optional='true'/>
-        <required namespace='osgi.bundle' name='org.eclipse.core.runtime' range='[3.0.0,4.0.0)' optional='true'/>
-        <required namespace='java.package' name='org.osgi.framework' range='1.3.0'/>
-        <required namespace='java.package' name='org.osgi.service.log' range='1.3.0'/>
-        <required namespace='java.package' name='org.osgi.util.tracker' range='1.3.1'/>
-      </requires>
-      <artifacts size='1'>
-        <artifact classifier='osgi.bundle' id='org.tmatesoft.svnkit' version='1.3.0.5847'/>
-      </artifacts>
-      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
-      <touchpointData size='1'>
-        <instructions size='1'>
-          <instruction key='manifest'>
-            Bundle-ManifestVersion: 2&#xA;Bundle-RequiredExecutionEnvironment: J2SE-1.4&#xA;Bundle-ActivationPolicy: lazy&#xA;Bundle-Name: SVNKit Library Plug-in&#xA;Ant-Version: Apache Ant 1.7.0&#xA;Bundle-ClassPath: .,svnkit.jar,svnkit-javahl.jar,trilead.jar&#xA;Require-Bundle: com.sun.jna;bundle-version=&quot;[3.0.0,4.0.0)&quot;;resolution:=optional,org.eclipse.core.runtime;bundle-version=&quot;[3.0.0,4.0.0)&quot;;resolution:=optional&#xA;Bundle-Activator: org.tmatesoft.svn.core.SVNKitActivator&#xA;Bundle-Vendor: TMate Software&#xA;Created-By: 1.4.2_17-b06 (Sun Microsystems Inc.)&#xA;Manifest-Version: 1.0&#xA;Bundle-Version: 1.3.0.5847&#xA;Export-Package: com.trilead.ssh2,com.trilead.ssh2.auth,com.trilead.ssh2.channel,com.trilead.ssh2.crypto,com.trilead.ssh2.crypto.cipher,com.trilead.ssh2.crypto.dh,com.trilead.ssh2.crypto.digest,com.trilead.ssh2.log,com.trilead.ssh2.packets,com.trilead.ssh2.sftp,com.trilead.ssh2.signature,com.trilead.ssh2.transport,com.trilead.ssh2.util,de.regnis.q.sequence,de.regnis.q.sequence.core,de.regnis.q.sequence.line,de.regnis.q.sequence.line.diff,de.regnis.q.sequence.line.simplifier,de.regnis.q.sequence.media,org.tigris.subversion.javahl,org.tmatesoft.svn.core,org.tmatesoft.svn.core.auth,org.tmatesoft.svn.core.internal.delta,org.tmatesoft.svn.core.internal.io.dav,org.tmatesoft.svn.core.internal.io.dav.handlers,org.tmatesoft.svn.core.internal.io.dav.http,org.tmatesoft.svn.core.internal.io.fs,org.tmatesoft.svn.core.internal.io.svn,org.tmatesoft.svn.core.internal.util,org.tmatesoft.svn.core.internal.util.jna,org.tmatesoft.svn.core.internal.wc,org.tmatesoft.svn.core.internal.wc.admin,org.tmatesoft.svn.core.io,org.tmatesoft.svn.core.io.diff,org.tmatesoft.svn.core.javahl,org.tmatesoft.svn.core.replicator,org.tmatesoft.svn.core.wc,org.tmatesoft.svn.core.wc.admin,org.tmatesoft.svn.core.wc.xml,org.tmatesoft.svn.util&#xA;Bundle-SymbolicName: org.tmatesoft.svnkit&#xA;Import-Package: org.osgi.framework;version=&quot;1.3.0&quot;,org.osgi.service.log; version=&quot;1.3&quot;,org.osgi.util.tracker;version=&quot;1.3.1&quot;&#xA;
-          </instruction>
-        </instructions>
-      </touchpointData>
     </unit>
     <unit id='a.jre' version='1.6.0' singleton='false'>
       <provides size='117'>
@@ -1190,44 +1097,104 @@
       </provides>
       <touchpoint id='org.eclipse.equinox.p2.native' version='1.0.0'/>
     </unit>
-    <unit id='org.tigris.subversion.clientadapter.javahl.feature.feature.group' version='1.6.2.1' singleton='false'>
-      <update id='org.tigris.subversion.clientadapter.javahl.feature.feature.group' range='[0.0.0,1.6.2.1)' severity='0'/>
-      <properties size='6'>
-        <property name='org.eclipse.equinox.p2.name' value='Subversion JavaHL Native Library Adapter (Required)'/>
-        <property name='org.eclipse.equinox.p2.description' value='%description'/>
-        <property name='org.eclipse.equinox.p2.provider' value='tigris.org'/>
-        <property name='org.eclipse.equinox.p2.type.group' value='true'/>
-        <property name='df_LT.description' value='Subversion Client Adapter implementation using the Subversion native JavaHL library.'/>
-        <property name='df_LT.license' value='Subclipse Software User Agreement&#xA;11th April, 2006&#xA;&#xA;Subclipse is licensed under the terms of the Eclipse Public&#xA;License v1.0.  http://www.eclipse.org/legal/epl-v10.html&#xA;&#xA;Applicable Licenses&#xA;&#xA;Subclipse is built upon a number of other open source&#xA;technologies and products.  Here is a list of those products&#xA;with links to their licenses.&#xA;&#xA;svnClientAdapter:  Part of the overall Subclipse project,&#xA;svnClientAdapter presents a pluggable high-level interface&#xA;to the Subversion repository.  svnClientAdapter is licensed&#xA;under the Apache2 License.&#xA;http://www.apache.org/licenses/LICENSE-2.0&#xA;&#xA;Depending on the adapter you choose in your preferences, the&#xA;following products and licenses are involved.&#xA;&#xA;Subversion/JavaHL:  JavaHL is a high-level Java language binding&#xA;to the Subversion &quot;C&quot; libraries and is part of the official&#xA;Subversion source distribution.  Subversion is licensed under&#xA;the CollabNet license.&#xA;http://subversion.tigris.org/project_license.html&#xA;&#xA;SVNKit:  SVNKit is a &quot;pure Java&quot; implementation of the&#xA;Subversion network protocols and working copy formats.&#xA;SVNKit is licensed under the TMate license.&#xA;http://svnkit.com/licensing/index.html&#xA;&#xA;Ganymed SSH-2:  SVNKit uses the Ganymed SSH-2 library to support&#xA;the svn+ssh:// protocol.  Ganymed SSH-2 is licensed under the&#xA;Ganymed license.&#xA;http://www.ganymed.ethz.ch/ssh2/LICENSE.txt&#xA;&#xA;IT IS YOUR OBLIGATION TO READ AND ACCEPT ALL SUCH TERMS&#xA;AND CONDITIONS PRIOR TO USE OF THIS CONTENT.&#xA;'/>
+    <unit id='org.tmatesoft.svnkit' version='1.3.0.5847' singleton='false'>
+      <update id='org.tmatesoft.svnkit' range='[0.0.0,1.3.0.5847)' severity='0'/>
+      <properties size='2'>
+        <property name='org.eclipse.equinox.p2.name' value='SVNKit Library Plug-in'/>
+        <property name='org.eclipse.equinox.p2.provider' value='TMate Software'/>
       </properties>
-      <provides size='2'>
-        <provided namespace='org.eclipse.equinox.p2.iu' name='org.tigris.subversion.clientadapter.javahl.feature.feature.group' version='1.6.2.1'/>
-        <provided namespace='org.eclipse.equinox.p2.localization' name='df_LT' version='1.0.0'/>
+      <provides size='43'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='org.tmatesoft.svnkit' version='1.3.0.5847'/>
+        <provided namespace='osgi.bundle' name='org.tmatesoft.svnkit' version='1.3.0.5847'/>
+        <provided namespace='java.package' name='com.trilead.ssh2' version='0.0.0'/>
+        <provided namespace='java.package' name='com.trilead.ssh2.auth' version='0.0.0'/>
+        <provided namespace='java.package' name='com.trilead.ssh2.channel' version='0.0.0'/>
+        <provided namespace='java.package' name='com.trilead.ssh2.crypto' version='0.0.0'/>
+        <provided namespace='java.package' name='com.trilead.ssh2.crypto.cipher' version='0.0.0'/>
+        <provided namespace='java.package' name='com.trilead.ssh2.crypto.dh' version='0.0.0'/>
+        <provided namespace='java.package' name='com.trilead.ssh2.crypto.digest' version='0.0.0'/>
+        <provided namespace='java.package' name='com.trilead.ssh2.log' version='0.0.0'/>
+        <provided namespace='java.package' name='com.trilead.ssh2.packets' version='0.0.0'/>
+        <provided namespace='java.package' name='com.trilead.ssh2.sftp' version='0.0.0'/>
+        <provided namespace='java.package' name='com.trilead.ssh2.signature' version='0.0.0'/>
+        <provided namespace='java.package' name='com.trilead.ssh2.transport' version='0.0.0'/>
+        <provided namespace='java.package' name='com.trilead.ssh2.util' version='0.0.0'/>
+        <provided namespace='java.package' name='de.regnis.q.sequence' version='0.0.0'/>
+        <provided namespace='java.package' name='de.regnis.q.sequence.core' version='0.0.0'/>
+        <provided namespace='java.package' name='de.regnis.q.sequence.line' version='0.0.0'/>
+        <provided namespace='java.package' name='de.regnis.q.sequence.line.diff' version='0.0.0'/>
+        <provided namespace='java.package' name='de.regnis.q.sequence.line.simplifier' version='0.0.0'/>
+        <provided namespace='java.package' name='de.regnis.q.sequence.media' version='0.0.0'/>
+        <provided namespace='java.package' name='org.tigris.subversion.javahl' version='0.0.0'/>
+        <provided namespace='java.package' name='org.tmatesoft.svn.core' version='0.0.0'/>
+        <provided namespace='java.package' name='org.tmatesoft.svn.core.auth' version='0.0.0'/>
+        <provided namespace='java.package' name='org.tmatesoft.svn.core.internal.delta' version='0.0.0'/>
+        <provided namespace='java.package' name='org.tmatesoft.svn.core.internal.io.dav' version='0.0.0'/>
+        <provided namespace='java.package' name='org.tmatesoft.svn.core.internal.io.dav.handlers' version='0.0.0'/>
+        <provided namespace='java.package' name='org.tmatesoft.svn.core.internal.io.dav.http' version='0.0.0'/>
+        <provided namespace='java.package' name='org.tmatesoft.svn.core.internal.io.fs' version='0.0.0'/>
+        <provided namespace='java.package' name='org.tmatesoft.svn.core.internal.io.svn' version='0.0.0'/>
+        <provided namespace='java.package' name='org.tmatesoft.svn.core.internal.util' version='0.0.0'/>
+        <provided namespace='java.package' name='org.tmatesoft.svn.core.internal.util.jna' version='0.0.0'/>
+        <provided namespace='java.package' name='org.tmatesoft.svn.core.internal.wc' version='0.0.0'/>
+        <provided namespace='java.package' name='org.tmatesoft.svn.core.internal.wc.admin' version='0.0.0'/>
+        <provided namespace='java.package' name='org.tmatesoft.svn.core.io' version='0.0.0'/>
+        <provided namespace='java.package' name='org.tmatesoft.svn.core.io.diff' version='0.0.0'/>
+        <provided namespace='java.package' name='org.tmatesoft.svn.core.javahl' version='0.0.0'/>
+        <provided namespace='java.package' name='org.tmatesoft.svn.core.replicator' version='0.0.0'/>
+        <provided namespace='java.package' name='org.tmatesoft.svn.core.wc' version='0.0.0'/>
+        <provided namespace='java.package' name='org.tmatesoft.svn.core.wc.admin' version='0.0.0'/>
+        <provided namespace='java.package' name='org.tmatesoft.svn.core.wc.xml' version='0.0.0'/>
+        <provided namespace='java.package' name='org.tmatesoft.svn.util' version='0.0.0'/>
+        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
       </provides>
       <requires size='5'>
-        <required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.core.runtime' range='0.0.0'/>
-        <required namespace='org.eclipse.equinox.p2.iu' name='org.tigris.subversion.clientadapter' range='[1.6.0,1.7.0)'/>
-        <required namespace='org.eclipse.equinox.p2.iu' name='org.tigris.subversion.clientadapter.javahl' range='[1.6.2.1,1.6.2.1]'/>
-        <required namespace='org.eclipse.equinox.p2.iu' name='org.tigris.subversion.clientadapter.javahl.win32' range='[1.6.2.1,1.6.2.1]'>
-          <filter>
-            (&amp;(osgi.os=win32)(osgi.arch=x86))
-          </filter>
-        </required>
-        <required namespace='org.eclipse.equinox.p2.iu' name='org.tigris.subversion.clientadapter.javahl.feature.feature.jar' range='[1.6.2.1,1.6.2.1]'>
-          <filter>
-            (org.eclipse.update.install.features=true)
-          </filter>
-        </required>
+        <required namespace='osgi.bundle' name='com.sun.jna' range='[3.0.0,4.0.0)' optional='true'/>
+        <required namespace='osgi.bundle' name='org.eclipse.core.runtime' range='[3.0.0,4.0.0)' optional='true'/>
+        <required namespace='java.package' name='org.osgi.framework' range='1.3.0'/>
+        <required namespace='java.package' name='org.osgi.service.log' range='1.3.0'/>
+        <required namespace='java.package' name='org.osgi.util.tracker' range='1.3.1'/>
       </requires>
-      <touchpoint id='null' version='0.0.0'/>
-      <licenses size='1'>
-        <license>
-          %license
-        </license>
-      </licenses>
-      <copyright url='http://subclipse.tigris.org/'>
-        http://subclipse.tigris.org/
-      </copyright>
+      <artifacts size='1'>
+        <artifact classifier='osgi.bundle' id='org.tmatesoft.svnkit' version='1.3.0.5847'/>
+      </artifacts>
+      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
+      <touchpointData size='1'>
+        <instructions size='1'>
+          <instruction key='manifest'>
+            Bundle-ManifestVersion: 2&#xA;Bundle-RequiredExecutionEnvironment: J2SE-1.4&#xA;Bundle-ActivationPolicy: lazy&#xA;Bundle-Name: SVNKit Library Plug-in&#xA;Ant-Version: Apache Ant 1.7.0&#xA;Bundle-ClassPath: .,svnkit.jar,svnkit-javahl.jar,trilead.jar&#xA;Require-Bundle: com.sun.jna;bundle-version=&quot;[3.0.0,4.0.0)&quot;;resolution:=optional,org.eclipse.core.runtime;bundle-version=&quot;[3.0.0,4.0.0)&quot;;resolution:=optional&#xA;Bundle-Activator: org.tmatesoft.svn.core.SVNKitActivator&#xA;Bundle-Vendor: TMate Software&#xA;Created-By: 1.4.2_17-b06 (Sun Microsystems Inc.)&#xA;Manifest-Version: 1.0&#xA;Bundle-Version: 1.3.0.5847&#xA;Export-Package: com.trilead.ssh2,com.trilead.ssh2.auth,com.trilead.ssh2.channel,com.trilead.ssh2.crypto,com.trilead.ssh2.crypto.cipher,com.trilead.ssh2.crypto.dh,com.trilead.ssh2.crypto.digest,com.trilead.ssh2.log,com.trilead.ssh2.packets,com.trilead.ssh2.sftp,com.trilead.ssh2.signature,com.trilead.ssh2.transport,com.trilead.ssh2.util,de.regnis.q.sequence,de.regnis.q.sequence.core,de.regnis.q.sequence.line,de.regnis.q.sequence.line.diff,de.regnis.q.sequence.line.simplifier,de.regnis.q.sequence.media,org.tigris.subversion.javahl,org.tmatesoft.svn.core,org.tmatesoft.svn.core.auth,org.tmatesoft.svn.core.internal.delta,org.tmatesoft.svn.core.internal.io.dav,org.tmatesoft.svn.core.internal.io.dav.handlers,org.tmatesoft.svn.core.internal.io.dav.http,org.tmatesoft.svn.core.internal.io.fs,org.tmatesoft.svn.core.internal.io.svn,org.tmatesoft.svn.core.internal.util,org.tmatesoft.svn.core.internal.util.jna,org.tmatesoft.svn.core.internal.wc,org.tmatesoft.svn.core.internal.wc.admin,org.tmatesoft.svn.core.io,org.tmatesoft.svn.core.io.diff,org.tmatesoft.svn.core.javahl,org.tmatesoft.svn.core.replicator,org.tmatesoft.svn.core.wc,org.tmatesoft.svn.core.wc.admin,org.tmatesoft.svn.core.wc.xml,org.tmatesoft.svn.util&#xA;Bundle-SymbolicName: org.tmatesoft.svnkit&#xA;Import-Package: org.osgi.framework;version=&quot;1.3.0&quot;,org.osgi.service.log; version=&quot;1.3&quot;,org.osgi.util.tracker;version=&quot;1.3.1&quot;&#xA;
+          </instruction>
+        </instructions>
+      </touchpointData>
+    </unit>
+    <unit id='org.tigris.subversion.clientadapter.javahl' version='1.6.3'>
+      <update id='org.tigris.subversion.clientadapter.javahl' range='[0.0.0,1.6.3)' severity='0'/>
+      <properties size='2'>
+        <property name='org.eclipse.equinox.p2.name' value='Subversion JavaHL'/>
+        <property name='org.eclipse.equinox.p2.provider' value='tigris.org'/>
+      </properties>
+      <provides size='5'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='org.tigris.subversion.clientadapter.javahl' version='1.6.3'/>
+        <provided namespace='osgi.bundle' name='org.tigris.subversion.clientadapter.javahl' version='1.6.3'/>
+        <provided namespace='java.package' name='org.tigris.subversion.javahl' version='0.0.0'/>
+        <provided namespace='java.package' name='org.tigris.subversion.svnclientadapter.javahl' version='0.0.0'/>
+        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
+      </provides>
+      <requires size='2'>
+        <required namespace='osgi.bundle' name='org.eclipse.core.runtime' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.tigris.subversion.clientadapter' range='[1.6.0,1.7.0)'/>
+      </requires>
+      <artifacts size='1'>
+        <artifact classifier='osgi.bundle' id='org.tigris.subversion.clientadapter.javahl' version='1.6.3'/>
+      </artifacts>
+      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
+      <touchpointData size='1'>
+        <instructions size='1'>
+          <instruction key='manifest'>
+            Bundle-Vendor: tigris.org&#xA;Bundle-ManifestVersion: 2&#xA;Bundle-Activator: org.tigris.subversion.clientadapter.javahl.Activator&#xA;Bundle-RequiredExecutionEnvironment: J2SE-1.4&#xA;Require-Bundle: org.eclipse.core.runtime,org.tigris.subversion.clientadapter;bundle-version=&quot;[1.6.0,1.7.0)&quot;&#xA;Bundle-Name: Subversion JavaHL&#xA;Manifest-Version: 1.0&#xA;Bundle-SymbolicName: org.tigris.subversion.clientadapter.javahl;singleton:=true&#xA;Bundle-Version: 1.6.3&#xA;Eclipse-LazyStart: true&#xA;Export-Package: org.tigris.subversion.javahl,org.tigris.subversion.svnclientadapter.javahl&#xA;
+          </instruction>
+        </instructions>
+      </touchpointData>
     </unit>
     <unit id='org.tigris.subversion.subclipse.graph' version='1.0.7'>
       <update id='org.tigris.subversion.subclipse.graph' range='[0.0.0,1.0.7)' severity='0'/>
@@ -1267,6 +1234,18 @@
           </instruction>
         </instructions>
       </touchpointData>
+    </unit>
+    <unit id='org.tigris.subversion.clientadapter.javahl.win32.translated_host_properties' version='1.6.3'>
+      <hostRequirements size='1'>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.tigris.subversion.clientadapter.javahl' range='[1.6.0,1.7.0)' greedy='false'/>
+      </hostRequirements>
+      <properties size='1'>
+        <property name='org.eclipse.equinox.p2.type.fragment' value='true'/>
+      </properties>
+      <requires size='1'>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.tigris.subversion.clientadapter.javahl' range='[1.6.0,1.7.0)' greedy='false'/>
+      </requires>
+      <touchpoint id='null' version='0.0.0'/>
     </unit>
     <unit id='com.collabnet.subversion.merge.feature.feature.jar' version='1.9.0.4'>
       <update id='com.collabnet.subversion.merge.feature.feature.jar' range='[0.0.0,1.9.0.4)' severity='0'/>
@@ -1345,17 +1324,38 @@
       </requires>
       <touchpoint id='null' version='0.0.0'/>
     </unit>
-    <unit id='org.tigris.subversion.clientadapter.javahl.win32.translated_host_properties' version='1.6.2.1'>
-      <hostRequirements size='1'>
-        <required namespace='org.eclipse.equinox.p2.iu' name='org.tigris.subversion.clientadapter.javahl' range='[1.6.0,1.7.0)' greedy='false'/>
-      </hostRequirements>
-      <properties size='1'>
-        <property name='org.eclipse.equinox.p2.type.fragment' value='true'/>
+    <unit id='org.tigris.subversion.clientadapter.javahl.win32' version='1.6.3' singleton='false'>
+      <update id='org.tigris.subversion.clientadapter.javahl.win32' range='[0.0.0,1.6.3)' severity='0'/>
+      <properties size='2'>
+        <property name='org.eclipse.equinox.p2.name' value='Win32 JavaHL Binaries'/>
+        <property name='org.eclipse.equinox.p2.provider' value='tigris.org'/>
       </properties>
+      <provides size='4'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='org.tigris.subversion.clientadapter.javahl.win32' version='1.6.3'/>
+        <provided namespace='osgi.bundle' name='org.tigris.subversion.clientadapter.javahl.win32' version='1.6.3'/>
+        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
+        <provided namespace='osgi.fragment' name='org.tigris.subversion.clientadapter.javahl' version='1.6.3'/>
+      </provides>
       <requires size='1'>
-        <required namespace='org.eclipse.equinox.p2.iu' name='org.tigris.subversion.clientadapter.javahl' range='[1.6.0,1.7.0)' greedy='false'/>
+        <required namespace='osgi.bundle' name='org.tigris.subversion.clientadapter.javahl' range='[1.6.0,1.7.0)'/>
       </requires>
-      <touchpoint id='null' version='0.0.0'/>
+      <filter>
+        (&amp; (osgi.os=win32) (osgi.arch=x86))
+      </filter>
+      <artifacts size='1'>
+        <artifact classifier='osgi.bundle' id='org.tigris.subversion.clientadapter.javahl.win32' version='1.6.3'/>
+      </artifacts>
+      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
+      <touchpointData size='1'>
+        <instructions size='2'>
+          <instruction key='manifest'>
+            Bundle-ManifestVersion: 2&#xA;Bundle-Version: 1.6.3&#xA;Manifest-Version: 1.0&#xA;Bundle-SymbolicName: org.tigris.subversion.clientadapter.javahl.win32&#xA;Bundle-Name: Win32 JavaHL Binaries&#xA;Fragment-Host: org.tigris.subversion.clientadapter.javahl;bundle-version=&quot;[1.6.0,1.7.0)&quot;&#xA;Bundle-Vendor: tigris.org&#xA;Eclipse-PlatformFilter: (&amp; (osgi.os=win32) (osgi.arch=x86))&#xA;
+          </instruction>
+          <instruction key='zipped'>
+            true
+          </instruction>
+        </instructions>
+      </touchpointData>
     </unit>
     <unit id='config.a.jre' version='1.6.0' singleton='false'>
       <hostRequirements size='1'>
