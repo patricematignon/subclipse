@@ -4,7 +4,7 @@
   <properties size='3'>
     <property name='publishPackFilesAsSiblings' value='true'/>
     <property name='p2.compressed' value='false'/>
-    <property name='p2.timestamp' value='1247507563014'/>
+    <property name='p2.timestamp' value='1247508888135'/>
   </properties>
   <mappings size='4'>
     <rule filter='(&amp; (classifier=osgi.bundle) (format=packed))' output='${repoUrl}/plugins/${id}_${version}.jar.pack.gz'/>
@@ -31,6 +31,12 @@
         <property name='artifact.size' value='157682'/>
         <property name='download.size' value='157682'/>
         <property name='download.contentType' value='application/zip'/>
+      </properties>
+    </artifact>
+    <artifact classifier='org.eclipse.update.feature' id='com.collabnet.subversion.merge.feature' version='1.9.1'>
+      <properties size='2'>
+        <property name='artifact.size' value='19215'/>
+        <property name='download.size' value='19215'/>
       </properties>
     </artifact>
     <artifact classifier='org.eclipse.update.feature' id='com.sun.jna' version='3.0.9'>
@@ -124,6 +130,13 @@
         <property name='download.size' value='18978'/>
       </properties>
     </artifact>
+    <artifact classifier='osgi.bundle' id='com.collabnet.subversion.merge' version='1.9.1'>
+      <properties size='3'>
+        <property name='artifact.size' value='439928'/>
+        <property name='download.size' value='439928'/>
+        <property name='download.contentType' value='application/zip'/>
+      </properties>
+    </artifact>
     <artifact classifier='osgi.bundle' id='org.tigris.subversion.clientadapter.javahl.win32' version='1.6.3'>
       <properties size='3'>
         <property name='artifact.size' value='2244456'/>
@@ -135,19 +148,6 @@
       <properties size='3'>
         <property name='artifact.size' value='3383608'/>
         <property name='download.size' value='3383608'/>
-        <property name='download.contentType' value='application/zip'/>
-      </properties>
-    </artifact>
-    <artifact classifier='org.eclipse.update.feature' id='com.collabnet.subversion.merge.feature' version='1.9.0.4'>
-      <properties size='2'>
-        <property name='artifact.size' value='19217'/>
-        <property name='download.size' value='19217'/>
-      </properties>
-    </artifact>
-    <artifact classifier='osgi.bundle' id='com.collabnet.subversion.merge' version='1.9.0.4'>
-      <properties size='3'>
-        <property name='artifact.size' value='439206'/>
-        <property name='download.size' value='439206'/>
         <property name='download.contentType' value='application/zip'/>
       </properties>
     </artifact>
