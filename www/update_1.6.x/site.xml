@@ -9,7 +9,7 @@
    <feature url="features/org.tigris.subversion.subclipse_1.6.3.jar" id="org.tigris.subversion.subclipse" version="1.6.3">
       <category name="Subclipse"/>
    </feature>
-   <feature url="features/com.collabnet.subversion.merge.feature_1.9.0.4.jar" id="com.collabnet.subversion.merge.feature" version="1.9.0.4">
+   <feature url="features/com.collabnet.subversion.merge.feature_1.9.1.jar" id="com.collabnet.subversion.merge.feature" version="1.9.1">
       <category name="Subclipse"/>
    </feature>
    <feature url="features/org.tigris.subversion.subclipse.graph.feature_1.0.7.jar" id="org.tigris.subversion.subclipse.graph.feature" version="1.0.7">
