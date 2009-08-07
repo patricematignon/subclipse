@@ -4,7 +4,7 @@
   <properties size='3'>
     <property name='publishPackFilesAsSiblings' value='true'/>
     <property name='p2.compressed' value='false'/>
-    <property name='p2.timestamp' value='1243519605850'/>
+    <property name='p2.timestamp' value='1249668925328'/>
   </properties>
   <mappings size='4'>
     <rule filter='(&amp; (classifier=osgi.bundle) (format=packed))' output='${repoUrl}/plugins/${id}_${version}.jar.pack.gz'/>
@@ -20,12 +20,6 @@
         <property name='download.contentType' value='application/zip'/>
       </properties>
     </artifact>
-    <artifact classifier='org.eclipse.update.feature' id='org.tigris.subversion.clientadapter.javahl.feature' version='1.5.6.1'>
-      <properties size='2'>
-        <property name='artifact.size' value='2867'/>
-        <property name='download.size' value='2867'/>
-      </properties>
-    </artifact>
     <artifact classifier='org.eclipse.update.feature' id='org.tigris.subversion.clientadapter.feature' version='1.5.3'>
       <properties size='2'>
         <property name='artifact.size' value='2769'/>
@@ -36,13 +30,6 @@
       <properties size='2'>
         <property name='artifact.size' value='3806'/>
         <property name='download.size' value='3806'/>
-      </properties>
-    </artifact>
-    <artifact classifier='osgi.bundle' id='org.tigris.subversion.clientadapter.javahl.win32' version='1.5.6'>
-      <properties size='3'>
-        <property name='artifact.size' value='2378237'/>
-        <property name='download.size' value='2378237'/>
-        <property name='download.contentType' value='application/zip'/>
       </properties>
     </artifact>
     <artifact classifier='osgi.bundle' id='org.tigris.subversion.subclipse.core' version='1.4.8'>
@@ -58,17 +45,17 @@
         <property name='download.size' value='1976'/>
       </properties>
     </artifact>
+    <artifact classifier='osgi.bundle' id='org.tigris.subversion.clientadapter.javahl' version='1.5.7'>
+      <properties size='3'>
+        <property name='artifact.size' value='153910'/>
+        <property name='download.size' value='153910'/>
+        <property name='download.contentType' value='application/zip'/>
+      </properties>
+    </artifact>
     <artifact classifier='osgi.bundle' id='com.sun.jna' version='3.0.9'>
       <properties size='3'>
         <property name='artifact.size' value='784476'/>
         <property name='download.size' value='784476'/>
-        <property name='download.contentType' value='application/zip'/>
-      </properties>
-    </artifact>
-    <artifact classifier='osgi.bundle' id='org.tigris.subversion.clientadapter.javahl' version='1.5.6.1'>
-      <properties size='3'>
-        <property name='artifact.size' value='154096'/>
-        <property name='download.size' value='154096'/>
         <property name='download.contentType' value='application/zip'/>
       </properties>
     </artifact>
@@ -77,6 +64,12 @@
         <property name='artifact.size' value='2342937'/>
         <property name='download.size' value='2342937'/>
         <property name='download.contentType' value='application/zip'/>
+      </properties>
+    </artifact>
+    <artifact classifier='org.eclipse.update.feature' id='org.tigris.subversion.clientadapter.javahl.feature' version='1.5.7'>
+      <properties size='2'>
+        <property name='artifact.size' value='2864'/>
+        <property name='download.size' value='2864'/>
       </properties>
     </artifact>
     <artifact classifier='org.eclipse.update.feature' id='com.sun.jna' version='3.0.9'>
@@ -96,6 +89,13 @@
       <properties size='3'>
         <property name='artifact.size' value='17722'/>
         <property name='download.size' value='17722'/>
+        <property name='download.contentType' value='application/zip'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.tigris.subversion.clientadapter.javahl.win32' version='1.5.7'>
+      <properties size='3'>
+        <property name='artifact.size' value='1962000'/>
+        <property name='download.size' value='1962000'/>
         <property name='download.contentType' value='application/zip'/>
       </properties>
     </artifact>
