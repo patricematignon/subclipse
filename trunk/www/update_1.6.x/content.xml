@@ -3,7 +3,7 @@
 <repository name='Subclipse 1.6.x Update Site' type='org.eclipse.equinox.internal.p2.metadata.repository.LocalMetadataRepository' version='1'>
   <properties size='2'>
     <property name='p2.compressed' value='false'/>
-    <property name='p2.timestamp' value='1256217521098'/>
+    <property name='p2.timestamp' value='1256924684381'/>
   </properties>
   <references size='4'>
     <repository url='http://eclipse.svnkit.com/1.3.x/' type='1' options='0'/>
@@ -1021,13 +1021,14 @@
       <provides size='1'>
         <provided namespace='org.eclipse.equinox.p2.iu' name='Subclipse' version='0.0.0'/>
       </provides>
-      <requires size='6'>
+      <requires size='7'>
         <required namespace='org.eclipse.equinox.p2.iu' name='org.tigris.subversion.clientadapter.svnkit.feature.feature.group' range='[1.6.4,1.6.4]'/>
         <required namespace='org.eclipse.equinox.p2.iu' name='org.tigris.subversion.subclipse.feature.group' range='[1.6.5,1.6.5]'/>
         <required namespace='org.eclipse.equinox.p2.iu' name='org.tigris.subversion.subclipse.mylyn.feature.group' range='[3.0.0,3.0.0]'/>
         <required namespace='org.eclipse.equinox.p2.iu' name='org.tigris.subversion.subclipse.graph.feature.feature.group' range='[1.0.7,1.0.7]'/>
         <required namespace='org.eclipse.equinox.p2.iu' name='org.tigris.subversion.clientadapter.javahl.feature.feature.group' range='[1.6.6,1.6.6]'/>
         <required namespace='org.eclipse.equinox.p2.iu' name='org.tigris.subversion.clientadapter.feature.feature.group' range='[1.6.4.1,1.6.4.1]'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='com.collabnet.subversion.merge.feature.feature.group' range='[1.10.0,1.10.0]'/>
       </requires>
       <touchpoint id='null' version='0.0.0'/>
     </unit>

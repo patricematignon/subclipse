@@ -3,6 +3,9 @@
    <description url="http://subclipse.tigris.org/update_1.6.x">
       Eclipse Install/Update site for Subclipse
    </description>
+   <feature url="features/com.collabnet.subversion.merge.feature_1.10.0.jar" id="com.collabnet.subversion.merge.feature" version="1.10.0">
+      <category name="Subclipse"/>
+   </feature>
    <feature url="features/org.tigris.subversion.subclipse.mylyn_3.0.0.jar" id="org.tigris.subversion.subclipse.mylyn" version="3.0.0">
       <category name="Subclipse"/>
    </feature>
