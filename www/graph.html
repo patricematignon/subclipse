@@ -97,7 +97,7 @@ in graphics or GEF in particular to help make it better.</p>
 1.5 and the introduction of merge tracking, this is something that should now be possible.
 What we discovered in testing and development was that the way the Subversion API currently works
 it is not conducive to retrieving the merge information for an entire repository.  It just killed
-the performance.  So what we did to offset this was the following.  When you the cache is built, it
+the performance.  So what we did to offset this was the following.  When the cache is built, it
 does not gather any merge information, and when you bring up a graph you will not see any merge
 information.  However, for any given revision in the graph, you can select it and take the
 "Refresh revision" option.  That will go out and get the merge information for that revision,
