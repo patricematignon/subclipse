@@ -61,8 +61,7 @@ in the SVN Repository view to clear/build the cache for a repository.  Those wer
 make it easier for us to maintain the cache during development.  They are not really needed in
 normal usage but could become necessary if we run into bugs in maintaining the cache information.</p>
 
-<p>A lot of effort went into making the cache as performant as possible.  We initially used an
-Apache Derby database but it was pretty apparent that the database was a bottleneck for performance.
+<p>A lot of effort went into making the cache as performant as possible.  
 We currently use a custom binary format that is yielding pretty good performance.  When used on the
 nearly 40k revision Subversion repository, as an example, the cache builds in around a minute.  You
 still might not want to use the feature on really large repositories, such as the Apache.org
