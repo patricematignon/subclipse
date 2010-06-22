@@ -31,6 +31,50 @@ will be pulled out due to testing problems.</p>
 1.6.0.</p> 
 
 <hr />
+<a name="1.6.12"></a>
+<h4>Version 1.6.12<br>
+22 June 2010</h4>
+<p>from: /trunk<br>
+<a href="http://subclipse.tigris.org/svn/subclipse/tags/subclipse/1.6.12">
+http://subclipse.tigris.org/svn/subclipse/tags/subclipse/1.6.12</a></p>
+<ul>
+ <li>Update JavaHL to SVN 1.6.12 release</li>
+ <li>Synchronize all of the selected projects after multiple projects shared. (<a
+  href="http://subclipse.tigris.org/issues/show_bug.cgi?id=1115">1115</a>)</li>
+ <li>Fix scheduling rule violation when resources from multiple projects selected for Replace With operation. (<a
+  href="http://subclipse.tigris.org/issues/show_bug.cgi?id=1100">1100</a>)</li>
+ <li>Improve handling of unexpected errors (i.e., invalid revision) in compare operations. (<a
+  href="http://subclipse.tigris.org/issues/show_bug.cgi?id=1116">1116</a>)</li>
+ <li>SVN Properties View - Indicate conflicted properties with icon.
+ <li>Edit Property Conflicts action. (<a
+  href="http://subclipse.tigris.org/issues/show_bug.cgi?id=1119">1119</a>)</li>
+ <li>Fix NPE when trying to share project that is not stored in local file system. (<a
+  href="http://subclipse.tigris.org/issues/show_bug.cgi?id=1122">1122</a>)</li>
+ <li>Fixed context menu breaking class cast error in history view compressed folders mode. (<a
+  href="http://subclipse.tigris.org/issues/show_bug.cgi?id=1124">1124</a>)</li>
+ <li>Do not show dialog prompting to disable password stores if password-stores property is present
+  and set to something other than gnome-keyring. (<a
+  href="http://subclipse.tigris.org/issues/show_bug.cgi?id=1136">1136</a>)</li>
+ <li>Fixes to Show Annotation. (<a
+  href="http://subclipse.tigris.org/issues/show_bug.cgi?id=1140">1140</a>)</li>
+ <li>Fix NPE in revision selection dialog when bug tracking properties are set. (<a
+  href="http://subclipse.tigris.org/issues/show_bug.cgi?id=1140">1140</a>)</li>
+ <li>Allow selection of URL's to compare in Compare Branch/Tag dialog. (<a
+  href="http://subclipse.tigris.org/issues/show_bug.cgi?id=1131">1131</a>)</li>
+ <li>Mark Tree Conflict Resolved wizard.</li>
+ <li>When comparing from workspace to repository, use SVN diff for folder compares, not for file compares.</li>
+ <li>Do not notify listeners on update actions when both content and property states are unknown or unchanged, regardless of command.</li>
+ <li>Don't show Refresh Revision/Merge Info context menu option in revision graph when no revision(s) selected. (<a
+  href="http://subclipse.tigris.org/issues/show_bug.cgi?id=1153">1153</a>)</li>
+ <li>Fix RevertResourceManager resource listener to ignore non-SVN projects. (<a
+  href="http://subclipse.tigris.org/issues/show_bug.cgi?id=1047">1047</a>)</li>
+ <li>Fix StatusCacheManager to ignore non-SVN projects. (<a
+  href="http://subclipse.tigris.org/issues/show_bug.cgi?id=1047">1047</a>)</li>
+ <li>Unregister subscriber change listener when editor is closed after quick diff. (<a
+  href="http://subclipse.tigris.org/issues/show_bug.cgi?id=1157">1157</a>)</li>
+</ul>
+
+<hr />
 <a name="1.6.10"></a>
 <h4>Version 1.6.10<br>
 08 March 2010</h4>
