@@ -3,7 +3,7 @@
 <repository name='Subclipse 1.6.x Update Site' type='org.eclipse.equinox.internal.p2.metadata.repository.LocalMetadataRepository' version='1'>
   <properties size='2'>
     <property name='p2.compressed' value='false'/>
-    <property name='p2.timestamp' value='1277214029213'/>
+    <property name='p2.timestamp' value='1280411763998'/>
   </properties>
   <references size='4'>
     <repository url='http://eclipse.svnkit.com/1.3.x/' type='1' options='0'/>
@@ -11,7 +11,7 @@
     <repository url='http://subclipse.tigris.org/update_1.6.x' type='0' options='0'/>
     <repository url='http://subclipse.tigris.org/update_1.6.x' type='1' options='0'/>
   </references>
-  <units size='37'>
+  <units size='36'>
     <unit id='org.tigris.subversion.clientadapter.svnkit.feature.feature.group' version='1.6.12' singleton='false'>
       <update id='org.tigris.subversion.clientadapter.svnkit.feature.feature.group' range='[0.0.0,1.6.12)' severity='0'/>
       <properties size='6'>
@@ -127,60 +127,55 @@
         http://subclipse.tigris.org/
       </copyright>
     </unit>
-    <unit id='org.tigris.subversion.subclipse.core' version='1.6.12'>
-      <update id='org.tigris.subversion.subclipse.core' range='[0.0.0,1.6.12)' severity='0'/>
-      <properties size='10'>
-        <property name='zh.providerName' value='tigris.org'/>
-        <property name='zh.pluginName' value='SVN 小组功能提供程序核心'/>
-        <property name='ja.providerName' value='tigris.org'/>
-        <property name='ja.pluginName' value='SVNチームプロバイダ Core'/>
-        <property name='df_LT.providerName' value='tigris.org'/>
-        <property name='df_LT.pluginName' value='SVN Team Provider Core'/>
-        <property name='zh_TW.providerName' value='tigris.org'/>
-        <property name='zh_TW.pluginName' value='SVN 團隊功能核心'/>
-        <property name='org.eclipse.equinox.p2.name' value='%pluginName'/>
-        <property name='org.eclipse.equinox.p2.provider' value='%providerName'/>
+    <unit id='org.tigris.subversion.subclipse.feature.group' version='1.6.13' singleton='false'>
+      <update id='org.tigris.subversion.subclipse.feature.group' range='[0.0.0,1.6.13)' severity='0'/>
+      <properties size='7'>
+        <property name='org.eclipse.equinox.p2.name' value='Subclipse (Required)'/>
+        <property name='org.eclipse.equinox.p2.description' value='%description'/>
+        <property name='org.eclipse.equinox.p2.description.url' value='%changesURL'/>
+        <property name='org.eclipse.equinox.p2.provider' value='tigris.org'/>
+        <property name='org.eclipse.equinox.p2.type.group' value='true'/>
+        <property name='df_LT.description' value='Subclipse is an Eclipse Team Provider for the Subversion version control system.'/>
+        <property name='df_LT.license' value='Subclipse Software User Agreement&#xA;11th April, 2006&#xA;&#xA;Subclipse is licensed under the terms of the Eclipse Public&#xA;License v1.0.  http://www.eclipse.org/legal/epl-v10.html&#xA;&#xA;Applicable Licenses&#xA;&#xA;Subclipse is built upon a number of other open source&#xA;technologies and products.  Here is a list of those products&#xA;with links to their licenses.&#xA;&#xA;svnClientAdapter:  Part of the overall Subclipse project,&#xA;svnClientAdapter presents a pluggable high-level interface&#xA;to the Subversion repository.  svnClientAdapter is licensed&#xA;under the Apache2 License.&#xA;http://www.apache.org/licenses/LICENSE-2.0&#xA;&#xA;Depending on the adapter you choose in your preferences, the&#xA;following products and licenses are involved.&#xA;&#xA;Subversion/JavaHL:  JavaHL is a high-level Java language binding&#xA;to the Subversion &quot;C&quot; libraries and is part of the official&#xA;Subversion source distribution.  Subversion is licensed under&#xA;the CollabNet license.&#xA;http://subversion.tigris.org/project_license.html&#xA;&#xA;SVNKit:  SVNKit is a &quot;pure Java&quot; implementation of the&#xA;Subversion network protocols and working copy formats.&#xA;SVNKit is licensed under the TMate license.&#xA;http://svnkit.com/licensing/index.html&#xA;&#xA;Ganymed SSH-2:  SVNKit uses the Ganymed SSH-2 library to support&#xA;the svn+ssh:// protocol.  Ganymed SSH-2 is licensed under the&#xA;Ganymed license.&#xA;http://www.ganymed.ethz.ch/ssh2/LICENSE.txt&#xA;&#xA;IT IS YOUR OBLIGATION TO READ AND ACCEPT ALL SUCH TERMS&#xA;AND CONDITIONS PRIOR TO USE OF THIS CONTENT.&#xA;'/>
       </properties>
-      <provides size='20'>
-        <provided namespace='org.eclipse.equinox.p2.iu' name='org.tigris.subversion.subclipse.core' version='1.6.12'/>
-        <provided namespace='osgi.bundle' name='org.tigris.subversion.subclipse.core' version='1.6.12'/>
-        <provided namespace='java.package' name='org.tigris.subversion.subclipse.core' version='0.0.0'/>
-        <provided namespace='java.package' name='org.tigris.subversion.subclipse.core.client' version='0.0.0'/>
-        <provided namespace='java.package' name='org.tigris.subversion.subclipse.core.commands' version='0.0.0'/>
-        <provided namespace='java.package' name='org.tigris.subversion.subclipse.core.history' version='0.0.0'/>
-        <provided namespace='java.package' name='org.tigris.subversion.subclipse.core.internal' version='0.0.0'/>
-        <provided namespace='java.package' name='org.tigris.subversion.subclipse.core.mapping' version='0.0.0'/>
-        <provided namespace='java.package' name='org.tigris.subversion.subclipse.core.properties' version='0.0.0'/>
-        <provided namespace='java.package' name='org.tigris.subversion.subclipse.core.repo' version='0.0.0'/>
-        <provided namespace='java.package' name='org.tigris.subversion.subclipse.core.resources' version='0.0.0'/>
-        <provided namespace='java.package' name='org.tigris.subversion.subclipse.core.resourcesListeners' version='0.0.0'/>
-        <provided namespace='java.package' name='org.tigris.subversion.subclipse.core.status' version='0.0.0'/>
-        <provided namespace='java.package' name='org.tigris.subversion.subclipse.core.sync' version='0.0.0'/>
-        <provided namespace='java.package' name='org.tigris.subversion.subclipse.core.util' version='0.0.0'/>
-        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
-        <provided namespace='org.eclipse.equinox.p2.localization' name='zh' version='1.0.0'/>
-        <provided namespace='org.eclipse.equinox.p2.localization' name='ja' version='1.0.0'/>
+      <provides size='2'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='org.tigris.subversion.subclipse.feature.group' version='1.6.13'/>
         <provided namespace='org.eclipse.equinox.p2.localization' name='df_LT' version='1.0.0'/>
-        <provided namespace='org.eclipse.equinox.p2.localization' name='zh_TW' version='1.0.0'/>
       </provides>
-      <requires size='5'>
-        <required namespace='osgi.bundle' name='org.eclipse.core.resources' range='3.2.0'/>
-        <required namespace='osgi.bundle' name='org.eclipse.team.core' range='3.2.0'/>
-        <required namespace='osgi.bundle' name='org.eclipse.core.runtime' range='3.2.0'/>
-        <required namespace='osgi.bundle' name='org.eclipse.osgi' range='0.0.0'/>
-        <required namespace='osgi.bundle' name='org.tigris.subversion.clientadapter' range='[1.6.12,1.7.0)'/>
+      <requires size='19'>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.core.resources' range='3.2.0'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.team.core' range='3.2.0'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.core.runtime' range='3.2.0'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.osgi' range='0.0.0'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.ui.ide' range='0.0.0'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.ui.views' range='0.0.0'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.jface.text' range='0.0.0'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.ui.workbench.texteditor' range='0.0.0'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.ui.editors' range='0.0.0'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.ui' range='0.0.0'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.team.ui' range='0.0.0'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.compare' range='0.0.0'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.ui.console' range='0.0.0'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.help' range='0.0.0'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.tigris.subversion.clientadapter' range='[1.6.12,1.7.0)'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.tigris.subversion.subclipse.core' range='[1.6.13,1.6.13]'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.tigris.subversion.subclipse.ui' range='[1.6.13,1.6.13]'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.tigris.subversion.subclipse.doc' range='[1.3.0,1.3.0]'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.tigris.subversion.subclipse.feature.jar' range='[1.6.13,1.6.13]'>
+          <filter>
+            (org.eclipse.update.install.features=true)
+          </filter>
+        </required>
       </requires>
-      <artifacts size='1'>
-        <artifact classifier='osgi.bundle' id='org.tigris.subversion.subclipse.core' version='1.6.12'/>
-      </artifacts>
-      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
-      <touchpointData size='1'>
-        <instructions size='1'>
-          <instruction key='manifest'>
-            Bundle-Vendor: %providerName&#xA;Bundle-ManifestVersion: 2&#xA;Bundle-Activator: org.tigris.subversion.subclipse.core.SVNProviderPlugin&#xA;Bundle-RequiredExecutionEnvironment: J2SE-1.4&#xA;Require-Bundle: org.eclipse.core.resources;bundle-version=&quot;3.2.0&quot;,org.eclipse.team.core;bundle-version=&quot;3.2.0&quot;,org.eclipse.core.runtime;bundle-version=&quot;3.2.0&quot;,org.eclipse.osgi,org.tigris.subversion.clientadapter;bundle-version=&quot;[1.6.12,1.7.0)&quot;;visibility:=reexport&#xA;Bundle-Name: %pluginName&#xA;Bundle-Localization: plugin&#xA;Bundle-SymbolicName: org.tigris.subversion.subclipse.core; singleton:=true&#xA;Bundle-Version: 1.6.12&#xA;Eclipse-LazyStart: true&#xA;Export-Package: org.tigris.subversion.subclipse.core,org.tigris.subversion.subclipse.core.client,org.tigris.subversion.subclipse.core.commands,org.tigris.subversion.subclipse.core.history,org.tigris.subversion.subclipse.core.internal,org.tigris.subversion.subclipse.core.mapping,org.tigris.subversion.subclipse.core.properties,org.tigris.subversion.subclipse.core.repo,org.tigris.subversion.subclipse.core.resources,org.tigris.subversion.subclipse.core.resourcesListeners,org.tigris.subversion.subclipse.core.status,org.tigris.subversion.subclipse.core.sync,org.tigris.subversion.subclipse.core.util&#xA;
-          </instruction>
-        </instructions>
-      </touchpointData>
+      <touchpoint id='null' version='0.0.0'/>
+      <licenses size='1'>
+        <license>
+          %license
+        </license>
+      </licenses>
+      <copyright url='http://subclipse.tigris.org/'>
+        http://subclipse.tigris.org/
+      </copyright>
     </unit>
     <unit id='org.tigris.subversion.subclipse.graph' version='1.0.8'>
       <update id='org.tigris.subversion.subclipse.graph' range='[0.0.0,1.0.8)' severity='0'/>
@@ -361,46 +356,6 @@
         </instructions>
       </touchpointData>
     </unit>
-    <unit id='org.tigris.subversion.subclipse.feature.jar' version='1.6.12'>
-      <update id='org.tigris.subversion.subclipse.feature.jar' range='[0.0.0,1.6.12)' severity='0'/>
-      <properties size='7'>
-        <property name='org.eclipse.equinox.p2.name' value='Subclipse (Required)'/>
-        <property name='org.eclipse.equinox.p2.description' value='%description'/>
-        <property name='org.eclipse.equinox.p2.description.url' value='%changesURL'/>
-        <property name='org.eclipse.equinox.p2.provider' value='tigris.org'/>
-        <property name='org.eclipse.update.feature.plugin' value='org.tigris.subversion.subclipse.core'/>
-        <property name='df_LT.description' value='Subclipse is an Eclipse Team Provider for the Subversion version control system.'/>
-        <property name='df_LT.license' value='Subclipse Software User Agreement&#xA;11th April, 2006&#xA;&#xA;Subclipse is licensed under the terms of the Eclipse Public&#xA;License v1.0.  http://www.eclipse.org/legal/epl-v10.html&#xA;&#xA;Applicable Licenses&#xA;&#xA;Subclipse is built upon a number of other open source&#xA;technologies and products.  Here is a list of those products&#xA;with links to their licenses.&#xA;&#xA;svnClientAdapter:  Part of the overall Subclipse project,&#xA;svnClientAdapter presents a pluggable high-level interface&#xA;to the Subversion repository.  svnClientAdapter is licensed&#xA;under the Apache2 License.&#xA;http://www.apache.org/licenses/LICENSE-2.0&#xA;&#xA;Depending on the adapter you choose in your preferences, the&#xA;following products and licenses are involved.&#xA;&#xA;Subversion/JavaHL:  JavaHL is a high-level Java language binding&#xA;to the Subversion &quot;C&quot; libraries and is part of the official&#xA;Subversion source distribution.  Subversion is licensed under&#xA;the CollabNet license.&#xA;http://subversion.tigris.org/project_license.html&#xA;&#xA;SVNKit:  SVNKit is a &quot;pure Java&quot; implementation of the&#xA;Subversion network protocols and working copy formats.&#xA;SVNKit is licensed under the TMate license.&#xA;http://svnkit.com/licensing/index.html&#xA;&#xA;Ganymed SSH-2:  SVNKit uses the Ganymed SSH-2 library to support&#xA;the svn+ssh:// protocol.  Ganymed SSH-2 is licensed under the&#xA;Ganymed license.&#xA;http://www.ganymed.ethz.ch/ssh2/LICENSE.txt&#xA;&#xA;IT IS YOUR OBLIGATION TO READ AND ACCEPT ALL SUCH TERMS&#xA;AND CONDITIONS PRIOR TO USE OF THIS CONTENT.&#xA;'/>
-      </properties>
-      <provides size='4'>
-        <provided namespace='org.eclipse.equinox.p2.iu' name='org.tigris.subversion.subclipse.feature.jar' version='1.6.12'/>
-        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='feature' version='1.0.0'/>
-        <provided namespace='org.eclipse.update.feature' name='org.tigris.subversion.subclipse' version='1.6.12'/>
-        <provided namespace='org.eclipse.equinox.p2.localization' name='df_LT' version='1.0.0'/>
-      </provides>
-      <filter>
-        (org.eclipse.update.install.features=true)
-      </filter>
-      <artifacts size='1'>
-        <artifact classifier='org.eclipse.update.feature' id='org.tigris.subversion.subclipse' version='1.6.12'/>
-      </artifacts>
-      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
-      <touchpointData size='1'>
-        <instructions size='1'>
-          <instruction key='zipped'>
-            true
-          </instruction>
-        </instructions>
-      </touchpointData>
-      <licenses size='1'>
-        <license>
-          %license
-        </license>
-      </licenses>
-      <copyright url='http://subclipse.tigris.org/'>
-        http://subclipse.tigris.org/
-      </copyright>
-    </unit>
     <unit id='org.tigris.subversion.clientadapter.svnkit' version='1.6.12'>
       <update id='org.tigris.subversion.clientadapter.svnkit' range='[0.0.0,1.6.12)' severity='0'/>
       <properties size='2'>
@@ -469,6 +424,61 @@
         <required namespace='org.eclipse.equinox.p2.iu' name='org.tigris.subversion.clientadapter.javahl' range='[1.6.0,1.7.0)' greedy='false'/>
       </requires>
       <touchpoint id='null' version='0.0.0'/>
+    </unit>
+    <unit id='org.tigris.subversion.subclipse.core' version='1.6.13'>
+      <update id='org.tigris.subversion.subclipse.core' range='[0.0.0,1.6.13)' severity='0'/>
+      <properties size='10'>
+        <property name='zh.providerName' value='tigris.org'/>
+        <property name='zh.pluginName' value='SVN 小组功能提供程序核心'/>
+        <property name='ja.providerName' value='tigris.org'/>
+        <property name='ja.pluginName' value='SVNチームプロバイダ Core'/>
+        <property name='df_LT.providerName' value='tigris.org'/>
+        <property name='df_LT.pluginName' value='SVN Team Provider Core'/>
+        <property name='zh_TW.providerName' value='tigris.org'/>
+        <property name='zh_TW.pluginName' value='SVN 團隊功能核心'/>
+        <property name='org.eclipse.equinox.p2.name' value='%pluginName'/>
+        <property name='org.eclipse.equinox.p2.provider' value='%providerName'/>
+      </properties>
+      <provides size='20'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='org.tigris.subversion.subclipse.core' version='1.6.13'/>
+        <provided namespace='osgi.bundle' name='org.tigris.subversion.subclipse.core' version='1.6.13'/>
+        <provided namespace='java.package' name='org.tigris.subversion.subclipse.core' version='0.0.0'/>
+        <provided namespace='java.package' name='org.tigris.subversion.subclipse.core.client' version='0.0.0'/>
+        <provided namespace='java.package' name='org.tigris.subversion.subclipse.core.commands' version='0.0.0'/>
+        <provided namespace='java.package' name='org.tigris.subversion.subclipse.core.history' version='0.0.0'/>
+        <provided namespace='java.package' name='org.tigris.subversion.subclipse.core.internal' version='0.0.0'/>
+        <provided namespace='java.package' name='org.tigris.subversion.subclipse.core.mapping' version='0.0.0'/>
+        <provided namespace='java.package' name='org.tigris.subversion.subclipse.core.properties' version='0.0.0'/>
+        <provided namespace='java.package' name='org.tigris.subversion.subclipse.core.repo' version='0.0.0'/>
+        <provided namespace='java.package' name='org.tigris.subversion.subclipse.core.resources' version='0.0.0'/>
+        <provided namespace='java.package' name='org.tigris.subversion.subclipse.core.resourcesListeners' version='0.0.0'/>
+        <provided namespace='java.package' name='org.tigris.subversion.subclipse.core.status' version='0.0.0'/>
+        <provided namespace='java.package' name='org.tigris.subversion.subclipse.core.sync' version='0.0.0'/>
+        <provided namespace='java.package' name='org.tigris.subversion.subclipse.core.util' version='0.0.0'/>
+        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
+        <provided namespace='org.eclipse.equinox.p2.localization' name='zh' version='1.0.0'/>
+        <provided namespace='org.eclipse.equinox.p2.localization' name='ja' version='1.0.0'/>
+        <provided namespace='org.eclipse.equinox.p2.localization' name='df_LT' version='1.0.0'/>
+        <provided namespace='org.eclipse.equinox.p2.localization' name='zh_TW' version='1.0.0'/>
+      </provides>
+      <requires size='5'>
+        <required namespace='osgi.bundle' name='org.eclipse.core.resources' range='3.2.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.team.core' range='3.2.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.core.runtime' range='3.2.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.osgi' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.tigris.subversion.clientadapter' range='[1.6.12,1.7.0)'/>
+      </requires>
+      <artifacts size='1'>
+        <artifact classifier='osgi.bundle' id='org.tigris.subversion.subclipse.core' version='1.6.13'/>
+      </artifacts>
+      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
+      <touchpointData size='1'>
+        <instructions size='1'>
+          <instruction key='manifest'>
+            Bundle-Vendor: %providerName&#xA;Bundle-ManifestVersion: 2&#xA;Bundle-Activator: org.tigris.subversion.subclipse.core.SVNProviderPlugin&#xA;Bundle-RequiredExecutionEnvironment: J2SE-1.4&#xA;Require-Bundle: org.eclipse.core.resources;bundle-version=&quot;3.2.0&quot;,org.eclipse.team.core;bundle-version=&quot;3.2.0&quot;,org.eclipse.core.runtime;bundle-version=&quot;3.2.0&quot;,org.eclipse.osgi,org.tigris.subversion.clientadapter;bundle-version=&quot;[1.6.12,1.7.0)&quot;;visibility:=reexport&#xA;Bundle-Name: %pluginName&#xA;Bundle-Localization: plugin&#xA;Bundle-SymbolicName: org.tigris.subversion.subclipse.core; singleton:=true&#xA;Bundle-Version: 1.6.13&#xA;Eclipse-LazyStart: true&#xA;Export-Package: org.tigris.subversion.subclipse.core,org.tigris.subversion.subclipse.core.client,org.tigris.subversion.subclipse.core.commands,org.tigris.subversion.subclipse.core.history,org.tigris.subversion.subclipse.core.internal,org.tigris.subversion.subclipse.core.mapping,org.tigris.subversion.subclipse.core.properties,org.tigris.subversion.subclipse.core.repo,org.tigris.subversion.subclipse.core.resources,org.tigris.subversion.subclipse.core.resourcesListeners,org.tigris.subversion.subclipse.core.status,org.tigris.subversion.subclipse.core.sync,org.tigris.subversion.subclipse.core.util&#xA;
+          </instruction>
+        </instructions>
+      </touchpointData>
     </unit>
     <unit id='org.tmatesoft.svnkit.feature.group' version='1.3.3.6648' singleton='false'>
       <update id='org.tmatesoft.svnkit.feature.group' range='[0.0.0,1.3.3.6648)' severity='0'/>
@@ -542,90 +552,6 @@
       <copyright url='http://subclipse.tigris.org/'>
         http://subclipse.tigris.org/
       </copyright>
-    </unit>
-    <unit id='org.tigris.subversion.subclipse.ui' version='1.6.12'>
-      <update id='org.tigris.subversion.subclipse.ui' range='[0.0.0,1.6.12)' severity='0'/>
-      <properties size='10'>
-        <property name='zh.providerName' value='tigris.org'/>
-        <property name='zh.pluginName' value='SVN 小组提供程序用户界面'/>
-        <property name='ja.providerName' value='tigris.org'/>
-        <property name='ja.pluginName' value='SVN チーム・プロバイダーの UI'/>
-        <property name='df_LT.providerName' value='tigris.org'/>
-        <property name='df_LT.pluginName' value='SVN Team Provider UI'/>
-        <property name='zh_TW.providerName' value='tigris.org'/>
-        <property name='zh_TW.pluginName' value='SVN 團隊程式使用者界面'/>
-        <property name='org.eclipse.equinox.p2.name' value='%pluginName'/>
-        <property name='org.eclipse.equinox.p2.provider' value='%providerName'/>
-      </properties>
-      <provides size='36'>
-        <provided namespace='org.eclipse.equinox.p2.iu' name='org.tigris.subversion.subclipse.ui' version='1.6.12'/>
-        <provided namespace='osgi.bundle' name='org.tigris.subversion.subclipse.ui' version='1.6.12'/>
-        <provided namespace='java.package' name='org.tigris.subversion.subclipse.ui' version='0.0.0'/>
-        <provided namespace='java.package' name='org.tigris.subversion.subclipse.ui.actions' version='0.0.0'/>
-        <provided namespace='java.package' name='org.tigris.subversion.subclipse.ui.annotations' version='0.0.0'/>
-        <provided namespace='java.package' name='org.tigris.subversion.subclipse.ui.authentication' version='0.0.0'/>
-        <provided namespace='java.package' name='org.tigris.subversion.subclipse.ui.comments' version='0.0.0'/>
-        <provided namespace='java.package' name='org.tigris.subversion.subclipse.ui.compare' version='0.0.0'/>
-        <provided namespace='java.package' name='org.tigris.subversion.subclipse.ui.compare.internal' version='0.0.0'/>
-        <provided namespace='java.package' name='org.tigris.subversion.subclipse.ui.conflicts' version='0.0.0'/>
-        <provided namespace='java.package' name='org.tigris.subversion.subclipse.ui.console' version='0.0.0'/>
-        <provided namespace='java.package' name='org.tigris.subversion.subclipse.ui.decorator' version='0.0.0'/>
-        <provided namespace='java.package' name='org.tigris.subversion.subclipse.ui.dialogs' version='0.0.0'/>
-        <provided namespace='java.package' name='org.tigris.subversion.subclipse.ui.editor' version='0.0.0'/>
-        <provided namespace='java.package' name='org.tigris.subversion.subclipse.ui.history' version='0.0.0'/>
-        <provided namespace='java.package' name='org.tigris.subversion.subclipse.ui.internal' version='0.0.0'/>
-        <provided namespace='java.package' name='org.tigris.subversion.subclipse.ui.operations' version='0.0.0'/>
-        <provided namespace='java.package' name='org.tigris.subversion.subclipse.ui.preferences' version='0.0.0'/>
-        <provided namespace='java.package' name='org.tigris.subversion.subclipse.ui.properties' version='0.0.0'/>
-        <provided namespace='java.package' name='org.tigris.subversion.subclipse.ui.repository' version='0.0.0'/>
-        <provided namespace='java.package' name='org.tigris.subversion.subclipse.ui.repository.model' version='0.0.0'/>
-        <provided namespace='java.package' name='org.tigris.subversion.subclipse.ui.repository.properties' version='0.0.0'/>
-        <provided namespace='java.package' name='org.tigris.subversion.subclipse.ui.settings' version='0.0.0'/>
-        <provided namespace='java.package' name='org.tigris.subversion.subclipse.ui.subscriber' version='0.0.0'/>
-        <provided namespace='java.package' name='org.tigris.subversion.subclipse.ui.svnproperties' version='0.0.0'/>
-        <provided namespace='java.package' name='org.tigris.subversion.subclipse.ui.sync' version='0.0.0'/>
-        <provided namespace='java.package' name='org.tigris.subversion.subclipse.ui.util' version='0.0.0'/>
-        <provided namespace='java.package' name='org.tigris.subversion.subclipse.ui.wizards' version='0.0.0'/>
-        <provided namespace='java.package' name='org.tigris.subversion.subclipse.ui.wizards.dialogs' version='0.0.0'/>
-        <provided namespace='java.package' name='org.tigris.subversion.subclipse.ui.wizards.generatediff' version='0.0.0'/>
-        <provided namespace='java.package' name='org.tigris.subversion.subclipse.ui.wizards.sharing' version='0.0.0'/>
-        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
-        <provided namespace='org.eclipse.equinox.p2.localization' name='zh' version='1.0.0'/>
-        <provided namespace='org.eclipse.equinox.p2.localization' name='ja' version='1.0.0'/>
-        <provided namespace='org.eclipse.equinox.p2.localization' name='df_LT' version='1.0.0'/>
-        <provided namespace='org.eclipse.equinox.p2.localization' name='zh_TW' version='1.0.0'/>
-      </provides>
-      <requires size='18'>
-        <required namespace='osgi.bundle' name='org.tigris.subversion.subclipse.core' range='0.0.0'/>
-        <required namespace='osgi.bundle' name='org.eclipse.ui.ide' range='0.0.0'/>
-        <required namespace='osgi.bundle' name='org.eclipse.ui.views' range='0.0.0'/>
-        <required namespace='osgi.bundle' name='org.eclipse.jface.text' range='0.0.0'/>
-        <required namespace='osgi.bundle' name='org.eclipse.ui.workbench.texteditor' range='0.0.0'/>
-        <required namespace='osgi.bundle' name='org.eclipse.ui.editors' range='0.0.0'/>
-        <required namespace='osgi.bundle' name='org.eclipse.core.runtime' range='3.2.0'/>
-        <required namespace='osgi.bundle' name='org.eclipse.core.resources' range='3.2.0'/>
-        <required namespace='osgi.bundle' name='org.eclipse.ui' range='0.0.0'/>
-        <required namespace='osgi.bundle' name='org.eclipse.team.core' range='3.2.0'/>
-        <required namespace='osgi.bundle' name='org.eclipse.team.ui' range='0.0.0'/>
-        <required namespace='osgi.bundle' name='org.eclipse.compare' range='0.0.0'/>
-        <required namespace='osgi.bundle' name='org.eclipse.osgi' range='0.0.0'/>
-        <required namespace='osgi.bundle' name='org.eclipse.ui.console' range='0.0.0'/>
-        <required namespace='osgi.bundle' name='org.eclipse.help' range='0.0.0'/>
-        <required namespace='osgi.bundle' name='org.eclipse.jdt.ui' range='0.0.0' optional='true'/>
-        <required namespace='osgi.bundle' name='org.eclipse.jdt.core' range='0.0.0' optional='true'/>
-        <required namespace='osgi.bundle' name='org.eclipse.ui.forms' range='0.0.0'/>
-      </requires>
-      <artifacts size='1'>
-        <artifact classifier='osgi.bundle' id='org.tigris.subversion.subclipse.ui' version='1.6.12'/>
-      </artifacts>
-      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
-      <touchpointData size='1'>
-        <instructions size='1'>
-          <instruction key='manifest'>
-            Bundle-Vendor: %providerName&#xA;Bundle-ManifestVersion: 2&#xA;Bundle-Activator: org.tigris.subversion.subclipse.ui.SVNUIPlugin&#xA;Bundle-RequiredExecutionEnvironment: J2SE-1.4&#xA;Require-Bundle: org.tigris.subversion.subclipse.core,org.eclipse.ui.ide,org.eclipse.ui.views,org.eclipse.jface.text,org.eclipse.ui.workbench.texteditor,org.eclipse.ui.editors,org.eclipse.core.runtime;bundle-version=&quot;3.2.0&quot;,org.eclipse.core.resources;bundle-version=&quot;3.2.0&quot;,org.eclipse.ui,org.eclipse.team.core;bundle-version=&quot;3.2.0&quot;,org.eclipse.team.ui,org.eclipse.compare,org.eclipse.osgi,org.eclipse.ui.console,org.eclipse.help,org.eclipse.jdt.ui;resolution:=optional,org.eclipse.jdt.core;resolution:=optional,org.eclipse.ui.forms&#xA;Bundle-Name: %pluginName&#xA;Bundle-Localization: plugin&#xA;Bundle-SymbolicName: org.tigris.subversion.subclipse.ui; singleton:=true&#xA;Bundle-Version: 1.6.12&#xA;Eclipse-LazyStart: true&#xA;Export-Package: org.tigris.subversion.subclipse.ui,org.tigris.subversion.subclipse.ui.actions,org.tigris.subversion.subclipse.ui.annotations,org.tigris.subversion.subclipse.ui.authentication,org.tigris.subversion.subclipse.ui.comments,org.tigris.subversion.subclipse.ui.compare,org.tigris.subversion.subclipse.ui.compare.internal,org.tigris.subversion.subclipse.ui.conflicts,org.tigris.subversion.subclipse.ui.console,org.tigris.subversion.subclipse.ui.decorator,org.tigris.subversion.subclipse.ui.dialogs,org.tigris.subversion.subclipse.ui.editor,org.tigris.subversion.subclipse.ui.history,org.tigris.subversion.subclipse.ui.internal,org.tigris.subversion.subclipse.ui.operations,org.tigris.subversion.subclipse.ui.preferences,org.tigris.subversion.subclipse.ui.properties,org.tigris.subversion.subclipse.ui.repository,org.tigris.subversion.subclipse.ui.repository.model,org.tigris.subversion.subclipse.ui.repository.properties,org.tigris.subversion.subclipse.ui.settings,org.tigris.subversion.subclipse.ui.subscriber,org.tigris.subversion.subclipse.ui.svnproperties,org.tigris.subversion.subclipse.ui.sync,org.tigris.subversion.subclipse.ui.util,org.tigris.subversion.subclipse.ui.wizards,org.tigris.subversion.subclipse.ui.wizards.dialogs,org.tigris.subversion.subclipse.ui.wizards.generatediff,org.tigris.subversion.subclipse.ui.wizards.sharing&#xA;
-          </instruction>
-        </instructions>
-      </touchpointData>
     </unit>
     <unit id='org.tmatesoft.svnkit.feature.jar' version='1.3.3.6648'>
       <update id='org.tmatesoft.svnkit.feature.jar' range='[0.0.0,1.3.3.6648)' severity='0'/>
@@ -1065,12 +991,96 @@
         <required namespace='org.eclipse.equinox.p2.iu' name='org.tigris.subversion.subclipse.graph.feature.feature.group' range='[1.0.8,1.0.8]'/>
         <required namespace='org.eclipse.equinox.p2.iu' name='org.tigris.subversion.clientadapter.svnkit.feature.feature.group' range='[1.6.12,1.6.12]'/>
         <required namespace='org.eclipse.equinox.p2.iu' name='org.tigris.subversion.subclipse.mylyn.feature.group' range='[3.0.0,3.0.0]'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.tigris.subversion.subclipse.feature.group' range='[1.6.13,1.6.13]'/>
         <required namespace='org.eclipse.equinox.p2.iu' name='org.tigris.subversion.clientadapter.javahl.feature.feature.group' range='[1.6.12,1.6.12]'/>
-        <required namespace='org.eclipse.equinox.p2.iu' name='org.tigris.subversion.subclipse.feature.group' range='[1.6.12,1.6.12]'/>
         <required namespace='org.eclipse.equinox.p2.iu' name='org.tigris.subversion.clientadapter.feature.feature.group' range='[1.6.12,1.6.12]'/>
         <required namespace='org.eclipse.equinox.p2.iu' name='com.collabnet.subversion.merge.feature.feature.group' range='[2.1.0,2.1.0]'/>
       </requires>
       <touchpoint id='null' version='0.0.0'/>
+    </unit>
+    <unit id='org.tigris.subversion.subclipse.ui' version='1.6.13'>
+      <update id='org.tigris.subversion.subclipse.ui' range='[0.0.0,1.6.13)' severity='0'/>
+      <properties size='10'>
+        <property name='zh.providerName' value='tigris.org'/>
+        <property name='zh.pluginName' value='SVN 小组提供程序用户界面'/>
+        <property name='ja.providerName' value='tigris.org'/>
+        <property name='ja.pluginName' value='SVN チーム・プロバイダーの UI'/>
+        <property name='df_LT.providerName' value='tigris.org'/>
+        <property name='df_LT.pluginName' value='SVN Team Provider UI'/>
+        <property name='zh_TW.providerName' value='tigris.org'/>
+        <property name='zh_TW.pluginName' value='SVN 團隊程式使用者界面'/>
+        <property name='org.eclipse.equinox.p2.name' value='%pluginName'/>
+        <property name='org.eclipse.equinox.p2.provider' value='%providerName'/>
+      </properties>
+      <provides size='36'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='org.tigris.subversion.subclipse.ui' version='1.6.13'/>
+        <provided namespace='osgi.bundle' name='org.tigris.subversion.subclipse.ui' version='1.6.13'/>
+        <provided namespace='java.package' name='org.tigris.subversion.subclipse.ui' version='0.0.0'/>
+        <provided namespace='java.package' name='org.tigris.subversion.subclipse.ui.actions' version='0.0.0'/>
+        <provided namespace='java.package' name='org.tigris.subversion.subclipse.ui.annotations' version='0.0.0'/>
+        <provided namespace='java.package' name='org.tigris.subversion.subclipse.ui.authentication' version='0.0.0'/>
+        <provided namespace='java.package' name='org.tigris.subversion.subclipse.ui.comments' version='0.0.0'/>
+        <provided namespace='java.package' name='org.tigris.subversion.subclipse.ui.compare' version='0.0.0'/>
+        <provided namespace='java.package' name='org.tigris.subversion.subclipse.ui.compare.internal' version='0.0.0'/>
+        <provided namespace='java.package' name='org.tigris.subversion.subclipse.ui.conflicts' version='0.0.0'/>
+        <provided namespace='java.package' name='org.tigris.subversion.subclipse.ui.console' version='0.0.0'/>
+        <provided namespace='java.package' name='org.tigris.subversion.subclipse.ui.decorator' version='0.0.0'/>
+        <provided namespace='java.package' name='org.tigris.subversion.subclipse.ui.dialogs' version='0.0.0'/>
+        <provided namespace='java.package' name='org.tigris.subversion.subclipse.ui.editor' version='0.0.0'/>
+        <provided namespace='java.package' name='org.tigris.subversion.subclipse.ui.history' version='0.0.0'/>
+        <provided namespace='java.package' name='org.tigris.subversion.subclipse.ui.internal' version='0.0.0'/>
+        <provided namespace='java.package' name='org.tigris.subversion.subclipse.ui.operations' version='0.0.0'/>
+        <provided namespace='java.package' name='org.tigris.subversion.subclipse.ui.preferences' version='0.0.0'/>
+        <provided namespace='java.package' name='org.tigris.subversion.subclipse.ui.properties' version='0.0.0'/>
+        <provided namespace='java.package' name='org.tigris.subversion.subclipse.ui.repository' version='0.0.0'/>
+        <provided namespace='java.package' name='org.tigris.subversion.subclipse.ui.repository.model' version='0.0.0'/>
+        <provided namespace='java.package' name='org.tigris.subversion.subclipse.ui.repository.properties' version='0.0.0'/>
+        <provided namespace='java.package' name='org.tigris.subversion.subclipse.ui.settings' version='0.0.0'/>
+        <provided namespace='java.package' name='org.tigris.subversion.subclipse.ui.subscriber' version='0.0.0'/>
+        <provided namespace='java.package' name='org.tigris.subversion.subclipse.ui.svnproperties' version='0.0.0'/>
+        <provided namespace='java.package' name='org.tigris.subversion.subclipse.ui.sync' version='0.0.0'/>
+        <provided namespace='java.package' name='org.tigris.subversion.subclipse.ui.util' version='0.0.0'/>
+        <provided namespace='java.package' name='org.tigris.subversion.subclipse.ui.wizards' version='0.0.0'/>
+        <provided namespace='java.package' name='org.tigris.subversion.subclipse.ui.wizards.dialogs' version='0.0.0'/>
+        <provided namespace='java.package' name='org.tigris.subversion.subclipse.ui.wizards.generatediff' version='0.0.0'/>
+        <provided namespace='java.package' name='org.tigris.subversion.subclipse.ui.wizards.sharing' version='0.0.0'/>
+        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
+        <provided namespace='org.eclipse.equinox.p2.localization' name='zh' version='1.0.0'/>
+        <provided namespace='org.eclipse.equinox.p2.localization' name='ja' version='1.0.0'/>
+        <provided namespace='org.eclipse.equinox.p2.localization' name='df_LT' version='1.0.0'/>
+        <provided namespace='org.eclipse.equinox.p2.localization' name='zh_TW' version='1.0.0'/>
+      </provides>
+      <requires size='18'>
+        <required namespace='osgi.bundle' name='org.tigris.subversion.subclipse.core' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.ui.ide' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.ui.views' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.jface.text' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.ui.workbench.texteditor' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.ui.editors' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.core.runtime' range='3.2.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.core.resources' range='3.2.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.ui' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.team.core' range='3.2.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.team.ui' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.compare' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.osgi' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.ui.console' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.help' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.jdt.ui' range='0.0.0' optional='true'/>
+        <required namespace='osgi.bundle' name='org.eclipse.jdt.core' range='0.0.0' optional='true'/>
+        <required namespace='osgi.bundle' name='org.eclipse.ui.forms' range='0.0.0'/>
+      </requires>
+      <artifacts size='1'>
+        <artifact classifier='osgi.bundle' id='org.tigris.subversion.subclipse.ui' version='1.6.13'/>
+      </artifacts>
+      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
+      <touchpointData size='1'>
+        <instructions size='1'>
+          <instruction key='manifest'>
+            Bundle-Vendor: %providerName&#xA;Bundle-ManifestVersion: 2&#xA;Bundle-Activator: org.tigris.subversion.subclipse.ui.SVNUIPlugin&#xA;Bundle-RequiredExecutionEnvironment: J2SE-1.4&#xA;Require-Bundle: org.tigris.subversion.subclipse.core,org.eclipse.ui.ide,org.eclipse.ui.views,org.eclipse.jface.text,org.eclipse.ui.workbench.texteditor,org.eclipse.ui.editors,org.eclipse.core.runtime;bundle-version=&quot;3.2.0&quot;,org.eclipse.core.resources;bundle-version=&quot;3.2.0&quot;,org.eclipse.ui,org.eclipse.team.core;bundle-version=&quot;3.2.0&quot;,org.eclipse.team.ui,org.eclipse.compare,org.eclipse.osgi,org.eclipse.ui.console,org.eclipse.help,org.eclipse.jdt.ui;resolution:=optional,org.eclipse.jdt.core;resolution:=optional,org.eclipse.ui.forms&#xA;Bundle-Name: %pluginName&#xA;Bundle-Localization: plugin&#xA;Bundle-SymbolicName: org.tigris.subversion.subclipse.ui; singleton:=true&#xA;Bundle-Version: 1.6.13&#xA;Eclipse-LazyStart: true&#xA;Export-Package: org.tigris.subversion.subclipse.ui,org.tigris.subversion.subclipse.ui.actions,org.tigris.subversion.subclipse.ui.annotations,org.tigris.subversion.subclipse.ui.authentication,org.tigris.subversion.subclipse.ui.comments,org.tigris.subversion.subclipse.ui.compare,org.tigris.subversion.subclipse.ui.compare.internal,org.tigris.subversion.subclipse.ui.conflicts,org.tigris.subversion.subclipse.ui.console,org.tigris.subversion.subclipse.ui.decorator,org.tigris.subversion.subclipse.ui.dialogs,org.tigris.subversion.subclipse.ui.editor,org.tigris.subversion.subclipse.ui.history,org.tigris.subversion.subclipse.ui.internal,org.tigris.subversion.subclipse.ui.operations,org.tigris.subversion.subclipse.ui.preferences,org.tigris.subversion.subclipse.ui.properties,org.tigris.subversion.subclipse.ui.repository,org.tigris.subversion.subclipse.ui.repository.model,org.tigris.subversion.subclipse.ui.repository.properties,org.tigris.subversion.subclipse.ui.settings,org.tigris.subversion.subclipse.ui.subscriber,org.tigris.subversion.subclipse.ui.svnproperties,org.tigris.subversion.subclipse.ui.sync,org.tigris.subversion.subclipse.ui.util,org.tigris.subversion.subclipse.ui.wizards,org.tigris.subversion.subclipse.ui.wizards.dialogs,org.tigris.subversion.subclipse.ui.wizards.generatediff,org.tigris.subversion.subclipse.ui.wizards.sharing&#xA;
+          </instruction>
+        </instructions>
+      </touchpointData>
     </unit>
     <unit id='a.jre' version='1.6.0' singleton='false'>
       <provides size='117'>
@@ -1253,9 +1263,12 @@
       </artifacts>
       <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
       <touchpointData size='1'>
-        <instructions size='1'>
+        <instructions size='2'>
           <instruction key='manifest'>
             Bundle-Vendor: tigris.org&#xA;Bundle-ManifestVersion: 2&#xA;Bundle-Activator: org.tigris.subversion.clientadapter.Activator&#xA;Bundle-RequiredExecutionEnvironment: J2SE-1.4&#xA;Require-Bundle: org.eclipse.core.runtime&#xA;Bundle-Name: Subversion Client Adapter&#xA;Manifest-Version: 1.0&#xA;Bundle-SymbolicName: org.tigris.subversion.clientadapter;singleton:=true&#xA;Bundle-Version: 1.6.12&#xA;Eclipse-LazyStart: true&#xA;Export-Package: org.tigris.subversion.clientadapter,org.tigris.subversion.svnclientadapter,org.tigris.subversion.svnclientadapter.utils&#xA;
+          </instruction>
+          <instruction key='zipped'>
+            true
           </instruction>
         </instructions>
       </touchpointData>
@@ -1293,56 +1306,6 @@
         </instructions>
       </touchpointData>
     </unit>
-    <unit id='org.tigris.subversion.subclipse.feature.group' version='1.6.12' singleton='false'>
-      <update id='org.tigris.subversion.subclipse.feature.group' range='[0.0.0,1.6.12)' severity='0'/>
-      <properties size='7'>
-        <property name='org.eclipse.equinox.p2.name' value='Subclipse (Required)'/>
-        <property name='org.eclipse.equinox.p2.description' value='%description'/>
-        <property name='org.eclipse.equinox.p2.description.url' value='%changesURL'/>
-        <property name='org.eclipse.equinox.p2.provider' value='tigris.org'/>
-        <property name='org.eclipse.equinox.p2.type.group' value='true'/>
-        <property name='df_LT.description' value='Subclipse is an Eclipse Team Provider for the Subversion version control system.'/>
-        <property name='df_LT.license' value='Subclipse Software User Agreement&#xA;11th April, 2006&#xA;&#xA;Subclipse is licensed under the terms of the Eclipse Public&#xA;License v1.0.  http://www.eclipse.org/legal/epl-v10.html&#xA;&#xA;Applicable Licenses&#xA;&#xA;Subclipse is built upon a number of other open source&#xA;technologies and products.  Here is a list of those products&#xA;with links to their licenses.&#xA;&#xA;svnClientAdapter:  Part of the overall Subclipse project,&#xA;svnClientAdapter presents a pluggable high-level interface&#xA;to the Subversion repository.  svnClientAdapter is licensed&#xA;under the Apache2 License.&#xA;http://www.apache.org/licenses/LICENSE-2.0&#xA;&#xA;Depending on the adapter you choose in your preferences, the&#xA;following products and licenses are involved.&#xA;&#xA;Subversion/JavaHL:  JavaHL is a high-level Java language binding&#xA;to the Subversion &quot;C&quot; libraries and is part of the official&#xA;Subversion source distribution.  Subversion is licensed under&#xA;the CollabNet license.&#xA;http://subversion.tigris.org/project_license.html&#xA;&#xA;SVNKit:  SVNKit is a &quot;pure Java&quot; implementation of the&#xA;Subversion network protocols and working copy formats.&#xA;SVNKit is licensed under the TMate license.&#xA;http://svnkit.com/licensing/index.html&#xA;&#xA;Ganymed SSH-2:  SVNKit uses the Ganymed SSH-2 library to support&#xA;the svn+ssh:// protocol.  Ganymed SSH-2 is licensed under the&#xA;Ganymed license.&#xA;http://www.ganymed.ethz.ch/ssh2/LICENSE.txt&#xA;&#xA;IT IS YOUR OBLIGATION TO READ AND ACCEPT ALL SUCH TERMS&#xA;AND CONDITIONS PRIOR TO USE OF THIS CONTENT.&#xA;'/>
-      </properties>
-      <provides size='2'>
-        <provided namespace='org.eclipse.equinox.p2.iu' name='org.tigris.subversion.subclipse.feature.group' version='1.6.12'/>
-        <provided namespace='org.eclipse.equinox.p2.localization' name='df_LT' version='1.0.0'/>
-      </provides>
-      <requires size='19'>
-        <required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.core.resources' range='3.2.0'/>
-        <required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.team.core' range='3.2.0'/>
-        <required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.core.runtime' range='3.2.0'/>
-        <required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.osgi' range='0.0.0'/>
-        <required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.ui.ide' range='0.0.0'/>
-        <required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.ui.views' range='0.0.0'/>
-        <required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.jface.text' range='0.0.0'/>
-        <required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.ui.workbench.texteditor' range='0.0.0'/>
-        <required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.ui.editors' range='0.0.0'/>
-        <required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.ui' range='0.0.0'/>
-        <required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.team.ui' range='0.0.0'/>
-        <required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.compare' range='0.0.0'/>
-        <required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.ui.console' range='0.0.0'/>
-        <required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.help' range='0.0.0'/>
-        <required namespace='org.eclipse.equinox.p2.iu' name='org.tigris.subversion.clientadapter' range='[1.6.12,1.7.0)'/>
-        <required namespace='org.eclipse.equinox.p2.iu' name='org.tigris.subversion.subclipse.core' range='[1.6.12,1.6.12]'/>
-        <required namespace='org.eclipse.equinox.p2.iu' name='org.tigris.subversion.subclipse.ui' range='[1.6.12,1.6.12]'/>
-        <required namespace='org.eclipse.equinox.p2.iu' name='org.tigris.subversion.subclipse.doc' range='[1.3.0,1.3.0]'/>
-        <required namespace='org.eclipse.equinox.p2.iu' name='org.tigris.subversion.subclipse.feature.jar' range='[1.6.12,1.6.12]'>
-          <filter>
-            (org.eclipse.update.install.features=true)
-          </filter>
-        </required>
-      </requires>
-      <touchpoint id='null' version='0.0.0'/>
-      <licenses size='1'>
-        <license>
-          %license
-        </license>
-      </licenses>
-      <copyright url='http://subclipse.tigris.org/'>
-        http://subclipse.tigris.org/
-      </copyright>
-    </unit>
     <unit id='SVNKit Library' version='0.0.0'>
       <properties size='3'>
         <property name='org.eclipse.equinox.p2.name' value='Core SVNKit Library'/>
@@ -1356,6 +1319,46 @@
         <required namespace='org.eclipse.equinox.p2.iu' name='org.tmatesoft.svnkit.feature.group' range='[1.3.3.6648,1.3.3.6648]'/>
       </requires>
       <touchpoint id='null' version='0.0.0'/>
+    </unit>
+    <unit id='org.tigris.subversion.subclipse.feature.jar' version='1.6.13'>
+      <update id='org.tigris.subversion.subclipse.feature.jar' range='[0.0.0,1.6.13)' severity='0'/>
+      <properties size='7'>
+        <property name='org.eclipse.equinox.p2.name' value='Subclipse (Required)'/>
+        <property name='org.eclipse.equinox.p2.description' value='%description'/>
+        <property name='org.eclipse.equinox.p2.description.url' value='%changesURL'/>
+        <property name='org.eclipse.equinox.p2.provider' value='tigris.org'/>
+        <property name='org.eclipse.update.feature.plugin' value='org.tigris.subversion.subclipse.core'/>
+        <property name='df_LT.description' value='Subclipse is an Eclipse Team Provider for the Subversion version control system.'/>
+        <property name='df_LT.license' value='Subclipse Software User Agreement&#xA;11th April, 2006&#xA;&#xA;Subclipse is licensed under the terms of the Eclipse Public&#xA;License v1.0.  http://www.eclipse.org/legal/epl-v10.html&#xA;&#xA;Applicable Licenses&#xA;&#xA;Subclipse is built upon a number of other open source&#xA;technologies and products.  Here is a list of those products&#xA;with links to their licenses.&#xA;&#xA;svnClientAdapter:  Part of the overall Subclipse project,&#xA;svnClientAdapter presents a pluggable high-level interface&#xA;to the Subversion repository.  svnClientAdapter is licensed&#xA;under the Apache2 License.&#xA;http://www.apache.org/licenses/LICENSE-2.0&#xA;&#xA;Depending on the adapter you choose in your preferences, the&#xA;following products and licenses are involved.&#xA;&#xA;Subversion/JavaHL:  JavaHL is a high-level Java language binding&#xA;to the Subversion &quot;C&quot; libraries and is part of the official&#xA;Subversion source distribution.  Subversion is licensed under&#xA;the CollabNet license.&#xA;http://subversion.tigris.org/project_license.html&#xA;&#xA;SVNKit:  SVNKit is a &quot;pure Java&quot; implementation of the&#xA;Subversion network protocols and working copy formats.&#xA;SVNKit is licensed under the TMate license.&#xA;http://svnkit.com/licensing/index.html&#xA;&#xA;Ganymed SSH-2:  SVNKit uses the Ganymed SSH-2 library to support&#xA;the svn+ssh:// protocol.  Ganymed SSH-2 is licensed under the&#xA;Ganymed license.&#xA;http://www.ganymed.ethz.ch/ssh2/LICENSE.txt&#xA;&#xA;IT IS YOUR OBLIGATION TO READ AND ACCEPT ALL SUCH TERMS&#xA;AND CONDITIONS PRIOR TO USE OF THIS CONTENT.&#xA;'/>
+      </properties>
+      <provides size='4'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='org.tigris.subversion.subclipse.feature.jar' version='1.6.13'/>
+        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='feature' version='1.0.0'/>
+        <provided namespace='org.eclipse.update.feature' name='org.tigris.subversion.subclipse' version='1.6.13'/>
+        <provided namespace='org.eclipse.equinox.p2.localization' name='df_LT' version='1.0.0'/>
+      </provides>
+      <filter>
+        (org.eclipse.update.install.features=true)
+      </filter>
+      <artifacts size='1'>
+        <artifact classifier='org.eclipse.update.feature' id='org.tigris.subversion.subclipse' version='1.6.13'/>
+      </artifacts>
+      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
+      <touchpointData size='1'>
+        <instructions size='1'>
+          <instruction key='zipped'>
+            true
+          </instruction>
+        </instructions>
+      </touchpointData>
+      <licenses size='1'>
+        <license>
+          %license
+        </license>
+      </licenses>
+      <copyright url='http://subclipse.tigris.org/'>
+        http://subclipse.tigris.org/
+      </copyright>
     </unit>
     <unit id='config.a.jre' version='1.6.0' singleton='false'>
       <hostRequirements size='1'>
@@ -1417,61 +1420,6 @@
       <copyright url='http://subclipse.tigris.org/'>
         http://subclipse.tigris.org/
       </copyright>
-    </unit>
-    <unit id='org.tigris.subversion.subclipse.core' version='1.6.8'>
-      <update id='org.tigris.subversion.subclipse.core' range='[0.0.0,1.6.8)' severity='0'/>
-      <properties size='10'>
-        <property name='zh.providerName' value='tigris.org'/>
-        <property name='zh.pluginName' value='SVN 小组功能提供程序核心'/>
-        <property name='ja.providerName' value='tigris.org'/>
-        <property name='ja.pluginName' value='SVNチームプロバイダ Core'/>
-        <property name='df_LT.providerName' value='tigris.org'/>
-        <property name='df_LT.pluginName' value='SVN Team Provider Core'/>
-        <property name='zh_TW.providerName' value='tigris.org'/>
-        <property name='zh_TW.pluginName' value='SVN 團隊功能核心'/>
-        <property name='org.eclipse.equinox.p2.name' value='%pluginName'/>
-        <property name='org.eclipse.equinox.p2.provider' value='%providerName'/>
-      </properties>
-      <provides size='20'>
-        <provided namespace='org.eclipse.equinox.p2.iu' name='org.tigris.subversion.subclipse.core' version='1.6.8'/>
-        <provided namespace='osgi.bundle' name='org.tigris.subversion.subclipse.core' version='1.6.8'/>
-        <provided namespace='java.package' name='org.tigris.subversion.subclipse.core' version='0.0.0'/>
-        <provided namespace='java.package' name='org.tigris.subversion.subclipse.core.client' version='0.0.0'/>
-        <provided namespace='java.package' name='org.tigris.subversion.subclipse.core.commands' version='0.0.0'/>
-        <provided namespace='java.package' name='org.tigris.subversion.subclipse.core.history' version='0.0.0'/>
-        <provided namespace='java.package' name='org.tigris.subversion.subclipse.core.internal' version='0.0.0'/>
-        <provided namespace='java.package' name='org.tigris.subversion.subclipse.core.mapping' version='0.0.0'/>
-        <provided namespace='java.package' name='org.tigris.subversion.subclipse.core.properties' version='0.0.0'/>
-        <provided namespace='java.package' name='org.tigris.subversion.subclipse.core.repo' version='0.0.0'/>
-        <provided namespace='java.package' name='org.tigris.subversion.subclipse.core.resources' version='0.0.0'/>
-        <provided namespace='java.package' name='org.tigris.subversion.subclipse.core.resourcesListeners' version='0.0.0'/>
-        <provided namespace='java.package' name='org.tigris.subversion.subclipse.core.status' version='0.0.0'/>
-        <provided namespace='java.package' name='org.tigris.subversion.subclipse.core.sync' version='0.0.0'/>
-        <provided namespace='java.package' name='org.tigris.subversion.subclipse.core.util' version='0.0.0'/>
-        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
-        <provided namespace='org.eclipse.equinox.p2.localization' name='zh' version='1.0.0'/>
-        <provided namespace='org.eclipse.equinox.p2.localization' name='ja' version='1.0.0'/>
-        <provided namespace='org.eclipse.equinox.p2.localization' name='df_LT' version='1.0.0'/>
-        <provided namespace='org.eclipse.equinox.p2.localization' name='zh_TW' version='1.0.0'/>
-      </provides>
-      <requires size='5'>
-        <required namespace='osgi.bundle' name='org.eclipse.core.resources' range='3.2.0'/>
-        <required namespace='osgi.bundle' name='org.eclipse.team.core' range='3.2.0'/>
-        <required namespace='osgi.bundle' name='org.eclipse.core.runtime' range='3.2.0'/>
-        <required namespace='osgi.bundle' name='org.eclipse.osgi' range='0.0.0'/>
-        <required namespace='osgi.bundle' name='org.tigris.subversion.clientadapter' range='[1.6.0,1.7.0)'/>
-      </requires>
-      <artifacts size='1'>
-        <artifact classifier='osgi.bundle' id='org.tigris.subversion.subclipse.core' version='1.6.8'/>
-      </artifacts>
-      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
-      <touchpointData size='1'>
-        <instructions size='1'>
-          <instruction key='manifest'>
-            Bundle-Vendor: %providerName&#xA;Bundle-ManifestVersion: 2&#xA;Bundle-Activator: org.tigris.subversion.subclipse.core.SVNProviderPlugin&#xA;Bundle-RequiredExecutionEnvironment: J2SE-1.4&#xA;Require-Bundle: org.eclipse.core.resources;bundle-version=&quot;3.2.0&quot;,org.eclipse.team.core;bundle-version=&quot;3.2.0&quot;,org.eclipse.core.runtime;bundle-version=&quot;3.2.0&quot;,org.eclipse.osgi,org.tigris.subversion.clientadapter;bundle-version=&quot;[1.6.0,1.7.0)&quot;;visibility:=reexport&#xA;Bundle-Name: %pluginName&#xA;Bundle-Localization: plugin&#xA;Bundle-SymbolicName: org.tigris.subversion.subclipse.core; singleton:=true&#xA;Bundle-Version: 1.6.8&#xA;Eclipse-LazyStart: true&#xA;Export-Package: org.tigris.subversion.subclipse.core,org.tigris.subversion.subclipse.core.client,org.tigris.subversion.subclipse.core.commands,org.tigris.subversion.subclipse.core.history,org.tigris.subversion.subclipse.core.internal,org.tigris.subversion.subclipse.core.mapping,org.tigris.subversion.subclipse.core.properties,org.tigris.subversion.subclipse.core.repo,org.tigris.subversion.subclipse.core.resources,org.tigris.subversion.subclipse.core.resourcesListeners,org.tigris.subversion.subclipse.core.status,org.tigris.subversion.subclipse.core.sync,org.tigris.subversion.subclipse.core.util&#xA;
-          </instruction>
-        </instructions>
-      </touchpointData>
     </unit>
   </units>
 </repository>
