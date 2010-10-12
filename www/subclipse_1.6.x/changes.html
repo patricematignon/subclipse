@@ -33,11 +33,12 @@ will be pulled out due to testing problems.</p>
 <hr />
 <a name="1.6.14"></a>
 <h4>Version 1.6.14<br>
-Not released yet</h4>
+12 October 2010</h4>
 <p>from: /trunk<br>
 <a href="http://subclipse.tigris.org/svn/subclipse/tags/subclipse/1.6.14">
 http://subclipse.tigris.org/svn/subclipse/tags/subclipse/1.6.14</a></p>
 <ul>
+ <li>JavaHL 1.6.13 and SVNKit 1.3.4 included</li>
  <li>When checking out multiple projects, failure to check out one or more of the projects will no longer result in successfully checked out projects ending up disconnected. (<a
   href="http://subclipse.tigris.org/issues/show_bug.cgi?id=1113">1113</a>)</li>
  <li>When Edit Conflicts fails because of an error invoking an external compare program, show the details of the error in the error dialog and error log.</li>
@@ -53,6 +54,13 @@ http://subclipse.tigris.org/svn/subclipse/tags/subclipse/1.6.14</a></p>
   href="http://subclipse.tigris.org/issues/show_bug.cgi?id=1191">1191</a>)</li>
  <li>Fix compare when local resource name does not match repository name. (<a
   href="http://subclipse.tigris.org/issues/show_bug.cgi?id=1193">1193</a>)</li>
+ <li>Added new plugin to report on <a href="http://subclipse.tigris.org/usage.html">usage</a>.</li>
+ <li>Fix "No such revision" error when refreshing new revisions and graph revisions in the revision graph. (<a
+  href="http://subclipse.tigris.org/issues/show_bug.cgi?id=1194">1194</a>)</li>
+ <li>Do not try to show revision graph for project that is checked out from repository root. (<a
+  href="http://subclipse.tigris.org/issues/show_bug.cgi?id=1194">1194</a>)</li>
+ <li>Reverse change to process resource change events in system jobs. (<a
+  href="http://subclipse.tigris.org/issues/show_bug.cgi?id=1199">1199</a>)</li>
 </ul>
 
 <hr />
