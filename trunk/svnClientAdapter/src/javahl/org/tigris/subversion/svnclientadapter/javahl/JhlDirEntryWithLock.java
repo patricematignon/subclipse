@@ -1,7 +1,7 @@
 package org.tigris.subversion.svnclientadapter.javahl;
 
-import org.tigris.subversion.javahl.DirEntry;
-import org.tigris.subversion.javahl.Lock;
+import org.apache.subversion.javahl.types.DirEntry;
+import org.apache.subversion.javahl.types.Lock;
 import org.tigris.subversion.svnclientadapter.ISVNDirEntry;
 import org.tigris.subversion.svnclientadapter.ISVNDirEntryWithLock;
 import org.tigris.subversion.svnclientadapter.ISVNLock;
