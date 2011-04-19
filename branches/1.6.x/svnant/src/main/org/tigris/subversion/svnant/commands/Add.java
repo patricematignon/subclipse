@@ -1,0 +1,278 @@
+/* ====================================================================
+ * The Apache Software License, Version 1.1
+ *
+ * Copyright (c) 2000 The Apache Software Foundation.  All rights
+ * reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ *
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in
+ *    the documentation and/or other materials provided with the
+ *    distribution.
+ *
+ * 3. The end-user documentation included with the redistribution,
+ *    if any, must include the following acknowledgment:
+ *       "This product includes software developed by the
+ *        Apache Software Foundation (http://www.apache.org/)."
+ *    Alternately, this acknowledgment may appear in the software itself,
+ *    if and wherever such third-party acknowledgments normally appear.
+ *
+ * 4. The names "Apache" and "Apache Software Foundation" must
+ *    not be used to endorse or promote products derived from this
+ *    software without prior written permission. For written
+ *    permission, please contact apache@apache.org.
+ *
+ * 5. Products derived from this software may not be called "Apache",
+ *    nor may "Apache" appear in their name, without prior written
+ *    permission of the Apache Software Foundation.
+ *
+ * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
+ * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+ * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
+ * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF
+ * USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
+ * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+ * SUCH DAMAGE.
+ * ====================================================================
+ *
+ * This software consists of voluntary contributions made by many
+ * individuals on behalf of the Apache Software Foundation.  For more
+ * information on the Apache Software Foundation, please see
+ * <http://www.apache.org/>.
+ *
+ */
+package org.tigris.subversion.svnant.commands;
+
+import org.tigris.subversion.svnclientadapter.utils.SVNStatusUtils;
+
+import org.tigris.subversion.svnclientadapter.SVNClientException;
+
+import org.tigris.subversion.svnant.SvnAntUtilities;
+
+import org.apache.tools.ant.types.FileSet;
+
+import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.DirectoryScanner;
+
+import java.util.Stack;
+import java.util.Vector;
+
+import java.io.File;
+
+/**
+ * svn Add. Add a file, a directory or a set of files to repository
+ * @author Cédric Chabanois 
+ *         <a href="mailto:cchabanois@ifrance.com">cchabanois@ifrance.com</a>
+ *
+ */
+public class Add extends SvnCommand {
+
+    /** file to add to the repository */
+    private File            file        = null;
+
+    /** filesets to add to the repository */
+    private Vector<FileSet> filesets    = new Vector<FileSet>();
+
+    /** directory to add to the repository */
+    private File            dir         = null;
+
+    /** add recursively ? (only for dir attribute) */
+    private boolean         recurse     = true;
+
+    /** check directories already under version control during add ? (only for dir attribute) */
+    private boolean         force       = false;
+
+    /**
+     * {@inheritDoc}
+     */
+    public void execute() {
+
+        // deal with the single file
+        if( file != null ) {
+            svnAddFile( file );
+        }
+
+        // deal with a directory
+        if( dir != null ) {
+            svnAddDir( dir, recurse, force );
+        }
+
+        // deal with filesets
+        if( filesets.size() > 0 ) {
+            for( int i = 0; i < filesets.size(); i++ ) {
+                svnAddFileSet( filesets.elementAt( i ) );
+            }
+        }
+
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected void validateAttributes() {
+        SvnAntUtilities.attrsNotSet( "file, dir, fileset", file, dir, filesets );
+        if( file != null ) {
+            SvnAntUtilities.attrIsFile( "file", file );
+        }
+        if( dir != null ) {
+            SvnAntUtilities.attrIsDirectory( "dir", dir );
+        }
+    }
+
+    /**
+     * add a file to the repository
+     * @param svnClient
+     * @param aFile
+     */
+    private void svnAddFile( File aFile ) {
+        try {
+            getClient().addFile( aFile );
+        } catch( SVNClientException e ) {
+            throw new BuildException( "Can't add file " + aFile.getAbsolutePath() + " to repository", e );
+        }
+    }
+
+    /**
+     * add a directory to the repository
+     * @param svnClient
+     * @param aDir
+     * @param recursive
+     * @param force
+     */
+    private void svnAddDir( File aDir, boolean recursive, boolean force ) {
+        try {
+            getClient().addDirectory( aDir, recursive, force );
+        } catch( SVNClientException e ) {
+            throw new BuildException( "Can't add directory " + aDir.getAbsolutePath() + " to repository", e );
+        }
+    }
+
+    /**
+     * add the file (or directory) to the repository, including any necessary parent directories
+     * @param svnClient
+     * @param aFile
+     * @param baseDir
+     */
+    private void svnAddFileWithDirs( File aFile, File baseDir ) {
+
+        Stack<File> dirs = new Stack<File>();
+        File currentDir = aFile.getParentFile();
+
+        try {
+            // don't add the file if already added ...
+            if( SVNStatusUtils.isManaged( getClient().getSingleStatus( aFile ) ) ) {
+                return;
+            }
+
+            // determine directories to add to repository     
+            while( (currentDir != null) && (!SVNStatusUtils.isManaged( getClient().getSingleStatus( currentDir ) ))
+                            && (!currentDir.equals( baseDir )) ) {
+                dirs.push( currentDir );
+                currentDir = currentDir.getParentFile();
+            }
+
+        } catch( SVNClientException e ) {
+            throw new BuildException( "Cannot get status of file or directory", e );
+        }
+
+        // add them to the repository
+        while( dirs.size() > 0 ) {
+            currentDir = dirs.pop();
+            try {
+                getClient().addFile( currentDir );
+            } catch( SVNClientException e ) {
+                throw new BuildException( "Cannot add directory " + currentDir.getAbsolutePath() + " to repository", e );
+            }
+        }
+
+        // now add the file ...
+        try {
+            getClient().addFile( aFile );
+        } catch( SVNClientException e ) {
+            throw new BuildException( "Can't add file " + aFile.getAbsolutePath() + " to repository", e );
+        }
+        
+    }
+
+    /**
+     * add a fileset (both dirs and files) to the repository
+     * @param svnClient
+     * @param fs
+     */
+    private void svnAddFileSet( FileSet fs ) {
+        DirectoryScanner ds = fs.getDirectoryScanner( getProject() );
+        File baseDir = fs.getDir( getProject() ); // base dir
+        String[] files = ds.getIncludedFiles();
+        String[] dirs = ds.getIncludedDirectories();
+
+        // first : we add directories to the repository
+        for( int i = 0; i < dirs.length; i++ ) {
+            svnAddFileWithDirs( new File( baseDir, dirs[i] ), baseDir );
+        }
+
+        // then we add files
+        for( int i = 0; i < files.length; i++ ) {
+            svnAddFileWithDirs( new File( baseDir, files[i] ), baseDir );
+        }
+    }
+
+    /**
+     * set file to add to repository
+     * @param file
+     */
+    public void setFile( File file ) {
+        this.file = file;
+    }
+
+    /**
+     * set the directory to add to the repository
+     * @param dir
+     */
+    public void setDir( File dir ) {
+        this.dir = dir;
+    }
+
+    /**
+     * if set, directory will be added recursively (see setDir)
+     * @param recurse
+     */
+    public void setRecurse( boolean recurse ) {
+        this.recurse = recurse;
+    }
+
+    /**
+     * if set, directory will be checked for new content even if already managed by subversion (see setDir)
+     * @param force
+     */
+    public void setForce( boolean force ) {
+        this.force = force;
+    }
+
+    /**
+     * Adds a set of files to add
+     * @param set
+     */
+    public void addFileset( FileSet set ) {
+        filesets.addElement( set );
+    }
+
+    /**
+     * Adds a set of files to add
+     * @param set
+     */
+    public void add( FileSet set ) {
+        filesets.addElement( set );
+    }
+
+}
