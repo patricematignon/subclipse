@@ -139,7 +139,6 @@
     <copy todir="${build.distrib.dir}/samples">
       <fileset dir="${src.samples.dir}"/>
     </copy>	
-    <copy file="license.txt" tofile="${build.distrib.dir}/SVNCLIENTADAPTER-LICENSE"/>
 	<zip destfile="${build.dir}/svnClientAdapter ${svnClientAdapter.version}.zip" basedir="${build.distrib.dir}"/>
   </target>
 
