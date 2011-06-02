@@ -66,6 +66,7 @@ import org.tigris.subversion.svnclientadapter.SVNUrl;
  * 
  * @author Philip Schatz (schatz at tigris)
  * @author C~dric Chabanois (cchabanois at no-log.org)
+ * @author Daniel Kasmeroglu (daniel.kasmeroglu@kasisoft.net)
  */
 public class CmdLineClientAdapter extends AbstractClientAdapter {
 
@@ -145,22 +146,22 @@ public class CmdLineClientAdapter extends AbstractClientAdapter {
         }
     }
  
-    /* (non-Javadoc)
-     * @see org.tigris.subversion.subclipse.client.ISVNClientAdapter#addNotifyListener(org.tigris.subversion.subclipse.client.ISVNClientNotifyListener)
+    /**
+     * {@inheritDoc}
      */
     public void addNotifyListener(ISVNNotifyListener listener) {
         notificationHandler.add(listener);
     }
 
-    /* (non-Javadoc)
-     * @see org.tigris.subversion.subclipse.client.ISVNClientAdapter#removeNotifyListener(org.tigris.subversion.subclipse.client.ISVNClientNotifyListener)
+    /**
+     * {@inheritDoc}
      */
     public void removeNotifyListener(ISVNNotifyListener listener) {
         notificationHandler.remove(listener);
     }
 
-    /* (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#getNotificationHandler()
+    /**
+     * {@inheritDoc}
      */
     public SVNNotificationHandler getNotificationHandler() {
         return notificationHandler;
@@ -180,8 +181,8 @@ public class CmdLineClientAdapter extends AbstractClientAdapter {
         return entries.exists();
     }
 
-    /* (non-Javadoc)
-     * @see org.tigris.subversion.subclipse.client.ISVNClientAdapter#getStatus(java.io.File[])
+    /**
+     * {@inheritDoc}
      */
     public ISVNStatus[] getStatus(File[] files) throws SVNClientException {
         
@@ -234,9 +235,8 @@ public class CmdLineClientAdapter extends AbstractClientAdapter {
         return statuses;        
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#getSingleStatus(java.io.File)
+    /**
+     * {@inheritDoc}
      */
     public ISVNStatus getSingleStatus(File path) 
              throws SVNClientException {
@@ -255,22 +255,25 @@ public class CmdLineClientAdapter extends AbstractClientAdapter {
         }
     }    
     
-    /* (non-Javadoc)
-     * @see org.tigris.subversion.subclipse.client.ISVNClientAdapter#getList(java.net.URL, org.tigris.subversion.subclipse.client.ISVNRevision, boolean)
+    /**
+     * {@inheritDoc}
      */
     public ISVNDirEntry[] getList(SVNUrl svnUrl, SVNRevision revision, boolean recurse)
         throws SVNClientException {
         return getList(toString(svnUrl), revision, recurse);
     }
     
-    /* (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#getList(java.io.File, org.tigris.subversion.svnclientadapter.SVNRevision, boolean)
+    /**
+     * {@inheritDoc}
      */
     public ISVNDirEntry[] getList(File path, SVNRevision revision,
             boolean recurse) throws SVNClientException {
         return getList(toString(path), revision, recurse);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public ISVNDirEntryWithLock[] getListWithLocks(SVNUrl url,
             SVNRevision revision, SVNRevision pegRevision, boolean recurse)
             throws SVNClientException {
@@ -282,9 +285,8 @@ public class CmdLineClientAdapter extends AbstractClientAdapter {
         return entriesWithLocks;
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#getDirEntry(org.tigris.subversion.svnclientadapter.SVNUrl, org.tigris.subversion.svnclientadapter.SVNRevision)
+    /**
+     * {@inheritDoc}
      */
     public ISVNDirEntry getDirEntry(SVNUrl url, SVNRevision revision)
         throws SVNClientException {
@@ -302,8 +304,8 @@ public class CmdLineClientAdapter extends AbstractClientAdapter {
         return null; // not found
     }
     
-    /* (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#getDirEntry(java.io.File, org.tigris.subversion.svnclientadapter.SVNRevision)
+    /**
+     * {@inheritDoc}
      */
     public ISVNDirEntry getDirEntry(File path, SVNRevision revision)
             throws SVNClientException {
@@ -320,8 +322,8 @@ public class CmdLineClientAdapter extends AbstractClientAdapter {
         return null; // not found
     }
     
-    /* (non-Javadoc)
-     * @see org.tigris.subversion.subclipse.client.ISVNClientAdapter#remove(java.io.File[], boolean)
+    /**
+     * {@inheritDoc}
      */
     public void remove(File[] files, boolean force) throws SVNClientException {
         String[] paths = new String[files.length];
@@ -335,8 +337,8 @@ public class CmdLineClientAdapter extends AbstractClientAdapter {
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.tigris.subversion.subclipse.client.ISVNClientAdapter#revert(java.io.File, boolean)
+    /**
+     * {@inheritDoc}
      */
     public void revert(File file, boolean recursive) throws SVNClientException {
         try {
@@ -348,8 +350,8 @@ public class CmdLineClientAdapter extends AbstractClientAdapter {
 
     }
 
-    /* (non-Javadoc)
-     * @see org.tigris.subversion.subclipse.client.ISVNClientAdapter#getContent(java.net.SVNUrl, org.tigris.subversion.subclipse.client.ISVNRevision)
+    /**
+     * {@inheritDoc}
      */
     public InputStream getContent(SVNUrl arg0, SVNRevision arg1) throws SVNClientException {
 
@@ -370,9 +372,8 @@ public class CmdLineClientAdapter extends AbstractClientAdapter {
 
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#getContent(java.io.File, org.tigris.subversion.svnclientadapter.SVNRevision)
+    /**
+     * {@inheritDoc}
      */
     public InputStream getContent(File path, SVNRevision revision) throws SVNClientException {
 
@@ -393,9 +394,8 @@ public class CmdLineClientAdapter extends AbstractClientAdapter {
 
     }
 
-
-    /* (non-Javadoc)
-     * @see org.tigris.subversion.subclipse.client.ISVNClientAdapter#mkdir(java.net.URL, java.lang.String)
+    /**
+     * {@inheritDoc}
      */
     public void mkdir(SVNUrl arg0, String arg1) throws SVNClientException {
         try {
@@ -405,8 +405,8 @@ public class CmdLineClientAdapter extends AbstractClientAdapter {
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.tigris.subversion.subclipse.client.ISVNClientAdapter#remove(java.net.URL[], java.lang.String)
+    /**
+     * {@inheritDoc}
      */
     public void remove(SVNUrl[] urls, String message) throws SVNClientException {
         String[] urlsStrings = new String[urls.length];
@@ -420,8 +420,8 @@ public class CmdLineClientAdapter extends AbstractClientAdapter {
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.tigris.subversion.subclipse.client.ISVNClientAdapter#copy(java.net.URL, java.net.URL, java.lang.String, org.tigris.subversion.subclipse.client.ISVNRevision)
+    /**
+     * {@inheritDoc}
      */
     public void copy(SVNUrl src, SVNUrl dest, String message, SVNRevision rev)
         throws SVNClientException {
@@ -434,9 +434,8 @@ public class CmdLineClientAdapter extends AbstractClientAdapter {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#copy(java.io.File, java.io.File)
+    /**
+     * {@inheritDoc}
      */
     public void copy(File srcPath, File destPath) throws SVNClientException {
         try {
@@ -455,8 +454,8 @@ public class CmdLineClientAdapter extends AbstractClientAdapter {
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.tigris.subversion.subclipse.client.ISVNClientAdapter#move(java.net.URL, java.net.URL, java.lang.String, org.tigris.subversion.subclipse.client.ISVNRevision)
+    /**
+     * {@inheritDoc}
      */
     public void move(SVNUrl url, SVNUrl destUrl, String message, SVNRevision revision)
         throws SVNClientException {
@@ -468,8 +467,8 @@ public class CmdLineClientAdapter extends AbstractClientAdapter {
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.tigris.subversion.subclipse.client.ISVNClientAdapter#move(java.io.File, java.io.File, boolean)
+    /**
+     * {@inheritDoc}
      */
     public void move(File file, File file2, boolean force) throws SVNClientException {
         try {
@@ -480,8 +479,8 @@ public class CmdLineClientAdapter extends AbstractClientAdapter {
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.tigris.subversion.subclipse.client.ISVNClientAdapter#setUsername(java.lang.String)
+    /**
+     * {@inheritDoc}
      */
     public void setUsername(String string) {
         if (string == null || string.length() == 0)
@@ -489,8 +488,8 @@ public class CmdLineClientAdapter extends AbstractClientAdapter {
         _cmd.setUsername(string);
     }
 
-    /* (non-Javadoc)
-     * @see org.tigris.subversion.subclipse.client.ISVNClientAdapter#setPassword(java.lang.String)
+    /**
+     * {@inheritDoc}
      */
     public void setPassword(String password) {
         if (password == null)
@@ -499,15 +498,15 @@ public class CmdLineClientAdapter extends AbstractClientAdapter {
         _cmd.setPassword(password);
     }
 
-    /* (non-Javadoc)
-     * @see org.tigris.subversion.subclipse.client.ISVNClientAdapter#addDirectory(java.io.File, boolean)
+    /**
+     * {@inheritDoc}
      */
     public void addDirectory(File file, boolean recurse) throws SVNClientException {
         addDirectory(file, recurse, false);
     }
 
-    /* (non-Javadoc)
-     * @see org.tigris.subversion.subclipse.client.ISVNClientAdapter#addDirectory(java.io.File, boolean, boolean)
+    /**
+     * {@inheritDoc}
      */
     public void addDirectory(File file, boolean recurse, boolean force) throws SVNClientException {
         try {
@@ -523,8 +522,8 @@ public class CmdLineClientAdapter extends AbstractClientAdapter {
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.tigris.subversion.subclipse.client.ISVNClientAdapter#addFile(java.io.File)
+    /**
+     * {@inheritDoc}
      */
     public void addFile(File file) throws SVNClientException {
         try {
@@ -540,15 +539,15 @@ public class CmdLineClientAdapter extends AbstractClientAdapter {
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.tigris.subversion.subclipse.client.ISVNClientAdapter#commit(java.io.File[], java.lang.String, boolean)
+    /**
+     * {@inheritDoc}
      */
     public long commit(File[] parents, String comment, boolean recurse) throws SVNClientException {
         return commit(parents, comment, recurse , false);
     }
 
-    /* (non-Javadoc)
-     * @see org.tigris.subversion.subclipse.client.ISVNClientAdapter#commit(java.io.File[], java.lang.String, boolean, boolean)
+    /**
+     * {@inheritDoc}
      */
     public long commit(File[] parents, String comment, boolean recurse, boolean keepLocks) throws SVNClientException {
         String[] paths = new String[parents.length];
@@ -584,8 +583,8 @@ public class CmdLineClientAdapter extends AbstractClientAdapter {
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.tigris.subversion.subclipse.client.ISVNClientAdapter#update(java.io.File, org.tigris.subversion.subclipse.client.ISVNRevision, boolean)
+    /**
+     * {@inheritDoc}
      */
     public long update(File file, SVNRevision revision, boolean b) throws SVNClientException {
         try {
@@ -597,8 +596,8 @@ public class CmdLineClientAdapter extends AbstractClientAdapter {
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#update(java.io.File[], org.tigris.subversion.svnclientadapter.SVNRevision, boolean, boolean)
+    /**
+     * {@inheritDoc}
      */
     public long[] update(File[] files, SVNRevision revision, boolean recurse, boolean ignoreExternals) throws SVNClientException
     {
@@ -611,8 +610,8 @@ public class CmdLineClientAdapter extends AbstractClientAdapter {
         }       
     }
 
-    /* (non-Javadoc)
-     * @see org.tigris.subversion.subclipse.client.ISVNClientAdapter#checkout(java.net.URL, java.io.File, org.tigris.subversion.subclipse.client.ISVNRevision, boolean)
+    /**
+     * {@inheritDoc}
      */
     public void checkout(SVNUrl url, File destPath, SVNRevision revision, boolean b)
         throws SVNClientException {
@@ -624,8 +623,8 @@ public class CmdLineClientAdapter extends AbstractClientAdapter {
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#getStatus(java.io.File, boolean, boolean)
+    /**
+     * {@inheritDoc}
      */
     public ISVNStatus[] getStatus(File path, boolean descend, boolean getAll)     
        throws SVNClientException {
@@ -689,9 +688,8 @@ public class CmdLineClientAdapter extends AbstractClientAdapter {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#diff(java.io.File, org.tigris.subversion.svnclientadapter.SVNRevision, java.io.File, org.tigris.subversion.svnclientadapter.SVNRevision, java.io.File, boolean)
+    /**
+     * {@inheritDoc}
      */
     public void diff(
         File oldPath,
@@ -711,6 +709,9 @@ public class CmdLineClientAdapter extends AbstractClientAdapter {
             recurse, true, false, false);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void diff(
             File oldPath,
             SVNRevision oldPathRevision,
@@ -733,17 +734,15 @@ public class CmdLineClientAdapter extends AbstractClientAdapter {
                 recurse, ignoreAncestry, noDiffDeleted, force);
         }
 
-    /*
-     * (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#diff(java.io.File, java.io.File, boolean)
+    /**
+     * {@inheritDoc}
      */
     public void diff(File path, File outFile, boolean recurse) throws SVNClientException {
         diff(path, null, null, null, outFile, recurse);
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#diff(org.tigris.subversion.svnclientadapter.SVNUrl, org.tigris.subversion.svnclientadapter.SVNRevision, org.tigris.subversion.svnclientadapter.SVNUrl, org.tigris.subversion.svnclientadapter.SVNRevision, java.io.File, boolean)
+    /**
+     * {@inheritDoc}
      */
     public void diff(
         SVNUrl oldUrl,
@@ -756,8 +755,8 @@ public class CmdLineClientAdapter extends AbstractClientAdapter {
         diff(oldUrl, oldUrlRevision, newUrl, newUrlRevision, outFile, recurse, true, false, false);
     }
 
-    /* (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#diff(org.tigris.subversion.svnclientadapter.SVNUrl, org.tigris.subversion.svnclientadapter.SVNRevision, org.tigris.subversion.svnclientadapter.SVNUrl, org.tigris.subversion.svnclientadapter.SVNRevision, java.io.File, boolean, boolean, boolean, boolean)
+    /**
+     * {@inheritDoc}
      */
     public void diff(
             SVNUrl oldUrl,
@@ -773,9 +772,8 @@ public class CmdLineClientAdapter extends AbstractClientAdapter {
             diff(toString(oldUrl), oldUrlRevision, toString(newUrl), newUrlRevision, outFile, recurse, ignoreAncestry, noDiffDeleted, force);
         }
 
-    /*
-     * (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#diff(org.tigris.subversion.svnclientadapter.SVNUrl, org.tigris.subversion.svnclientadapter.SVNRevision, org.tigris.subversion.svnclientadapter.SVNRevision, java.io.File, boolean)
+    /**
+     * {@inheritDoc}
      */
     public void diff(
         SVNUrl url,
@@ -787,9 +785,8 @@ public class CmdLineClientAdapter extends AbstractClientAdapter {
         diff(url, oldUrlRevision, url, newUrlRevision, outFile, recurse);
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#propertyGet(java.io.File, java.lang.String)
+    /**
+     * {@inheritDoc}
      */
     public ISVNProperty propertyGet(File path, String propertyName) throws SVNClientException {
         try {
@@ -809,6 +806,9 @@ public class CmdLineClientAdapter extends AbstractClientAdapter {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public ISVNProperty propertyGet(SVNUrl url, String propertyName) throws SVNClientException {
         try {
             InputStream valueAndData = _cmd.propget(url.toString(), propertyName);
@@ -827,6 +827,9 @@ public class CmdLineClientAdapter extends AbstractClientAdapter {
         }
     }
     
+    /**
+     * {@inheritDoc}
+     */
     public ISVNProperty propertyGet(SVNUrl url, SVNRevision revision,
             SVNRevision peg, String propertyName) throws SVNClientException {
         try {
@@ -845,9 +848,8 @@ public class CmdLineClientAdapter extends AbstractClientAdapter {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#propertySet(java.io.File, java.lang.String, java.io.File, boolean)
+    /**
+     * {@inheritDoc}
      */
     public void propertySet(File path, String propertyName, File propertyFile, boolean recurse)
         throws SVNClientException, IOException {
@@ -866,9 +868,8 @@ public class CmdLineClientAdapter extends AbstractClientAdapter {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#propertyDel(java.io.File, java.lang.String, boolean)
+    /**
+     * {@inheritDoc}
      */
     public void propertyDel(File path, String propertyName, boolean recurse)
         throws SVNClientException {
@@ -887,8 +888,8 @@ public class CmdLineClientAdapter extends AbstractClientAdapter {
             }        
     }
 
-    /* (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#setRevProperty(org.tigris.subversion.svnclientadapter.SVNUrl, org.tigris.subversion.svnclientadapter.SVNRevision.Number, java.lang.String, java.lang.String, boolean)
+    /**
+     * {@inheritDoc}
      */
     public void setRevProperty(SVNUrl path, SVNRevision.Number revisionNo, String propName, String propertyData, boolean force) throws SVNClientException {
         try {
@@ -920,9 +921,8 @@ public class CmdLineClientAdapter extends AbstractClientAdapter {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#doImport(java.io.File, org.tigris.subversion.svnclientadapter.SVNUrl, java.lang.String, boolean)
+    /**
+     * {@inheritDoc}
      */
     public void doImport(File path, SVNUrl url, String message, boolean recurse)
         throws SVNClientException {
@@ -934,9 +934,8 @@ public class CmdLineClientAdapter extends AbstractClientAdapter {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#doExport(org.tigris.subversion.svnclientadapter.SVNUrl, java.io.File, org.tigris.subversion.svnclientadapter.SVNRevision, boolean)
+    /**
+     * {@inheritDoc}
      */
     public void doExport(SVNUrl srcUrl, File destPath, SVNRevision revision, boolean force)
         throws SVNClientException {
@@ -947,9 +946,8 @@ public class CmdLineClientAdapter extends AbstractClientAdapter {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#doExport(java.io.File, java.io.File, boolean)
+    /**
+     * {@inheritDoc}
      */
     public void doExport(File srcPath, File destPath, boolean force) throws SVNClientException {
         try {
@@ -959,9 +957,8 @@ public class CmdLineClientAdapter extends AbstractClientAdapter {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#copy(java.io.File, org.tigris.subversion.svnclientadapter.SVNUrl, java.lang.String)
+    /**
+     * {@inheritDoc}
      */
     public void copy(File srcPath, SVNUrl destUrl, String message) throws SVNClientException {
         try {
@@ -973,8 +970,8 @@ public class CmdLineClientAdapter extends AbstractClientAdapter {
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#copy(org.tigris.subversion.svnclientadapter.SVNUrl, java.io.File, org.tigris.subversion.svnclientadapter.SVNRevision)
+    /**
+     * {@inheritDoc}
      */
     public void copy(SVNUrl srcUrl, File destPath, SVNRevision revision)
         throws SVNClientException {
@@ -985,8 +982,8 @@ public class CmdLineClientAdapter extends AbstractClientAdapter {
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#propertySet(java.io.File, java.lang.String, java.lang.String, boolean)
+    /**
+     * {@inheritDoc}
      */
     public void propertySet(File path, String propertyName, String propertyValue, boolean recurse)
         throws SVNClientException {
@@ -1101,9 +1098,8 @@ public class CmdLineClientAdapter extends AbstractClientAdapter {
         }
     }
     
-    /*
-     * (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#blame(org.tigris.subversion.svnclientadapter.SVNUrl, org.tigris.subversion.svnclientadapter.SVNRevision, org.tigris.subversion.svnclientadapter.SVNRevision)
+    /**
+     * {@inheritDoc}
      */
     public ISVNAnnotations annotate(SVNUrl url, SVNRevision revisionStart, SVNRevision revisionEnd)
         throws SVNClientException
@@ -1111,9 +1107,8 @@ public class CmdLineClientAdapter extends AbstractClientAdapter {
         return annotate(toString(url), revisionStart, revisionEnd);
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#annotate(java.io.File, org.tigris.subversion.svnclientadapter.SVNRevision, org.tigris.subversion.svnclientadapter.SVNRevision)
+    /**
+     * {@inheritDoc}
      */
     public ISVNAnnotations annotate(File file, SVNRevision revisionStart, SVNRevision revisionEnd)
         throws SVNClientException
@@ -1127,9 +1122,8 @@ public class CmdLineClientAdapter extends AbstractClientAdapter {
         return annotate(target, revisionStart, revisionEnd);
     }
     
-    /*
-     * (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#getProperties(java.io.File)
+    /**
+     * {@inheritDoc}
      */
     public ISVNProperty[] getProperties(File path) throws SVNClientException {
         try {
@@ -1153,6 +1147,9 @@ public class CmdLineClientAdapter extends AbstractClientAdapter {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public ISVNProperty[] getProperties(SVNUrl url) throws SVNClientException {
         try {
             String propertiesString = _cmd.proplist(url.toString(), false);
@@ -1176,10 +1173,8 @@ public class CmdLineClientAdapter extends AbstractClientAdapter {
     }
 
     /**
-     * Remove 'conflicted' state on working copy files or directories
-     * @param path
-     * @throws SVNClientException
-     */    
+     * {@inheritDoc}
+     */
     public void resolved(File path) 
         throws SVNClientException
     {
@@ -1196,8 +1191,8 @@ public class CmdLineClientAdapter extends AbstractClientAdapter {
     }
 
     
-    /* (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#createRepository(java.io.File)
+    /**
+     * {@inheritDoc}
      */
     public void createRepository(File path, String repositoryType) throws SVNClientException {
         try {
@@ -1207,15 +1202,15 @@ public class CmdLineClientAdapter extends AbstractClientAdapter {
         }       
     }
 
-    /* (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#getStatus(java.io.File, boolean, boolean, boolean)
+    /**
+     * {@inheritDoc}
      */
     public ISVNStatus[] getStatus(File path, boolean descend, boolean getAll, boolean contactServer) throws SVNClientException {
         return getStatus(path, descend, getAll, contactServer, false);
     }
 
-    /* (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#getStatus(java.io.File, boolean, boolean, boolean, boolean)
+    /**
+     * {@inheritDoc}
      */
     public ISVNStatus[] getStatus(File path, boolean descend, boolean getAll, boolean contactServer, boolean ignoreExternals) throws SVNClientException {
         try {
@@ -1268,16 +1263,16 @@ public class CmdLineClientAdapter extends AbstractClientAdapter {
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#cancelOperation()
+    /**
+     * {@inheritDoc}
      */
     public void cancelOperation() throws SVNClientException {
             notificationHandler.logMessage("Warning: operation canceled.");
             _cmd.stopProcess();
     }
     
-    /* (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#getInfoFromWorkingCopy(java.io.File)
+    /**
+     * {@inheritDoc}
      */
     public ISVNInfo getInfoFromWorkingCopy(File path) throws SVNClientException {
         try {
@@ -1297,15 +1292,15 @@ public class CmdLineClientAdapter extends AbstractClientAdapter {
         }        
     }
 
-    /* (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#getInfo(java.io.File)
+    /**
+     * {@inheritDoc}
      */
     public ISVNInfo getInfo(File path) throws SVNClientException {
         return getInfoFromWorkingCopy(path);
     }
 
-    /* (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#getInfo(org.tigris.subversion.svnclientadapter.SVNUrl, org.tigris.subversion.svnclientadapter.SVNRevision, org.tigris.subversion.svnclientadapter.SVNRevision)
+    /**
+     * {@inheritDoc}
      */
     public ISVNInfo getInfo(SVNUrl url, SVNRevision revision, SVNRevision peg) throws SVNClientException {
         return getInfo(new SVNUrl[] { url }, revision, peg);
@@ -1332,8 +1327,8 @@ public class CmdLineClientAdapter extends AbstractClientAdapter {
         return getInfo(urls, null, null);
     }
 
-    /* (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#switchUrl(org.tigris.subversion.svnclientadapter.SVNUrl, java.io.File, org.tigris.subversion.svnclientadapter.SVNRevision, boolean)
+    /**
+     * {@inheritDoc}
      */
     public void switchToUrl(File path, SVNUrl url, SVNRevision revision, boolean recurse) throws SVNClientException {
         try {
@@ -1344,15 +1339,15 @@ public class CmdLineClientAdapter extends AbstractClientAdapter {
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#setConfigDirectory(java.io.File)
+    /**
+     * {@inheritDoc}
      */
     public void setConfigDirectory(File dir) throws SVNClientException {
         _cmd.setConfigDirectory(toString(dir));
     }
 
-    /* (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#cleanup(java.io.File)
+    /**
+     * {@inheritDoc}
      */
     public void cleanup(File path) throws SVNClientException {
         try {
@@ -1363,8 +1358,8 @@ public class CmdLineClientAdapter extends AbstractClientAdapter {
         }
     }
     
-    /* (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#merge(org.tigris.subversion.svnclientadapter.SVNUrl, org.tigris.subversion.svnclientadapter.SVNRevision, org.tigris.subversion.svnclientadapter.SVNUrl, org.tigris.subversion.svnclientadapter.SVNRevision, java.io.File, boolean, boolean, boolean, boolean)
+    /**
+     * {@inheritDoc}
      */
     public void merge(SVNUrl path1, SVNRevision revision1, SVNUrl path2,
             SVNRevision revision2, File localPath, boolean force,
@@ -1377,8 +1372,8 @@ public class CmdLineClientAdapter extends AbstractClientAdapter {
         }
     }
     
-    /* (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#lock(SVNUrl[], java.lang.String, boolean)
+    /**
+     * {@inheritDoc}
      */
     public void lock(SVNUrl[] uris, String comment, boolean force)
         throws SVNClientException {
@@ -1391,8 +1386,8 @@ public class CmdLineClientAdapter extends AbstractClientAdapter {
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#unlock(SVNUrl[], boolean)
+    /**
+     * {@inheritDoc}
      */
     public void unlock(SVNUrl[] uris, boolean force)
         throws SVNClientException {
@@ -1405,8 +1400,8 @@ public class CmdLineClientAdapter extends AbstractClientAdapter {
         }
     }
     
-    /* (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#lock(java.io.File[], java.lang.String, boolean)
+    /**
+     * {@inheritDoc}
      */
     public void lock(File[] paths, String comment, boolean force)
             throws SVNClientException {
@@ -1427,8 +1422,8 @@ public class CmdLineClientAdapter extends AbstractClientAdapter {
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#unlock(java.lang.String[], boolean)
+    /**
+     * {@inheritDoc}
      */
     public void unlock(File[] paths, boolean force) throws SVNClientException {
         String[] files = new String[paths.length];
@@ -1448,6 +1443,9 @@ public class CmdLineClientAdapter extends AbstractClientAdapter {
         }
    }
     
+    /**
+     * {@inheritDoc}
+     */
     public String getAdminDirectoryName(){
         if (dirName == null) {
             // svn only supports this feature on Windows
@@ -1463,6 +1461,9 @@ public class CmdLineClientAdapter extends AbstractClientAdapter {
         return dirName;
     }
     
+    /**
+     * {@inheritDoc}
+     */
     public boolean isAdminDirectory(String name) {
         return getAdminDirectoryName().equals(name);
     }
@@ -1512,8 +1513,8 @@ public class CmdLineClientAdapter extends AbstractClientAdapter {
         return envVars;
     }
     
-    /* (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#getLogMessages(java.io.File, org.tigris.subversion.svnclientadapter.SVNRevision, org.tigris.subversion.svnclientadapter.SVNRevision, boolean)
+    /**
+     * {@inheritDoc}
      */
     public ISVNLogMessage[] getLogMessages(File path, SVNRevision revStart,
             SVNRevision revEnd, boolean fetchChangePath)
@@ -1521,8 +1522,8 @@ public class CmdLineClientAdapter extends AbstractClientAdapter {
         return getLogMessages(path, revStart, revEnd, false, fetchChangePath);
     }
 
-    /* (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#getLogMessages(java.io.File, org.tigris.subversion.svnclientadapter.SVNRevision, org.tigris.subversion.svnclientadapter.SVNRevision, boolean, boolean)
+    /**
+     * {@inheritDoc}
      */
     public ISVNLogMessage[] getLogMessages(File path, SVNRevision revStart,
             SVNRevision revEnd, boolean stopOnCopy, boolean fetchChangePath)
@@ -1531,8 +1532,8 @@ public class CmdLineClientAdapter extends AbstractClientAdapter {
                 fetchChangePath, 0);
     }
     
-    /* (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#getLogMessages(java.io.File, org.tigris.subversion.svnclientadapter.SVNRevision, org.tigris.subversion.svnclientadapter.SVNRevision, boolean, boolean, long)
+    /**
+     * {@inheritDoc}
      */
     public ISVNLogMessage[] getLogMessages(File path, SVNRevision revStart,
             SVNRevision revEnd, boolean stopOnCopy, boolean fetchChangePath,
@@ -1547,8 +1548,8 @@ public class CmdLineClientAdapter extends AbstractClientAdapter {
                 fetchChangePath, limit);
     }
     
-    /* (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#getLogMessages(org.tigris.subversion.svnclientadapter.SVNUrl, org.tigris.subversion.svnclientadapter.SVNRevision, org.tigris.subversion.svnclientadapter.SVNRevision, boolean)
+    /**
+     * {@inheritDoc}
      */
     public ISVNLogMessage[] getLogMessages(SVNUrl url, SVNRevision revStart,
             SVNRevision revEnd, boolean fetchChangePath)
@@ -1557,8 +1558,8 @@ public class CmdLineClientAdapter extends AbstractClientAdapter {
                 fetchChangePath);
     }
 
-    /* (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#getLogMessages(org.tigris.subversion.svnclientadapter.SVNUrl, org.tigris.subversion.svnclientadapter.SVNRevision, org.tigris.subversion.svnclientadapter.SVNRevision, org.tigris.subversion.svnclientadapter.SVNRevision, boolean, boolean, long)
+    /**
+     * {@inheritDoc}
      */
     public ISVNLogMessage[] getLogMessages(SVNUrl url, SVNRevision pegRevision,
             SVNRevision revStart, SVNRevision revEnd, boolean stopOnCopy,
@@ -1568,8 +1569,8 @@ public class CmdLineClientAdapter extends AbstractClientAdapter {
                 fetchChangePath, limit);
     }
 
-    /* (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#getLogMessages(org.tigris.subversion.svnclientadapter.SVNUrl, java.lang.String[], org.tigris.subversion.svnclientadapter.SVNRevision, org.tigris.subversion.svnclientadapter.SVNRevision, boolean, boolean)
+    /**
+     * {@inheritDoc}
      */
     public ISVNLogMessage[] getLogMessages(SVNUrl url, String[] paths,
             SVNRevision revStart, SVNRevision revEnd, boolean stopOnCopy,
@@ -1578,6 +1579,9 @@ public class CmdLineClientAdapter extends AbstractClientAdapter {
                 fetchChangePath, 0);
     }
     
+    /**
+     * {@inheritDoc}
+     */
     public void relocate(String from, String to, String path, boolean recurse)
             throws SVNClientException {
         try {
@@ -1587,8 +1591,9 @@ public class CmdLineClientAdapter extends AbstractClientAdapter {
             throw SVNClientException.wrapException(e);
         }
     }
-    /* (non-Javadoc)
-     * @see org.tigris.subversion.svnclientadapter.ISVNClientAdapter#diff(java.io.File, org.tigris.subversion.svnclientadapter.SVNUrl, org.tigris.subversion.svnclientadapter.SVNRevision, java.io.File, boolean)
+
+    /**
+     * {@inheritDoc}
      */
     public void diff(File path, SVNUrl url, SVNRevision urlRevision,
             File outFile, boolean recurse) throws SVNClientException {
@@ -1601,10 +1606,16 @@ public class CmdLineClientAdapter extends AbstractClientAdapter {
                 recurse, true, false, false);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void addConflictResolutionCallback(ISVNConflictResolver callback) {
         // TODO
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public ISVNAnnotations annotate(File file, SVNRevision revisionStart,
             SVNRevision revisionEnd, boolean ignoreMimeType,
             boolean includeMergedRevisions) throws SVNClientException {
@@ -1619,6 +1630,9 @@ public class CmdLineClientAdapter extends AbstractClientAdapter {
         return null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public ISVNLogMessage[] getLogMessages(File path, SVNRevision pegRevision,
             SVNRevision revisionStart, SVNRevision revisionEnd,
             boolean stopOnCopy, boolean fetchChangePath, long limit,
@@ -1627,6 +1641,9 @@ public class CmdLineClientAdapter extends AbstractClientAdapter {
         return null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public ISVNLogMessage[] getLogMessages(SVNUrl url, SVNRevision pegRevision,
             SVNRevision revisionStart, SVNRevision revisionEnd,
             boolean stopOnCopy, boolean fetchChangePath, long limit,
@@ -1635,12 +1652,18 @@ public class CmdLineClientAdapter extends AbstractClientAdapter {
         return null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public ISVNMergeInfo getMergeInfo(File path, SVNRevision revision)
             throws SVNClientException {
         notImplementedYet();
         return null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public ISVNMergeInfo getMergeInfo(SVNUrl url, SVNRevision revision)
             throws SVNClientException {
         notImplementedYet();
@@ -1664,26 +1687,41 @@ public class CmdLineClientAdapter extends AbstractClientAdapter {
         return null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public SVNDiffSummary[] diffSummarize(SVNUrl target, SVNRevision pegRevision, SVNRevision startRevision, SVNRevision endRevision, int depth, boolean ignoreAncestry) throws SVNClientException {
         notImplementedYet();
         return null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public SVNDiffSummary[] diffSummarize(SVNUrl target1, SVNRevision revision1, SVNUrl target2, SVNRevision revision2, int depth, boolean ignoreAncestry) throws SVNClientException {
         notImplementedYet();
         return null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public String[] suggestMergeSources(File path) throws SVNClientException {
         notImplementedYet();
         return null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public String[] suggestMergeSources(SVNUrl url, SVNRevision peg) throws SVNClientException {
         notImplementedYet();
         return null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void checkout(SVNUrl moduleName, File destPath,
             SVNRevision revision, int depth, boolean ignoreExternals,
             boolean force) throws SVNClientException {
@@ -1692,6 +1730,9 @@ public class CmdLineClientAdapter extends AbstractClientAdapter {
         
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void copy(SVNUrl srcUrl, SVNUrl destUrl, String message,
             SVNRevision revision, boolean makeParents)
             throws SVNClientException {
@@ -1704,6 +1745,9 @@ public class CmdLineClientAdapter extends AbstractClientAdapter {
     }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void diff(SVNUrl target, SVNRevision pegRevision,
             SVNRevision startRevision, SVNRevision endRevision, File outFile,
             int depth, boolean ignoreAncestry, boolean noDiffDeleted,
@@ -1713,6 +1757,9 @@ public class CmdLineClientAdapter extends AbstractClientAdapter {
         
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void diff(SVNUrl target, SVNRevision pegRevision,
             SVNRevision startRevision, SVNRevision endRevision, File outFile,
             boolean recurse) throws SVNClientException {
@@ -1721,11 +1768,17 @@ public class CmdLineClientAdapter extends AbstractClientAdapter {
         
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void dispose() {
         // TODO Auto-generated method stub
         
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public InputStream getContent(SVNUrl url, SVNRevision revision,
             SVNRevision pegRevision) throws SVNClientException {
         // TODO Auto-generated method stub
@@ -1733,6 +1786,9 @@ public class CmdLineClientAdapter extends AbstractClientAdapter {
         return null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public ISVNDirEntry[] getList(SVNUrl url, SVNRevision revision,
             SVNRevision pegRevision, boolean recurse) throws SVNClientException {
         // TODO Auto-generated method stub
@@ -1740,6 +1796,9 @@ public class CmdLineClientAdapter extends AbstractClientAdapter {
         return null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public ISVNDirEntry[] getList(File path, SVNRevision revision,
             SVNRevision pegRevision, boolean recurse) throws SVNClientException {
         // TODO Auto-generated method stub
@@ -1747,17 +1806,26 @@ public class CmdLineClientAdapter extends AbstractClientAdapter {
         return null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void resolve(File path, int result) throws SVNClientException {
         // TODO Auto-generated method stub
         notImplementedYet();
         
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void setProgressListener(ISVNProgressListener progressListener) {
         // TODO Auto-generated method stub
         
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void merge(SVNUrl url, SVNRevision pegRevision,
             SVNRevisionRange[] revisions, File localPath, boolean force,
             int depth, boolean ignoreAncestry, boolean dryRun,
@@ -1767,6 +1835,9 @@ public class CmdLineClientAdapter extends AbstractClientAdapter {
         
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void merge(SVNUrl path1, SVNRevision revision1, SVNUrl path2,
             SVNRevision revision2, File localPath, boolean force, int depth,
             boolean dryRun, boolean ignoreAncestry, boolean recordOnly)
@@ -1775,12 +1846,18 @@ public class CmdLineClientAdapter extends AbstractClientAdapter {
         notImplementedYet();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void copy(File[] srcPaths, SVNUrl destUrl, String message,
             boolean copyAsChild, boolean makeParents) throws SVNClientException {
         // TODO Auto-generated method stub
         notImplementedYet();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void copy(SVNUrl[] srcUrls, SVNUrl destUrl, String message,
             SVNRevision revision, boolean copyAsChild, boolean makeParents)
             throws SVNClientException {
@@ -1788,6 +1865,9 @@ public class CmdLineClientAdapter extends AbstractClientAdapter {
         notImplementedYet();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void switchToUrl(File path, SVNUrl url, SVNRevision revision,
             int depth, boolean setDepth, boolean ignoreExternals, boolean force)
             throws SVNClientException {
@@ -1795,6 +1875,9 @@ public class CmdLineClientAdapter extends AbstractClientAdapter {
         notImplementedYet();        
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void switchToUrl(File path, SVNUrl url, SVNRevision revision,
             SVNRevision pegRevision, int depth, boolean setDepth,
             boolean ignoreExternals, boolean force) throws SVNClientException {
@@ -1802,6 +1885,9 @@ public class CmdLineClientAdapter extends AbstractClientAdapter {
         notImplementedYet();        
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public long update(File path, SVNRevision revision, int depth,
             boolean setDepth, boolean ignoreExternals, boolean force)
             throws SVNClientException {
@@ -1810,6 +1896,9 @@ public class CmdLineClientAdapter extends AbstractClientAdapter {
         return 0;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public long[] update(File[] path, SVNRevision revision, int depth,
             boolean setDepth, boolean ignoreExternals, boolean force)
             throws SVNClientException {
@@ -1818,6 +1907,9 @@ public class CmdLineClientAdapter extends AbstractClientAdapter {
         return null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void mergeReintegrate(SVNUrl path, SVNRevision pegRevision,
             File localPath, boolean force, boolean dryRun)
             throws SVNClientException {
@@ -1825,12 +1917,18 @@ public class CmdLineClientAdapter extends AbstractClientAdapter {
         notImplementedYet();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void copy(SVNUrl srcUrl, File destPath, SVNRevision revision,
             boolean copyAsChild, boolean makeParents) throws SVNClientException {
         // TODO Auto-generated method stub
         notImplementedYet();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public ISVNLogMessage[] getMergeinfoLog(int kind, File path,
             SVNRevision pegRevision, SVNUrl mergeSourceUrl,
             SVNRevision srcPegRevision, boolean discoverChangedPaths)
@@ -1840,6 +1938,9 @@ public class CmdLineClientAdapter extends AbstractClientAdapter {
         return null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public ISVNLogMessage[] getMergeinfoLog(int kind, SVNUrl url,
             SVNRevision pegRevision, SVNUrl mergeSourceUrl,
             SVNRevision srcPegRevision, boolean discoverChangedPaths)
@@ -1849,6 +1950,9 @@ public class CmdLineClientAdapter extends AbstractClientAdapter {
         return null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void getLogMessages(File path, SVNRevision pegRevision,
             SVNRevision revisionStart, SVNRevision revisionEnd,
             boolean stopOnCopy, boolean fetchChangePath, long limit,
@@ -1859,6 +1963,9 @@ public class CmdLineClientAdapter extends AbstractClientAdapter {
         
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void getLogMessages(SVNUrl url, SVNRevision pegRevision,
             SVNRevision revisionStart, SVNRevision revisionEnd,
             boolean stopOnCopy, boolean fetchChangePath, long limit,
@@ -1869,6 +1976,9 @@ public class CmdLineClientAdapter extends AbstractClientAdapter {
         
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void copy(SVNUrl srcUrl, File destPath, SVNRevision revision,
             SVNRevision pegRevision, boolean copyAsChild, boolean makeParents)
             throws SVNClientException {
@@ -1876,18 +1986,27 @@ public class CmdLineClientAdapter extends AbstractClientAdapter {
         
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public ISVNInfo[] getInfo(File file, boolean descend)
             throws SVNClientException {
         // TODO Auto-generated method stub
         return null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public String getRevProperty(SVNUrl path, Number revisionNo, String propName)
             throws SVNClientException {
         // TODO Auto-generated method stub
         return null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public ISVNAnnotations annotate(SVNUrl url, SVNRevision revisionStart,
             SVNRevision revisionEnd, SVNRevision pegRevision,
             boolean ignoreMimeType, boolean includeMergedRevisions)
@@ -1896,6 +2015,9 @@ public class CmdLineClientAdapter extends AbstractClientAdapter {
         return null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public ISVNAnnotations annotate(File file, SVNRevision revisionStart,
             SVNRevision revisionEnd, SVNRevision pegRevision,
             boolean ignoreMimeType, boolean includeMergedRevisions)
@@ -1904,18 +2026,27 @@ public class CmdLineClientAdapter extends AbstractClientAdapter {
         return null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public ISVNProperty[] getProperties(SVNUrl url, SVNRevision revision,
             SVNRevision peg) throws SVNClientException {
         // TODO Auto-generated method stub
         return null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public ISVNProperty[] getRevProperties(SVNUrl url, Number revision)
             throws SVNClientException {
         // TODO Auto-generated method stub
         return null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public SVNDiffSummary[] diffSummarize(File path, SVNUrl toUrl,
             SVNRevision toRevision, boolean recurse) throws SVNClientException {
         // TODO Auto-generated method stub
