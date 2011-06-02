@@ -8,8 +8,8 @@
 	<classpathentry kind="src" output="classes/testcases" path="src/testcases"/>
 	<classpathentry kind="lib" path="lib/svnjavahl.jar"/>
 	<classpathentry kind="lib" path="lib/ganymed.jar"/>
-	<classpathentry kind="lib" path="lib/svnkit/svnkit.jar"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="lib/svnkit.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/3"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path="classes/main"/>
 </classpath>
