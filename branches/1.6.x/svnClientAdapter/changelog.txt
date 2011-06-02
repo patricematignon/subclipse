@@ -1,3 +1,9 @@
+* 0.9.101
+
+- fixed the commandline info command which failed for a large number of targets which has to be queried.
+- the commandline client is always being executed with the option --no-auth-cache so the system credentials won't be altered.
+
+* ???
 - #1231: implemented the method 'CmdLineClientAdapter#copy(SVNUrl,SVNUrl,String,SVNRevision,boolean)' 
 - added ISVNStatus#isWcLocked() and ISVNStatus#isSwitched()
 - removed the getRepositoryRoot() method from adapter interface
