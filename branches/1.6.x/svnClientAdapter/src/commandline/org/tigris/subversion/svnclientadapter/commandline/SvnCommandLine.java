@@ -382,6 +382,8 @@ public class SvnCommandLine extends CommandLine {
         return execString(args,false);
     }
 
+    private static final int PARTITIONSIZE = 32;
+    
     /**
      * info: Display info about a resource.
      * usage: info [PATH [PATH ... ]]
@@ -402,22 +404,27 @@ public class SvnCommandLine extends CommandLine {
         }
         
         setCommand(ISVNNotifyListener.Command.INFO, false);
-        CmdArguments args = new CmdArguments();
-        args.add("info");
-        args.addAuthInfo(this.user, this.pass);
-        args.addConfigInfo(this.configDir);
-        if (revision != null) {
-            args.add("-r");
-            args.add(revision);
+        StringBuffer result = new StringBuffer();
+        for (int i = 0; i < target.length; i += PARTITIONSIZE) {
+            CmdArguments args = new CmdArguments();
+            args.add("info");
+            args.addAuthInfo(this.user, this.pass);
+            args.addConfigInfo(this.configDir);
+            if (revision != null) {
+                args.add("-r");
+                args.add(revision);
+            }
+            for (int j = 0, k = i; (j < PARTITIONSIZE) && (k < target.length); j++, k++) {
+                if (peg == null) {
+                    args.add(target[k]);
+                } else {
+                    args.add(target[k] + "@" + peg);
+                }
+            }
+            String partialresult = execString(args, false);
+            result.append(partialresult);
         }
-        for (int i = 0;i < target.length;i++) {
-            if (peg == null)
-                args.add(target[i]);
-            else
-                args.add(target[i] + "@" + peg);
-        }
-
-        return execString(args,false);
+        return result.toString();
     }
 
     /**
