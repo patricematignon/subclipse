@@ -1,3 +1,6 @@
+* 0.9.102
+- #1156: enhanced the commandline client to support the depth parameter for the checkout operation
+
 * 0.9.101
 
 - updated svnkit library to 1.3.5.7406
