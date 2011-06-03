@@ -203,6 +203,37 @@ public class SvnCommandLine extends CommandLine {
 
     /**
      * <p>
+     * Check out a working copy from a repository.</p>
+     *
+     * @param url The URL to check out from.
+     * @param destination The local directory to check out to.
+     * @param revision The revision to check out.
+     *   Defaults to <tt>"HEAD"</tt>.
+     * @param recursive true if subdirs should be checked out recursively.
+     * @throws CmdLineException
+     */
+    String checkout(String url, String destination, String revision, String depth, 
+                    boolean ignoreExternals, boolean force)
+        throws CmdLineException {
+        setCommand(ISVNNotifyListener.Command.CHECKOUT, true);
+        CmdArguments args = newCmdArguments("co");
+        args.add("-r");
+        args.add(validRev(revision));
+        args.add(url + "@" + validRev(revision));
+        args.add(destination);
+        if( depth != null ) {
+            args.add( "--depth" );
+            args.add( depth );
+        }
+        args.add("--force", force);
+        args.add("--ignore-externals", ignoreExternals);
+        args.addAuthInfo(this.user, this.pass);
+        args.addConfigInfo(this.configDir);
+        return execString(args,false);
+    }
+
+    /**
+     * <p>
      * Duplicate something in working copy or repos,
      * remembering history.</p>
      * 

@@ -57,6 +57,7 @@ import org.tigris.subversion.svnclientadapter.SVNRevisionRange;
 import org.tigris.subversion.svnclientadapter.SVNScheduleKind;
 import org.tigris.subversion.svnclientadapter.SVNStatusUnversioned;
 import org.tigris.subversion.svnclientadapter.SVNUrl;
+import org.tigris.subversion.svnclientadapter.utils.Depth;
 
 /**
  * <p>
@@ -1725,9 +1726,30 @@ public class CmdLineClientAdapter extends AbstractClientAdapter {
     public void checkout(SVNUrl moduleName, File destPath,
             SVNRevision revision, int depth, boolean ignoreExternals,
             boolean force) throws SVNClientException {
-        // TODO Auto-generated method stub
-        notImplementedYet();
-        
+        try {
+            notificationHandler.setBaseDir(SVNBaseDir.getBaseDir(destPath));
+            _cmd.checkout(toString(moduleName), toString(destPath), toString(revision), 
+                            depthToString(depth), ignoreExternals, force);
+        } catch (CmdLineException e) {
+            throw SVNClientException.wrapException(e);
+        }
+    }
+    
+    /**
+     * Provides the command line value for the supplied depth.
+     * 
+     * @param depth   The constant specifying the checkout depth.
+     * 
+     * @return   The textual command line value for the checkout depth. Maybe <code>null</code>.
+     */
+    private String depthToString( int depth ) {
+        switch (depth) {
+        case Depth.empty        : return "empty";
+        case Depth.files        : return "files";
+        case Depth.immediates   : return "immediates";
+        case Depth.infinity     : return "infinity";
+        }
+        return null;
     }
 
     /**
