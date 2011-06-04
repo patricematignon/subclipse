@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<msubsection id="svnsetting" title="svnSetting" xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <p>Allows to configure the access to the subversion repository within a &lt;svnSetting&gt; elements.</p>
+
+  <attributes>
+  
+    <attribute name="dateFormatter" required="false" default="MM/DD/YYYY HH:MM AM_PM">
+      <doc>formatter definition used to format/parse dates (e.g. when revision is specified as date).</doc>
+    </attribute>
+  
+    <attribute name="dateTimeZone" required="false" default="local">
+      <doc>time zone used to format/parse dates (e.g. when revision is specified as date).</doc>
+    </attribute>
+  
+    <attribute name="id" required="true">
+      <doc>The Id which is used to refer to these settings.</doc>
+    </attribute>
+  
+    <attribute name="username" required="false">
+      <doc>username that will be used for all nested svn commands.</doc>
+    </attribute>
+  
+    <attribute name="password" required="false">
+      <doc>password that will be used for all nested svn commands.</doc>
+    </attribute>
+
+    <attribute name="javahl" required="false" default="true">
+      <doc>Set to "false" to use command line client interface instead of JNI JavaHL binding.</doc>
+    </attribute>
+
+    <attribute name="svnkit" required="false" default="false">
+      <doc>Set to "false" to use command line client interface instead of SVNKit binding.</doc>
+    </attribute>
+
+    <attribute name="failonerror" required="false" default="true">
+      <doc>Controls whether an error stops the build or is merely reported to the screen.</doc>
+    </attribute>
+    
+    <attribute name="sshkeypath" required="false">
+      <doc>Specifies the location of a SSH private key.</doc>
+      <doc><b>UNTESTED FEATURE: NOT SUPPORTED BY THE COMMANDLINE CLIENT ! SUBJECT TO CHANGE !</b></doc>
+    </attribute> 
+
+    <attribute name="sshpassphrase" required="false">
+      <doc>Specifies the passphrase for the SSH private key.</doc>
+      <doc><b>UNTESTED FEATURE: NOT SUPPORTED BY THE COMMANDLINE CLIENT ! SUBJECT TO CHANGE !</b></doc>
+    </attribute> 
+
+    <attribute name="sshport" required="false" default="22">
+      <doc>The port to be used when connecting using SSH. If the connection URL contains
+      a port number this will be used instead.</doc>
+      <doc><b>UNTESTED FEATURE: NOT SUPPORTED BY THE COMMANDLINE CLIENT ! SUBJECT TO CHANGE !</b></doc>
+    </attribute> 
+
+    <attribute name="sslclientcertpath" required="false">
+      <doc>The path of a SSL client certificate.</doc>
+      <doc><b>UNTESTED FEATURE: NOT SUPPORTED BY THE COMMANDLINE CLIENT ! SUBJECT TO CHANGE !</b></doc>
+    </attribute> 
+
+    <attribute name="sslpassword" required="false">
+      <doc>The password for the SSL connection.</doc>
+      <doc><b>UNTESTED FEATURE: NOT SUPPORTED BY THE COMMANDLINE CLIENT ! SUBJECT TO CHANGE !</b></doc>
+    </attribute> 
+
+    <attribute name="certreject" required="false" default="false">
+      <doc>Boolean which allows to reject untrusted certificates in general. By default they are
+      accepted temporarily (we don't want to break with previous implementations).</doc>
+      <doc><b>UNTESTED FEATURE: NOT SUPPORTED BY THE COMMANDLINE CLIENT ! SUBJECT TO CHANGE !</b></doc>
+    </attribute> 
+      
+  </attributes>
+  
+</msubsection>
