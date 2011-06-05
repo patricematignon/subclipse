@@ -1,41 +1,36 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
-<html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html xmlns:html="http://www.w3.org/1999/xhtml" xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=us-ascii" />
-<title>SvnAnt User Manual</title>
-<meta http-equiv="Content-Language" content="en-us" />
-<link rel="stylesheet" type="text/css" href="http://tortoisesvn.tigris.org/branding/css/print.css" media="print" />
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Introduction</title>
+<meta http-equiv="Content-Language" content="en-us">
+<link rel="stylesheet" type="text/css" href="http://tortoisesvn.tigris.org/branding/css/print.css" media="print">
 <style type="text/css">
-/* <![CDATA[ */
- @import "http://subclipse.tigris.org/branding/css/tigris.css";
- @import "http://subclipse.tigris.org/branding/css/inst.css";
- /* ]]> */
-</style>
-
+        /*  */
+            @import "http://subclipse.tigris.org/branding/css/tigris.css";
+            @import "http://subclipse.tigris.org/branding/css/inst.css";
+        /*  */
+      </style>
 <style type="text/css">
-/*<![CDATA[*/
-        /*
-        table {
+        table.svnant {
           border: 1pt solid gray;
           border-collapse: collapse;
-          width: 70%;
+          width: 90%;
         }
-        tr, td {
+        table.svnant tr, table.svnant tr td {
           border: 1pt solid gray;
         }
-        tr:hover {
+        table.svnant tr:hover {
           background-color: rgb(93%,93%,93%);
         }
-        td {
+        table.svnant tr td {
           padding: 2pt;
         }
-        tr {
+        table.svnant tr {
           width: 100%;
         }
         h1 {
-          font-size: 200%; 
-          text-transform: lowercase; 
-          letter-spacing: 3px;
+          font-size: 200%; text-transform: lowercase; letter-spacing: 3px;
           margin-bottom: 1em; 
           padding: 0.66em 0 0.33em 1em;
         }
@@ -50,7 +45,6 @@
           padding: 0.66em 0 0.33em 1em;
           background-color: #f3f1f4;
         }
-        */
         .sample {
           font-family: Courier, "Courier New", monospace;
           background-color: #f3f1f4;
@@ -68,8 +62,8 @@
           max-width: 15em;
         }
         .lastcol {
-          width: 6em;
-          max-width: 6em;
+          width: 10em;
+          max-width: 10em;
         }
         p.remark {
           margin-left: 2em;
@@ -86,10 +80,27 @@
         }
         table.attributes {
           margin-bottom: 2em;
-        } 
+          border: 1pt solid gray;
+          border-collapse: collapse;
+          width: 90%;
+        }
+        table.attributes tr, table.attributes tr td {
+          border: 1pt solid gray;
+        }
+        table.nestedelements {
+          margin-bottom: 2em;
+          border: 1pt solid gray;
+          border-collapse: collapse;
+          width: 90%;
+        }
+        table.nestedelements tr, table.nestedelements tr td {
+          border: 1pt solid gray;
+        }
         table.nestedelements tr td.firstcol {
           text-style: bold;
           width: 10em;
+          border: 1pt solid gray;
+          border-collapse: collapse;
         }
         tr.invisiblerow {
           border: 0pt solid black;
@@ -112,25 +123,49 @@
           font-weight: bold;
           padding: 2px 8px 5px; 
         }
-/*]]>*/
-</style>
+      </style>
 </head>
-<body lang="en-US" dir="ltr" xml:lang="en-US">
+<body lang="en-US" dir="ltr">
 <ul id="horizontalmenu">
-<li><a href="introduction.html">Introduction</a></li>
-<li><a href="svntask.html">Tasks</a></li>
-<li><a href="types.html">Types</a></li>
-<li><a href="selectors.html">Selectors</a></li>
-<li><a href="conditions.html">Conditions</a></li>
+<li>
+<a href="introduction.html">Introduction</a>
+</li>
+<li>
+<a href="svntask.html">Tasks</a>
+</li>
+<li>
+<a href="types.html">Types</a>
+</li>
+<li>
+<a href="selectors.html">Selectors</a>
+</li>
+<li>
+<a href="conditions.html">Conditions</a>
+</li>
 </ul>
-<div class="h2" title="Introduction"><a style="visibility: hidden;" name="introduction" id="introduction"></a>
+<div class="h2" title="Introduction">
+<a style="visibility: hidden;" name="introduction"></a>
 <h2>Introduction</h2>
-<p>The <i>svnant</i> project provides a set of <a href="http://ant.apache.org">Ant</a> extensions which can be used to interact with <a href="http://subversion.apache.org">Subversion</a> repositories.</p>
+  
+    
+<p>The <i>svnant</i> project provides a set of <a href="http://ant.apache.org">Ant</a> extensions
+    which can be used to interact with <a href="http://subversion.apache.org">Subversion</a> 
+    repositories.</p>
+  
+  
 </div>
-<div class="h2" title="Setup"><a style="visibility: hidden;" name="setup" id="setup"></a>
+<div class="h2" title="Setup">
+<a style="visibility: hidden;" name="setup"></a>
 <h2>Setup</h2>
-<p>As with most Ant extensions, SvnAnt's task and type names must be <a href="http://ant.apache.org/manual/CoreTasks/typedef.html">mapped to their implementing classes</a> before being used in an Ant build file. An example of how to use the <em>antlib</em> bundled in SvnAnt's JAR file to perform that registration follows:</p>
-<a style="visibility: hidden;" name="snippetbasicdeclaration" id="snippetbasicdeclaration"></a>
+  
+    
+<p>As with most Ant extensions, SvnAnt's task and type names must be 
+    <a href="http://ant.apache.org/manual/CoreTasks/typedef.html">mapped to their 
+    implementing classes</a> before being used in an Ant build file. An example of how to use 
+    the <em>antlib</em> bundled in SvnAnt's JAR file to perform that registration follows:</p>
+    
+    
+<a style="visibility: hidden;" name="snippetbasicdeclaration"></a>
 <pre class="sample">
     
       &lt;path id="path.svnant"&gt;
@@ -144,32 +179,90 @@
           classpathref="path.svnant"
       /&gt;
       
+    </pre>
+  
     
-</pre>
-<p class="remark">Please be aware that the previously used declaration mechanism using the file <code>svnant.properties</code> is no longer supported so it's necessary to update your declaration if necessary.</p>
-<div class="h3" title="Binding"><a style="visibility: hidden;" name="binding" id="binding"></a>
+<p class="remark">Please be aware that the previously used declaration mechanism using the file
+    <code>svnant.properties</code> is no longer supported so it's necessary to update
+    your declaration if necessary.</p>
+  
+    
+<div class="h3" title="Binding">
+<a style="visibility: hidden;" name="binding"></a>
 <h3>Binding</h3>
-<p>The path declaration shown <a href="#snippetbasicdeclaration">above</a> only contains the necessary jar files used to realise subversion access.</p>
-<p>If you don't extend the above mentioned path declaration the only possibility to access a subversion repository is the so called <code>commandline</code> binding.</p>
-<p>In general you want to extend this path with additional libraries in order to use a specific binding to the subversion repository.</p>
-<p>The following list shows the requirements and the meaning of the available bindings (the order specifies the precedence):</p>
+
+      
+<p>The path declaration shown <a href="#snippetbasicdeclaration">above</a> only contains the
+      necessary jar files used to realise subversion access.</p>
+      
+      
+<p>If you don't extend the above mentioned path declaration the only possibility to access
+      a subversion repository is the so called <code>commandline</code> binding.</p>
+      
+      
+<p>In general you want to extend this path with additional libraries in order to use a
+      specific binding to the subversion repository.</p>
+  
+      
+<p>The following list shows the requirements and the meaning of the available bindings
+      (the order specifies the precedence):</p>
+      
+      
 <h4>javahl</h4>
-<p>This type of binding makes use of a Java native bridge in order to realise the subversion commands. These share libraries must be on your library path. You can launch the Ant script using the following option (of course you need to adjust the path):</p>
+      
+        
+<p>This type of binding makes use of a Java native bridge in order to realise the subversion
+        commands. These share libraries must be on your library path. You can launch the Ant
+        script using the following option (of course you need to adjust the path):</p>
+        
+        
 <pre class="sample">
           -Djava.library.path=${basedir}/javahl
+        </pre>
         
-</pre>
-<p>You also need to add the Jar equivalent of the binding which is typically named <code>svnjavahl.jar</code>.</p>
-<p class="remark">If this binding doesn't seem to work, you should check whether the library path is correct or not. You can use the <a href="http://ant.apache.org/manual/Tasks/echoproperties.html">echoproperties</a> to get this information.</p>
+        
+<p>You also need to add the Jar equivalent of the binding which is typically named
+        <code>svnjavahl.jar</code>.</p>
+        
+        
+<p class="remark">If this binding doesn't seem to work, you should check whether the library 
+        path is correct or not. You can use the <a href="http://ant.apache.org/manual/Tasks/echoproperties.html">echoproperties</a>
+        to get this information.</p>
+        
+      
+      
+      
 <h4>svnkit</h4>
-<p>The <a href="http://svnkit.com">svnkit</a> binding is purely java based. Using this binding requires the jar <code>svnkit.jar</code> to be used for the <i>svnant</i> declaration. You also need the <code>ganymed.jar</code> which provides the necessary functionality for SSH based communication.</p>
+        
+        
+<p>The <a href="http://svnkit.com">svnkit</a> binding is purely java based. Using this
+        binding requires the jar <code>svnkit.jar</code> to be used for the <i>svnant</i>
+        declaration. You also need the <code>ganymed.jar</code> which provides the necessary
+        functionality for SSH based communication.</p>
+      
+      
+
+      
 <h4>commandline</h4>
-<p>This binding is the simpliest one and is considered to be a fallback solution. It just looks for the <i>svn</i> executable itself, so it must be locatable using the path specified within the propert <code>java.library.path</code>.</p>
+      
+        
+<p>This binding is the simpliest one and is considered to be a fallback solution. It
+        just looks for the <i>svn</i> executable itself, so it must be locatable using the
+        path specified within the propert <code>java.library.path</code>.</p>
+        
+      
+  
+    
 </div>
+  
+  
 </div>
-<div class="h2" title="License"><a style="visibility: hidden;" name="license" id="license"></a>
+<div class="h2" title="License">
+<a style="visibility: hidden;" name="license"></a>
 <h2>License</h2>
-<a style="visibility: hidden;" name="license" id="license"></a>
+  
+    
+<a style="visibility: hidden;" name="license"></a>
 <pre class="sample">
       SvnAnt license
 
@@ -236,11 +329,16 @@ their terms may differ from the terms below.
 
 
 
-    
-</pre></div>
-<div class="h2" title="Changelog"><a style="visibility: hidden;" name="changelog" id="changelog"></a>
+    </pre>
+  
+  
+</div>
+<div class="h2" title="Changelog">
+<a style="visibility: hidden;" name="changelog"></a>
 <h2>Changelog</h2>
-<a style="visibility: hidden;" name="changelog" id="changelog"></a>
+  
+    
+<a style="visibility: hidden;" name="changelog"></a>
 <pre class="sample">
       
 * 1.3.1
@@ -294,34 +392,86 @@ their terms may differ from the terms below.
 - Added the force option to &lt;add&gt; command
   
 * 1.0.0
+    </pre>
     
-</pre></div>
-<div class="h2" title="Known issues"><a style="visibility: hidden;" name="knownissues" id="knownissues"></a>
+  
+</div>
+<div class="h2" title="Known issues">
+<a style="visibility: hidden;" name="knownissues"></a>
 <h2>Known issues</h2>
-<p>This chapter provides some known issues which might be of interest when you're experiencing <i>weird</i> behaviour:</p>
+  
+    
+<p>This chapter provides some known issues which might be of interest when you're experiencing
+    <i>weird</i> behaviour:</p>
+    
+    
 <div class="h3" title="General">
 <h3>General</h3>
+    
+      
 <ul>
-<li><b>Mutable Ant properties</b><br />
-<p>Basically Ant properties aren't supposed to be changed. This means that their value stays the same once they have been set. <i>svnant</i> doesn't take care of this so if you're <i>reusing</i> property names you should be aware that they can be overwritten.</p>
-<p>We won't change that behaviour since this is a historical result and modifying the behaviour might cause issues on current build scripts.</p>
+      
+        
+<li>
+<b>Mutable Ant properties</b>
+<br>
+        
+<p>Basically Ant properties aren't supposed to be changed. This means that their value
+        stays the same once they have been set. <i>svnant</i> doesn't take care of this so if
+        you're <i>reusing</i> property names you should be aware that they can be overwritten.</p>
+        
+<p>We won't change that behaviour since this is a historical result and modifying the
+        behaviour might cause issues on current build scripts.</p> 
+        
 </li>
+        
+      
 </ul>
+      
+    
 </div>
+
+    
 <div class="h3" title="JavaHL Binding">
 <h3>JavaHL Binding</h3>
+    
+      
 <ul>
-<li><code>propset</code> fails with binary code<br />
-<p>If you're trying to use the <code>propset</code> command with the <code>file</code> attribute you might experience errors in case of binary data. This is an error within the JavaHL implementation and has been filed using the following issue:</p>
-<a href="http://subversion.tigris.org/issues/show_bug.cgi?id=3770">http://subversion.tigris.org/issues/show_bug.cgi?id=3770</a></li>
+        
+        
+<li>
+<code>propset</code> fails with binary code<br>
+        
+<p>If you're trying to use the <code>propset</code> command with the <code>file</code>
+        attribute you might experience errors in case of binary data. This is an error within
+        the JavaHL implementation and has been filed using the following issue:</p>
+        
+<a href="http://subversion.tigris.org/issues/show_bug.cgi?id=3770">http://subversion.tigris.org/issues/show_bug.cgi?id=3770</a>
+        
+</li>
+        
+      
 </ul>
+    
+    
 </div>
+    
+  
 </div>
-<div class="h2" title="Authors"><a style="visibility: hidden;" name="authors" id="authors"></a>
+<div class="h2" title="Authors">
+<a style="visibility: hidden;" name="authors"></a>
 <h2>Authors</h2>
+  
+    
 <ul>
-<li><a href="mailto:users@subclipse.tigris.org">C&eacute;dric Chabanois</a></li>
+      
+<li>
+<a href="mailto:users@subclipse.tigris.org">C&eacute;dric Chabanois</a>
+</li>
+    
 </ul>
+  
+  
 </div>
 </body>
 </html>
