@@ -3,7 +3,7 @@
 <repository name='Subclipse 1.8.x Update Site' type='org.eclipse.equinox.internal.p2.metadata.repository.LocalMetadataRepository' version='1'>
   <properties size='2'>
     <property name='p2.compressed' value='false'/>
-    <property name='p2.timestamp' value='1310739177351'/>
+    <property name='p2.timestamp' value='1310740075097'/>
   </properties>
   <references size='2'>
     <repository url='http://subclipse.tigris.org/update_1.8.x' type='1' options='0'/>
@@ -925,7 +925,7 @@
       </provides>
       <requires size='5'>
         <required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.core.runtime' range='0.0.0'/>
-        <required namespace='org.eclipse.equinox.p2.iu' name='org.tigris.subversion.clientadapter' range='[1.6.12,1.7.0)'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.tigris.subversion.clientadapter' range='[1.7.0,1.8.0)'/>
         <required namespace='org.eclipse.equinox.p2.iu' name='org.tigris.subversion.clientadapter.javahl' range='[1.7.0,1.7.0]'/>
         <required namespace='org.eclipse.equinox.p2.iu' name='org.tigris.subversion.clientadapter.javahl.win32' range='[1.7.0,1.7.0]'>
           <filter>
