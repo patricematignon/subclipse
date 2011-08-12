@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <description url="http://subclipse.tigris.org/update_1.4.x">
+      Eclipse Install/Update site for Subclipse
+   </description>
+   <feature url="features/org.tmatesoft.svnkit_1.2.3.5521.jar" id="org.tmatesoft.svnkit" version="1.2.3.5521">
+      <category name="Subclipse SVNKit Option"/>
+   </feature>
+   <feature url="features/com.sun.jna_3.0.9.jar" id="com.sun.jna" version="3.0.9">
+      <category name="Subclipse SVNKit Option"/>
+   </feature>
+   <feature url="features/org.tigris.subversion.subclipse.mylyn_3.0.0.jar" id="org.tigris.subversion.subclipse.mylyn" version="3.0.0">
+      <category name="Subclipse Integrations"/>
+   </feature>
+   <feature url="features/org.tigris.subversion.subclipse_1.4.8.jar" id="org.tigris.subversion.subclipse" version="1.4.8">
+      <category name="Subclipse"/>
+   </feature>
+   <feature url="features/org.tigris.subversion.subclipse.graph.feature_1.0.7.jar" id="org.tigris.subversion.subclipse.graph.feature" version="1.0.7">
+      <category name="Subclipse"/>
+   </feature>
+   <feature url="features/org.tigris.subversion.clientadapter.feature_1.5.3.jar" id="org.tigris.subversion.clientadapter.feature" version="1.5.3">
+      <category name="Subclipse"/>
+   </feature>
+   <feature url="features/org.tigris.subversion.clientadapter.javahl.feature_1.5.7.jar" id="org.tigris.subversion.clientadapter.javahl.feature" version="1.5.7">
+      <category name="Subclipse"/>
+   </feature>
+   <feature url="features/org.tigris.subversion.clientadapter.svnkit.feature_1.5.6.1.jar" id="org.tigris.subversion.clientadapter.svnkit.feature" version="1.5.6.1">
+      <category name="Subclipse SVNKit Option"/>
+   </feature>
+   <category-def name="Subclipse" label="Subclipse">
+      <description>
+         Subversion Plug-in for Eclipse 3.2 and higher
+      </description>
+   </category-def>
+   <category-def name="Subclipse SVNKit Option" label="Subclipse SVNKit Option">
+      <description>
+         The pure Java adapter.  Use SVNKit, a pure Java  implementation of Subversion client and protocols.
+      </description>
+   </category-def>
+   <category-def name="Subclipse Integrations" label="Subclipse Integrations">
+      <description>
+         Integrations between Subclipse and other tools.  Install these ONLY if you already use these tools
+      </description>
+   </category-def>
+</site>
