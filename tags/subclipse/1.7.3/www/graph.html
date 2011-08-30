@@ -1,0 +1,112 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<head>
+<title>Subversion Revision Graph</title>
+</head>
+
+<body>
+<div class="app">
+
+<h1 style="text-align: center;">Subversion Revision Graph</h1>
+<p>The Subclipse project participated in the 2008 Google <a href="http://code.google.com/soc/2008/">Summer of Code</a> program.  One of
+the projects we mentored was to add a revision graph feature to the Subclipse plug-in.  The
+student who signed on for this task was <a href="http://gimenetegsoc.wordpress.com/">Alberto Gimeno</a>.  Alberto did a fantastic job on this
+feature and we are pleased to have integrated his work, and this feature, into Subclipse.
+This document will provide some information on the feature, how to install and how to use it.</p>
+
+<div class="h2" id="install" title="install">
+<h2>Install the Revision Graph feature</h2>
+
+<p>We may revisit this decision in the future, but for now the revision graph feature
+is a separate Eclipse feature from the rest of Subclipse.  This is because the revision
+graph feature requires additional dependencies (GEF/Draw2D) than core Subclipse and
+we did not want require that all Subclipse users must have those dependencies.  The feature
+itself is on the main Subclipse update site, so to install it just follow the normal procedure
+for installing Subclipse and be sure to select the Revision graph feature on the install screen.</p>
+</div>
+
+<div class="h2" id="overview" title="overview">
+<h2>Overview of the Revision Graph feature</h2>
+
+<p>If you are just looking for a quick-start, then right-click on a file either in your local
+workspace or the SVN Repository view and look for the "View file history as graph" option.  This
+will open the revision graph for the selected item.  The option is enabled for files and folders
+but really only works well for files.  Depending on the size of your repository and whether
+the local cache has already been built, you should see something like the following:</p>
+
+<img src="/images/graph/simple.png" alt="Simple revision graph" />
+
+<h3>History Cache</h3>
+
+<p>The Subversion repository format is not naturally conducive to supporting a revision
+graph because it does not store or record copy-to information in the repository.  Consequently,
+the only way to get this information is to retrieve the history of the entire repository and
+calculate that information in the graph itself.  For obvious reasons, this does not perform
+well.  To make performance generally acceptable we maintain a local cache of revision history
+and update it when necessary.  Of course this means the first time you use the option you will
+take a performance hit while the cache is initially loaded.  Subsequent actions should be relatively
+quick and the cache will update with new revisions as needed.</p>
+
+<p>The cache is associated with a repository, so if you have multiple projects from the same
+repository, you do not need to maintain a separate cache for each project.  We have added options
+in the SVN Repository view to clear/build the cache for a repository.  Those were mainly added to
+make it easier for us to maintain the cache during development.  They are not really needed in
+normal usage but could become necessary if we run into bugs in maintaining the cache information.</p>
+
+<p>A lot of effort went into making the cache as performant as possible.  
+We currently use a custom binary format that is yielding pretty good performance.  When used on the
+nearly 40k revision Subversion repository, as an example, the cache builds in around a minute.  You
+still might not want to use the feature on really large repositories, such as the Apache.org
+repository.</p>
+
+<h3>Visualization</h3>
+
+<p>A major problem we have seen with other attempts at a Subversion revision graph is that
+they are typically too big, with too much information, to be useful.  We cannot claim to have
+solved that problem but we have made attempts to "reduce the noise".  For example, for any
+location where an item has been copied but not modified, we treat it as a "tag" and rather than
+showing it on the graph, we instead annotate the revision that was copied with the tag locations.
+Another area where we help reduce noise is deleted branches.  For this scenario, we give you
+three options.  You can simply hide these, show these or hide them only if the file was never
+modified on the branch.</p>
+
+<p>The revision graph was built using the Eclipse Draw2D/GEF plugins.  It includes a number
+of features that are common in plugins built on top of GEF.  You can zoom in/out, export to
+a graphic, and also navigate a large diagram using the Outline view.</p>
+
+<img src="/images/graph/toolbar.png" alt="GEF Toolbar options" />
+
+<img src="/images/graph/outline.png" alt="Graph with outline view" />
+
+<p>There are certainly
+improvements that could be made in the visualization.  We went with the current approach as
+it produced a compact, but generally useful visualization.  We would welcome any experts
+in graphics or GEF in particular to help make it better.</p>
+
+<h3>Support for Merge Information</h3>
+
+<p>We wanted to include support for showing merges on the revision graph.  With Subversion
+1.5 and the introduction of merge tracking, this is something that should now be possible.
+What we discovered in testing and development was that the way the Subversion API currently works
+it is not conducive to retrieving the merge information for an entire repository.  It just killed
+the performance.  So what we did to offset this was the following.  When the cache is built, it
+does not gather any merge information, and when you bring up a graph you will not see any merge
+information.  However, for any given revision in the graph, you can select it and take the
+"Refresh revision" option.  That will go out and get the merge information for that revision,
+store it in the cache, and re-draw the graph.  Using the toolbar, you can refresh all of the
+revisions on the graph at once, although performance for that option is not always great either.
+This approach has allowed us to make the graph support the display of merge information and will
+make it easier for us to improve this in the future as the Subversion API is refined to allow
+this information to be retrieved in a way that is more performant.</p>
+
+<p>Here is a simple example where the graph has been refreshed to show the merges:</p>
+
+<img src="/images/graph/simple-merge.png" alt="Simple revision graph with merge" />
+
+</div>
+
+</div>
+
+</body>
+</html>
