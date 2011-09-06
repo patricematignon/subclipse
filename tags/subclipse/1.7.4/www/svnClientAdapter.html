@@ -1,0 +1,77 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+
+<head>
+<meta http-equiv="CONTENT-TYPE" content="text/html; charset=us-ascii" />
+<!--
+<style type="text/css"> /* <![CDATA[ */
+ @import "http://subclipse.tigris.org/branding/css/tigris.css";
+ /* ]]> */</style>
+ -->
+<title></title>
+</head>
+
+<body lang="en-US" dir="LTR">
+
+<div id="highlights">
+	<a class="nav" href="index.html">Subclipse</a> .: :.
+	<a class="nav" href="svnant.html">SvnAnt</a> .: :.
+	<a class="nav" href="svnClientAdapter.html">SvnClientAdapter</a> </div>
+<div class="h2" id="svnClientAdapter" title="svnClientAdapter">
+	<h2>SvnClientAdapter</h2>
+	<p>SVNClientAdapter is a high-level Java API for Subversion.<br/>
+	It can use one of 3 low-level svn client implementations to provide access 
+	to the Subversion API:<br/>
+	</p>
+	<ul>
+	<li>JavaHL native (JNI) subversion library 
+	(http://svn.collab.net/repos/svn/trunk/subversion/bindings/java/javahl/)</li>
+	<li>JavaSVN (pure Java) subversion API implementation (http://tmate.org/svn/)</li>
+	<li>svn(.exe) command line client wrapper</li>
+	</ul>
+	<h3>Why should I use SvnClientAdapter instead of javahl ?</h3>
+	<p>SvnClientAdapter is a higher level API (comparing to javahl ...). That's 
+	why svnClientAdapter is easier to use in many cases.<br/>
+	For example, you can use ISVNClientAdapter <font size="2">
+	<font face="Courier New"><font color="#000000">addToIgnoredPatterns</font></font></font> 
+	method to add a pattern of files to ignore to a directory.</p>
+	<p style="margin-bottom: 0cm"><font face="Courier New"><font size="2"><b>
+	<font color="#7f0055">public</font></b> <b><font color="#7f0055">abstract</font></b>
+	<b><font color="#7f0055">void</font></b> <font color="#000000">
+	addToIgnoredPatterns(File</font>
+	<font color="#000000">path,</font> <font color="#000000">String</font>
+	<font color="#000000">pattern)</font></font></font></p>
+	<p style="margin-bottom: 0cm"><font size="2"><font face="Courier New"><b>
+	<font color="#7f0055">throws</font></b> <font color="#000000">SVNClientException;</font></font></font>
+	</p>
+	<p style="margin-bottom: 0cm">With javahl, it would have been necessary to 
+	get the svn:ignore property, parse it, verify that the pattern is not 
+	already set, add the pattern to the property string and then set the 
+	property.</p>
+	<p>Besides the simpler use, it provides unified adapter to the low-level 
+	APIs enabling seamless interchange of the underlying library. (e.g. in case JavaHL is not 
+	available, command line wrapper can be used without any impact to existing code)</p>
+</div>
+<div class="h2" id="Documentation" title="Documentation">
+	<h2>Documentation</h2>
+	<p>Javadoc documentation is included in the distributed file</p>
+	<h3>Source</h3>
+	<p>You can <a href="http://subclipse.tigris.org/source/browse/subclipse/">
+	browse the latest source here.</a> </p>
+	<p>Otherwise you can check out the newest SvnClientAdapter source using svn:
+	</p>
+	<pre style="margin-bottom: 0.5cm">   svn co http://subclipse.tigris.org/svn/subclipse/trunk/svnClientAdapter/ svnClientAdapter</pre>
+</div>
+<div class="h2" id="Links" title="Links">
+	<h2>Links</h2>
+	<ul>
+		<li>
+		<a href="http://svn.collab.net/repos/svn/trunk/subversion/bindings/javahl/">
+		Subversion javahl</a> </li>
+		<li><a href="http://svnkit.com/">SVNKit</a> </li>
+	</ul>
+</div>
+
+</body>
+
+</html>
