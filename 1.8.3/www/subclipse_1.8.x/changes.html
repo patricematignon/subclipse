@@ -1,0 +1,253 @@
+<html>
+<head>
+<title>Subclipse Changelog</title>
+<style>
+li {
+	margin-top: 6px;
+	margin-bottom: 3px;
+}
+li p {
+	margin-top: 3px;
+	margin-bottom: 3px;
+}
+</style>
+</head>
+<body>
+<h1>Subclipse Changelog</h1>
+<p>This file documents all of the changes that have been made to <a
+ href="http://subclipse.tigris.org/">Subclipse</a> beginning with the 1.7.0 release process.
+Please visit <a href="http://subclipse.tigris.org/">
+http://subclipse.tigris.org/</a> for the latest information on Subclipse.</p>
+<p>The latest version of this file can be viewed directly from our
+website at <a
+ href="http://subclipse.tigris.org/subclipse_1.8.x/changes.html">
+http://subclipse.tigris.org/subclipse_1.8.x/changes.html</a>. Please
+note that the file on the website may contain information about changes
+that have not yet been made available in a release. Generally, these changes
+will be available in the next release but it is also possible that a change
+will be pulled out due to testing problems.</p>
+
+<p><b>NOTE:</b> As of Subclipse 1.7.0, the minimum Subversion JavaHL requirement is
+1.7.0.</p> 
+
+<p><b>NOTE:</b> Subclipse follows an odd/even release numbering convention.  The 1.7.x
+release stream is development builds which will culminate in the official 1.8.0 release.
+Timing for the 1.8.0 release will ideally be to coincide with Subversion 1.7.</p> 
+
+<hr />
+<a name="1.8.3"></a>
+<h4>Version 1.8.3<br>
+November 21, 2011</h4>
+<p>from: /trunk<br>
+<a href="http://subclipse.tigris.org/svn/subclipse/tags/subclipse/1.8.3">
+http://subclipse.tigris.org/svn/subclipse/tags/subclipse/1.8.3</a></p>
+<ul>
+ <li>Fix Commit dialog so that unversioned decorator is not incorrecly applied to deletes.</li>
+ <li>Fix NPE when trying to revert Change Set. (<a
+  href="http://subclipse.tigris.org/issues/show_bug.cgi?id=1326">1326</a>)</li>
+ <li>Fix local refresh of subfolders after Cleanup.</li>
+ <li>Fix NPE when updating with "local unversioned, incoming add" conflicts. (<a
+  href="http://subclipse.tigris.org/issues/show_bug.cgi?id=1333">1333</a>)</li>
+ <li>Date format preference for label text decorations. (<a
+  href="http://subclipse.tigris.org/issues/show_bug.cgi?id=1177">1177</a>,<a
+  href="http://subclipse.tigris.org/issues/show_bug.cgi?id=1332">1332</a>)</li>
+ <li>Use SelectionListener on Tree rather than SelectionChangedListener on TreeViewer. (<a
+  href="http://subclipse.tigris.org/issues/show_bug.cgi?id=1327">1327</a>)</li>
+ <li>Fix project/folder decoration to indicate that it is dirty if there are hidden, versioned children that are dirty. (<a
+  href="http://subclipse.tigris.org/issues/show_bug.cgi?id=1335">1335</a>)</li>
+ <li>Add a preference to ignore hidden resources. (<a
+  href="http://subclipse.tigris.org/issues/show_bug.cgi?id=1335">1335</a>)</li>
+ <li>Fix problem with caching of HEAD revision contents of remote file. (<a
+  href="http://subclipse.tigris.org/issues/show_bug.cgi?id=1334">1334</a>)</li>
+ <li>Fix refresh of Sync view after update. (<a
+  href="http://subclipse.tigris.org/issues/show_bug.cgi?id=1336">1336</a>)</li>
+ <li>Correctly set project location for new Eclipse project after checkout to a custom location. (<a
+  href="http://subclipse.tigris.org/issues/show_bug.cgi?id=1339">1339</a>)</li>
+</ul>
+
+<hr />
+<a name="1.8.2"></a>
+<h4>Version 1.8.2<br>
+October 25, 2011</h4>
+<p>from: /trunk<br>
+<a href="http://subclipse.tigris.org/svn/subclipse/tags/subclipse/1.8.2">
+http://subclipse.tigris.org/svn/subclipse/tags/subclipse/1.8.2</a></p>
+<ul>
+ <li>Fix bug where Subclipse could delete .svn folder in parent of Eclipse projects.</li>
+ <li>Do not show files and folders as outgoing deletions in the Sync view if they have not actually been deleted but are just filtered using Eclipse resource filters. (<a
+  href="http://subclipse.tigris.org/issues/show_bug.cgi?id=1321">1321</a>)</li>
+</ul>
+
+<hr />
+<a name="1.8.1"></a>
+<h4>Version 1.8.1<br>
+October 23, 2011</h4>
+<p>from: /trunk<br>
+<a href="http://subclipse.tigris.org/svn/subclipse/tags/subclipse/1.8.1">
+http://subclipse.tigris.org/svn/subclipse/tags/subclipse/1.8.1</a></p>
+<ul>
+ <li>JavaHL Win32/Win64 binaries from SVN 1.7.1</li>
+ <li>Check for test mode before putting up modal dialogs.</li>
+ <li>Look for commit comment properties by starting at selected resource and working up through ancestors. (<a
+  href="http://subclipse.tigris.org/issues/show_bug.cgi?id=1317">1317</a>)</li>
+ <li>Catch all exceptions when calling out to SynchronizationStateTester from decorator. (<a
+  href="http://subclipse.tigris.org/issues/show_bug.cgi?id=1315">1315</a>)</li>
+ <li>Fix sync view to include deletions made from file system. (<a
+  href="http://subclipse.tigris.org/issues/show_bug.cgi?id=1318">1318</a>)</li>
+ <li>Eliminate a NPE in LocalResource.getUrl. (<a
+  href="http://subclipse.tigris.org/issues/show_bug.cgi?id=1319">1319</a>)</li>
+</ul>
+
+<hr />
+<a name="1.8.0"></a>
+<h4>Version 1.8.0<br>
+October 17, 2011</h4>
+<p>from: /trunk<br>
+<a href="http://subclipse.tigris.org/svn/subclipse/tags/subclipse/1.8.0">
+http://subclipse.tigris.org/svn/subclipse/tags/subclipse/1.8.0</a></p>
+<ul>
+ <li>JavaHL Win32/Win64 binaries from SVN 1.7.0 GA</li>
+ <li>Check for test mode before putting up modal dialogs.</li>
+ <li>Fix revert from Sync view to revert recursively if nothing was removed from revert dialog. (<a
+  href="http://subclipse.tigris.org/issues/show_bug.cgi?id=1303">1303</a>)</li>
+ <li>Fix NPE trying to compare a new incoming file from sync view. (<a
+  href="http://subclipse.tigris.org/issues/show_bug.cgi?id=1312">1312</a>)</li>
+ <li>Enable cancellation of Synchronize job.</li>
+</ul>
+
+<hr />
+<a name="1.7.5"></a>
+<h4>Version 1.7.5<br>
+September 13, 2011</h4>
+<p>from: /trunk<br>
+<a href="http://subclipse.tigris.org/svn/subclipse/tags/subclipse/1.7.5">
+http://subclipse.tigris.org/svn/subclipse/tags/subclipse/1.7.5</a></p>
+<ul>
+ <li>JavaHL Win32/Win64 binaries from SVN 1.7.0-rc3</li>
+ <li>Fix display of log messages with non-ASCII characters. (<a
+  href="http://subclipse.tigris.org/issues/show_bug.cgi?id=1299">1299</a>)</li>
+ <li>Properly encode to URI format before passing URL to API. (<a
+  href="http://subclipse.tigris.org/issues/show_bug.cgi?id=1298">1298</a>)</li>
+ <li>When file encoding is not known, tell Eclipse compare UI it is UTF8.</li>
+ <li>Fix error handling in repository browse dialog. (<a
+  href="http://subclipse.tigris.org/issues/show_bug.cgi?id=1301">1301</a>)</li>
+</ul>
+
+<hr />
+<a name="1.7.4"></a>
+<h4>Version 1.7.4<br>
+September 6, 2011</h4>
+<p>from: /trunk<br>
+<a href="http://subclipse.tigris.org/svn/subclipse/tags/subclipse/1.7.4">
+http://subclipse.tigris.org/svn/subclipse/tags/subclipse/1.7.4</a></p>
+<ul>
+ <li>Fixed missing VS 2010 DLL's with JavaHL</li>
+ <li>Support for mine-conflict, theirs-conflict conflict resolution.</li>
+ <li>Fix NPE in String initialization when revprops author or message is null.</li>
+</ul>
+
+<hr />
+<a name="1.7.3"></a>
+<h4>Version 1.7.3<br>
+August 30, 2011</h4>
+<p>from: /trunk<br>
+<a href="http://subclipse.tigris.org/svn/subclipse/tags/subclipse/1.7.3">
+http://subclipse.tigris.org/svn/subclipse/tags/subclipse/1.7.3</a></p>
+<ul>
+ <li>JavaHL Win32/Win64 binaries from SVN 1.7.0-rc2</li>
+ <li>Fix NPE trying trying to branch/tag from working copy with multiple resources selected.</li>
+ <li>Option to pin external revisions when creating branch from working copy. (<a
+  href="http://subclipse.tigris.org/issues/show_bug.cgi?id=1294">1294</a>)</li>
+ <li>Refresh new project locally after checkout using New Project Wizard.</li>
+ <li>Support interactive conflict resolution for Update/Switch operations (<a
+  href="http://subclipse.tigris.org/issues/show_bug.cgi?id=1295">1295</a>)</li>
+ <li>Refresh local status cache after Cleanup operation.</li>
+ <li>Notify the resource tree of the deleted folder so that proper notifications will be sent.</li>
+ <li>Fix refresh of synchronize view after commit of folder deletion.</li>
+ <li>Force refresh of parent folder decorator after deletion.</li>
+ <li>Include phantoms when asking eclipse for folder. (<a
+  href="http://subclipse.tigris.org/issues/show_bug.cgi?id=1297">1297</a>)</li>
+ <li>Fix Sync view refresh after commit of deleted folders.</li>
+ <li>Fix status cache refresh after folder added.</li>
+</ul>
+
+<hr />
+<a name="1.7.2"></a>
+<h4>Version 1.7.2<br>
+August 10, 2011</h4>
+<p>from: /trunk<br>
+<a href="http://subclipse.tigris.org/svn/subclipse/tags/subclipse/1.7.2">
+http://subclipse.tigris.org/svn/subclipse/tags/subclipse/1.7.2</a></p>
+<ul>
+ <li>JavaHL binaries from SVN 1.7.0-beta3</li>
+ <li>Addition of JavaHL Windows 64-bit binaries</li>
+ <li>Fix drag/drop, copy/paste over existing file so that target file does not end up as a scheduled delete. (<a
+  href="http://subclipse.tigris.org/issues/show_bug.cgi?id=1275">1275</a>)</li>
+ <li>Fix missing borders in affected paths tables. (<a
+  href="http://subclipse.tigris.org/issues/show_bug.cgi?id=1257">1257</a>)</li>
+ <li>When showing annotation, check for already open editor on resource that implements ITextEditorExtension4 (showRevisionInformation) rather the more specific AbstractDecoratedTextEditor. (<a
+  href="http://subclipse.tigris.org/issues/show_bug.cgi?id=1282">1282</a>)</li>
+ <li>When resolving a "local add, incoming add upon merge" tree conflict, include the option to compare the working copy with merge source and optionally resolve the tree conflict when the compare editor is closed.. (<a
+  href="http://subclipse.tigris.org/issues/show_bug.cgi?id=1279">1279</a>)</li>
+ <li>Fix suggestMergeSources.  It was always returning an empty array.</li>
+ <li>"Suggest merge sources" preference. (<a
+  href="http://subclipse.tigris.org/issues/show_bug.cgi?id=1250">1250</a>)</li>
+ <li>Checkout project and then create/open project over the checkout, rather than vice versa, to ensure that resource delta is not fired when project is in an invalid state.(<a
+  href="http://subclipse.tigris.org/issues/show_bug.cgi?id=1201">1201</a>)</li>
+ <li>When multiple projects checked out, defer opening them all until all of them are checked out. (<a
+  href="http://subclipse.tigris.org/issues/show_bug.cgi?id=1201">1201</a>)</li>
+ <li>Friendly handling of failures to write to temp directory when opening a file in an external editor from the Repositories View. (<a
+  href="http://subclipse.tigris.org/issues/show_bug.cgi?id=1135">1135</a>)</li>
+ <li>If project cannot be deleted due to locks on SQLite database, use SVNMoveDeleteHook to show a meaningful error message and cancel the project deletion.</li>
+ <li>If compare pane is open in commit dialog, then automatically populate it when selection changes.  Likewise, if a file is selected when compare pane is opened, then automatically populate it. (<a
+  href="http://subclipse.tigris.org/issues/show_bug.cgi?id=1265">1265</a>)</li>
+ <li>Truncate cached log messages for revision graph at 64K to work around Java limitation. (<a
+  href="http://subclipse.tigris.org/issues/show_bug.cgi?id=1289">1289</a>)</li>
+ <li>Don't prompt to save dirty files if they are not related to the operation. (<a
+  href="http://subclipse.tigris.org/issues/show_bug.cgi?id=1290">1290</a>)</li>
+ <li>When checking out a specific revision, check to see if the location has changed in the repository and adjust the URL if it has. (<a
+  href="http://subclipse.tigris.org/issues/show_bug.cgi?id=1274">1274</a>)</li>
+ <li>Fix error when viewing revision of a deleted file from history view. (<a
+  href="http://subclipse.tigris.org/issues/show_bug.cgi?id=1267">1267</a>)</li>
+ <li>Fix history view compare problem when comparing revisions from before branch was created. (<a
+  href="http://subclipse.tigris.org/issues/show_bug.cgi?id=1248">1248</a>)</li>
+ <li>When switching to a specific revision, use that revision as the peg revision. (<a
+  href="http://subclipse.tigris.org/issues/show_bug.cgi?id=1291">1291</a>)</li>
+ <li>Fix scheduling rule error in move delete hook when resolving a tree conflict and selecting option to delete a resource. (<a
+  href="http://subclipse.tigris.org/issues/show_bug.cgi?id=1230">1230</a>)</li>
+ </ul>
+
+<hr />
+<a name="1.7.1"></a>
+<h4>Version 1.7.1<br>
+July 20, 2011</h4>
+<p>from: /trunk<br>
+<a href="http://subclipse.tigris.org/svn/subclipse/tags/subclipse/1.7.1">
+http://subclipse.tigris.org/svn/subclipse/tags/subclipse/1.7.1</a></p>
+<ul>
+ <li>JavaHL binaries from SVN 1.7.x branch @ r1148902</li>
+ <li>Fix typo in working copy upgrade message. (<a
+  href="http://subclipse.tigris.org/issues/show_bug.cgi?id=1284">1284</a>)</li>
+ <li>Working copy upgrade notification message. (<a
+  href="http://subclipse.tigris.org/issues/show_bug.cgi?id=1284">1284</a>)</li>
+ <li>Refresh target of update operation. (<a
+  href="http://subclipse.tigris.org/issues/show_bug.cgi?id=1285">1285</a>)</li>
+ <li>Auto share imported project if it lives inside a working copy. (<a
+  href="http://subclipse.tigris.org/issues/show_bug.cgi?id=1286">1286</a>)</li>
+</ul>
+
+<hr />
+<a name="1.7.0"></a>
+<h4>Version 1.7.0<br>
+July 15, 2011</h4>
+<p>from: /trunk<br>
+<a href="http://subclipse.tigris.org/svn/subclipse/tags/subclipse/1.7.0">
+http://subclipse.tigris.org/svn/subclipse/tags/subclipse/1.7.0</a></p>
+<ul>
+ <li>JavaHL binaries for Subversion 1.7.0-beta1</li>
+ <li>New Upgrade option to upgrade working copy to 1.7 format.</li>
+ <li>Support for changes in SVN 1.7 working copy design.</li>
+</ul>
+
+</body>
+</html>
