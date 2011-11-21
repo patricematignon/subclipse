@@ -4,7 +4,7 @@
   <properties size='3'>
     <property name='publishPackFilesAsSiblings' value='true'/>
     <property name='p2.compressed' value='false'/>
-    <property name='p2.timestamp' value='1319909427747'/>
+    <property name='p2.timestamp' value='1321903139563'/>
   </properties>
   <mappings size='4'>
     <rule filter='(&amp; (classifier=osgi.bundle) (format=packed))' output='${repoUrl}/plugins/${id}_${version}.jar.pack.gz'/>
@@ -17,6 +17,13 @@
       <properties size='3'>
         <property name='artifact.size' value='452758'/>
         <property name='download.size' value='452758'/>
+        <property name='download.contentType' value='application/zip'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.tigris.subversion.subclipse.ui' version='1.8.3'>
+      <properties size='3'>
+        <property name='artifact.size' value='2025170'/>
+        <property name='download.size' value='2025170'/>
         <property name='download.contentType' value='application/zip'/>
       </properties>
     </artifact>
@@ -40,13 +47,6 @@
         <property name='download.contentType' value='application/zip'/>
       </properties>
     </artifact>
-    <artifact classifier='osgi.bundle' id='org.tigris.subversion.subclipse.ui' version='1.8.2'>
-      <properties size='3'>
-        <property name='artifact.size' value='2021307'/>
-        <property name='download.size' value='2021307'/>
-        <property name='download.contentType' value='application/zip'/>
-      </properties>
-    </artifact>
     <artifact classifier='osgi.bundle' id='org.tigris.subversion.subclipse.graph' version='1.1.1'>
       <properties size='3'>
         <property name='artifact.size' value='124486'/>
@@ -58,19 +58,6 @@
       <properties size='3'>
         <property name='artifact.size' value='3192613'/>
         <property name='download.size' value='3192613'/>
-        <property name='download.contentType' value='application/zip'/>
-      </properties>
-    </artifact>
-    <artifact classifier='org.eclipse.update.feature' id='org.tigris.subversion.subclipse' version='1.8.2'>
-      <properties size='2'>
-        <property name='artifact.size' value='20623'/>
-        <property name='download.size' value='20623'/>
-      </properties>
-    </artifact>
-    <artifact classifier='osgi.bundle' id='org.tigris.subversion.subclipse.core' version='1.8.2'>
-      <properties size='3'>
-        <property name='artifact.size' value='311964'/>
-        <property name='download.size' value='311964'/>
         <property name='download.contentType' value='application/zip'/>
       </properties>
     </artifact>
@@ -92,6 +79,13 @@
       <properties size='2'>
         <property name='artifact.size' value='19138'/>
         <property name='download.size' value='19138'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.tigris.subversion.subclipse.core' version='1.8.3'>
+      <properties size='3'>
+        <property name='artifact.size' value='313242'/>
+        <property name='download.size' value='313242'/>
+        <property name='download.contentType' value='application/zip'/>
       </properties>
     </artifact>
     <artifact classifier='org.eclipse.update.feature' id='org.tigris.subversion.clientadapter.javahl.feature' version='1.7.1.1'>
@@ -124,6 +118,12 @@
         <property name='artifact.size' value='2342932'/>
         <property name='download.size' value='2342932'/>
         <property name='download.contentType' value='application/zip'/>
+      </properties>
+    </artifact>
+    <artifact classifier='org.eclipse.update.feature' id='org.tigris.subversion.subclipse' version='1.8.3'>
+      <properties size='2'>
+        <property name='artifact.size' value='21007'/>
+        <property name='download.size' value='21007'/>
       </properties>
     </artifact>
   </artifacts>
