@@ -35,6 +35,37 @@ release stream is development builds which will culminate in the official 1.8.0 
 Timing for the 1.8.0 release will ideally be to coincide with Subversion 1.7.</p> 
 
 <hr />
+<a name="1.8.5"></a>
+<h4>Version 1.8.5<br>
+February 13, 2011</h4>
+<p>from: /trunk<br>
+<a href="http://subclipse.tigris.org/svn/subclipse/tags/subclipse/1.8.5">
+http://subclipse.tigris.org/svn/subclipse/tags/subclipse/1.8.5</a></p>
+<ul>
+ <li>JavaHL updated to Subversion 1.7.3.</li>
+ <li>Fix error when trying to checkout a project that already exists in the workspace to a new location when the existing project is closed and has no .project file. (<a
+  href="http://subclipse.tigris.org/issues/show_bug.cgi?id=1350">1350</a>)</li>
+ <li>Make sure to end operation when checkout fails with an error. (<a
+  href="http://subclipse.tigris.org/issues/show_bug.cgi?id=1351">1351</a>)</li>
+ <li>Validate file name before attempting to create patch. (<a
+  href="http://subclipse.tigris.org/issues/show_bug.cgi?id=1352">1352</a>)</li>
+ <li>Improvements to folder compare from history view. (<a
+  href="http://subclipse.tigris.org/issues/show_bug.cgi?id=1341">1341</a>)</li>
+ <li>Fix sync view to show file system deletions. (<a
+  href="http://subclipse.tigris.org/issues/show_bug.cgi?id=1318">1318</a>)</li>
+ <li>If resource not found at HEAD revision, start looking at last known revision. (<a
+  href="http://subclipse.tigris.org/issues/show_bug.cgi?id=1356">1356</a>)</li>
+ <li>If "Ignore changes to hidden resources" preference is true, then do not include resources that have been filtered out using Resource Filters when doing a commit, revert or synchronize. (<a
+  href="http://subclipse.tigris.org/issues/show_bug.cgi?id=1321">1321</a>)</li>
+ <li>Expose ignore ancestry for switch. (<a
+  href="http://subclipse.tigris.org/issues/show_bug.cgi?id=1358">1358</a>)</li>
+ <li>Do not contact contact repository when determining if all selected resources are from the same repository. (<a
+  href="http://subclipse.tigris.org/issues/show_bug.cgi?id=1366">1366</a>)</li>
+ <li>Improvements to multiple project sharing. (<a
+  href="http://subclipse.tigris.org/issues/show_bug.cgi?id=1371">1371</a>)</li>
+</ul>
+
+<hr />
 <a name="1.8.4"></a>
 <h4>Version 1.8.4<br>
 December 5, 2011</h4>
