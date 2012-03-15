@@ -35,6 +35,28 @@ release stream is development builds which will culminate in the official 1.8.0 
 Timing for the 1.8.0 release will ideally be to coincide with Subversion 1.7.</p> 
 
 <hr />
+<a name="1.8.7"></a>
+<h4>Version 1.8.7<br>
+March 15, 2012</h4>
+<p>from: /trunk<br>
+<a href="http://subclipse.tigris.org/svn/subclipse/tags/subclipse/1.8.7">
+http://subclipse.tigris.org/svn/subclipse/tags/subclipse/1.8.7</a></p>
+<ul>
+ <li>Undo change to condition refresh after Update based on notification of revision,as this change breaks refresh when there are mixed revisions. (<a
+  href="http://subclipse.tigris.org/issues/show_bug.cgi?id=1375">1375</a>)</li>
+ <li>Reliable filtering of child folders. (<a
+  href="http://subclipse.tigris.org/issues/show_bug.cgi?id=1375">1375</a>)</li>
+ <li>Disable "Revert changes from revision X" history view option for first revisions. (<a
+  href="http://subclipse.tigris.org/issues/show_bug.cgi?id=1381">1381</a>)</li>
+ <li>Add SVNSynchronizeParticipant as a property change listener during init rather than in the constructor. (<a
+  href="http://subclipse.tigris.org/issues/show_bug.cgi?id=1380">1380</a>)</li>
+ <li>Added "Ignore managed derived resources" preference. (<a
+  href="http://subclipse.tigris.org/issues/show_bug.cgi?id=535">535</a>)</li>
+ <li>Fix scheduling rule problem when doing a revert on a project that causes changes in nested project to be reverted. (<a
+  href="http://subclipse.tigris.org/issues/show_bug.cgi?id=1387">1387</a>)</li>
+</ul>
+
+<hr />
 <a name="1.8.6"></a>
 <h4>Version 1.8.6<br>
 March 9, 2012</h4>
