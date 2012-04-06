@@ -4,7 +4,7 @@
   <properties size='3'>
     <property name='publishPackFilesAsSiblings' value='true'/>
     <property name='p2.compressed' value='false'/>
-    <property name='p2.timestamp' value='1331838354534'/>
+    <property name='p2.timestamp' value='1333717722614'/>
   </properties>
   <mappings size='4'>
     <rule filter='(&amp; (classifier=osgi.bundle) (format=packed))' output='${repoUrl}/plugins/${id}_${version}.jar.pack.gz'/>
@@ -25,19 +25,6 @@
         <property name='artifact.size' value='101666'/>
         <property name='download.size' value='101666'/>
         <property name='download.contentType' value='application/zip'/>
-      </properties>
-    </artifact>
-    <artifact classifier='osgi.bundle' id='org.tmatesoft.sqljet' version='1.1.0.SNAPSHOT_r1196_v20120226_1438'>
-      <properties size='3'>
-        <property name='artifact.size' value='907914'/>
-        <property name='download.size' value='907914'/>
-        <property name='download.contentType' value='application/zip'/>
-      </properties>
-    </artifact>
-    <artifact classifier='org.eclipse.update.feature' id='org.tmatesoft.svnkit' version='1.7.0.beta3_t20120306_2144'>
-      <properties size='2'>
-        <property name='artifact.size' value='2322'/>
-        <property name='download.size' value='2322'/>
       </properties>
     </artifact>
     <artifact classifier='osgi.bundle' id='com.collabnet.subversion.merge' version='3.0.7'>
@@ -115,10 +102,30 @@
         <property name='download.contentType' value='application/zip'/>
       </properties>
     </artifact>
+    <artifact classifier='osgi.bundle' id='org.tmatesoft.svnkit' version='1.7.4.rc5_t20120405_1702'>
+      <properties size='3'>
+        <property name='artifact.size' value='3726027'/>
+        <property name='download.size' value='3726027'/>
+        <property name='download.contentType' value='application/zip'/>
+      </properties>
+    </artifact>
     <artifact classifier='org.eclipse.update.feature' id='org.tigris.subversion.clientadapter.svnkit.feature' version='1.7.0'>
       <properties size='2'>
         <property name='artifact.size' value='2832'/>
         <property name='download.size' value='2832'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.tmatesoft.sqljet' version='1.1.0.1_t20120329_1843'>
+      <properties size='3'>
+        <property name='artifact.size' value='907926'/>
+        <property name='download.size' value='907926'/>
+        <property name='download.contentType' value='application/zip'/>
+      </properties>
+    </artifact>
+    <artifact classifier='org.eclipse.update.feature' id='org.tmatesoft.svnkit' version='1.7.4.rc5_t20120405_1702'>
+      <properties size='2'>
+        <property name='artifact.size' value='2307'/>
+        <property name='download.size' value='2307'/>
       </properties>
     </artifact>
     <artifact classifier='org.eclipse.update.feature' id='com.collabnet.subversion.merge.feature' version='3.0.7'>
@@ -131,13 +138,6 @@
       <properties size='2'>
         <property name='artifact.size' value='2873'/>
         <property name='download.size' value='2873'/>
-      </properties>
-    </artifact>
-    <artifact classifier='osgi.bundle' id='org.tmatesoft.svnkit' version='1.7.0.beta3_t20120306_2144'>
-      <properties size='3'>
-        <property name='artifact.size' value='3704916'/>
-        <property name='download.size' value='3704916'/>
-        <property name='download.contentType' value='application/zip'/>
       </properties>
     </artifact>
     <artifact classifier='org.eclipse.update.feature' id='org.tigris.subversion.subclipse.graph.feature' version='1.1.1'>

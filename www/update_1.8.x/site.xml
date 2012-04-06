@@ -25,7 +25,7 @@
       <category name="SVNKit"/>
    </feature>
 
-   <feature url="features/org.tmatesoft.svnkit_1.7.0.beta3_t20120306_2144.jar" id="org.tmatesoft.svnkit" version="1.7.0.beta3_t20120306_2144">
+   <feature url="features/org.tmatesoft.svnkit_1.7.4.rc5_t20120405_1702.jar" id="org.tmatesoft.svnkit" version="1.7.4.rc5_t20120405_1702">
       <category name="SVNKit"/>
    </feature>
 
