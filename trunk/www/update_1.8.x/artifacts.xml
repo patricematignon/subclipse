@@ -4,7 +4,7 @@
   <properties size='3'>
     <property name='publishPackFilesAsSiblings' value='true'/>
     <property name='p2.compressed' value='false'/>
-    <property name='p2.timestamp' value='1333717722614'/>
+    <property name='p2.timestamp' value='1334329717272'/>
   </properties>
   <mappings size='4'>
     <rule filter='(&amp; (classifier=osgi.bundle) (format=packed))' output='${repoUrl}/plugins/${id}_${version}.jar.pack.gz'/>
@@ -20,10 +20,10 @@
         <property name='download.contentType' value='application/zip'/>
       </properties>
     </artifact>
-    <artifact classifier='osgi.bundle' id='org.tigris.subversion.clientadapter.svnkit' version='1.7.0'>
+    <artifact classifier='osgi.bundle' id='org.tmatesoft.svnkit' version='1.7.4.t20120412_2022'>
       <properties size='3'>
-        <property name='artifact.size' value='101666'/>
-        <property name='download.size' value='101666'/>
+        <property name='artifact.size' value='3729703'/>
+        <property name='download.size' value='3729703'/>
         <property name='download.contentType' value='application/zip'/>
       </properties>
     </artifact>
@@ -81,6 +81,12 @@
         <property name='download.contentType' value='application/zip'/>
       </properties>
     </artifact>
+    <artifact classifier='org.eclipse.update.feature' id='org.tigris.subversion.clientadapter.svnkit.feature' version='1.7.0'>
+      <properties size='2'>
+        <property name='artifact.size' value='2827'/>
+        <property name='download.size' value='2827'/>
+      </properties>
+    </artifact>
     <artifact classifier='osgi.bundle' id='com.trilead.ssh2' version='1.0.0.build214'>
       <properties size='3'>
         <property name='artifact.size' value='247970'/>
@@ -102,19 +108,6 @@
         <property name='download.contentType' value='application/zip'/>
       </properties>
     </artifact>
-    <artifact classifier='osgi.bundle' id='org.tmatesoft.svnkit' version='1.7.4.rc5_t20120405_1702'>
-      <properties size='3'>
-        <property name='artifact.size' value='3726027'/>
-        <property name='download.size' value='3726027'/>
-        <property name='download.contentType' value='application/zip'/>
-      </properties>
-    </artifact>
-    <artifact classifier='org.eclipse.update.feature' id='org.tigris.subversion.clientadapter.svnkit.feature' version='1.7.0'>
-      <properties size='2'>
-        <property name='artifact.size' value='2832'/>
-        <property name='download.size' value='2832'/>
-      </properties>
-    </artifact>
     <artifact classifier='osgi.bundle' id='org.tmatesoft.sqljet' version='1.1.0.1_t20120329_1843'>
       <properties size='3'>
         <property name='artifact.size' value='907926'/>
@@ -122,10 +115,10 @@
         <property name='download.contentType' value='application/zip'/>
       </properties>
     </artifact>
-    <artifact classifier='org.eclipse.update.feature' id='org.tmatesoft.svnkit' version='1.7.4.rc5_t20120405_1702'>
+    <artifact classifier='org.eclipse.update.feature' id='org.tmatesoft.svnkit' version='1.7.4.t20120412_2022'>
       <properties size='2'>
-        <property name='artifact.size' value='2307'/>
-        <property name='download.size' value='2307'/>
+        <property name='artifact.size' value='2303'/>
+        <property name='download.size' value='2303'/>
       </properties>
     </artifact>
     <artifact classifier='org.eclipse.update.feature' id='com.collabnet.subversion.merge.feature' version='3.0.7'>
@@ -170,6 +163,13 @@
       <properties size='2'>
         <property name='artifact.size' value='1486'/>
         <property name='download.size' value='1486'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.tigris.subversion.clientadapter.svnkit' version='1.7.0'>
+      <properties size='3'>
+        <property name='artifact.size' value='101659'/>
+        <property name='download.size' value='101659'/>
+        <property name='download.contentType' value='application/zip'/>
       </properties>
     </artifact>
     <artifact classifier='osgi.bundle' id='org.tigris.subversion.clientadapter' version='1.8.1'>
