@@ -35,6 +35,28 @@ release stream is development builds which will culminate in the official 1.8.0 
 Timing for the 1.8.0 release will ideally be to coincide with Subversion 1.7.</p> 
 
 <hr />
+<a name="1.8.9"></a>
+<h4>Version 1.8.9<br>
+April 17, 2012</h4>
+<p>from: /trunk<br>
+<a href="http://subclipse.tigris.org/svn/subclipse/tags/subclipse/1.8.9">
+http://subclipse.tigris.org/svn/subclipse/tags/subclipse/1.8.9</a></p>
+<ul>
+ <li>Fix Compare SVN Properties when project name does not match repository location. (<a
+  href="http://subclipse.tigris.org/issues/show_bug.cgi?id=1407">1407</a>)</li>
+ <li>Fix Compare with Base Revision to not show hidden resources as local deletions. (<a
+  href="http://subclipse.tigris.org/issues/show_bug.cgi?id=1406">1406</a>)</li>
+ <li>Only read status from cache once when getting URL for LocalResource.</li>
+ <li>Optimizations to context menu option enablement to avoid repeated reading of status cache.</li>
+ <li>Fix potential NPEs in finally blocks when client adapter has not been instantiated. (<a
+  href="http://subclipse.tigris.org/issues/show_bug.cgi?id=1408">1408</a>)</li>
+ <li>Fix potential loop when refreshing status cache. (<a
+  href="http://subclipse.tigris.org/issues/show_bug.cgi?id=1402">1402</a>)</li>
+ <li>Do not show changes in Sync view if they are hidden by resource filters. (<a
+  href="http://subclipse.tigris.org/issues/show_bug.cgi?id=1409">1409</a>)</li>
+</ul>
+
+<hr />
 <a name="1.8.8"></a>
 <h4>Version 1.8.8<br>
 April 17, 2012</h4>
