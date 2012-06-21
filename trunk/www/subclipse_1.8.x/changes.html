@@ -35,6 +35,24 @@ release stream is development builds which will culminate in the official 1.8.0 
 Timing for the 1.8.0 release will ideally be to coincide with Subversion 1.7.</p> 
 
 <hr />
+<a name="1.8.12"></a>
+<h4>Version 1.8.12<br>
+June 21, 2012</h4>
+<p>from: /trunk<br>
+<a href="http://subclipse.tigris.org/svn/subclipse/tags/subclipse/1.8.12">
+http://subclipse.tigris.org/svn/subclipse/tags/subclipse/1.8.12</a></p>
+<ul>
+ <li>Fix schedule rule violation after file is locked by file modification validator. (<a
+  href="http://subclipse.tigris.org/issues/show_bug.cgi?id=1427">1427</a>)</li>
+ <li>Only lock the projects that are being committed during a commit. (<a
+  href="http://subclipse.tigris.org/issues/show_bug.cgi?id=1425">1425</a>)</li>
+ <li>Don't use SynchronizationStateTester to check for outgoing changes in Working
+Sets as this can cause updating of the status cache.  Instead, check to see if
+any of the working set projects are dirty. (<a
+  href="http://subclipse.tigris.org/issues/show_bug.cgi?id=1424">1424</a>)</li>
+</ul>
+
+<hr />
 <a name="1.8.11"></a>
 <h4>Version 1.8.11<br>
 June 7, 2012</h4>
