@@ -15,7 +15,7 @@
    <feature url="features/org.tigris.subversion.clientadapter.javahl.feature_1.7.5.2.jar" id="org.tigris.subversion.clientadapter.javahl.feature" version="1.7.5.2">
       <category name="Subclipse"/>
    </feature>
-   <feature url="features/org.tigris.subversion.subclipse_1.8.12.jar" id="org.tigris.subversion.subclipse" version="1.8.12">
+   <feature url="features/org.tigris.subversion.subclipse_1.8.13.jar" id="org.tigris.subversion.subclipse" version="1.8.13">
       <category name="Subclipse"/>
    </feature>
    <feature url="features/org.tigris.subversion.subclipse.graph.feature_1.1.1.jar" id="org.tigris.subversion.subclipse.graph.feature" version="1.1.1">
@@ -24,8 +24,8 @@
    <feature url="features/org.tigris.subversion.clientadapter.svnkit.feature_1.7.5.jar" id="org.tigris.subversion.clientadapter.svnkit.feature" version="1.7.5">
       <category name="SVNKit"/>
    </feature>
-
-   <feature url="features/org.tmatesoft.svnkit_1.7.4.v1_r9190_v20120510_1337.jar" id="org.tmatesoft.svnkit" version="1.7.4.v1_r9190_v20120510_1337">
+   
+   <feature url="features/org.tmatesoft.svnkit_1.7.5.r9306_v20120621_1817.jar" id="org.tmatesoft.svnkit" version="1.7.5.r9306_v20120621_1817">
       <category name="SVNKit"/>
    </feature>
 
