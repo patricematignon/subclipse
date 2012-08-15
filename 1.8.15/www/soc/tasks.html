@@ -1,0 +1,131 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<style type="text/css"> /* <![CDATA[ */
+  @import "branding/css/tigris.css";
+  @import "branding/css/inst.css";
+  /* ]]> */</style>
+<link rel="stylesheet" type="text/css" media="print"
+  href="branding/css/print.css">
+<script type="text/javascript" src="branding/scripts/tigris.js"></script>
+<title>Subclipse Ideas for Google Summer of Code</title>
+</head>
+<body>
+
+<div class="app">
+<h1 style="text-align: center">Subclipse Ideas for Google Summer of Code</h1>
+
+<p>
+This page contains ideas for Google Summer of Code students.  The items on this page are the ideas that we think would be the best
+projects for a SoC student and which would provide a lot of value to Subclipse.  However, don't take these as gospel! We welcome 
+discussion on creative proposals. Don't hesitate to ask for details or start discussing one of these tasks on the <a href="mailto:dev@subclipse.tigris.org">dev@subclipse.tigris.org</a> 
+mailing list (see <a href="http://subclipse.tigris.org/servlets/ProjectMailingListList">here</a> for subscription information).
+</p>
+<p><b>
+In fact, please do discuss your task on the mailing list: regardless of whether you start discussing before or after submitting your
+application, a demonstrated willingness to engage with the rest of the Subclipse development community will be considered favorable
+in evaluating your application!
+</b></p>
+<p>
+See the <a href="http://subclipse.tigris.org/dev/index.html">Subclipse Developer Guide</a> for details on our policies and how to access the code.
+</p>
+
+
+<div class="h2" id="revision-graph" title="revision-graph">
+<h2>Revision Graph</h2>
+<p>
+It would be useful if the history of a file or folder could be viewed as a
+revision graph.  Eclipse, via the Graphical Editor Framework (GEF), gives us the
+tools we need to present a rich presentation of a revision graph.  The challenge is
+really in Subversion, and what it would take to get the information we need to present
+a proper graph.
+</p>
+<p>
+TortoiseSVN probably has the closest proximation of the feature we want to add
+and the challenges that will involve.  Because of the amount of information they
+have to pull from the repository to create the graph, they created a local
+cache.  We may need to do the same.  Alternatively, we could work with the
+Subversion community to define the API's we need to get the information on demand.
+</p>
+<p>
+<strong>Expected difficulty:</strong> Potentially High due to the Subversion limitations.  This would be a
+very fun project though and would be well-received by our community.<br />
+<strong>Related Issue#:</strong> <a href="http://subclipse.tigris.org/issues/show_bug.cgi?id=721">721</a>
+</p>
+</div>
+
+<div class="h2" id="changelists" title="changelists">
+<h2>Subversion 1.5 Changelists</h2>
+<p>
+Subversion 1.5 added support for a local changelist feature that is functionally very similar to the existing Subclipse change set support
+in the Synchronize view.  This task involves tying the two features together so that a user can switch between Subclipse and the
+command-line or other tools and still see the changelist membership for a given set of files.  The Subclipse change set support includes
+the ability to add folders to a change set, as well as associate a commit message.  Those features cannot be lost.
+</p>
+<p>
+<strong>Expected difficulty:</strong> Moderate.  This is generally a straight-forward task but there will be a few areas where the two changeset
+implementations have differences that have to be worked out.<br />
+<strong>Related Issue#:</strong> <a href="http://subclipse.tigris.org/issues/show_bug.cgi?id=635">635</a>
+</p>
+</div>
+
+<div class="h2" id="eclipse-api" title="eclipse-api">
+<h2>Implement Eclipse File System and History Provider API</h2>
+<p>
+Eclipse 3.2 introduced some new API and abstractions that are available for team and filesystem providers to implement.  There are probably
+some internal simplifications we could make within Subclipse if we implemented these API, but the main benefit would be for third parties
+that want to build applications on top of these API's and have their application work properly for CVS, Subversion or any other tool that
+properly implements the API.
+</p>
+<p>
+<strong>Expected difficulty:</strong> Easy/Moderate.  Should be straight-forward, but will need to familiarize with the Eclipse API and might need to
+write a test app to really know the API's work.<br />
+<strong>Related Issue#:</strong> <a href="http://subclipse.tigris.org/issues/show_bug.cgi?id=513">513</a>
+</p>
+</div>
+
+<div class="h2" id="flexible" title="flexible">
+<h2>Support Flexible Project Structures</h2>
+<p>
+Subclipse currently requires that the root of an Eclipse project be associated with a Subversion repository.  Users have asked for more flexibility.
+For example, a project might have its src folder shared with Subversion, but not the project itself or its other folders.  This feature would also
+allow us to make the checkout process more flexible as we could support checking out into existing projects.  A common use-case is someone that wants
+to use Eclipse to work on a project that has not standardized on Eclipse and does not store the Eclipse project files in the repository.  The user
+could create an Eclipse project locally, and then checkout the source code into that project.
+</p>
+<p>
+<strong>Expected difficulty:</strong> Potentially High.  A lot of code will need to be looked at and modified to not make any assumptions about the
+project structure.  It is possible, perhaps even likely, that most of this code calls the same one or two methods though.  So the core change might
+eventually involve a small amount of code.  New UI would need to be added in places like checkout and share project to support this new scenario.<br />
+<strong>Related Issue#:</strong> <a href="http://subclipse.tigris.org/issues/show_bug.cgi?id=525">525</a>
+</p>
+</div>
+
+<div class="h2" id="synch-view" title="synch-view">
+<h2>Rewrite Synchronize View to use new Logical Model API</h2>
+<p>
+In Eclipse 3.2 the CVS plug-in re-wrote their Synchronize view implementation to use a new API, called the Logical Model API.  This
+allows alternate presentations of information in the view, such as Java-specific, generic resource, changesets etc.  Presumably other
+"models" can be added easily or would automatically appear if present (such as a Ruby model).  The main benefit for Subclipse, is to
+be supporting the new API.  To the user, the presentation of their changes in the view closely matches the presentation from the model-specific
+views they are used to seeing.<br />
+</p>
+<p>
+<strong>Expected difficulty:</strong> Very Difficult.  There is a lot of API involved, and in some cases it has not yet become full-fledged API which
+means code needs to be copied into Subclipse.<br />
+</p>
+</div>
+
+
+<div class="h2" id="other" title="other">
+<h2>Other Ideas</h2>
+<p>
+<a href="http://subclipse.tigris.org/issues/buglist.cgi?component=subclipse&amp;issue_status=NEW&amp;issue_status=STARTED&amp;issue_status=REOPENED&amp;keywords=SoC&amp;keywords_type=anytokens">
+	Click here</a> for a list of all open issues in our issue tracker with the "SoC" keyword applied.</p>
+</div>
+
+</div>
+
+</body>
+</html>
