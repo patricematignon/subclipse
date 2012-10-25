@@ -6,6 +6,9 @@
    <feature url="features/org.sonatype.m2e.subclipse.feature_0.14.0.201204121509.jar" id="org.sonatype.m2e.subclipse.feature" version="0.14.0.201204121509">
       <category name="Maven"/>
    </feature>
+   <feature url="features/org.sonatype.m2e.subclipse.feature_0.15.0.201210250850.jar" id="org.sonatype.m2e.subclipse.feature" version="0.15.0.201210250850">
+      <category name="Maven"/>
+   </feature>
    <category-def name="Maven" label="Maven SCM Integration">
       <description>
          Subclipse plugin for Maven SCM Integration
