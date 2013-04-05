@@ -35,6 +35,35 @@ release stream is development builds which will culminate in the official 1.8.0 
 Timing for the 1.8.0 release will ideally be to coincide with Subversion 1.7.</p> 
 
 <hr />
+<a name="1.8.19"></a>
+<h4>Version 1.8.19<br>
+April 5, 2013</h4>
+<p>from: /trunk<br>
+<a href="http://subclipse.tigris.org/svn/subclipse/tags/subclipse/1.8.19">
+http://subclipse.tigris.org/svn/subclipse/tags/subclipse/1.8.19</a></p>
+<ul>
+ <li>Update JavaHL to 1.7.9</li>
+ <li>Fix NPE in SVNHistoryPage during start up when "link to editor and selection" is selected and one or more editors was open at previous shutdown. (<a
+  href="http://subclipse.tigris.org/issues/show_bug.cgi?id=1493">1493</a>)</li>
+ <li>Fix open/focus of History view using shortcuts. (<a
+  href="http://subclipse.tigris.org/issues/show_bug.cgi?id=1491">1491</a>)</li>
+ <li>Use String.replace rather than String.replaceAll when resolving commit message. (<a
+  href="http://subclipse.tigris.org/issues/show_bug.cgi?id=1482">1482</a>)</li>
+ <li>Provide a scheduling rule when scheduling update operation. (<a
+  href="http://subclipse.tigris.org/issues/show_bug.cgi?id=1494">1494</a>)</li>
+ <li>Additional null proofing in decorator. (<a
+  href="http://subclipse.tigris.org/issues/show_bug.cgi?id=1440">1440</a>)</li>
+ <li>Fix refresh of Sync view after updating all incoming changes with Show Out of Date Folders preference turned on. (<a
+  href="http://subclipse.tigris.org/issues/show_bug.cgi?id=1490">1490</a>)</li>
+ <li>Use MultiRule scheduling rule when refreshing status cache. (<a
+  href="http://subclipse.tigris.org/issues/show_bug.cgi?id=1473">1473</a>)</li>
+ <li>Remove old code for storing username and password in the keyring. (<a
+  href="http://subclipse.tigris.org/issues/show_bug.cgi?id=1485">1485</a>)</li>
+ <li>When comparing versions of a file from the history view, set the encoding based on the local workspace resource. (<a
+  href="http://subclipse.tigris.org/issues/show_bug.cgi?id=1442">1442</a>)</li>
+ </ul>
+
+<hr />
 <a name="1.8.18"></a>
 <h4>Version 1.8.18<br>
 January 9, 2013</h4>
