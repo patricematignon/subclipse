@@ -15,18 +15,34 @@
    <feature url="features/org.tigris.subversion.clientadapter.feature_1.10.0.jar" id="org.tigris.subversion.clientadapter.feature" version="1.10.0">
       <category name="Subclipse"/>
    </feature>
-   <feature url="features/org.tigris.subversion.clientadapter.svnkit.feature_1.8.0.jar" id="org.tigris.subversion.clientadapter.svnkit.feature" version="1.8.0">
-      <category name="Subclipse"/>
+   
+   <feature url="features/org.tmatesoft.svnkit_1.8.0.SNAPSHOT_r9949_v20130902_1351.jar" id="org.tmatesoft.svnkit" version="1.8.0.SNAPSHOT_r9949_v20130902_1351">
+      <category name="SVNKit"/>
    </feature>
+
+   <feature url="features/net.java.dev.jna_3.5.2.r153_v20130408_1947.jar" id="net.java.dev.jna" version="3.5.2.r153_v20130408_1947">
+      <category name="SVNKit"/>
+   </feature>
+
+   <feature url="features/org.tigris.subversion.clientadapter.svnkit.feature_1.8.0.1.jar" id="org.tigris.subversion.clientadapter.svnkit.feature" version="1.8.0.1">
+      <category name="SVNKit"/>
+   </feature>
+   
    <feature url="features/org.tigris.subversion.clientadapter.javahl.feature_1.8.3.jar" id="org.tigris.subversion.clientadapter.javahl.feature" version="1.8.3">
       <category name="Subclipse"/>
    </feature>
    <feature url="features/org.tigris.subversion.subclipse_1.10.2.jar" id="org.tigris.subversion.subclipse" version="1.10.2">
       <category name="Subclipse"/>
    </feature>
+
    <category-def name="Subclipse" label="Subclipse">
       <description>
          Subversion 1.8 plug-in for Eclipse 3.2 and higher.
+      </description>
+   </category-def>
+   <category-def name="SVNKit" label="SVNKit">
+      <description>
+         SVNKit Library support for Subversion 1.7.x API
       </description>
    </category-def>
 </site>
