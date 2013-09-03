@@ -34,6 +34,29 @@ will be pulled out due to testing problems.</p>
 either use JavaHL or stick with Subclipse 1.8.x releases until SVNKit is available.</p> 
 
 <hr />
+<a name="1.10.2"></a>
+<h4>Version 1.10.2<br>
+Sept 3, 2013</h4>
+<p>from: /trunk<br>
+<a href="http://subclipse.tigris.org/svn/subclipse/tags/subclipse/1.10.2">
+http://subclipse.tigris.org/svn/subclipse/tags/subclipse/1.10.2</a></p>
+<ul>
+ <li>Update JavaHL to SVN 1.8.3</li>
+ <li>Fix RevisionRange passed to merge API so that it will correctly determine type of merge to run. (<a
+  href="http://subclipse.tigris.org/issues/show_bug.cgi?id=1544">1544</a>)</li>
+ <li>Don't log an error when trying to get info for an unversioned folder. (<a
+  href="http://subclipse.tigris.org/issues/show_bug.cgi?id=1538">1538</a>)</li>
+ <li>Fix SVNMoveDeleteHook so that it does not interfere with moving a file or folder to a project that is not under version control. (<a
+  href="http://subclipse.tigris.org/issues/show_bug.cgi?id=1536">1536</a>)</li>
+ <li>Null proof CleanupResourcesCommand. (<a
+  href="http://subclipse.tigris.org/issues/show_bug.cgi?id=1535">1535</a>)</li>
+ <li>Fix potential NPE in history view when log entry containing a bug id is selected (with certain bugtraq:logregex patterns). (<a
+  href="http://subclipse.tigris.org/issues/show_bug.cgi?id=1539">1539</a>)</li>
+ <li>Don't show multiple prompts when files from multiple projects added to svn:ignore from sync view. (<a
+  href="http://subclipse.tigris.org/issues/show_bug.cgi?id=1543">1543</a>)</li>
+</ul>
+
+<hr />
 <a name="1.10.1"></a>
 <h4>Version 1.10.1<br>
 July 25, 2013</h4>
