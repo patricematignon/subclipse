@@ -198,7 +198,7 @@ public class DiningPhilosophers extends javax.swing.JApplet
 
     protected static ImageIcon createAppletImageIcon(String path,
                                               String description) {
-        int MAX_IMAGE_SIZE = 75000; //Change this to the size of
+        int MAX_IMAGE_SIZE = 70000; //Change this to the size of
                                     //your biggest image, in bytes.
         int count = 0;
         BufferedInputStream imgStream = new BufferedInputStream(
