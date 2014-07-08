@@ -28,7 +28,7 @@
       <category name="SVNKit"/>
    </feature>
    
-   <feature url="features/org.tigris.subversion.clientadapter.javahl.feature_1.8.9.jar" id="org.tigris.subversion.clientadapter.javahl.feature" version="1.8.9">
+   <feature url="features/org.tigris.subversion.clientadapter.javahl.feature_1.8.9.1.jar" id="org.tigris.subversion.clientadapter.javahl.feature" version="1.8.9.1">
       <category name="Subclipse"/>
    </feature>
 
