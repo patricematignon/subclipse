@@ -12,15 +12,15 @@
    <feature url="features/com.collabnet.subversion.merge.feature_4.0.3.jar" id="com.collabnet.subversion.merge.feature" version="4.0.3">
       <category name="Subclipse"/>
    </feature>
-   <feature url="features/org.tigris.subversion.clientadapter.feature_1.10.1.jar" id="org.tigris.subversion.clientadapter.feature" version="1.10.1">
+   <feature url="features/org.tigris.subversion.clientadapter.feature_1.10.2.jar" id="org.tigris.subversion.clientadapter.feature" version="1.10.2">
       <category name="Subclipse"/>
    </feature>
-   
-   <feature url="features/org.tmatesoft.svnkit_1.8.5.r10237_v20140319_1934.jar" id="org.tmatesoft.svnkit" version="1.8.5.r10237_v20140319_1934">
+
+   <feature url="features/org.tmatesoft.svnkit_1.8.6.r10298_v20140730_2254.jar" id="org.tmatesoft.svnkit" version="1.8.6.r10298_v20140730_2254">
       <category name="SVNKit"/>
    </feature>
 
-   <feature url="features/net.java.dev.jna_3.5.2" id="net.java.dev.jna" version="3.5.2">
+   <feature url="features/net.java.dev.jna_4.1.0.v20140626_1915.jar" id="net.java.dev.jna" version="4.1.0.v20140626_1915">
       <category name="SVNKit"/>
    </feature>
 
@@ -32,7 +32,7 @@
       <category name="Subclipse"/>
    </feature>
 
-   <feature url="features/org.tigris.subversion.subclipse_1.10.5.jar" id="org.tigris.subversion.subclipse" version="1.10.5">
+   <feature url="features/org.tigris.subversion.subclipse_1.10.6.jar" id="org.tigris.subversion.subclipse" version="1.10.6">
       <category name="Subclipse"/>
    </feature>
 
