@@ -16,7 +16,7 @@
       <category name="Subclipse"/>
    </feature>
 
-   <feature url="features/org.tmatesoft.svnkit_1.8.7.r10376_v20141223_2131.jar" id="org.tmatesoft.svnkit" version="1.8.7.r10376_v20141223_2131">
+   <feature url="features/org.tmatesoft.svnkit_1.8.8.r10386_v20150206_1954.jar" id="org.tmatesoft.svnkit" version="1.8.8.r10386_v20150206_1954">
       <category name="SVNKit"/>
    </feature>
 
@@ -32,7 +32,7 @@
       <category name="Subclipse"/>
    </feature>
 
-   <feature url="features/org.tigris.subversion.subclipse_1.10.8.jar" id="org.tigris.subversion.subclipse" version="1.10.8">
+   <feature url="features/org.tigris.subversion.subclipse_1.10.9.jar" id="org.tigris.subversion.subclipse" version="1.10.9">
       <category name="Subclipse"/>
    </feature>
 
