@@ -20,7 +20,7 @@
    </license>
 
    <url>
-      <update label="%updateSiteName" url="http://subclipse.tigris.org/update_1.10.x"/>
+      <update label="%updateSiteName" url="http://subclipse.tigris.org/update_1.12.x"/>
    </url>
 
    <requires>
