@@ -16,7 +16,7 @@
       <category name="Subclipse"/>
    </feature>
 
-   <feature url="features/org.tmatesoft.svnkit_1.8.10.r10446_v20150526_1454.jar" id="org.tmatesoft.svnkit" version="1.8.10.r10446_v20150526_1454">
+   <feature url="features/org.tmatesoft.svnkit_1.8.11.r10483_v20150925_0010.jar" id="org.tmatesoft.svnkit" version="1.8.11.r10483_v20150925_0010">
       <category name="SVNKit"/>
    </feature>
 
