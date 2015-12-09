@@ -1,3 +1,9 @@
+* Dec 9, 20155
+- Forked to https://github.com/patricematignon/subclipse
+- Adjusted dependencies against svnKit 1.8.11 and built against ant 1.8.4
+- Ignored JavaHL (not tested)
+
+
 - #1231: implemented the method 'CmdLineClientAdapter#copy(SVNUrl,SVNUrl,String,SVNRevision,boolean)' 
 - added ISVNStatus#isWcLocked() and ISVNStatus#isSwitched()
 - removed the getRepositoryRoot() method from adapter interface

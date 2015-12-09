@@ -1,10 +1,10 @@
-<project name="svnant" default="all" basedir=".">
+<project name="svnant" default="makeDistrib" basedir=".">
 
   <dirname file="${ant.file.svnant}" property="dir.svnant"/>
-  
+
   <!-- prefer the settings from the user if there are some. -->
   <property file="svnant-${user.name}.properties"/>
-  
+
   <!-- import the default properties -->
   <property file="svnant.properties" />
 
@@ -14,16 +14,16 @@
   <!-- ======================================================================================= -->
   <!-- path declarations                                                                       -->
   <!-- ======================================================================================= -->
-  
+
   <path id="project.classpath">
     <fileset dir="${dir.svnant}/lib/junit"            includes="**/*.jar"/>
     <fileset dir="${dir.svnant}/lib/svnclientadapter">
       <include name="**/*.jar"/>
-      <exclude name="**/svnkit-cli.jar"/>
-      <exclude name="**/svnkit-javahl16.jar"/>
+      <exclude name="**/svnkit-cli*.jar"/>
+      <exclude name="**/svnkit-javahl16*.jar"/>
     </fileset>
   </path>
-  
+
   <path id="path.xinclude">
     <fileset dir="${dir.svnant}/lib/xincluder" includes="**/*.jar"/>
   </path>
@@ -33,7 +33,7 @@
   <!-- ======================================================================================= -->
 
   <taskdef classpathref="path.xinclude" name="xinclude" classname="org.znerd.xincludetask.XIncludeTask" />
-  
+
   <!-- ======================================================================================= -->
   <!-- cleans everything                                                                       -->
   <!-- ======================================================================================= -->
@@ -48,15 +48,15 @@
   <target name="compile" description="compile all source files">
     <mkdir dir="${build.classes.dir}" />
     <depend srcDir="${src.main.dir}" destDir="${build.classes.dir}" cache="${build.cache.dir}" />
-    <javac srcdir="${src.main.dir}" 
+    <javac srcdir="${src.main.dir}"
       encoding="${encoding}"
       destdir="${build.classes.dir}"
-      debug="${debug}" 
+      debug="${debug}"
       target="${targetJvm}"
       source="${targetJvm}"
       includes="**"
       includeantruntime="true"
-      classpathref="project.classpath" 
+      classpathref="project.classpath"
     />
     <copy file="${src.main.dir}/org/tigris/subversion/svnant/svnantlib.xml" todir="${build.classes.dir}/org/tigris/subversion/svnant" />
   </target>
@@ -82,33 +82,36 @@
   <!-- ======================================================================================= -->
   <!-- compile docs                                                                            -->
   <!-- ======================================================================================= -->
-  
+
   <target name="docs" depends="" description="generate documentation">
-    
+
     <mkdir dir="${build.distrib.dir}/doc" />
-    
-    <tempfile property="file.temporary" deleteonexit="true"/>
-    
+
+    <mkdir dir="${build.dir}"/>
+    <tempfile destdir="${build.dir}" prefix="svnant-docs" property="file.temporary" deleteonexit="true"/>
+
     <xinclude in="${src.doc.dir}/tasks/svntask.xml" out="${file.temporary}"/>
     <xslt in="${file.temporary}" out="${build.distrib.dir}/doc/svntask.html" style="${src.doc.dir}/antdoc.xsl"/>
-    
+
     <xinclude in="${src.doc.dir}/conditions/conditions.xml" out="${file.temporary}"/>
     <xslt in="${file.temporary}" out="${build.distrib.dir}/doc/conditions.html" style="${src.doc.dir}/antdoc.xsl"/>
-      
+
     <xinclude in="${src.doc.dir}/selectors/selectors.xml" out="${file.temporary}"/>
     <xslt in="${file.temporary}" out="${build.distrib.dir}/doc/selectors.html" style="${src.doc.dir}/antdoc.xsl"/>
-    
+
     <xinclude in="${src.doc.dir}/types/types.xml" out="${file.temporary}"/>
     <xslt in="${file.temporary}" out="${build.distrib.dir}/doc/types.html" style="${src.doc.dir}/antdoc.xsl"/>
-      
+
     <xinclude in="${src.doc.dir}/introduction.xml" out="${file.temporary}"/>
     <xslt in="${file.temporary}" out="${build.distrib.dir}/doc/introduction.html" style="${src.doc.dir}/antdoc.xsl"/>
-    
+
     <copy file="${build.distrib.dir}/doc/introduction.html" tofile="${build.distrib.dir}/doc/svn.html"/>
-    
+
     <copy todir="${build.distrib.dir}/doc" overwrite="true">
       <fileset dir="${src.doc.dir}" includes="*.html"/>
     </copy>
+
+    <delete file="${file.temporary}" quiet="yes" failonerror="no"/>
   </target>
 
   <!-- ======================================================================================= -->
@@ -116,10 +119,10 @@
   <!-- ======================================================================================= -->
   <target name="compileTests" description="compile junit sources files">
     <mkdir dir="${build.classes.dir}" />
-    <javac srcdir="${src.testcases.dir}" 
-      destdir="${build.classes.dir}" 
-      debug="${debug}" 
-      includes="**" 
+    <javac srcdir="${src.testcases.dir}"
+      destdir="${build.classes.dir}"
+      debug="${debug}"
+      includes="**"
       target="${targetJvm}"
       source="${targetJvm}"
       includeantruntime="true"
@@ -167,29 +170,29 @@
     </copy>
     <copy file="${build.lib.dir}/svnant.jar"           todir="${build.distrib.dir}/lib" />
     <copy file="${distribfiles.dir}/build.xml"         todir="${build.distrib.dir}"/>
-    
+
     <copy file="${distribfiles.dir}/build.properties"  todir="${build.distrib.dir}">
       <filterset>
         <filter token="SVNANTVERSION" value="${svnant.version}" />
       </filterset>
     </copy>
-    
+
     <copy file="${distribfiles.dir}/release-announcement-template.txt" todir="${build.dir}">
       <filterset>
         <filter token="SVNANTVERSION" value="${svnant.version}" />
       </filterset>
     </copy>
-    
-    <condition property="revision" value="unknown" else="${env.SVN_REVISION}">
+
+    <condition property="revision" value="" else="-${env.SVN_REVISION}">
       <equals arg1="${env.SVN_REVISION}" arg2="$${env.SVN_REVISION}"/>
     </condition>
-    
+
     <echo file="${build.distrib.dir}/releaseinfo.txt">DEVELOPMENT RELEASE OF REVISION: ${revision}</echo>
-    
-    <zip destfile="${build.dir}/svnant-${svnant.version}-${revision}.zip">
+
+    <zip destfile="${build.dir}/svnant-${svnant.version}${revision}.zip">
       <zipfileset dir="${build.distrib.dir}" prefix="svnant-${svnant.version}" />
     </zip>
-    
+
   </target>
 
   <!-- create all jar files -->
